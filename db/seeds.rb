@@ -223,10 +223,19 @@ puts "\nCreating Courses..."
 sample_pdf_path = Rails.root.join('app', 'assets', 'files', 'sample.pdf')
 
 courses_data = [
-  { title: "Réglementation aérienne", description: "Apprendre les règles de l'air, l'espace aérien et les procédures de communication.", file: "reglementation.pdf" },
-  { title: "Météorologie aéronautique", description: "Savoir interpréter les cartes météo, les METAR/TAF et anticiper les conditions de vol.", file: "meteo.pdf" },
-  { title: "Navigation", description: "Maîtriser les techniques de navigation à l'estime et radio-navigation.", file: "navigation.pdf" },
-  { title: "Facteurs humains", description: "Prendre conscience de l'impact de la physiologie et de la psychologie sur le pilotage.", file: "facteurs-humains.pdf" }
+  { title: "FTP1 Environnement réglementaire de la formation", description: "Eléments du PART NCO, SGS (ATO) ou politique de sécurité (DTO), Retour d’expérience REX FFA et occurrence reporting dans le cadre du règlement 376/2014, Manuel de sécurité FA..", file: "ftp1.pdf" },
+  { title: "FTP2 Mise en œuvre de l’avion. Eléments de sécurité élémentaire", description: "Eléments de sécurité élémentaire. Préparation pour le vol (les 5 éléments de contexte). Actions avant et après vol (objectifs du briefing et débriefing). Compétences techniques/Non techniques.", file: "ftp2.pdf" },
+  { title: "FTP3 Bases d’aérodynamique (assiette – incidence – pente)", description: "Puissance nécessaire au vol. Relation puissance/assiette/vitesse/trajectoire.", file: "ftp3.pdf" },
+  { title: "FTP4 Signaux de guidage au sol. Procédures de contrôle de la circulation aérienne", description: "Procédures de contrôle de la circulation aérienne. Urgences : Pannes de freins et de direction. Virages : Notions de facteur de charge et puissance requise. Contrôle du cap : Utilisation du compas et du conservateur de cap. ffets du vent : Notion de dérive.", file: "ftp4.pdf" },
+  { title: "FTP5 Mécanique du vol et vitesses caractéristiques (évolution – V réf…)", description: "Limitations avion et dangers associés. Circonstances menant aux situations inusuelles, détection et récupération.", file: "ftp5.pdf" },
+  { title: "FTP6 Le tour de piste – communication", description: "Approche gestion menaces et erreurs (Menaces, erreurs et situations indésirables) dans le cadre des vols locaux.", file: "fpt6.pdf" },
+  { title: "FTP7 Pannes et procédures particulières : Identifier, analyser, appliquer une procédure", description: "Situations d’urgence. Appliquer une procédure d’urgence.", file: "ftp7.pdf" },
+  { title: "FTP8 Méthodes de navigation. Préparation d’une navigation (journal de navigation)", description: "Rappels réglementation : Espaces aérien, conditions VMC, altitudes et niveaux de vol, services ATC, intégration sur les aérodromes", file: "ftp8.pdf" },
+  { title: "FTP9 Présentation des moyens de radionavigations conventionnels et du GPS", description: "Utilisation et organisation des moyens radio. Approche gestion des menaces et erreurs (Menaces, erreurs, et situations indésirables) dans le cadre du vol sur la campagne.", file: "ftp9.pdf" },
+  { title: "FTP10 Présentation du dossier de vol", description: "Préparation d’un voyage aérien (avitaillement, assistance). Approche gestion menaces et erreurs (Menaces, erreurs et situations indésirables) dans le cadre du voyage avec passagers. Gestion des pannes et situations anormales. Déroutement. Interruption volontaire du vol.", file: "ftp10.pdf" },
+  { title: "FTP11 Pilotage sans visibilité", description: "(VSV, circuit visuel). Approche gestion menaces et erreurs (Menaces, erreurs, situations indésirables) dans le cadre du VSV. Maintien des conditions VMC, réactions en cas de perte de conditions VMC, retour aux conditions VMC.", file: "ftp11.pdf" },
+  { title: "FTP12 Présentation de l’examen", description: "Présentation de l’examenau travers du guide FFA de l’examen en vol et du manuel de sécurité FFA ; Détail des exercices et de leur enchaînement, critères observés, niveau attendu, contenu du briefing.", file: "ftp12.pdf" },
+  { title: "Facteurs Humains", description: "Cours sur les facteurs humains", file: "facteurshumains.pdf" }
 ]
 
 courses_data.each do |course_data|

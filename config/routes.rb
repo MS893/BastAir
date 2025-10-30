@@ -30,12 +30,11 @@ Rails.application.routes.draw do
   end
 
   # routes pour les cours (à compléter avec les cours du club)
-  #resources :elearning, only: [:index, :show] do   # voir si utilie ou pas (sinon ligne du dessous)
-  #  member do
-  #    get 'document'
-  #  end
-  #end
-  resources :elearning, only: [:index, :show]
+  resources :elearning, only: [:index, :show] do
+    member do
+      get 'document'
+    end
+  end
   resources :audios, only: [:show]
 
   # routes pour les événements, avec des routes imbriquées pour les participations
