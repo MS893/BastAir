@@ -42,9 +42,9 @@ client_secret_116956730384-s3ph8gf0op1juca1oflgu59511bjhe0g.apps.googleuserconte
 # Ignore vscode.
 /.vscode
 
-# Ignore fichier améliorations.txt
+# Ignore fichier améliorations.txt et .aiexclude
 améliorations.txt
-
+.aiexclude
 
 /app/assets/builds/*
 !/app/assets/builds/.keep
