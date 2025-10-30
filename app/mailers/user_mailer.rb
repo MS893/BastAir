@@ -11,6 +11,9 @@ class UserMailer < ApplicationMailer
     # pour éviter de faire planter l'application.
     return unless @organizer
 
+    # On prépare le nom de l'organisateur ici, en un seul endroit.
+    @organizer_name = @organizer.name.presence || @organizer.email
+
     mail(to: @organizer.email, subject: "Nouveau participant à votre événement : #{@event.title}")
   end
 
