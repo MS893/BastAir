@@ -26,7 +26,7 @@ class CreateUsers < ActiveRecord::Migration[8.0]
       t.date :cotisation_ffa
       t.boolean :autorise
       t.boolean :admin, default: false, null: false
-      t.string :fonction     # président, trésorier ou secrétaire
+      t.string :fonction     # president, tresorier ou secretaire pour les admins, et eleve ou brevete pour les autres
 
       t.timestamps
     end

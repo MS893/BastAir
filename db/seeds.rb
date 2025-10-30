@@ -28,8 +28,8 @@ puts "\nCreating users..."
 original_delivery_method = ActionMailer::Base.delivery_method
 ActionMailer::Base.delivery_method = :test
 
-# 1. Création de 30 adhérents, dont un administrateur
-# ----------------------------------------------------
+# 1. Création de 30 adhérents, dont un administrateur et un élève
+# ---------------------------------------------------------------
 
 # Crée un administrateur
 admin_user = User.create!(
@@ -57,11 +57,41 @@ admin_user = User.create!(
   cotisation_club: Faker::Date.forward(days: 365),
   cotisation_ffa: Faker::Date.forward(days: 365),
   autorise: true,
-  fonction: "Président"
+  fonction: "president"
 )
 puts "✅ Administrator created: #{admin_user.email}"
 
-# Crée 29 adhérents normaux
+# Crée un élève
+admin_user = User.create!(
+  prenom: "Eleve",
+  nom: "Debutant",
+  email: "eleve@bastair.com",
+  password: "password",
+  password_confirmation: "password",
+  admin: false,
+  date_naissance: Faker::Date.birthday(min_age: 61, max_age: 65),
+  lieu_naissance: Faker::Address.city,
+  profession: "Administrateur Système",
+  adresse: Faker::Address.full_address,
+  telephone: Faker::PhoneNumber.phone_number,
+  contact_urgence: "#{Faker::Name.name} - #{Faker::PhoneNumber.phone_number}",
+  num_ffa: Faker::Number.number(digits: 8).to_s,
+  licence_type: "PPL",
+  num_licence: "FRA.PPL.#{Faker::Number.number(digits: 6)}",
+  date_licence: Faker::Date.backward(days: 365 * 5),
+  medical: Faker::Date.forward(days: 365),
+  fi: Faker::Date.forward(days: 365),
+  fe: Faker::Date.forward(days: 365),
+  controle: Faker::Date.forward(days: 365),
+  solde: Faker::Number.decimal(l_digits: 3, r_digits: 2),
+  cotisation_club: Faker::Date.forward(days: 365),
+  cotisation_ffa: Faker::Date.forward(days: 365),
+  autorise: true,
+  fonction: "eleve"
+)
+puts "✅ Trainee created: #{admin_user.email}"
+
+# Crée 28 adhérents normaux (non élève)
 29.times do
   licence = ["PPL", "LAPL"].sample
   User.create!(
@@ -86,10 +116,11 @@ puts "✅ Administrator created: #{admin_user.email}"
     cotisation_club: Faker::Date.forward(days: 365),
     cotisation_ffa: Faker::Date.forward(days: 365),
     autorise: [true, true, true, false].sample, # 75% de chance d'être autorisé
-    admin: false
-  )
+    admin: false,
+    fonction: "brevete"
+    )
 end
-puts "✅ 29 regular members created."
+puts "✅ 28 regular members created."
 puts "Total users: #{User.count}"
 
 # On réactive l'envoi d'e-mails
