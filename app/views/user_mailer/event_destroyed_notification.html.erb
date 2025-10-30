@@ -12,6 +12,13 @@
       Nous vous informons que l'événement <strong>"<%= @event_title %>"</strong> auquel vous étiez inscrit a malheureusement été annulé.
     </p>
 
+    <%# On ajoute une mention de remboursement si l'événement était payant %>
+    <% if @was_paid %>
+      <p>
+        Comme cet événement était payant, un remboursement du montant de votre inscription a été initié. Il apparaîtra sur votre compte bancaire dans les prochains jours.
+      </p>
+    <% end %>
+
     <p>L'équipe de BastAir.</p>
   </body>
 </html>

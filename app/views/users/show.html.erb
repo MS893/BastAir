@@ -1,26 +1,39 @@
+<% content_for :title, "Profil de #{@user.prenom} #{@user.nom}" %>
+
 <div class="container my-5">
-  <div class="row justify-content-center">
-    <div class="col-12 col-md-10 col-lg-8">
-      <div class="card profile-card border-0 shadow-lg">
-        <div class="card-body text-center p-4 p-md-5">
-          
-          <%= image_tag @user.avatar.attached? ? @user.avatar : 'https://via.placeholder.com/120', class: "profile-avatar rounded-circle mb-4" %>
-
-          <h2 class="card-title mb-1"><%= @user.name %></h2>
-          <p class="text-muted mb-4"><%= @user.email %></p>
-
-          <hr class="my-4">
-
-          <div class="profile-details text-start">
-            <p><strong>Prénom:</strong> <%= @user.prenom %></p>
-            <p><strong>Nom:</strong> <%= @user.nom %></p>
-          </div>
-
-          <%# On affiche le bouton "Modifier" seulement si l'utilisateur consulte son propre profil %>
-          <% if current_user == @user %>
-            <%= link_to "Modifier mon profil", edit_user_registration_path, class: "btn btn-primary mt-4" %>
-          <% end %>
+  <div class="row">
+    <div class="col-md-4 text-center">
+      <% if @user.avatar.attached? %>
+        <%= image_tag @user.avatar, class: "img-fluid rounded-circle mb-3", style: "width: 150px; height: 150px; object-fit: cover;" %>
+      <% else %>
+        <div class="avatar-placeholder mb-3" style="width: 150px; height: 150px; background-color: #e9ecef; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;">
+          <i class="bi bi-person-fill" style="font-size: 4rem; color: #adb5bd;"></i>
         </div>
+      <% end %>
+      <h2 class="mb-1"><%= @user.prenom %> <%= @user.nom %></h2>
+      <p class="text-muted"><%= @user.email %></p>
+      <% if @user.admin? %>
+        <span class="badge bg-primary">Administrateur</span>
+      <% end %>
+    </div>
+
+    <div class="col-md-8">
+      <h3>Informations de l'adhérent</h3>
+      <hr>
+      <p><strong>Fonction :</strong> <%= @user.fonction.capitalize %></p>
+      <p><strong>Téléphone :</strong> <%= @user.telephone %></p>
+      <p><strong>Adresse :</strong> <%= @user.adresse %></p>
+      <p><strong>Solde du compte :</strong> <%= number_to_currency(@user.solde, unit: "€", separator: ",", delimiter: " ", format: "%n %u") %></p>
+      
+      <%# --- BOUTONS D'ACTION --- %>
+      <div class="mt-4">
+        <% if current_user == @user %>
+          <%= link_to "Modifier mon profil", edit_user_registration_path, class: "btn btn-primary" %>
+        <% end %>
+        <%# Le bouton n'apparaît que si l'utilisateur consulté est un admin %>
+        <% if @user.admin? %>
+          <%= link_to "Créer un nouvel adhérent", new_admin_user_path, class: "btn btn-success ms-2" %>
+        <% end %>
       </div>
     </div>
   </div>

@@ -1,5 +1,3 @@
-Comment puis-je faire en sorte que les fichiers PDF soient streamés depuis Active Storage au lieu du système de fichiers ?
-
 Pourrais-tu m'aider à refactoriser le `ElearningController` pour le rendre plus simple ?
 
 BOF - Comment sécuriser l'accès aux documents pour que seuls les utilisateurs connectés puissent les voir ? (pas forcément nécessaire puisque le menu n'est accessible que lorsqu'on est connecté)
@@ -12,4 +10,5 @@ Explique-moi comment fonctionne le `content_for` que j'utilise pour le titre de 
 Explique-moi comment fonctionne la méthode `current_page?` pour rendre les liens de la navbar actifs.
 
 Comment puis-je créer une page de profil administrateur spéciale qui n'est pas la même que celle des utilisateurs normaux ?
+
 

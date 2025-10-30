@@ -233,6 +233,7 @@ Tarif.create!(
   annee: Date.today.year,
   tarif_horaire_avion1: 150,
   tarif_horaire_avion2: 0,    # Mettre à jour si autres avions (faire une migration)
+  tarif_instructeur: 10,
   tarif_simulateur: 20,
   cotisation_club_m21: 100,
   cotisation_club_p21: 200,
@@ -271,11 +272,10 @@ courses_data = [
 
 courses_data.each do |course_data|
   course = Course.create!(title: course_data[:title], description: course_data[:description])
-  # Attache un fichier PDF d'exemple. Créez des fichiers PDF factices dans app/assets/files/ pour que cela fonctionne.
+  # Attache le fichier PDF via Active Storage
   file_path = Rails.root.join('app', 'assets', 'files', course_data[:file])
   if File.exist?(file_path)
-    content_type = course_data[:file].end_with?('.pptx') ? 'application/vnd.openxmlformats-officedocument.presentationml.presentation' : 'application/pdf'
-    course.document.attach(io: File.open(file_path), filename: course_data[:file], content_type: content_type)
+    course.document.attach(io: File.open(file_path), filename: course_data[:file], content_type: 'application/pdf')
   else
     puts "      ⚠️  Warning: File #{course_data[:file]} not found for course '#{course_data[:title]}'."
   end
