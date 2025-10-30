@@ -67,4 +67,28 @@ class StaticPagesController < ApplicationController
     # Logique pour récupérer les disponibilités des instructeurs à venir
   end
 
+  def documents_divers
+    downloads_path = Rails.root.join('app', 'assets', 'files', 'download')
+    @files = []
+
+    if Dir.exist?(downloads_path)
+      # On récupère uniquement les noms de fichiers, pas les chemins complets
+      @files = Dir.children(downloads_path).sort
+    else
+      flash.now[:alert] = "Le dossier de téléchargement n'a pas été trouvé."
+    end
+  end
+
+  def download
+    filename = params[:filename]
+    file_path = Rails.root.join('app', 'assets', 'files', 'download', filename)
+
+    if File.exist?(file_path)
+      # 'disposition: "attachment"' force le téléchargement
+      send_file file_path, disposition: 'attachment'
+    else
+      redirect_to documents_divers_path, alert: "Le fichier demandé n'existe pas."
+    end
+  end
+
 end

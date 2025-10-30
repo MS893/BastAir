@@ -1,0 +1,26 @@
+<% content_for :title, "Documents Divers" %>
+
+<div class="container my-5">
+  <h1 class="text-center mb-4">Documents Divers</h1>
+  <p class="lead text-center mb-5">
+    Retrouvez ici une sélection de documents utiles à télécharger.
+  </p>
+
+  <% if @files.any? %>
+    <div class="list-group w-75 mx-auto">
+      <% @files.each do |file_name| %>
+        <%= link_to download_file_path(filename: file_name), class: "list-group-item list-group-item-action d-flex justify-content-between align-items-center" do %>
+          <span>
+            <i class="bi bi-file-earmark-arrow-down me-2"></i>
+            <%= file_name.gsub('_', ' ').gsub('-', ' ').humanize %>
+          </span>
+          <span class="badge bg-primary rounded-pill">Télécharger</span>
+        <% end %>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="alert alert-info text-center" role="alert">
+      Aucun document n'est disponible au téléchargement pour le moment.
+    </div>
+  <% end %>
+</div>

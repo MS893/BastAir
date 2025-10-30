@@ -30,7 +30,12 @@ Rails.application.routes.draw do
   end
 
   # routes pour les cours (à compléter avec les cours du club)
-  resources :courses, only: [:show]
+  #resources :elearning, only: [:index, :show] do   # voir si utilie ou pas (sinon ligne du dessous)
+  #  member do
+  #    get 'document'
+  #  end
+  #end
+  resources :elearning, only: [:index, :show]
   resources :audios, only: [:show]
 
   # routes pour les événements, avec des routes imbriquées pour les participations
@@ -56,7 +61,8 @@ Rails.application.routes.draw do
   get 'bia', to: 'static_pages#bia'
   get 'baptemes', to: 'static_pages#baptemes'
   get 'outils', to: 'static_pages#outils'
-  get 'cours_theoriques', to: 'elearning#index'
+  get 'cours_theoriques', to: 'elearning#index', as: 'cours_theoriques'
+  get 'documents_divers', to: 'static_pages#documents_divers'
   get 'credit', to: 'static_pages#credit'
   get 'lecons_de_vol', to: 'flight_lessons#index'
   get 'agenda_avion', to: 'static_pages#agenda_avion'
@@ -67,6 +73,9 @@ Rails.application.routes.draw do
   get 'contact', to: 'static_pages#contact'
   get 'team', to: 'static_pages#team'
   get 'privacy_policy', to: 'static_pages#privacy_policy'
+
+  # Route pour gérer le téléchargement des fichiers
+  get 'download/:filename', to: 'static_pages#download', as: 'download_file', constraints: { filename: /[^\/]+/ }
   
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.

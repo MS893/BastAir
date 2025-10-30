@@ -223,11 +223,10 @@ puts "\nCreating Courses..."
 sample_pdf_path = Rails.root.join('app', 'assets', 'files', 'sample.pdf')
 
 courses_data = [
-  { title: "Principes de vol", description: "Comprendre les bases de l'aérodynamique et les forces qui agissent sur un avion.", file: "Le vol moteur réduit.pptx" },
   { title: "Réglementation aérienne", description: "Apprendre les règles de l'air, l'espace aérien et les procédures de communication.", file: "reglementation.pdf" },
   { title: "Météorologie aéronautique", description: "Savoir interpréter les cartes météo, les METAR/TAF et anticiper les conditions de vol.", file: "meteo.pdf" },
   { title: "Navigation", description: "Maîtriser les techniques de navigation à l'estime et radio-navigation.", file: "navigation.pdf" },
-  { title: "Facteurs humains", description: "Prendre conscience de l'impact de la physiologie et de la psychologie sur le pilotage.", file: "facteurs_humains.pdf" }
+  { title: "Facteurs humains", description: "Prendre conscience de l'impact de la physiologie et de la psychologie sur le pilotage.", file: "facteurs-humains.pdf" }
 ]
 
 courses_data.each do |course_data|
@@ -250,8 +249,12 @@ puts "\nCreating Podcasts..."
 Audio.destroy_all
 
 podcasts_data = [
-  { title: "Voler par fortes chaleurs", description: "Un premier épisode sur les choses à vérifier avant de voler.", file: "High Temperature Flight Operations.wav" }
-  # Vous pourrez ajouter d'autres podcasts ici à l'avenir
+  { title: "Voler par fortes chaleurs", description: "Les questions à se poser quand il fait chaud. Attention les performances de l'avion sont dégradées.", file: "HighTemperatureFlightOperations.wav" },
+  { title: "Les virages", description: "Des explications sur les bonnes pratiques pour effectuer un virage parfait.", file: "AerialManeuversTurnsSymmetry.wav" },
+  { title: "Le SIV", description: "Le Service D'Information de Vol (SIV), c'est quoi ?", file: "FlightInformationService.wav" },
+  { title: "Préparer une navigation VFR", description: "Un podcast qui explique la préparation d'une navigation VFR.", file: "PracticalGuideVFRNavigation.wav" },
+  { title: "SIV et espaces aériens", description: "Les espaces aériens et le SIV.", file: "VFRAirspace.wav" }
+  # autres podcasts : ajouter ici
 ]
 
 podcasts_data.each do |podcast_data|

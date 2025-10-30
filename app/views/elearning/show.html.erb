@@ -1,0 +1,16 @@
+<% content_for :title, @course.title %>
+
+<div class="container my-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="mb-0"><%= @course.title %></h1>
+    <%= link_to 'Retour à la liste des cours', cours_theoriques_path, class: 'btn btn-secondary' %>
+  </div>
+
+  <p class="lead"><%= @course.description %></p>
+
+  <hr>
+
+  <div class="pdf-viewer-container" style="height: 80vh; border: 1px solid #dee2e6; border-radius: .25rem;">
+    <embed src="<%= @pdf_path %>" type="application/pdf" width="100%" height="100%">
+  </div>
+</div>
