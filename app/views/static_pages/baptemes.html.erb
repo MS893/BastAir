@@ -77,7 +77,7 @@
         </div>
         <div class="mb-3">
           <%= form.label :message, 'Donnez-nous les dates auxquelles vous êtes disponible', class: 'form-label' %>
-          <%= form.text_area :message, @message, class: 'form-control', rows: 5, required: true %>
+          <%= form.text_area :message, class: 'form-control', rows: 5, required: true, value: @message %>
         </div>
         <div class="mb-3 d-flex justify-content-center">
           <%= recaptcha_tags %>

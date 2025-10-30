@@ -63,7 +63,7 @@ admin_user = User.create!(
 puts "✅ Administrator created: #{admin_user.email}"
 
 # Crée un élève
-admin_user = User.create!(
+eleve_user = User.create!(
   prenom: "Eleve",
   nom: "Debutant",
   email: "eleve@bastair.com",
@@ -90,7 +90,7 @@ admin_user = User.create!(
   autorise: true,
   fonction: "eleve"
 )
-puts "✅ Trainee created: #{admin_user.email}"
+puts "✅ Trainee created: #{eleve_user.email}"
 
 # Crée 28 adhérents normaux (non élève)
 29.times do

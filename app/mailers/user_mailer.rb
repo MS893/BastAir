@@ -1,16 +1,16 @@
 class UserMailer < ApplicationMailer
   default from: 'no-reply@bastair.com'
 
-  def welcome_email(user)
-    @user = user
-    mail(to: @user.email, subject: 'Bienvenue chez BastAir !')
-  end
-
   def new_participant_notification(attendance)
     @attendance = attendance
     @event = attendance.event
-    @participant = attendance.user
-    @organizer = @event.admin
+    @participant = attendance.user 
+    @organizer = @event.admin || User.find_by(admin: true) # Plan B: trouver un admin général
+
+    # Si, même après le plan B, aucun organisateur n'est trouvé, on n'envoie pas d'email
+    # pour éviter de faire planter l'application.
+    return unless @organizer
+
     mail(to: @organizer.email, subject: "Nouveau participant à votre événement : #{@event.title}")
   end
 
@@ -31,4 +31,10 @@ class UserMailer < ApplicationMailer
     @user = user
     mail(to: @user.email, subject: 'Alerte : Votre solde de compte est négatif')
   end
+
+  def welcome_email(user)
+    @user = user
+    mail(to: @user.email, subject: 'Bienvenue chez BastAir !')
+  end
+
 end

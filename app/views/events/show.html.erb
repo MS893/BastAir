@@ -65,7 +65,7 @@
             <% else %>
               <h4 class="mb-3">S'inscrire à l'événement</h4>
               <% if @event.is_free? %>
-                <%= button_to "Participer gratuitement", event_attendances_path(@event), method: :post, class: "btn btn-success btn-lg" %>
+                <%= button_to "Participer", event_attendances_path(@event), method: :post, class: "btn btn-success btn-lg" %>
               <% else %>
                 <%= button_to "Acheter avec Stripe", checkout_path(event_id: @event.id), method: :post, data: { turbo: false }, class: "btn btn-primary btn-lg" %>
               <% end %>

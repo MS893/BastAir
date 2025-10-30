@@ -11,4 +11,7 @@ Explique-moi comment fonctionne la méthode `current_page?` pour rendre les lien
 
 Comment puis-je créer une page de profil administrateur spéciale qui n'est pas la même que celle des utilisateurs normaux ?
 
+Peux-tu m'aider à ajouter un test pour vérifier que l'e-mail de notification est bien envoyé lors de l'inscription à un événement ?
+
+Comment pourrais-je créer une page d'administration pour gérer les événements et leurs participants ?
 
