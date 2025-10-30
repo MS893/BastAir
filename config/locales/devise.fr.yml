@@ -65,3 +65,17 @@ fr:
       not_saved:
         one: "1 erreur a empêché ce %{resource} d'être enregistré :"
         other: "%{count} erreurs ont empêché ce %{resource} d'être enregistré :"
+  activerecord:
+    errors:
+      models:
+        event:
+          attributes:
+            price:
+              blank: "ne peut pas être vide"
+              not_a_number: "doit être un nombre"
+            admin:
+              required: "doit exister"
+      messages:
+        required: "doit être rempli(e)"
+        blank: "ne peut pas être vide"
+        not_a_number: "doit être un nombre"

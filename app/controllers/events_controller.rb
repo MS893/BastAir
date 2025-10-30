@@ -18,6 +18,11 @@ class EventsController < ApplicationController
 
   def create
     @event = Event.new(event_params)
+    # On associe l'administrateur actuel à l'événement
+    @event.admin = current_user
+    
+    # On s'assure que le prix est à 0 s'il n'est pas spécifié
+    @event.price ||= 0
 
     if @event.save
       redirect_to root_path, notice: "L'événement a été créé avec succès."
@@ -70,11 +75,6 @@ class EventsController < ApplicationController
 
   def event_params
     params.require(:event).permit(:title, :description, :start_date, :price, :photo)
-  end
-  
-  # pour autoriser uniquement les administrateurs à accéder à certaines actions
-  def authorize_admin!
-    redirect_to root_path, alert: "Accès réservé aux administrateurs." unless current_user&.admin?
   end
 
 end
