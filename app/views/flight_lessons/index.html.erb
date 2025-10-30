@@ -1,7 +1,21 @@
 <% content_for :title, "Leçons de Vol" %>
 
 <div class="container my-5">
-  <h1 class="text-center mb-4">Mes Leçons de Vol</h1>
-  <p class="lead text-center">Bienvenue dans votre espace de suivi des leçons de vol. Cette section est en cours de construction.</p>
-  <!-- Le contenu de la page des leçons de vol viendra ici -->
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <h1 class="text-center mb-4">Liste des Leçons</h1>
+      <p class="text-center text-muted mb-5">
+        Voici le programme détaillé des leçons pratiques pour l'obtention de votre licence.
+      </p>
+
+      <ol class="list-group list-group-numbered">
+        <% @lessons.each_with_index do |lesson, index| %>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <a href="<%= flight_lesson_path(lesson) %>" class="ms-2 me-auto text-decoration-none text-body stretched-link"><%= lesson.title %></a>
+            <i class="bi bi-chevron-right text-muted"></i>
+          </li>
+        <% end %>
+      </ol>
+    </div>
+  </div>
 </div>

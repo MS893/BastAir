@@ -3,8 +3,11 @@ class FlightLessonsController < ApplicationController
   before_action :authorize_eleve!
 
   def index
-    # Cette page est maintenant réservée aux élèves.
-    # Vous pouvez ajouter ici la logique pour récupérer les leçons de vol de l'élève.
+    @lessons = FlightLesson.all.order(:id)
+  end
+
+  def show
+    @lesson = FlightLesson.find(params[:id])
   end
 
 end

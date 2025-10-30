@@ -6,6 +6,7 @@ require 'faker'
 
 puts "\nCleaning database..."
 Audio.destroy_all
+FlightLesson.destroy_all
 Reservation.destroy_all
 Vol.destroy_all
 Avion.destroy_all
@@ -305,6 +306,62 @@ podcasts_data.each do |podcast_data|
   end
 end
 puts "✅ #{Audio.count} podcast(s) created."
+
+# 8. Création des leçons de vol
+# ----------------------------------------------------
+puts "\nCreating Flight Lessons..."
+
+flight_lessons_data = [
+  { title: "1 Mise en œuvre, roulage et vol d’accoutumance", file: "lecon_1.pdf" },
+  { title: "2 Assiette, inclinaison et ligne droite", file: "lecon_2.pdf" },
+  { title: "3 Utilisation du moteur et du compensateur", file: "lecon_3.pdf" },
+  { title: "4 Alignement et décollage", file: "lecon_4.pdf" },
+  { title: "5 Assiette - Vitesse assiette - Trajectoire", file: "lecon_5.pdf" },
+  { title: "6 Relation puissance vitesse - Incidence", file: "lecon_6.pdf" },
+  { title: "7 Contrôle du cap", file: "lecon_7.pdf" },
+  { title: "8 Palier, montée et descente symétrie du vol", file: "lecon_8.pdf" },
+  { title: "9 Virages en palier, montée et descente symétrie du vol", file: "lecon_9.pdf" },
+  { title: "10 Relations dans le virage", file: "lecon_10.pdf" },
+  { title: "11 Effets du vent traversier sur les trajectoires sol", file: "lecon_11.pdf" },
+  { title: "12 Changement de configuration", file: "lecon_12.pdf" },
+  { title: "13 Décrochage", file: "lecon_13.pdf" },
+  { title: "14 Vol lent", file: "lecon_14.pdf" },
+  { title: "15 Chargement, centrage et stabilité longitudinale", file: "lecon_15.pdf" },
+  { title: "16 Approche et approche interrompue", file: "lecon_16.pdf" },
+  { title: "17 L’atterrissage", file: "lecon_17.pdf" },
+  { title: "18 Circuits d’aérodrome", file: "lecon_18.pdf" },
+  { title: "19 Virage engagé", file: "lecon_19.pdf" },
+  { title: "20 Pannes en phase de décollage", file: "lecon_20.pdf" },
+  { title: "21 Virage à grande inclinaison", file: "lecon_21.pdf" },
+  { title: "22 Le lâcher", file: "lecon_22.pdf" },
+  { title: "23 Décollages et montées adaptés", file: "lecon_23.pdf" },
+  { title: "24 Approches et atterrissages adaptés", file: "lecon_24.pdf" },
+  { title: "25 Atterrissage de précaution", file: "lecon_25.pdf" },
+  { title: "26 Le vol moteur réduit", file: "lecon_26.pdf" },
+  { title: "27 La vrille", file: "lecon_27.pdf" },
+  { title: "28 Procédures anormales et d’urgence", file: "lecon_28.pdf" },
+  { title: "29 Virage à forte inclinaison en descente moteur réduit", file: "lecon_29.pdf" },
+  { title: "30 L’estime élémentaire", file: "lecon_30.pdf" },
+  { title: "31 Le cheminement", file: "lecon_31.pdf" },
+  { title: "32 Navigation", file: "lecon_32.pdf" },
+  { title: "33 Application au voyage", file: "lecon_33.pdf" },
+  { title: "34 Radionavigation", file: "lecon_34.pdf" },
+  { title: "35 Egarement", file: "lecon_35.pdf" },
+  { title: "36 Perte de références extérieures", file: "lecon_36.pdf" },
+  { title: "37 Utilisation du GPS", file: "lecon_37.pdf" }
+]
+
+flight_lessons_data.each do |lesson_data|
+  lesson = FlightLesson.create!(title: lesson_data[:title].split(' ', 2).last)
+  # Vous pouvez placer vos PDFs dans 'app/assets/files/flight_lessons/'
+  file_path = Rails.root.join('app', 'assets', 'files', 'flight_lessons', lesson_data[:file])
+  if File.exist?(file_path)
+    lesson.document.attach(io: File.open(file_path), filename: lesson_data[:file], content_type: 'application/pdf')
+  else
+    puts "      ⚠️  Warning: File #{lesson_data[:file]} not found for flight lesson '#{lesson.title}'."
+  end
+end
+puts "✅ Flight Lessons created."
 
 puts "\nSeed finished successfully!"
 puts
