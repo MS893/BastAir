@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  </head>
+  <body>
+    <h1>Nouvelle demande de contact pour un baptême</h1>
+    <p>Vous avez reçu une nouvelle demande de la part de : <strong><%= @prenom %> <%= @nom %></strong> (<%= @email %>).</p>
+    <p><strong>Message :</strong></p>
+    <p><%= simple_format(@message) %></p>
+  </body>
+</html>

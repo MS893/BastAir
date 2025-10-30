@@ -61,6 +61,7 @@ class EventsController < ApplicationController
     # @event est déjà défini par `set_event`
   end
 
+  
   private
 
   def set_event
@@ -71,9 +72,9 @@ class EventsController < ApplicationController
     params.require(:event).permit(:title, :description, :start_date, :price, :photo)
   end
   
-  # pour autoriser uniquement les administrateurs
+  # pour autoriser uniquement les administrateurs à accéder à certaines actions
   def authorize_admin!
-    redirect_to root_path, alert: "Accès réservé aux administrateurs." unless current_user.admin?
+    redirect_to root_path, alert: "Accès réservé aux administrateurs." unless current_user&.admin?
   end
 
 end

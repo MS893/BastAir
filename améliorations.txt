@@ -9,4 +9,7 @@ BOF - Comment puis-je remplacer la balise `<embed>` par une bibliothèque JavaSc
 BOF - Comment puis-je ajouter une barre de recherche pour filtrer les cours et les podcasts par titre ?
 
 Explique-moi comment fonctionne le `content_for` que j'utilise pour le titre de la page.
+Explique-moi comment fonctionne la méthode `current_page?` pour rendre les liens de la navbar actifs.
+
+Comment puis-je créer une page de profil administrateur spéciale qui n'est pas la même que celle des utilisateurs normaux ?
 

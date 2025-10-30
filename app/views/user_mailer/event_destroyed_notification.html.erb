@@ -4,12 +4,14 @@
     <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
   </head>
   <body>
-    <h1>Annulation de l'événement : <%= @event_title %></h1>
-    <p>Bonjour <%= @user.name %>,</p>
-    <p>Nous sommes au regret de vous informer que l'événement "<%= @event_title %>" auquel vous étiez inscrit a été annulé par l'organisateur.</p>
-    <% if @was_paid %>
-      <p>Votre participation ayant été payante, un remboursement intégral a été automatiquement effectué sur le moyen de paiement utilisé.</p>
-    <% end %>
-    <p>Nous espérons vous revoir bientôt sur Eventbrite</p>
+    <h1>Annulation d'un événement</h1>
+
+    <p>Bonjour <%= @participant.prenom %>,</p>
+
+    <p>
+      Nous vous informons que l'événement <strong>"<%= @event_title %>"</strong> auquel vous étiez inscrit a malheureusement été annulé.
+    </p>
+
+    <p>L'équipe de BastAir.</p>
   </body>
 </html>

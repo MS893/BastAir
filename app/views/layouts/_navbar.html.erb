@@ -81,7 +81,7 @@
               <li><%= link_to "Mon Profil", user_path(current_user), class: "dropdown-item" %></li>
               <li><%= link_to "Modifier mon profil", edit_user_registration_path, class: "dropdown-item" %></li>
               <li><hr class="dropdown-divider"></li>
-              <li><%= link_to "Se déconnecter", destroy_user_session_path, data: { turbo_method: :delete }, class: "dropdown-item" %></li>
+              <li><%= link_to "Se déconnecter", destroy_user_session_get_path, class: "dropdown-item" %></li>
             </ul>
           </li>
         <% else %>

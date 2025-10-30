@@ -32,8 +32,27 @@
           </div>
         </div>
 
-        <%# --- Section pour les utilisateurs connectés (non-admin de l'event) --- %>
-        <% if user_signed_in? && @event.admin != current_user %>
+        <%# 1. L'utilisateur est-il un administrateur ? %>
+        <% if user_signed_in? && current_user.admin? %>
+          <div class="card-footer p-3 bg-light">
+            <div class="alert alert-info" role="alert">
+              <i class="bi bi-shield-lock-fill me-2"></i>Vous êtes connecté en tant qu'administrateur.
+            </div>
+            <div class="admin-section mt-3">
+              <h5 class="card-title">Liste des participants (<%= @event.users.count %>)</h5>
+              <%# ... (le code de la liste des participants reste le même) ... %>
+              <div class="d-flex justify-content-between align-items-center mt-3">
+                <%= link_to "Retour", "javascript:history.back()", class: "btn btn-secondary" %>
+                <div>
+                  <%= link_to 'Editer', edit_event_path(@event), class: 'btn btn-warning me-2' %>
+                  <%= link_to 'Supprimer', confirm_destroy_event_path(@event), class: 'btn btn-danger' %>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        <%# 2. Sinon, est-ce un utilisateur connecté (non-admin) ? %>
+        <% elsif user_signed_in? %>
           <div class="card-footer text-center p-3">
             <% if @event.users.include?(current_user) %>
               <div class="d-grid gap-2">
@@ -53,34 +72,7 @@
             <% end %>
           </div>
 
-        <%# --- Section pour l'administrateur de l'événement --- %>
-        <% elsif user_signed_in? && @event.admin == current_user %>
-          <div class="card-footer p-3">
-            <div class="alert alert-info" role="alert">
-              <i class="bi bi-info-circle-fill me-2"></i>Vous êtes l'organisateur de cet événement.
-            </div>
-            <div class="admin-section mt-3">
-              <h5 class="card-title">Liste des participants (<%= @event.users.count %>)</h5>
-              <% if @event.users.any? %>
-                <ul class="list-group list-group-flush mb-3">
-                  <% @event.users.each do |participant| %>
-                    <li class="list-group-item"><%= participant.name.strip.presence || participant.email %></li>
-                  <% end %>
-                </ul>
-              <% else %>
-                <p class="text-muted">Il n'y a pas encore de participants inscrits.</p>
-              <% end %>
-              <div class="d-flex justify-content-between align-items-center">
-                <%= link_to "Retour", "javascript:history.back()", class: "btn btn-secondary" %>
-                <div>
-                  <%= link_to 'Editer', edit_event_path(@event), class: 'btn btn-warning me-2' %>
-                  <%= link_to 'Supprimer', confirm_destroy_event_path(@event), class: 'btn btn-danger' %>
-                </div>
-              </div>
-            </div>
-          </div>
-
-        <%# --- Section pour les visiteurs non connectés --- %>
+        <%# 3. Sinon, c'est un visiteur non connecté. %>
         <% else %>
           <div class="card-footer text-center p-4">
             <%= link_to "Connectez-vous pour vous inscrire", new_user_session_path, class: "btn btn-primary btn-lg" %>

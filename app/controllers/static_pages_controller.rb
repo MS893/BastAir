@@ -91,4 +91,20 @@ class StaticPagesController < ApplicationController
     end
   end
 
+  def create_contact
+    @nom = params[:nom]
+    @prenom = params[:prenom]
+    @email = params[:email]
+    @message = params[:message]
+
+    # Validation du format de l'email côté serveur
+    if !verify_recaptcha || @email.blank? || !@email.match?(/\A[^@\s]+@[^@\s]+\z/)
+      flash.now[:alert] = "La vérification reCAPTCHA a échoué ou l'email est invalide. Veuillez réessayer."
+      render :baptemes, status: :unprocessable_entity
+    else
+      # Envoyer l'email
+      ContactMailer.contact_email(@nom, @prenom, @email, @message).deliver_now
+      redirect_to baptemes_path, notice: "Votre message a bien été envoyé. Nous vous répondrons dans les plus brefs délais."
+    end
+  end
 end

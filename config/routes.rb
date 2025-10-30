@@ -75,6 +75,7 @@ Rails.application.routes.draw do
   # routes pour les pages statiques du footer
   get 'faq', to: 'static_pages#faq'
   get 'contact', to: 'static_pages#contact'
+  post 'contact', to: 'static_pages#create_contact' # Ajout de la route pour la soumission du formulaire
   get 'team', to: 'static_pages#team'
   get 'privacy_policy', to: 'static_pages#privacy_policy'
 

@@ -1,51 +1,37 @@
-<% content_for :title, "Baptêmes de l'air" %>
+<% content_for :title, "Baptêmes de l'Air" %>
 
 <div class="container my-5">
+
   <div class="text-center">
     <h1 class="mb-4">Baptêmes de l'air</h1>
-    <p class="lead">
-      Offrez-vous ou offrez à vos proches une expérience inoubliable dans le ciel de la Guadeloupe.
-    </p>
+    <p class="lead">Découvrez la Guadeloupe vue du ciel avec nos vols d'initiation.</p>
   </div>
+
   <hr class="my-5">
 
-  <h2 class="text-center mb-4">Nos circuits de découverte</h2>
   <div class="row">
+
     <!-- Circuit 1: Volcan -->
-    <div class="col-md-4 mb-4">
+    <div class="col-lg-4 col-md-6 mb-4">
       <div class="card h-100">
-        <%= image_tag 'https://placehold.co/600x400/dc3545/FFFFFF?text=Volcan', class: 'card-img-top', alt: 'Survol du volcan' %>
+        <%= image_tag 'Volcan1.webp', class: 'card-img-top', alt: 'Survol du volcan de la Soufrière' %>
         <div class="card-body">
-          <h5 class="card-title">Survol du volcan</h5>
-          <p class="card-text">Admirez la majestueuse Soufrière depuis le ciel. Une vue à couper le souffle sur le sommet de la Guadeloupe.</p>
+          <h5 class="card-title">Volcan</h5>
+          <p class="card-text">Survolez le majestueux volcan de la Soufrière et admirez son sommet fumant. Une vue à couper le souffle sur le parc national de la Guadeloupe (vol possible en fonction des conditions météorologiques).</p>
         </div>
       </div>
     </div>
 
     <!-- Circuit 2: Les Saintes -->
-    <div class="col-md-4 mb-4">
+    <div class="col-lg-4 col-md-6 mb-4">
       <div class="card h-100">
-        <%= image_tag 'https://placehold.co/600x400/0d6efd/FFFFFF?text=Les+Saintes', class: 'card-img-top', alt: 'Survol des Saintes' %>
+        <%= image_tag 'LesSaintes1.webp', class: 'card-img-top', alt: 'Survol du volcan de la Soufrière' %>
         <div class="card-body">
-          <h5 class="card-title">Survol des Saintes</h5>
-          <p class="card-text">Découvrez l'une des plus belles baies du monde vue d'en haut. Un panorama exceptionnel sur l'archipel des Saintes.</p>
+          <h5 class="card-title">Côte sous le vent</h5>
+          <p class="card-text">Survolez Les Saintes, ou longez la côte ouest de Basse-Terre, de la réserve Cousteau aux plages de Deshaies. Un panorama exceptionnel sur la mer des Caraïbes.</p>
         </div>
       </div>
     </div>
-
-    <!-- Circuit 3: Côte de Basse-Terre -->
-    <div class="col-md-4 mb-4">
-      <div class="card h-100">
-        <%= image_tag 'https://placehold.co/600x400/198754/FFFFFF?text=Côte', class: 'card-img-top', alt: 'Survol de la côte' %>
-        <div class="card-body">
-          <h5 class="card-title">Survol de la côte de Basse-Terre</h5>
-          <p class="card-text">Longez le littoral de la Côte-sous-le-vent, entre mer des Caraïbes et montagnes verdoyantes.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <hr class="my-5">
 
   <!-- Card : Tarifs Baptêmes -->
   <div class="col-lg-4 col-md-6 mb-4">
@@ -57,11 +43,49 @@
         <h1 class="card-title pricing-card-title">150€</h1>
         <ul class="list-unstyled mt-3 mb-4">
           <li>Vol découverte de 30 minutes</li>
-          <li>Survol de la côte à Basse-Terre</li>
-          <li>Cadeau inoubliable</li>
+          <li>Offrez-vous ou offrez à vos proches une expérience inoubliable.</li>
         </ul>
         <%= link_to "Offrir un baptême", '#', class: "w-100 btn btn-lg btn-outline-primary mt-auto" %>
       </div>
+    </div>
+  </div>
+
+  </div>
+
+  <hr class="my-5">
+
+  <!-- Section Formulaire de Contact -->
+  <div class="row">
+    <div class="col-lg-8 mx-auto">
+      <h2 class="text-center mb-4">Demande d'informations</h2>
+      <p class="text-center mb-4">Une question ? Envie de réserver ? Laissez-nous un message !</p>
+      
+      <%= form_with url: contact_path, method: :post, local: true do |form| %>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <%= form.label :prenom, class: 'form-label' %>
+            <%= form.text_field :prenom, class: 'form-control', required: true, value: @prenom %>
+          </div>
+          <div class="col-md-6 mb-3">
+            <%= form.label :nom, class: 'form-label' %>
+            <%= form.text_field :nom, class: 'form-control', required: true, value: @nom %>
+          </div>
+        </div>
+        <div class="mb-3">
+          <%= form.label :email, 'Votre adresse email', class: 'form-label' %>
+          <%= form.email_field :email, class: 'form-control', required: true, value: @email %>
+        </div>
+        <div class="mb-3">
+          <%= form.label :message, 'Donnez-nous les dates auxquelles vous êtes disponible', class: 'form-label' %>
+          <%= form.text_area :message, @message, class: 'form-control', rows: 5, required: true %>
+        </div>
+        <div class="mb-3 d-flex justify-content-center">
+          <%= recaptcha_tags %>
+        </div>
+        <div class="text-center">
+          <%= form.submit "Envoyer le message", class: "btn btn-primary btn-lg" %>
+        </div>
+      <% end %>
     </div>
   </div>
 
