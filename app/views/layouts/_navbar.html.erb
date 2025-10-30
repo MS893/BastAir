@@ -28,17 +28,25 @@
           </li>
           <!-- MENU DÉROULANT "DOCUMENTS" -->
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownDocs" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               Documents
             </a>
-            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-              <li><%= link_to "Cours théoriques", cours_theoriques_path, class: "dropdown-item" %></li>
-              <li><%= link_to "Leçons de vol", "#", class: "dropdown-item" %></li>
-              <li><hr class="dropdown-divider"></li>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownDocs">
               <li><%= link_to "Documents divers", documents_divers_path, class: "dropdown-item" %></li>
             </ul>
           </li>
-          <!-- FIN DU MENU -->
+          <!-- MENU DÉROULANT "ÉLÈVES" -->
+          <% if current_user.fonction == 'eleve' || current_user.admin? %>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownEleves" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Élèves
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownEleves">
+                <li><%= link_to "Cours théoriques", cours_theoriques_path, class: "dropdown-item" %></li>
+                <li><%= link_to "Leçons de vol", flight_lessons_path, class: "dropdown-item" %></li>
+              </ul>
+            </li>
+          <% end %>
         <% else %>
           <li class="nav-item">
             <%= link_to "Médiathèque", mediatheque_path, class: "nav-link #{'active' if current_page?(mediatheque_path)}" %>

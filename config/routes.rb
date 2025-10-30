@@ -1,32 +1,31 @@
 Rails.application.routes.draw do
 
-  # seul un administrateur peut créer un compte (désactivation publique de devise)
-  # les utilisateurs pourront toujours modifier leur profil via /users/edit
-  devise_for :users, skip: [:registrations], controllers: { passwords: 'users_auth/passwords', sessions: 'users_auth/sessions' }
+  # Configuration de Devise :
+  # On désactive la création de compte publique (gérée par l'admin).
+  # On regroupe les routes de Devise ici pour éviter les conflits.
+  devise_for :users, 
+    skip: [:registrations], # On désactive les routes d'inscription publiques
+    controllers: { 
+      sessions: 'users_auth/sessions', # Contrôleur personnalisé pour la connexion (avec reCAPTCHA)
+      passwords: 'users_auth/passwords' # Contrôleur personnalisé pour les mots de passe
+    }
+
+  # On recrée manuellement les routes pour que les utilisateurs puissent modifier leur profil,
+  # tout en utilisant le contrôleur par défaut de Devise pour les registrations.
   as :user do
     get 'users/edit' => 'devise/registrations#edit', as: 'edit_user_registration'
     put 'users' => 'devise/registrations#update', as: 'user_registration'
+    get 'users/sign_out' => 'users_auth/sessions#destroy', as: 'destroy_user_session_get'
   end
+
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
   # Defines the root path route ("/")
   root "static_pages#home"
 
-  # configuration de Devise avec un contrôleur de registration personnalisé
-  # et une route de déconnexion custom
-  # devise_for :users, controllers: { registrations: 'users/registrations', sessions: 'users/sessions' }
-  # devise_scope :user do
-  #   get '/users/sign_out' => 'devise/sessions#destroy'
-  # end
-
   # routes pour l'administration
   namespace :admin do
     resources :users, only: [:new, :create]
-  end
-
-  # routes pour les utilisateurs (profils, etc.) avec une route imbriquée pour les avatars
-  resources :users, only: [:show, :edit, :update] do
-    resources :avatars, only: [:create]
   end
 
   # routes pour les cours (à compléter avec les cours du club)
@@ -46,6 +45,11 @@ Rails.application.routes.draw do
     end
     resources :attendances, only: [:create, :destroy]
   end
+
+  # routes pour les utilisateurs (profils, etc.) avec une route imbriquée pour les avatars
+  resources :users, only: [:show, :edit, :update], constraints: { id: /\d+/ } do
+    resources :avatars, only: [:create]
+  end
   
   # Stripe Checkout
   get 'checkout', to: 'checkout#show'
@@ -61,6 +65,7 @@ Rails.application.routes.draw do
   get 'baptemes', to: 'static_pages#baptemes'
   get 'outils', to: 'static_pages#outils'
   get 'cours_theoriques', to: 'elearning#index', as: 'cours_theoriques'
+  get 'flight_lessons', to: 'flight_lessons#index', as: 'flight_lessons'
   get 'documents_divers', to: 'static_pages#documents_divers'
   get 'credit', to: 'static_pages#credit'
   get 'lecons_de_vol', to: 'flight_lessons#index'

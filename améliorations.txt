@@ -5,3 +5,8 @@ Pourrais-tu m'aider à refactoriser le `ElearningController` pour le rendre plus
 BOF - Comment sécuriser l'accès aux documents pour que seuls les utilisateurs connectés puissent les voir ? (pas forcément nécessaire puisque le menu n'est accessible que lorsqu'on est connecté)
 
 BOF - Comment puis-je remplacer la balise `<embed>` par une bibliothèque JavaScript comme PDF.js pour avoir plus de contrôle sur l'affichage ?
+
+BOF - Comment puis-je ajouter une barre de recherche pour filtrer les cours et les podcasts par titre ?
+
+Explique-moi comment fonctionne le `content_for` que j'utilise pour le titre de la page.
+
