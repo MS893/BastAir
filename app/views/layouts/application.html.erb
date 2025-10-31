@@ -15,6 +15,7 @@
 
     <!-- Chargement du thème Zephyr (qui inclut Bootstrap) depuis le CDN de Bootswatch -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.3/dist/zephyr/bootstrap.min.css">
+    <!-- Chargement du thème Zephyr (qui inclut Bootstrap) depuis le CDN de Bootswatch -->
 
 
 
@@ -23,9 +24,16 @@
     <!-- Chargement de nos styles personnalisés, qui peuvent surcharger le thème -->
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
 
-    <!-- Ajout de Bootstrap JS -->
+
+
+
+    <!-- Ajout de Bootstrap JS - INDISPENSABLE POUR LE FONCTIONNEMENT DES DROPDOWN -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+    <!-- INDISPENSABLE POUR LE FONCTIONNEMENT DES DROPDOWN -->
+
+
+
 
     <link rel="icon" href="/icon.png" type="image/png">
     <link rel="icon" href="/icon.svg" type="image/svg+xml">

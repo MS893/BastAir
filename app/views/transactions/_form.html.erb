@@ -1,45 +1,57 @@
-<%= simple_form_for(@transaction) do |f| %>
-  <%# Affiche une notification globale en cas d'erreur %>
-  <%= f.error_notification %>
-  <%= f.error_notification message: f.object.errors[:base].to_sentence if f.object.errors[:base].present? %>
-
-  <div class="form-inputs">
-    <%# Champ pour la date, avec un calendrier HTML5 %>
-    <%= f.input :date_transaction, as: :date, html5: true, label: "Date de la transaction" %>
-
-    <%# Champ pour la description (plus grand) %>
-    <%= f.input :description, as: :text, input_html: { rows: 4 }, label: "Description" %>
-
-    <%# Champ pour le montant, en acceptant les décimales %>
-    <%= f.input :montant, as: :float, label: "Montant (€)" %>
-
-    <%# Simple Form détecte automatiquement les 'enum' et crée des listes déroulantes %>
-    <%# On utilise explicitement les constantes du modèle pour construire les listes déroulantes %>
-    <%= f.input :mouvement, 
-                collection: Transaction::ALLOWED_MVT.values, 
-                label: "Type de mouvement" %>
-    <%= f.input :source_transaction, 
-                collection: Transaction::ALLOWED_TSN.values, 
-                label: "Origine / Destination" %>
-    <%= f.input :payment_method, 
-                collection: Transaction::ALLOWED_PYT.values, 
-                label: "Moyen de paiement" %>
-
-    <%# Champ d'association pour lier à un utilisateur. C'est optionnel. %>
-    <%# Il affichera le nom complet de l'utilisateur grâce à la méthode `name` du modèle User. %>
-    <%= f.association :user,
-                      collection: User.order(:nom),
-                      label_method: :name,
-                      prompt: "Aucun utilisateur spécifique",
-                      label: "Lié à l'adhérent" %>
-
-    <%# Case à cocher pour le rapprochement bancaire %>
-    <%= f.input :is_checked, as: :boolean, label: "Rapproché en banque ?" %>
-
+<div class="card shadow-sm bg-light">
+  <div class="card-header bg-primary text-white">
+    <h4 class="mb-0">Transaction</h4>
   </div>
+  <div class="card-body">
+    <%# On utilise form_with, comme dans le formulaire de création d'adhérent %>
+    <%= form_with(model: @transaction, local: true) do |form| %>
 
-  <div class="form-actions mt-4">
-    <%# Le texte du bouton s'adaptera automatiquement ("Créer" ou "Mettre à jour") %>
-    <%= f.button :submit, class: "btn btn-primary" %>
+      <%# Affichage des erreurs, inspiré du formulaire de création d'adhérent %>
+      <% if @transaction.errors.any? %>
+        <div class="alert alert-danger">
+          <h5><%= pluralize(@transaction.errors.count, "erreur") %> a empêché cette transaction d'être sauvegardée :</h5>
+          <ul>
+            <% @transaction.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <h5 class="mb-3">Informations principales</h5>
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <%= form.label :date_transaction, "Date de la transaction" %>
+          <%= form.date_field :date_transaction, class: "form-control" %>
+        </div>
+        <div class="col-md-6 mb-3">
+          <%= form.label :montant %>
+          <%= form.number_field :montant, class: "form-control", step: '0.01', placeholder: "0.00" %>
+        </div>
+      </div>
+      <div class="mb-3">
+        <%= form.text_area :description, class: "form-control", placeholder: "Description de la transaction", rows: 3 %>
+      </div>
+
+      <hr class="my-4">
+      <h5 class="mb-3">Catégorisation</h5>
+      <div class="row">
+        <div class="col-md-4 mb-3"><%= form.label :mouvement, "Type" %> <%= form.select :mouvement, Transaction::ALLOWED_MVT.values, { prompt: 'Sélectionner...' }, class: "form-select" %></div>
+        <div class="col-md-4 mb-3"><%= form.label :source_transaction, "Origine" %> <%= form.select :source_transaction, Transaction::ALLOWED_TSN.values, { prompt: 'Sélectionner...' }, class: "form-select" %></div>
+        <div class="col-md-4 mb-3"><%= form.label :payment_method, "Paiement" %> <%= form.select :payment_method, Transaction::ALLOWED_PYT.values, { prompt: 'Sélectionner...' }, class: "form-select" %></div>
+      </div>
+      <div class="mb-3">
+        <%= form.label :user_id, "Lié à l'adhérent" %>
+        <%= form.collection_select :user_id, User.order(:nom), :id, :name, { prompt: "Aucun utilisateur spécifique" }, { class: "form-select" } %>
+      </div>
+
+      <div class="form-check form-switch mb-3"><%= form.check_box :is_checked, class: "form-check-input" %> <%= form.label :is_checked, "Rapproché en banque", class: "form-check-label" %></div>
+
+      <div class="form-actions mt-4 border-top pt-3">
+        <%= form.submit "Enregistrer la transaction", class: "btn btn-success" %>
+        <%= link_to 'Annuler', transactions_path, class: 'btn btn-outline-secondary ms-2' %>
+      </div>
+
+    <% end %>
   </div>
-<% end %>
+</div>

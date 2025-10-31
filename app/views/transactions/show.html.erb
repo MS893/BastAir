@@ -1,0 +1,53 @@
+<% content_for :title, "Détails de la Transaction" %>
+
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+
+      <div class="card shadow-sm bg-light">
+        <div class="card-header bg-primary text-white">
+          <h2 class="mb-0">Détails de la transaction #<%= @transaction.id %></h2>
+        </div>
+        <div class="card-body">
+          <h4 class="card-title text-primary"><%= @transaction.description %></h4>
+          <hr>
+
+          <dl class="row">
+            <dt class="col-sm-4">Montant</dt>
+            <dd class="col-sm-8 fs-5 fw-bold <%= @transaction.mouvement == 'Recette' ? 'text-success' : 'text-danger' %>">
+              <%= number_to_currency(@transaction.montant, unit: "€", separator: ",", delimiter: " ", format: "%n %u") %>
+            </dd>
+
+            <dt class="col-sm-4">Date</dt>
+            <dd class="col-sm-8"><%= l @transaction.date_transaction, format: :long %></dd>
+
+            <dt class="col-sm-4">Type de mouvement</dt>
+            <dd class="col-sm-8">
+              <span class="badge <%= @transaction.mouvement == 'Recette' ? 'bg-success' : 'bg-danger' %> fs-6"><%= @transaction.mouvement %></span>
+            </dd>
+
+            <dt class="col-sm-4">Origine / Destination</dt>
+            <dd class="col-sm-8"><span class="badge bg-secondary fs-6"><%= @transaction.source_transaction %></span></dd>
+
+            <dt class="col-sm-4">Moyen de paiement</dt>
+            <dd class="col-sm-8"><span class="badge bg-info text-dark fs-6"><%= @transaction.payment_method %></span></dd>
+
+            <% if @transaction.user.present? %>
+              <dt class="col-sm-4">Lié à l'adhérent</dt>
+              <dd class="col-sm-8"><%= link_to @transaction.user.name, user_path(@transaction.user) %></dd>
+            <% end %>
+
+            <dt class="col-sm-4">Rapprochement bancaire</dt>
+            <dd class="col-sm-8"><%= @transaction.is_checked ? 'Oui' : 'Non' %></dd>
+          </dl>
+        </div>
+        <div class="card-footer text-end">
+          <%= link_to 'Modifier', edit_transaction_path(@transaction), class: 'btn btn-secondary' %>
+          <%= link_to 'Supprimer', transaction_path(@transaction), data: { turbo_method: :delete, turbo_confirm: 'Êtes-vous sûr de vouloir supprimer cette transaction ?' }, class: 'btn btn-sm btn-outline-danger ms-1' %>
+          <%= link_to 'Retour à la liste', transactions_path, class: 'btn btn-outline-secondary ms-2' %>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

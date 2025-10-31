@@ -30,12 +30,21 @@
         <% if current_user == @user %>
           <%= link_to "Modifier mon profil", edit_user_registration_path, class: "btn btn-primary" %>
         <% end %>
-        <%# Le bouton n'apparaît que si l'utilisateur consulté est un admin %>
-        <% if @user.admin? %>
-          <%= link_to "Créer un nouvel adhérent", new_admin_user_path, class: "btn btn-success ms-2" %>
-        <% end %>
+
+        <%# Menu de gestion visible uniquement pour les administrateurs %>
         <% if current_user.admin? %>
-          <%= link_to "Saisir une transaction (recette ou dépense)", new_transaction_path, class: "btn btn-info ms-2" %>
+          <div class="dropdown d-inline-block ms-2">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="adminMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-gear-fill"></i> Gestion
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="adminMenuButton">
+              <li><%= link_to '<i class="bi bi-journal-text me-2"></i>Afficher les comptes'.html_safe, transactions_path, class: "dropdown-item" %></li>
+              <li><%= link_to '<i class="bi bi-plus-circle me-2"></i>Saisir une transaction'.html_safe, new_transaction_path, class: "dropdown-item" %></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><%= link_to '<i class="bi bi-person-plus me-2"></i>Créer un nouvel adhérent'.html_safe, new_admin_user_path, class: "dropdown-item" %></li>
+              <li><%= link_to '<i class="bi bi-server me-2"></i>Gérer les tables (BDD)'.html_safe, "#", class: "dropdown-item disabled" %></li>
+            </ul>
+          </div>
         <% end %>
       </div>
     </div>

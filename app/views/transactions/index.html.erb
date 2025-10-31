@@ -1,0 +1,63 @@
+<% content_for :title, "Comptabilité - Liste des Transactions" %>
+
+<div class="container mt-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="mb-0">Liste des Transactions</h1>
+    <div>
+      <%= link_to 'Retour au profil', user_path(current_user), class: 'btn btn-secondary' %>
+      <%= link_to 'Nouvelle Transaction', new_transaction_path, class: 'btn btn-primary ms-2' %>
+    </div>
+  </div>
+
+  <div class="card bg-light mb-4">
+    <div class="card-body text-center">
+      <h5 class="card-title text-muted">Solde Total Actuel</h5>
+      <p class="card-text fs-3 fw-bold <%= @solde_total >= 0 ? 'text-success' : 'text-danger' %>">
+        <%= number_to_currency(@solde_total, unit: "€", separator: ",", delimiter: " ", format: "%n %u") %>
+      </p>
+    </div>
+  </div>
+
+  <div class="card shadow-sm">
+    <div class="table-responsive">
+      <table class="table table-striped table-hover mb-0">
+        <thead class="table-light">
+          <tr>
+            <th scope="col">Date</th>
+            <th scope="col">Description</th>
+            <th scope="col" class="text-end">Montant</th>
+            <th scope="col">Type</th>
+            <th scope="col">Origine</th>
+            <th scope="col" class="text-center">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @transactions.each do |transaction| %>
+            <tr>
+              <td><%= l transaction.date_transaction, format: :short %></td>
+              <td><%= link_to truncate(transaction.description, length: 40), transaction_path(transaction) %></td>
+              <td class="text-end fw-bold <%= transaction.mouvement == 'Recette' ? 'text-success' : 'text-danger' %>">
+                <%= number_to_currency(transaction.montant, unit: "€", separator: ",", delimiter: " ", format: "%n %u") %>
+              </td>
+              <td>
+                <span class="badge <%= transaction.mouvement == 'Recette' ? 'bg-success-subtle text-success-emphasis' : 'bg-danger-subtle text-danger-emphasis' %>"><%= transaction.mouvement %></span>
+              </td>
+              <td>
+                <span class="badge bg-secondary-subtle text-secondary-emphasis"><%= transaction.source_transaction %></span>
+              </td>
+              <td class="text-center">
+                <%= link_to 'Voir', transaction_path(transaction), class: 'btn btn-sm btn-outline-info' %>
+                <%= link_to 'Modifier', edit_transaction_path(transaction), class: 'btn btn-sm btn-outline-secondary' %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <%# Liens de pagination Kaminari %>
+  <div class="d-flex justify-content-center mt-4">
+    <%= paginate @transactions %>
+  </div>
+</div>

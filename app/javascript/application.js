@@ -2,8 +2,8 @@
 import "@hotwired/turbo-rails"
 import "controllers"
 
-import "@popperjs/core";
-import "bootstrap";
+//import "@popperjs/core";  // déjà importés dans application.html.erb
+//import "bootstrap";
 
 document.addEventListener("turbo:load", function () {
   var tooltipTriggerList = [].slice.call(

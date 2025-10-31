@@ -33,9 +33,9 @@ class Transaction < ApplicationRecord
   # S'assure que les données essentielles sont toujours présentes.
   validates :date_transaction, presence: true
   validates :description, presence: true, length: { minimum: 3 }
-  validates :mouvement, presence: true, inclusion: { in: ALLOWED_MVT }
+  validates :mouvement, presence: true, inclusion: { in: ALLOWED_MVT.values }
   validates :montant, presence: true, numericality: { greater_than: 0 }
-  validates :source_transaction, presence: true, inclusion: { in: ALLOWED_TSN }
-  validates :payment_method, presence: true, inclusion: { in: ALLOWED_PYT }
+  validates :source_transaction, presence: true, inclusion: { in: ALLOWED_TSN.values }
+  validates :payment_method, presence: true, inclusion: { in: ALLOWED_PYT.values }
 
 end

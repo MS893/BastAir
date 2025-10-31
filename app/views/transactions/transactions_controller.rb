@@ -71,8 +71,8 @@ class TransactionsController < ApplicationController
   # Strong Parameters pour sécuriser les données entrantes
   def transaction_params
     params.require(:transaction).permit(
-      :user_id, :date_transaction, :description, :mouvement, :montant,
-      :piece_justificative, :payment_method, :is_checked, :source_transaction, :attachment_url
+      :user_id, :date_transaction, :description, :type_mouvement, :montant,
+      :piece_justificative, :payment_method, :is_checked, :origine, :attachment_url, :mouvement
     )
   end
 end

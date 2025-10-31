@@ -3,7 +3,10 @@
 <div class="container my-5">
   <div class="row justify-content-center">
     <div class="col-lg-8">
-      <h1 class="mb-4">Créer un nouvel adhérent</h1>
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="mb-0">Créer un nouvel adhérent</h1>
+        <%= link_to 'Retour au profil', user_path(current_user), class: 'btn btn-secondary' %>
+      </div>
 
       <%# Affiche les erreurs de validation s'il y en a %>
       <% if @user.errors.any? %>
