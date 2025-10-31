@@ -7,6 +7,7 @@ class UsersController < ApplicationController
     # Cette action rendra la vue app/views/users/show.html.erb
   end
 
+  
   private
   
   def set_user

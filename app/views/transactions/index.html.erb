@@ -18,6 +18,26 @@
     </div>
   </div>
 
+  <%# --- FORMULAIRE DE FILTRE --- %>
+  <div class="card mb-4">
+    <div class="card-body">
+      <%= form_with(url: transactions_path, method: :get, class: "row g-3 align-items-end") do %>
+        <div class="col-md-4">
+          <%= label_tag :month, "Mois", class: "form-label" %>
+          <%= select_tag :month, options_for_select((1..12).map { |m| [l(Date.new(2000, m), format: '%B'), m] }, @selected_month), { include_blank: 'Tous les mois', class: 'form-select' } %>
+        </div>
+        <div class="col-md-4">
+          <%= label_tag :year, "Année", class: "form-label" %>
+          <%= select_tag :year, options_for_select((Transaction.minimum(:date_transaction).year..Date.current.year).to_a.reverse, @selected_year), { include_blank: 'Toutes les années', class: 'form-select' } %>
+        </div>
+        <div class="col-md-4">
+          <%= submit_tag "Filtrer", class: "btn btn-info" %>
+          <%= link_to "Réinitialiser", transactions_path, class: "btn btn-outline-secondary ms-2" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
   <div class="card shadow-sm">
     <div class="table-responsive">
       <table class="table table-striped table-hover mb-0">

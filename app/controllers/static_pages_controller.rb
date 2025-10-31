@@ -24,6 +24,11 @@ class StaticPagesController < ApplicationController
         logger.error "Stripe Error: #{e.message}"
       end
     end
+
+    # On récupère les 5 dernières transactions de l'utilisateur connecté pour le dashboard
+    if user_signed_in?
+      @transactions = current_user.transactions.order(date_transaction: :desc).limit(5)
+    end
   end
 
   def flotte

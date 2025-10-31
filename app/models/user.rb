@@ -34,6 +34,9 @@ class User < ApplicationRecord
   has_many :attendances, dependent: :destroy
   has_many :attended_events, through: :attendances, source: :event
 
+  # Transactions
+  has_many :transactions
+
 
   def welcome_send
     UserMailer.welcome_email(self).deliver_now
