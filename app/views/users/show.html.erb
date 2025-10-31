@@ -1,4 +1,4 @@
-<% content_for :title, "Profil de #{@user.prenom} #{@user.nom}" %>
+<% content_for :title, "Accueil pilote #{@user.prenom} #{@user.nom}" %>
 
 <div class="container my-5">
   <div class="row">
@@ -33,6 +33,9 @@
         <%# Le bouton n'apparaît que si l'utilisateur consulté est un admin %>
         <% if @user.admin? %>
           <%= link_to "Créer un nouvel adhérent", new_admin_user_path, class: "btn btn-success ms-2" %>
+        <% end %>
+        <% if current_user.admin? %>
+          <%= link_to "Saisir une transaction (recette ou dépense)", new_transaction_path, class: "btn btn-info ms-2" %>
         <% end %>
       </div>
     </div>

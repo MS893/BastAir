@@ -23,6 +23,9 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   root "static_pages#home"
 
+  # routes pour la gestion de la comptabilité
+  resources :transactions
+
   # routes pour l'administration
   namespace :admin do
     resources :users, only: [:new, :create]

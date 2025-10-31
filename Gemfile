@@ -1,6 +1,5 @@
 source "https://rubygems.org"
 
-gem "table_print"
 gem "faker"
 gem 'simple_form'
 # Gem pour la pagination de la page index si beaucoup d'infos à afficher
@@ -84,6 +83,10 @@ group :development, :test do
 
   # letter_opener intercepte l'email envoyé et l'ouvre dans un nouvel onglet du navigateur
   gem 'letter_opener'
+
+  # Rspec pour les tests
+  gem "rspec-rails", "~> 6.1"
+
 end
 
 group :development do

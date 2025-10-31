@@ -1,0 +1,38 @@
+<%= simple_form_for(@transaction) do |f| %>
+  <%# Affiche une notification globale en cas d'erreur %>
+  <%= f.error_notification %>
+  <%= f.error_notification message: f.object.errors[:base].to_sentence if f.object.errors[:base].present? %>
+
+  <div class="form-inputs">
+    <%# Champ pour la date, avec un calendrier HTML5 %>
+    <%= f.input :date_transaction, as: :date, html5: true, label: "Date de la transaction" %>
+
+    <%# Champ pour la description (plus grand) %>
+    <%= f.input :description, as: :text, input_html: { rows: 4 }, label: "Description" %>
+
+    <%# Champ pour le montant, en acceptant les décimales %>
+    <%= f.input :montant, as: :float, label: "Montant (€)" %>
+
+    <%# Simple Form détecte automatiquement les 'enum' et crée des listes déroulantes %>
+    <%= f.input :mouvement, label: "Type de mouvement" %>
+    <%= f.input :source_transaction, label: "Origine / Destination" %>
+    <%= f.input :payment_method, label: "Moyen de paiement" %>
+
+    <%# Champ d'association pour lier à un utilisateur. C'est optionnel. %>
+    <%# Il affichera le nom complet de l'utilisateur grâce à la méthode `name` du modèle User. %>
+    <%= f.association :user,
+                      collection: User.order(:nom),
+                      label_method: :name,
+                      prompt: "Aucun utilisateur spécifique",
+                      label: "Lié à l'adhérent" %>
+
+    <%# Case à cocher pour le rapprochement bancaire %>
+    <%= f.input :is_checked, as: :boolean, label: "Rapproché en banque ?", wrapper: :vertical_boolean %>
+
+  </div>
+
+  <div class="form-actions mt-4">
+    <%# Le texte du bouton s'adaptera automatiquement ("Créer" ou "Mettre à jour") %>
+    <%= f.button :submit, class: "btn btn-primary" %>
+  </div>
+<% end %>
