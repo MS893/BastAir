@@ -4,7 +4,6 @@
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h1 class="mb-0">Liste des Transactions</h1>
     <div>
-      <%= link_to "Voir les graphiques", analytics_transactions_path, class: "btn btn-info btn-sm mt-1" %>
       <%= link_to 'Retour au profil', user_path(current_user), class: 'btn btn-secondary' %>
       <%= link_to 'Nouvelle Transaction', new_transaction_path, class: 'btn btn-primary ms-2' %>
     </div>
@@ -16,6 +15,7 @@
       <p class="card-text fs-3 fw-bold <%= @solde_total >= 0 ? 'text-success' : 'text-danger' %>">
         <%= number_to_currency(@solde_total, unit: "€", separator: ",", delimiter: " ", format: "%n %u") %>
       </p>
+      <%= link_to "Voir les graphiques", analytics_transactions_path, class: "btn btn-info btn-sm mt-2" %>
     </div>
   </div>
 
@@ -23,15 +23,19 @@
   <div class="card mb-4">
     <div class="card-body">
       <%= form_with(url: transactions_path, method: :get, class: "row g-3 align-items-end") do %>
-        <div class="col-md-4">
+        <div class="col-md-3">
           <%= label_tag :month, "Mois", class: "form-label" %>
           <%= select_tag :month, options_for_select((1..12).map { |m| [l(Date.new(2000, m), format: '%B'), m] }, @selected_month), { include_blank: 'Tous les mois', class: 'form-select' } %>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
           <%= label_tag :year, "Année", class: "form-label" %>
           <%= select_tag :year, options_for_select((Transaction.minimum(:date_transaction).year..Date.current.year).to_a.reverse, @selected_year), { include_blank: 'Toutes les années', class: 'form-select' } %>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
+          <%= label_tag :source, "Origine", class: "form-label" %>
+          <%= select_tag :source, options_for_select(Transaction::ALLOWED_TSN.values, @selected_source), { include_blank: 'Toutes les origines', class: 'form-select' } %>
+        </div>
+        <div class="col-md-3">
           <%= submit_tag "Filtrer", class: "btn btn-info" %>
           <%= link_to "Réinitialiser", transactions_path, class: "btn btn-outline-primary ms-2" %>
         </div>
@@ -49,13 +53,14 @@
             <th scope="col" class="text-end">Montant</th>
             <th scope="col">Type</th>
             <th scope="col">Origine</th>
+            <th scope="col">Adhérent</th>
             <th scope="col" class="text-center">Actions</th>
           </tr>
         </thead>
         <tbody>
           <% @transactions.each do |transaction| %>
             <tr>
-              <td><%= l transaction.date_transaction, format: :short %></td>
+              <td><%= l transaction.date_transaction, format: "%d %b %Y" %></td>
               <td><%= link_to truncate(transaction.description, length: 40), transaction_path(transaction) %></td>
               <td class="text-end fw-bold <%= transaction.mouvement == 'Recette' ? 'text-success' : 'text-danger' %>">
                 <%= number_to_currency(transaction.montant, unit: "€", separator: ",", delimiter: " ", format: "%n %u") %>
@@ -65,6 +70,13 @@
               </td>
               <td>
                 <span class="badge bg-secondary-subtle text-secondary-emphasis"><%= transaction.source_transaction %></span>
+              </td>
+              <td>
+                <% if transaction.user %>
+                  <%= link_to transaction.user.name, user_path(transaction.user) %>
+                <% else %>
+                  <span class="text-muted">N/A</span>
+                <% end %>
               </td>
               <td class="text-center">
                 <%= link_to 'Voir', transaction_path(transaction), class: 'btn btn-sm btn-outline-info' %>

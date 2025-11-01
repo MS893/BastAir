@@ -8,6 +8,7 @@ class TransactionsController < ApplicationController
 
     @selected_month = params[:month]
     @selected_year = params[:year]
+    @selected_source = params[:source]
 
     if @selected_month.present?
       @transactions = @transactions.where("strftime('%m', date_transaction) = ?", @selected_month.to_s.rjust(2, '0'))
@@ -15,6 +16,10 @@ class TransactionsController < ApplicationController
 
     if @selected_year.present?
       @transactions = @transactions.where("strftime('%Y', date_transaction) = ?", @selected_year.to_s)
+    end
+
+    if @selected_source.present?
+      @transactions = @transactions.where(source_transaction: @selected_source)
     end
 
     # Calcule le solde total basé sur les transactions filtrées
@@ -71,6 +76,7 @@ class TransactionsController < ApplicationController
 
   def new
     @transaction = Transaction.new
+    @users = User.order(:prenom, :nom)
   end
 
   def create
@@ -83,6 +89,7 @@ class TransactionsController < ApplicationController
   end
 
   def edit
+    @users = User.order(:prenom, :nom)
   end
 
   def update
