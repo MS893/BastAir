@@ -12,6 +12,22 @@ class User < ApplicationRecord
   attribute :solde, :decimal, default: 0.0
   broadcasts_to ->(user) { [user, "solde"] }, inserts_by: :prepend
 
+  # fonctions des utilisateurs
+  ALLOWED_FCT = {
+    president: 'president',
+    tresorier: 'tresorier',
+    eleve: 'eleve',
+    brevete: 'brevete'
+  }
+
+  # fonctions des utilisateurs
+  ALLOWED_LIC = {
+    atpl: 'ATPL',
+    cpl: 'CPL',
+    ppl: 'PPL',
+    lapl: 'LAPL'
+  }
+
   # Ajout des validations
   validates :nom, presence: true
   validates :prenom, presence: true
@@ -19,6 +35,9 @@ class User < ApplicationRecord
     presence: true,
     uniqueness: true,
     format: { with: /\A[^@\s]+@([^@\s]+\.)+[^@\s]+\z/, message: "email address please" }
+  validates :fonction, presence: true, inclusion: { in: ALLOWED_FCT.values }
+  validates :licence_type, presence: true, inclusion: { in: ALLOWED_LIC.values }
+  validates :num_licence, format: { with: /\A\d{7}\z/, message: "doit être composé de 7 chiffres" }, allow_blank: true
 
   # ActiveStorage
   has_one_attached :avatar, dependent: :purge

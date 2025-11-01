@@ -11,7 +11,7 @@
 
   <div class="card shadow-sm mb-4">
     <div class="card-body text-center">
-      <h5 class="card-title text-muted">Solde Total Actuel</h5>
+      <h5 class="card-title text-muted"><%= @solde_title %></h5>
       <p class="card-text fs-3 fw-bold <%= @solde_total >= 0 ? 'text-success' : 'text-danger' %>">
         <%= number_to_currency(@solde_total, unit: "€", separator: ",", delimiter: " ", format: "%n %u") %>
       </p>

@@ -25,6 +25,21 @@ class TransactionsController < ApplicationController
     # Calcule le solde total basé sur les transactions filtrées
     @solde_total = @transactions.sum("CASE WHEN mouvement = 'Recette' THEN montant ELSE -montant END")
 
+    # Construit le titre dynamique pour la carte du solde
+    title_parts = []
+    title_parts << l(Date.new(2000, @selected_month.to_i), format: '%B') if @selected_month.present?
+    title_parts << @selected_year if @selected_year.present?
+    
+    if @selected_source.present?
+      title_parts << "(#{@selected_source})"
+    end
+
+    @solde_title = if title_parts.any?
+                      "Solde pour #{title_parts.join(' ')}"
+                    else
+                      "Solde Total Actuel"
+                    end
+
     # Ordonne et pagine les résultats filtrés
     @transactions = @transactions.order(date_transaction: :desc).page(params[:page]).per(15)
   end

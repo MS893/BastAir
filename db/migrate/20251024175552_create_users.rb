@@ -12,7 +12,7 @@ class CreateUsers < ActiveRecord::Migration[8.0]
       t.string :encrypted_password, null: false, default: ""
       t.string :contact_urgence
       t.string :num_ffa
-      t.string :licence_type
+      t.string :licence_type    # ATPL, CPL, PPL ou LAPL
       t.string :num_licence
       t.date :date_licence
       t.string :type_medical

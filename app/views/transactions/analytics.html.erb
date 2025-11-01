@@ -9,12 +9,14 @@
   <!-- Formulaire de filtre par année -->
   <div class="card bg-light mb-4">
     <div class="card-body">
-      <%= form_with url: analytics_transactions_path, method: :get, class: "d-flex align-items-center" do |form| %>
-        <div class="me-3">
-          <%= form.label :year, "Sélectionner une année :", class: "form-label me-2" %>
+      <%= form_with url: analytics_transactions_path, method: :get, class: "row g-3 align-items-end" do |form| %>
+        <div class="col-md-4">
+          <%= form.label :year, "Sélectionner une année :", class: "form-label" %>
           <%= form.select :year, options_for_select(@years, @selected_year), {}, { class: "form-select" } %>
         </div>
-        <%= form.submit "Filtrer", class: "btn btn-primary" %>
+        <div class="col-md-4">
+          <%= form.submit "Filtrer", class: "btn btn-primary" %>
+        </div>
       <% end %>
     </div>
   </div>
@@ -25,7 +27,7 @@
       <h5 class="card-title mb-0">Recettes vs Dépenses par mois pour l'année <%= @selected_year %></h5>
     </div>
     <div class="card-body">
-      <%= bar_chart @monthly_data, stacked: true, thousands: " ", suffix: " €", library: { scales: { y: { ticks: { callback: "function(value) { return value.toLocaleString('fr-FR') + ' €'; }" } } } } %>
+      <%= bar_chart @monthly_data, stacked: true, thousands: " ", suffix: " €", library: { scales: { x: { ticks: { callback: "function(value) { return value.toLocaleString('fr-FR') + ' €'; }" } } } } %>
     </div>
   </div>
 

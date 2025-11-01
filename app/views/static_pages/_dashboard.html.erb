@@ -1,6 +1,6 @@
 <div class="container-fluid pt-4">
   
-  <h2 class="display-5 mt-5 mb-5 text-center">Bienvenue, <%= current_user.prenom %></h2>
+  <h2 class="display-5 mt-1 mb-3 text-center">Bienvenue, <%= current_user.prenom %></h2>
   <%= turbo_stream_from current_user %>
 
   <div class="row justify-content-center g-4">
@@ -19,7 +19,7 @@
 
   <%# --- SECTION DERNIÈRES TRANSACTIONS --- %>
   <% if @transactions.present? && @transactions.any? %>
-    <div class="row justify-content-center mt-5">
+    <div class="row justify-content-center mt-4">
       <div class="col-lg-10">
         <div class="card shadow-sm">
           <div class="card-header d-flex justify-content-between align-items-center">
