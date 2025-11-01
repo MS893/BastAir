@@ -5,15 +5,16 @@
 require 'faker'
 
 puts "\nCleaning database..."
+Transaction.destroy_all
 Audio.destroy_all
 FlightLesson.destroy_all
 Reservation.destroy_all
 Vol.destroy_all
 Avion.destroy_all
 Tarif.destroy_all
-Event.destroy_all
 Attendance.destroy_all
-User.destroy_all # User doit être le dernier à être détruit si d'autres modèles en dépendent
+Event.destroy_all # Doit être détruit après Attendance
+User.destroy_all # Doit être détruit en dernier car beaucoup de tables en dépendent
 Course.destroy_all
 puts "✅ Cleaned"
 
@@ -268,7 +269,7 @@ courses_data = [
   { title: "FTP10 Présentation du dossier de vol", description: "Préparation d’un voyage aérien (avitaillement, assistance). Approche gestion menaces et erreurs (Menaces, erreurs et situations indésirables) dans le cadre du voyage avec passagers. Gestion des pannes et situations anormales. Déroutement. Interruption volontaire du vol.", file: "ftp10.pdf" },
   { title: "FTP11 Pilotage sans visibilité", description: "(VSV, circuit visuel). Approche gestion menaces et erreurs (Menaces, erreurs, situations indésirables) dans le cadre du VSV. Maintien des conditions VMC, réactions en cas de perte de conditions VMC, retour aux conditions VMC.", file: "ftp11.pdf" },
   { title: "FTP12 Présentation de l’examen", description: "Présentation de l’examenau travers du guide FFA de l’examen en vol et du manuel de sécurité FFA ; Détail des exercices et de leur enchaînement, critères observés, niveau attendu, contenu du briefing.", file: "ftp12.pdf" },
-  { title: "Facteurs Humains", description: "Cours sur les facteurs humains", file: "facteurshumains.pdf" }
+  { title: "Facteurs Humains", description: "Cours sur les facteurs humains", file: "facteurs_humains.pdf" }
 ]
 
 courses_data.each do |course_data|
@@ -362,6 +363,32 @@ flight_lessons_data.each do |lesson_data|
   end
 end
 puts "✅ Flight Lessons created."
+
+
+# 9. Création de 20 transactions
+# ----------------------------------------------------
+puts "\nCreating 20 transactions..."
+
+payment_methods = ['Carte bancaire', 'Virement', 'Chèque', 'Espèces']
+descriptions_recette = ["Crédit compte", "Achat bloc 6h", "Paiement cotisation annuelle", "Participation événement BBQ"]
+descriptions_depense = ["Heure de vol F-HGBT", "Achat casque", "Taxe atterrissage", "Remboursement"]
+
+20.times do
+  mouvement = ['Recette', 'Dépense'].sample
+  description = mouvement == 'Recette' ? descriptions_recette.sample : descriptions_depense.sample
+  
+  Transaction.create!(
+    user: all_users.sample,
+    date_transaction: Faker::Date.between(from: 1.year.ago, to: Date.today),
+    description: description,
+    mouvement: mouvement,
+    montant: Faker::Commerce.price(range: 10..500),
+    payment_method: payment_methods.sample,
+    is_checked: [true, false].sample,
+    source_transaction: Transaction::ALLOWED_TSN.values.sample
+  )
+end
+puts "✅ 20 transactions created."
 
 puts "\nSeed finished successfully!"
 puts

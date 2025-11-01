@@ -47,3 +47,11 @@ fr:
     day_names: [dimanche, lundi, mardi, mercredi, jeudi, vendredi, samedi]
     abbr_day_names: [dim, lun, mar, mer, jeu, ven, sam]
     order: [day, month, year]
+  activerecord:
+    errors:
+      messages:
+        record_invalid: "La validation a échoué : %{errors}"
+        # Vous pouvez ajouter d'autres traductions d'erreurs de base ici si nécessaire
+  # Ajoutez d'autres traductions pour votre application ici
+  hello: "Bonjour le monde"
+

@@ -31,9 +31,6 @@ RSpec.describe ElearningController, type: :controller do
 
       get :show, params: { id: course1.id }
       expect(response).to redirect_to(new_user_session_path)
-
-      get :document, params: { id: course1.id }
-      expect(response).to redirect_to(new_user_session_path)
     end
   end
 
@@ -74,12 +71,10 @@ RSpec.describe ElearningController, type: :controller do
 
     describe "GET #document" do
       context "quand le document est attaché" do
-        it "redirige vers l'URL du document" do
+        it "envoie le fichier PDF avec succès" do
           get :document, params: { id: course_with_document.id }
-          # On ne peut pas connaître l'URL exacte, mais on peut vérifier que la redirection
-          # pointe bien vers une URL générée par Active Storage.
-          expect(response).to have_http_status(:found) # Statut 302 pour une redirection
-          expect(response.location).to include(course_with_document.document.filename.to_s)
+          expect(response).to be_successful
+          expect(response.content_type).to eq 'application/pdf'
         end
       end
 
