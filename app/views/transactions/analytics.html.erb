@@ -1,0 +1,51 @@
+<% content_for :title, "Analyse des Transactions" %>
+
+<div class="container my-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="mb-0">Analyse des Transactions</h1>
+    <%= link_to 'Retour à la liste', transactions_path, class: 'btn btn-secondary' %>
+  </div>
+
+  <!-- Formulaire de filtre par année -->
+  <div class="card bg-light mb-4">
+    <div class="card-body">
+      <%= form_with url: analytics_transactions_path, method: :get, class: "d-flex align-items-center" do |form| %>
+        <div class="me-3">
+          <%= form.label :year, "Sélectionner une année :", class: "form-label me-2" %>
+          <%= form.select :year, options_for_select(@years, @selected_year), {}, { class: "form-select" } %>
+        </div>
+        <%= form.submit "Filtrer", class: "btn btn-primary" %>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Graphique en barres -->
+  <div class="card shadow-sm mb-4">
+    <div class="card-header">
+      <h5 class="card-title mb-0">Recettes vs Dépenses par mois pour l'année <%= @selected_year %></h5>
+    </div>
+    <div class="card-body">
+      <%= bar_chart @monthly_data, stacked: true, thousands: " ", suffix: " €", library: { scales: { y: { ticks: { callback: "function(value) { return value.toLocaleString('fr-FR') + ' €'; }" } } } } %>
+    </div>
+  </div>
+
+  <!-- Graphique en camembert -->
+  <div class="card shadow-sm">
+    <div class="card-header">
+      <h5 class="card-title mb-0">Répartition par source pour l'année <%= @selected_year %></h5>
+    </div>
+    <div class="card-body">
+      <%= pie_chart @source_data, thousands: " ", suffix: " €" %>
+    </div>
+  </div>
+
+  <!-- Graphique en ligne du solde cumulé -->
+  <div class="card shadow-sm mt-4">
+    <div class="card-header">
+      <h5 class="card-title mb-0">Évolution du solde cumulé pour l'année <%= @selected_year %></h5>
+    </div>
+    <div class="card-body">
+      <%= line_chart @cumulative_balance_data, thousands: " ", suffix: " €", curve: false, points: false, library: { scales: { y: { ticks: { callback: "function(value) { return value.toLocaleString('fr-FR') + ' €'; }" } } } } %>
+    </div>
+  </div>
+</div>

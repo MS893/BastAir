@@ -24,7 +24,9 @@ Rails.application.routes.draw do
   root "static_pages#home"
 
   # routes pour la gestion de la comptabilité
-  resources :transactions
+  resources :transactions do
+    get 'analytics', on: :collection
+  end
 
   # routes pour l'administration
   namespace :admin do
@@ -67,7 +69,7 @@ Rails.application.routes.draw do
   get 'bia', to: 'static_pages#bia'
   get 'baptemes', to: 'static_pages#baptemes'
   get 'outils', to: 'static_pages#outils'
-  resources :cours_theoriques, to: 'elearning#index', as: 'cours_theoriques'
+  # resources :cours_theoriques, to: 'elearning#index', as: 'cours_theoriques'
   resources :flight_lessons, only: [:index, :show]
   get 'documents_divers', to: 'static_pages#documents_divers'
   get 'credit', to: 'static_pages#credit'

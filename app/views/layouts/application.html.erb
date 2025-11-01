@@ -88,5 +88,16 @@
       });
     </script>
 
+    <%# --- SCRIPTS POUR LES GRAPHIQUES --- %>
+    <%# On charge la bibliothèque Chart.js depuis un CDN %>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <%# On ajoute l'adaptateur de date pour que Chart.js puisse gérer les axes temporels %>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    
+    <%# On charge ensuite Chartkick, qui dépend de Chart.js %>
+    <script src="https://cdn.jsdelivr.net/npm/chartkick@5.0.1/dist/chartkick.min.js"></script>
+
+
   </body>
 </html>
