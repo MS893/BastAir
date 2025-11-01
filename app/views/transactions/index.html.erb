@@ -9,7 +9,7 @@
     </div>
   </div>
 
-  <div class="card bg-light mb-4">
+  <div class="card shadow-sm mb-4">
     <div class="card-body text-center">
       <h5 class="card-title text-muted">Solde Total Actuel</h5>
       <p class="card-text fs-3 fw-bold <%= @solde_total >= 0 ? 'text-success' : 'text-danger' %>">
@@ -32,7 +32,7 @@
         </div>
         <div class="col-md-4">
           <%= submit_tag "Filtrer", class: "btn btn-info" %>
-          <%= link_to "Réinitialiser", transactions_path, class: "btn btn-outline-secondary ms-2" %>
+          <%= link_to "Réinitialiser", transactions_path, class: "btn btn-outline-primary ms-2" %>
         </div>
       <% end %>
     </div>

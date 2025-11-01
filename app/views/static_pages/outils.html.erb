@@ -12,7 +12,7 @@
         }
 
         .display-area {
-            background-color: rgba(111, 151, 192, 1);
+            background-color: rgba(153, 197, 241, 1);
             border-bottom: 1px solid #ffffffff;
             text-align: right;
             padding: .5rem 1rem .5rem .5rem;
@@ -24,13 +24,11 @@
             overflow-y: auto;
             font-size: 1.3rem;
             padding-right: 1.5rem;
-        }
-        #time-list.text-muted {
-            color: #ffffffff !important; /* Bleu ciel un peu plus foncé */
+            color: #0e1114ff; /* Couleur text-muted de Bootstrap */
         }
 
-        #result.text-primary {
-            color: #ffffffff !important; 
+        #current-input, #result {
+            color: #0d6efd; /* Couleur text-primary de Bootstrap */
         }
 
         .keypad .btn {
@@ -82,14 +80,14 @@
                 </div>
             </div>
 
-            <div class="calculator bg-dark p-3">
+            <div class="calculator bg-body-secondary p-3">
                 <!-- Display -->
                 <div class="display-area mb-3 rounded">
-                    <div id="time-list" class="text-muted"></div>
+                    <div id="time-list"></div>
                     <div id="current-input" class="h2 mb-0">0h 00mn</div>
                 </div>
                 <div class="text-center mb-3">
-                    <h2>Total: <span id="result" class="text-primary">0h 00mn</span></h2>
+                    <h2>Total: <span id="result">0h 00mn</span></h2>
                     <button id="convert-btn" class="btn btn-success btn-sm mt-2" onclick="convertTotal()">Convertir en
                         cent.</button>
                 </div>
