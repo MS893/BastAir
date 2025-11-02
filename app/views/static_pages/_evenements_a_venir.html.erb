@@ -1,26 +1,24 @@
-<%# On récupère les 3 prochains évènements à partir de la date du jour %>
-<% upcoming_events = Event.where('start_date >= ?', Date.today).order(start_date: :asc).limit(3) %>
+<%# On récupère les 4 prochains évènements à partir de la date du jour %>
+<% upcoming_events = Event.where('start_date >= ?', Date.today).order(start_date: :asc).limit(4) %>
 
-<div class="col-lg-5">
-  <div class="card h-100 shadow">
-    <div class="card-header bg-info text-white">
-      <h5 class="card-title mb-0">
-        <i class="fas fa-glass-cheers me-2"></i>Évènements à venir
-      </h5>
-    </div>
-    <% if upcoming_events.any? %>
-      <ul class="list-group list-group-flush">
-        <% upcoming_events.each do |event| %>
-          <li class="list-group-item d-flex justify-content-between align-items-center">
-            <%= link_to event.title, event_path(event) %>
-            <span class="text-body-secondary"><%= l(event.start_date, format: :long) %></span>
-          </li>
-        <% end %>
-      </ul>
-    <% else %>
-      <div class="card-body">
-        <p class="card-text text-muted">Aucun évènement programmé pour le moment.</p>
-      </div>
-    <% end %>
+<div class="card h-100 shadow">
+  <div class="card-header bg-info text-white">
+    <h5 class="card-title mb-0">
+      <i class="fas fa-glass-cheers me-2"></i>Évènements à venir
+    </h5>
   </div>
+  <% if upcoming_events.any? %>
+    <ul class="list-group list-group-flush">
+      <% upcoming_events.each do |event| %>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <%= link_to event.title, event_path(event) %>
+          <span class="text-body-secondary"><%= l(event.start_date, format: :long) %></span>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <div class="card-body">
+      <p class="card-text text-muted">Aucun évènement programmé pour le moment.</p>
+    </div>
+  <% end %>
 </div>

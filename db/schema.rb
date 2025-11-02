@@ -194,22 +194,22 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_31_083042) do
   create_table "vols", force: :cascade do |t|
     t.integer "user_id"
     t.integer "avion_id"
-    t.string "type_vol"
-    t.string "depart"
-    t.string "arrivee"
-    t.datetime "debut_vol"
-    t.datetime "fin_vol"
-    t.float "compteur_depart"
-    t.float "compteur_arrivee"
-    t.float "duree_vol"
-    t.integer "nb_atterro"
-    t.boolean "solo"
-    t.boolean "supervise"
-    t.boolean "nav"
-    t.boolean "jour"
-    t.float "fuel_avant_vol"
-    t.float "fuel_apres_vol"
-    t.float "huile"
+    t.string "type_vol", default: "Standard", null: false
+    t.string "depart", null: false
+    t.string "arrivee", null: false
+    t.datetime "debut_vol", null: false
+    t.datetime "fin_vol", null: false
+    t.float "compteur_depart", null: false
+    t.float "compteur_arrivee", null: false
+    t.float "duree_vol", null: false
+    t.integer "nb_atterro", default: 1, null: false
+    t.boolean "solo", default: false, null: false
+    t.boolean "supervise", default: false, null: false
+    t.boolean "nav", default: false, null: false
+    t.string "nature", default: "VFR de jour", null: false
+    t.float "fuel_avant_vol", default: 0.0, null: false
+    t.float "fuel_apres_vol", default: 0.0, null: false
+    t.float "huile", default: 0.0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["avion_id"], name: "index_vols_on_avion_id"

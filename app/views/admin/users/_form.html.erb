@@ -95,19 +95,17 @@
 
       <h5 class="mb-3">Licences et Qualifications</h5>
       <div class="row">
-        <div class="col-md-6 mb-3">
-          <%= form.label :num_ffa, "Numéro FFA", class: "form-label" %>
-          <%= form.text_field :num_ffa, class: "form-control bg-light" %>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-6 mb-3">
+        <div class="col-md-4 mb-3">
           <%= form.label :licence_type, "Type de licence", class: "form-label" %>
           <%= form.select :licence_type, User::ALLOWED_LIC.values, { prompt: 'Sélectionner...' }, { class: "form-select bg-light" } %>
         </div>
-        <div class="col-md-6 mb-3">
+        <div class="col-md-4 mb-3">
           <%= form.label :num_licence, "Numéro de licence", class: "form-label" %>
-          <%= form.text_field :num_licence, class: "form-control bg-light" %>
+          <%= form.text_field :num_licence, class: "form-control bg-light", maxlength: 8 %>
+        </div>
+        <div class="col-md-4 mb-3">
+          <%= form.label :num_ffa, "Numéro FFA", class: "form-label" %>
+          <%= form.text_field :num_ffa, class: "form-control bg-light", maxlength: 7 %>
         </div>
       </div>
 
@@ -117,8 +115,12 @@
           <%= form.label :date_licence, "Fin de validité Licence", class: "form-label" %>
           <%= form.date_field :date_licence, class: "form-control bg-light" %>
         </div>
-        <div class="col-md-6 mb-3">
-          <%= form.label :medical, "Fin de validité Visite Médicale", class: "form-label" %>
+        <div class="col-md-3 mb-3">
+          <%= form.label :type_medical, "Type Visite Médicale", class: "form-label" %>
+          <%= form.select :type_medical, User::ALLOWED_MED.values, { prompt: 'Sélectionner...' }, { class: "form-select bg-light" } %>
+        </div>
+        <div class="col-md-3 mb-3">
+          <%= form.label :medical, "Fin de validité VM", class: "form-label" %>
           <%= form.date_field :medical, class: "form-control bg-light" %>
         </div>
       </div>

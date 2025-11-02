@@ -1,0 +1,160 @@
+<% content_for :title, "Saisie d'un nouveau vol" %>
+
+<div class="container my-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-10">
+      <h1 class="text-center mb-4">Retour de vol</h1>
+      <%= render 'form', vol: @vol %>
+    </div>
+  </div>
+</div>
+
+<!-- Fenêtre Modale de Confirmation -->
+<div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="confirmationModalLabel">
+          <i class="bi bi-question-circle me-2"></i>Confirmation de l'enregistrement
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Êtes-vous sûr de vouloir enregistrer ce vol ?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+        <%# Ce bouton va réellement soumettre le formulaire %>
+        <button type="button" id="submit-form-btn" class="btn btn-success">Confirmer l'enregistrement</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%# --- SCRIPT POUR LE CALCUL AUTOMATIQUE DE L'HEURE DE FIN --- %>
+<script>
+  document.addEventListener('turbo:load', function() {
+    const debutVolInput = document.getElementById('vol_debut_vol');
+    const avionSelect = document.getElementById('vol_avion_id');
+    const finVolInput = document.getElementById('vol_fin_vol');
+    const compteurDepartInput = document.getElementById('vol_compteur_depart');
+    const compteurArriveeInput = document.getElementById('vol_compteur_arrivee');
+    const dureeVolCentiemesInput = document.getElementById('vol_duree_vol'); // Le champ pour les centièmes
+    const dureeVolMnInput = document.getElementById('vol_duree_vol_mn'); // Le champ pour les minutes
+    const volForm = document.getElementById('vol-form');
+
+    function calculateDurationsAndEndTime() {
+      const departValue = parseFloat(compteurDepartInput.value);
+      const arriveeValue = parseFloat(compteurArriveeInput.value);
+      const debutVolValue = debutVolInput.value;
+
+      if (!isNaN(departValue) && !isNaN(arriveeValue) && arriveeValue >= departValue) {
+        // 1. Calculer la durée en centièmes
+        const dureeCentiemes = arriveeValue - departValue;
+        dureeVolCentiemesInput.value = dureeCentiemes.toFixed(2);
+        dureeVolMnInput.value = Math.round(dureeCentiemes * 60);
+
+        // 2. Calculer l'heure de fin à partir de cette durée
+        if (debutVolValue) {
+          const dureeMinutes = Math.round(dureeCentiemes * 60);
+          const debutDate = new Date(debutVolValue);
+          debutDate.setMinutes(debutDate.getMinutes() + dureeMinutes);
+
+          const year = debutDate.getFullYear();
+          const month = (debutDate.getMonth() + 1).toString().padStart(2, '0');
+          const day = debutDate.getDate().toString().padStart(2, '0');
+          const hours = debutDate.getHours().toString().padStart(2, '0');
+          const minutes = debutDate.getMinutes().toString().padStart(2, '0');
+
+          finVolInput.value = `${year}-${month}-${day}T${hours}:${minutes}`;t
+        }
+      } else {
+        // Réinitialiser les champs si les compteurs sont invalides
+        dureeVolCentiemesInput.value = '';
+        finVolInput.value = '';
+      }
+    }
+
+    // Ajoute des écouteurs d'événements sur les champs qui déclenchent le calcul
+    if (debutVolInput && compteurDepartInput && compteurArriveeInput) {
+      debutVolInput.addEventListener('input', calculateDurationsAndEndTime);
+      compteurDepartInput.addEventListener('input', calculateDurationsAndEndTime);
+      compteurArriveeInput.addEventListener('input', calculateDurationsAndEndTime);
+    }
+
+    // Ajoute un écouteur sur le changement d'avion pour pré-remplir le compteur
+    if (avionSelect && compteurDepartInput) {
+      avionSelect.addEventListener('change', function() {
+        const avionId = this.value;
+        if (avionId) {
+          fetch(`/avions/${avionId}/last_compteur`)
+            .then(response => response.json())
+            .then(data => {
+              compteurDepartInput.value = data.compteur_depart;
+              // Déclenche le calcul des durées et de l'heure de fin
+              calculateDurationsAndEndTime();
+            });
+        }
+      });
+    }
+    // Déclenche manuellement l'événement 'change' au chargement de la page
+    // pour pré-remplir le compteur du premier avion sélectionné par défaut.
+    if (avionSelect.value) {
+      avionSelect.dispatchEvent(new Event('change'));
+    }
+
+    // --- GESTION DE LA VALIDATION CLIENT POUR ACTIVER LE BOUTON ---
+    const submissionButton = document.getElementById('confirm-submission-btn');
+    const requiredFields = [
+      document.getElementById('vol_avion_id'),
+      document.getElementById('vol_type_vol'),
+      document.getElementById('vol_depart'),
+      document.getElementById('vol_arrivee'),
+      document.getElementById('vol_debut_vol'),
+      document.getElementById('vol_compteur_depart'),
+      document.getElementById('vol_compteur_arrivee'),
+      document.getElementById('vol_fuel_avant_vol'),
+      document.getElementById('vol_fuel_apres_vol'),
+      document.getElementById('vol_huile')
+    ];
+
+    function checkFormValidity() {
+      // La méthode .every() vérifie si TOUS les champs ont une valeur non vide.
+      const isFormValid = requiredFields.every(field => field && field.value.trim() !== '');
+      // On active ou désactive le bouton en fonction du résultat.
+      submissionButton.disabled = !isFormValid;
+    }
+
+    // Ajoute un écouteur d'événement 'input' ou 'change' à chaque champ requis.
+    requiredFields.forEach(field => {
+      if (field) {
+        field.addEventListener('input', checkFormValidity);
+        field.addEventListener('change', checkFormValidity); // Pour les 'select'
+      }
+    });
+
+    // Vérifie la validité du formulaire au chargement de la page pour définir l'état initial du bouton.
+    checkFormValidity();
+
+    // --- GESTION DE LA FENETRE DE CONFIRMATION ---
+    const confirmButton = document.getElementById('confirm-submission-btn');
+    const modalSubmitButton = document.getElementById('submit-form-btn');
+    const confirmationModal = new bootstrap.Modal(document.getElementById('confirmationModal'));
+
+    if (confirmButton && volForm) {
+      // 1. Quand on clique sur le bouton principal, on affiche la modale au lieu de soumettre
+      confirmButton.addEventListener('click', function(event) {
+        event.preventDefault(); // Empêche la soumission du formulaire
+        confirmationModal.show();
+      });
+
+      // 2. Quand on clique sur "Confirmer" dans la modale, on soumet le formulaire
+      modalSubmitButton.addEventListener('click', function() {
+        volForm.submit();
+      });
+    }
+
+    // Calcul initial au chargement de la page
+    calculateDurationsAndEndTime();
+  });
+</script>

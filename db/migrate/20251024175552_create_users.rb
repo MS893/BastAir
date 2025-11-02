@@ -15,7 +15,7 @@ class CreateUsers < ActiveRecord::Migration[8.0]
       t.string :licence_type    # ATPL, CPL, PPL ou LAPL
       t.string :num_licence
       t.date :date_licence
-      t.string :type_medical
+      t.string :type_medical    # Classe 1, Classe 2 ou LAPL
       t.date :medical
       t.date :nuit
       t.date :fi

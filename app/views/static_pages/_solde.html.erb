@@ -7,15 +7,17 @@
                   'bg-success'  # Vert sinon (supérieur ou égal à 100€)
                 end
 %>
-<div class="col-lg-4" id="solde_compte">
+
+<div class="card h-100 shadow">
   <div class="card text-white <%= solde_class %> h-100">
     <div class="card-body">
-      <h5 class="card-title">Solde de votre compte</h5>
-      <p class="card-text display-6"><%= number_to_currency(user.solde, unit: "€", separator: ",", delimiter: " ", format: "%n %u") %></p>
-      <div class="d-flex gap-3">
+      <h3 class="card-title mb-5">Solde de votre compte</h3>
+      <p class="card-text display-3"><%= number_to_currency(user.solde, unit: "€", separator: ",", delimiter: " ", format: "%n %u") %></p>
+      <div class="d-flex gap-4 mt-5">
         <%= link_to "Créditer mon compte", credit_path, class: "btn btn-light" %>
         <%= link_to "Mon compte", user_path(user), class: "btn btn-outline-light text-white" %>
       </div>
     </div>
   </div>
 </div>
+

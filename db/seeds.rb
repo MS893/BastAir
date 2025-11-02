@@ -45,11 +45,11 @@ admin_user = User.create!(
   lieu_naissance: Faker::Address.city,
   profession: "Administrateur Système",
   adresse: Faker::Address.full_address,
-  telephone: Faker::PhoneNumber.phone_number,
+  telephone: '0606060606',
   contact_urgence: "#{Faker::Name.name} - #{Faker::PhoneNumber.phone_number}",
-  num_ffa: Faker::Number.number(digits: 8).to_s,
-  licence_type: "PPL",
-  num_licence: "FRA.PPL.#{Faker::Number.number(digits: 6)}",
+  num_ffa: Faker::Number.number(digits: 7).to_s,
+  licence_type: "ATPL",
+  num_licence: Faker::Number.number(digits: 8).to_s,
   date_licence: Faker::Date.backward(days: 365 * 5),
   medical: Faker::Date.forward(days: 365),
   fi: Faker::Date.forward(days: 365),
@@ -75,11 +75,11 @@ eleve_user = User.create!(
   lieu_naissance: Faker::Address.city,
   profession: "Administrateur Système",
   adresse: Faker::Address.full_address,
-  telephone: Faker::PhoneNumber.phone_number,
+  telephone: '0606060606',
   contact_urgence: "#{Faker::Name.name} - #{Faker::PhoneNumber.phone_number}",
-  num_ffa: Faker::Number.number(digits: 8).to_s,
+  num_ffa: Faker::Number.number(digits: 7).to_s,
   licence_type: "PPL",
-  num_licence: "FRA.PPL.#{Faker::Number.number(digits: 6)}",
+  num_licence: Faker::Number.number(digits: 8).to_s,
   date_licence: Faker::Date.backward(days: 365 * 5),
   medical: Faker::Date.forward(days: 365),
   fi: Faker::Date.forward(days: 365),
@@ -94,7 +94,8 @@ eleve_user = User.create!(
 puts "✅ Trainee created: #{eleve_user.email}"
 
 # Crée 28 adhérents normaux (non élève)
-29.times do
+puts "\nCreating 28 regular members..."
+28.times do
   licence = ["PPL", "LAPL"].sample
   User.create!(
     prenom: Faker::Name.first_name,
@@ -106,11 +107,11 @@ puts "✅ Trainee created: #{eleve_user.email}"
     lieu_naissance: Faker::Address.city,
     profession: Faker::Job.title,
     adresse: Faker::Address.full_address,
-    telephone: Faker::PhoneNumber.phone_number,
+    telephone: '0606060606',
     contact_urgence: "#{Faker::Name.name} - #{Faker::PhoneNumber.phone_number}",
-    num_ffa: Faker::Number.number(digits: 8).to_s,
+    num_ffa: Faker::Number.number(digits: 7).to_s,
     licence_type: licence,
-    num_licence: "FRA.#{licence}.#{Faker::Number.number(digits: 6)}",
+    num_licence: Faker::Number.number(digits: 8).to_s,
     date_licence: Faker::Date.backward(days: 365 * 10),
     medical: Faker::Date.forward(days: 365),
     controle: Faker::Date.forward(days: 365),
@@ -121,8 +122,9 @@ puts "✅ Trainee created: #{eleve_user.email}"
     admin: false,
     fonction: "brevete"
     )
-end
-puts "✅ 28 regular members created."
+    print "*" # barre de progression
+  end
+puts "\n✅ 28 regular members created."
 puts "Total users: #{User.count}"
 
 # On réactive l'envoi d'e-mails
@@ -160,16 +162,14 @@ puts "✅ Aircraft created: #{avion.immatriculation}"
 # 3. Création de 20 vols
 # ----------------------------------------------------
 
-puts "\nCreating flights..."
+puts "\nCreating 20 flights..."
 aerodromes = ["TFFB", "TFFS", "TFFM", "TFFR", "TFFC", "TFFA"]
-types_vol = ["solo", "instruction", "contrôle FI", "vol découverte", "vol d'initiation", "vol d'essai", "convoyage", "vol BIA"]
+types_vol = ["Standard", "Vol découverte", "Vol d'initiation", "Vol d'essai", "Convoyage", "Vol BIA"]
 all_users = User.all
-compteur_actuel = 1234.5
+compteur_actuel = 123.45
 
 20.times do
   depart_time = Faker::Time.between(from: DateTime.now - 30, to: DateTime.now + 30)
-  duree_minutes = [30, 45, 60, 90, 120].sample
-  duree_heures = duree_minutes / 60.0
   Vol.create!(
     user: all_users.sample, # Correctly assign a random user
     avion: avion,           # Assign the created aircraft
@@ -177,22 +177,23 @@ compteur_actuel = 1234.5
     depart: aerodromes.sample,
     arrivee: aerodromes.sample,
     debut_vol: depart_time,
-    fin_vol: depart_time + duree_minutes.minutes,
-    compteur_depart: compteur_actuel,
-    compteur_arrivee: compteur_actuel + duree_minutes,
-    duree_vol: duree_minutes,
+    fin_vol: depart_time + 90.minutes,
+    compteur_depart: compteur_actuel.round(2),
+    compteur_arrivee: (compteur_actuel + 1.50).round(2),
+    duree_vol: 1.50,
     nb_atterro: [1, 2, 3].sample,
     solo: [true, false].sample,
     supervise: [true, false].sample,
     nav: [true, false].sample,
-    jour: true,
-    fuel_avant_vol: Faker::Number.between(from: 80.0, to: 100.0).round(1),
-    fuel_apres_vol: Faker::Number.between(from: 40.0, to: 60.0).round(1),
+    nature: 'VFR de jour',
+    fuel_avant_vol: Faker::Number.between(from: 10.0, to: 100.0).round(1),
+    fuel_apres_vol: Faker::Number.between(from: 20.0, to: 110.0).round(1),
     huile: Faker::Number.between(from: 2.0, to: 3.0).round(1)
   )
-  compteur_actuel += duree_minutes + 15 # Ajoute un petit temps au sol entre 2 vols
+  compteur_actuel = (compteur_actuel + 1.90).round(2)  # ajoute un petit temps au sol entre 2 vols
+  print "*" # barre de progression
 end
-puts "✅ 20 flights created."
+puts "\n✅ 20 flights created."
 
 
 # 4. Création de 20 réservations
@@ -279,7 +280,7 @@ courses_data.each do |course_data|
   if File.exist?(file_path)
     course.document.attach(io: File.open(file_path), filename: course_data[:file], content_type: 'application/pdf')
   else
-    puts "      ⚠️  Warning: File #{course_data[:file]} not found for course '#{course_data[:title]}'."
+    puts "      ⚠️  Warning: File not found : #{course_data[:file]} '#{course_data[:title]}'."
   end
 end
 puts "✅ Courses created."
@@ -359,7 +360,7 @@ flight_lessons_data.each do |lesson_data|
   if File.exist?(file_path)
     lesson.document.attach(io: File.open(file_path), filename: lesson_data[:file], content_type: 'application/pdf')
   else
-    puts "      ⚠️  Warning: File #{lesson_data[:file]} not found for flight lesson '#{lesson.title}'."
+    puts "      ⚠️  Warning: File not found : #{lesson_data[:file]} '#{lesson.title}'."
   end
 end
 puts "✅ Flight Lessons created."

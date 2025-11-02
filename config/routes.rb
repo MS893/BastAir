@@ -28,6 +28,16 @@ Rails.application.routes.draw do
     get 'analytics', on: :collection
   end
 
+  # routes pour la gestion des vols
+  resources :vols, only: [:new, :create, :index, :show]
+
+  # Route pour récupérer des informations sur les avions (ex: dernier compteur)
+  resources :avions, only: [] do
+    member do
+      get :last_compteur
+    end
+  end
+
   # routes pour l'administration
   namespace :admin do
     resources :users, only: [:new, :create]

@@ -1,47 +1,33 @@
 <div class="container-fluid pt-4">
   
-  <h2 class="display-5 mt-1 mb-3 text-center">Bienvenue, <%= current_user.prenom %></h2>
+  <h2 class="mb-5 text-center">Bienvenue, <%= current_user.prenom %></h2>
   <%= turbo_stream_from current_user %>
 
-  <div class="row justify-content-center g-4">
-    <!-- Carte Solde -->
-    <%= render "static_pages/solde", user: current_user %>
-
-    <!-- Carte Prochain Vol -->
-    <%= render "static_pages/prochain_vol" %>
-
-    <!-- Carte dates limites -->
-    <%= render 'static_pages/validites', user: current_user %>
-
-    <!-- Carte évènements à venir -->
-    <%= render 'static_pages/evenements_a_venir' %>
+  <div class="row g-4">
+    <div class="col-lg-4">
+      <!-- Carte Solde -->
+      <%= render "static_pages/solde", user: current_user %>
+    </div>
+    <div class="col-lg-4">
+      <!-- Carte Prochain Vol -->
+      <%= render "static_pages/prochain_vol" %>
+    </div>
+    <div class="col-lg-4">
+      <!-- Carte Mes Vols -->
+      <%= render "static_pages/mes_vols" %>
+    </div>
+    <div class="col-lg-4">
+      <!-- Carte dates limites -->
+      <%= render 'static_pages/validites', user: current_user %>
+    </div>
+    <div class="col-lg-4">
+      <!-- Carte évènements à venir -->
+      <%= render 'static_pages/evenements_a_venir' %>
+    </div>
+    <div class="col-lg-4">
+      <!-- Carte dernières transactions -->
+      <%= render 'static_pages/mes_transactions' %>
+    </div>
   </div>
 
-  <%# --- SECTION DERNIÈRES TRANSACTIONS --- %>
-  <% if @transactions.present? && @transactions.any? %>
-    <div class="row justify-content-center mt-4">
-      <div class="col-lg-10">
-        <div class="card shadow-sm">
-          <div class="card-header d-flex justify-content-between align-items-center">
-            <h4 class="mb-0">Mes dernières transactions</h4>
-            <%= link_to "Voir toutes", transactions_path, class: "btn btn-sm btn-outline-primary" %>
-          </div>
-          <div class="list-group list-group-flush">
-            <% @transactions.each do |transaction| %>
-              <%= link_to transaction_path(transaction), class: "list-group-item list-group-item-action d-flex justify-content-between align-items-center" do %>
-                <div>
-                  <span class="text-muted"><%= l transaction.date_transaction, format: :short %></span> -
-                  <strong><%= transaction.description %></strong>
-                </div>
-                <span class="badge <%= transaction.mouvement == 'Recette' ? 'bg-success' : 'bg-danger' %> rounded-pill fs-6">
-                  <%= number_to_currency(transaction.montant, unit: "€", separator: ",", delimiter: " ", format: "%n %u") %>
-                </span>
-              <% end %>
-            <% end %>
-          </div>
-        </div>
-      </div>
-    </div>
-  <% end %>
-  
 </div>
