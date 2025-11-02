@@ -203,6 +203,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_31_083042) do
     t.float "compteur_arrivee", null: false
     t.float "duree_vol", null: false
     t.integer "nb_atterro", default: 1, null: false
+    t.string "instructeur"
     t.boolean "solo", default: false, null: false
     t.boolean "supervise", default: false, null: false
     t.boolean "nav", default: false, null: false

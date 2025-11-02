@@ -42,6 +42,7 @@ class VolsController < ApplicationController
 
   def new
     @avions = Avion.all
+    @instructeurs = User.where(fonction: 'instructeur').order(:nom)
     @vol = Vol.new(
       user: current_user,
       debut_vol: Time.current.beginning_of_minute,
@@ -61,6 +62,7 @@ class VolsController < ApplicationController
     if @vol.save
       redirect_to root_path, notice: 'Votre vol a été enregistré avec succès.'
     else
+      @instructeurs = User.where(fonction: 'instructeur').order(:nom)
       @avions = Avion.all # Il faut recharger @avions pour que le formulaire se ré-affiche correctement
       render :new, status: :unprocessable_entity
     end
@@ -72,8 +74,9 @@ class VolsController < ApplicationController
   def vol_params
     params.require(:vol).permit(
       :avion_id, :type_vol, :depart, :arrivee, :debut_vol, :fin_vol,
-      :compteur_depart, :compteur_arrivee, :duree_vol, :nb_atterro,
-      :solo, :supervise, :nav, :nature, :fuel_avant_vol, :fuel_apres_vol, :huile
+      :compteur_depart, :compteur_arrivee, :duree_vol, :nb_atterro, :solo,
+      :supervise, :nav, :nature, :fuel_avant_vol, :fuel_apres_vol, :huile,
+      :instructeur_id
     )
   end
 end

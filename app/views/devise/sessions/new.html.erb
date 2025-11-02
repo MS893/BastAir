@@ -20,7 +20,12 @@
 
           <div class="mb-3">
             <%= f.label :password, "Mot de passe", class: "form-label" %>
-            <%= f.password_field :password, autocomplete: "current-password", class: "form-control" %>
+            <div class="input-group" data-controller="password-toggle">
+              <%= f.password_field :password, autocomplete: "current-password", class: "form-control", data: { password_toggle_target: "input" } %>
+              <button class="btn btn-outline-secondary" type="button" data-action="click->password-toggle#toggle" aria-label="Afficher ou masquer le mot de passe">
+                <i class="bi bi-eye-slash" data-password-toggle-target="icon"></i>
+              </button>
+            </div>
           </div>
 
           <% if devise_mapping.rememberable? %>
@@ -55,14 +60,6 @@
       <p class="text-muted">Vous n'êtes pas encore membre ?</p>
       <%= link_to "Contactez-nous pour vous inscrire", contact_path, class: "btn btn-outline-primary" %>
     </div>
-    
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
 
   </div>
 </div>

@@ -17,7 +17,8 @@ class User < ApplicationRecord
     president: 'president',
     tresorier: 'tresorier',
     eleve: 'eleve',
-    brevete: 'brevete'
+    brevete: 'brevete',
+    instructeur: 'instructeur'
   }
 
   # fonctions des utilisateurs
@@ -79,6 +80,31 @@ class User < ApplicationRecord
   # méthode pour vérifier si l'utilisateur est un administrateur
   def admin?
     admin
+  end
+
+  # Méthode pour vérifier si l'utilisateur est un élève
+  def eleve?
+    fonction == ALLOWED_FCT[:eleve]
+  end
+
+  # Méthode pour vérifier si l'utilisateur est un président
+  def president?
+    fonction == ALLOWED_FCT[:president]
+  end
+
+  # Méthode pour vérifier si l'utilisateur est un trésorier
+  def tresorier?
+    fonction == ALLOWED_FCT[:tresorier]
+  end
+
+  # Méthode pour vérifier si l'utilisateur est un breveté
+  def brevete?
+    fonction == ALLOWED_FCT[:brevete]
+  end
+
+  # Méthode pour vérifier si l'utilisateur est un instructeur
+  def instructeur?
+    fonction == ALLOWED_FCT[:instructeur]
   end
 
   # Méthode pour créditer le compte de l'utilisateur de manière sécurisée
