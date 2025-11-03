@@ -27,7 +27,7 @@
         </div>
         <div class="col-md-6 mb-3">
           <%= form.label :montant %>
-          <%= form.number_field :montant, class: "form-control", step: '0.01', placeholder: "0.00" %>
+          <%= form.number_field :montant, class: "form-control", step: '0.01', placeholder: "0" %>
         </div>
       </div>
       <div class="mb-3">
@@ -42,15 +42,25 @@
         <div class="col-md-4 mb-3"><%= form.label :payment_method, "Paiement" %> <%= form.select :payment_method, Transaction::ALLOWED_PYT.values, { prompt: 'Sélectionner...' }, class: "form-select" %></div>
       </div>
       <div class="mb-3">
-        <%= form.label :user_id, "Lié à l'adhérent" %>
-        <%= form.collection_select :user_id, User.order(:nom), :id, :name, { prompt: "Aucun utilisateur spécifique" }, { class: "form-select" } %>
+        <%= form.label :user_id, "Lié à l'adhérent (recherche)" %>
+        <%# --- Début du composant d'autocomplétion --- %>
+        <div data-controller="autocomplete" class="position-relative">
+          <%# Champ de texte visible pour la recherche %>
+          <input type="text" class="form-control" data-autocomplete-target="input" data-action="input->autocomplete#search" placeholder="Taper un nom..." autocomplete="off">
+          
+          <%# Champ caché qui contiendra l'ID de l'utilisateur et sera envoyé avec le formulaire %>
+          <%= form.hidden_field :user_id, data: { autocomplete_target: "hidden" } %>
+
+          <%# Le Turbo Frame qui recevra et affichera les résultats de la recherche %>
+          <turbo-frame id="search_results" class="position-absolute w-100 d-none" data-autocomplete-target="results" style="z-index: 1000;"></turbo-frame>
+        </div>
       </div>
 
       <div class="form-check form-switch mb-3"><%= form.check_box :is_checked, class: "form-check-input" %> <%= form.label :is_checked, "Rapproché en banque", class: "form-check-label" %></div>
 
       <div class="form-actions mt-4 border-top pt-3">
         <%= form.submit "Enregistrer la transaction", class: "btn btn-success" %>
-        <%= link_to 'Annuler', transactions_path, class: 'btn btn-outline-secondary ms-2' %>
+        <%= link_to 'Annuler', transactions_path, class: 'btn btn-outline-primary ms-2' %>
       </div>
 
     <% end %>

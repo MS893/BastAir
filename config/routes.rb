@@ -1,5 +1,10 @@
 Rails.application.routes.draw do
 
+  # --- Routes pour les utilisateurs et l'authentification ---
+  resources :users do
+    get :search, on: :collection # Ajoute la route GET /users/search
+  end
+
   # Configuration de Devise :
   # On désactive la création de compte publique (gérée par l'admin).
   # On regroupe les routes de Devise ici pour éviter les conflits.

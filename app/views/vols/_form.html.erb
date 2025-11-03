@@ -19,156 +19,131 @@
     </div>
   <% end %>
 
-  <div class="card shadow-sm">
-    <div class="card-body p-4">
+  <fieldset id="vol-form-fieldset">
+    <div class="card shadow-sm">
+      <div class="card-body p-4">
 
-      <h5 class="mb-4">Informations Générales</h5>
-      <div class="row">
-        <div class="col-md-2 mb-3">
-          <%= form.label :avion_id, "Avion" %>
-          <%= form.collection_select :avion_id, @avions, :id, :immatriculation, { prompt: "Avion" }, { class: "form-select", id: 'vol_avion_id' } %>
+        <h5 class="mb-4">Informations Générales</h5>
+        <div class="row">
+          <div class="col-md-2 mb-3">
+            <%= form.label :avion_id, "Avion" %>
+            <%= form.collection_select :avion_id, @avions, :id, :immatriculation, { prompt: "Avion" }, { class: "form-select", id: 'vol_avion_id' } %>
+          </div>
+          <div class="col-md-2 mb-3">
+            <%= form.label :type_vol, "Type"%>
+            <%= form.select :type_vol, ["Standard", "Vol découverte", "Vol d'initiation", "Vol d'essai", "Convoyage", "Vol BIA"], {}, { class: "form-select" } %>
+          </div>
+          <div class="col-md-3 mb-3">
+            <%= form.label :depart, "Aérodrome départ" %>
+            <%= form.text_field :depart, class: "form-control" %>
+          </div>
+          <div class="col-md-3 mb-3">
+            <%= form.label :arrivee, "Aérodrome arrivée" %>
+            <%= form.text_field :arrivee, class: "form-control" %>
+          </div>
+          <div class="col-md-2 mb-3">
+            <%= form.label :nb_atterro, "Atterrissages" %>
+            <%= form.number_field :nb_atterro, class: "form-control", step: '1' %>
+          </div>
         </div>
-        <div class="col-md-2 mb-3">
-          <%= form.label :type_vol, "Type"%>
-          <%= form.select :type_vol, ["Standard", "Vol découverte", "Vol d'initiation", "Vol d'essai", "Convoyage", "Vol BIA"], {}, { class: "form-select" } %>
-        </div>
-        <div class="col-md-3 mb-3">
-          <%= form.label :depart, "Aérodrome départ" %>
-          <%= form.text_field :depart, class: "form-control" %>
-        </div>
-        <div class="col-md-3 mb-3">
-          <%= form.label :arrivee, "Aérodrome arrivée" %>
-          <%= form.text_field :arrivee, class: "form-control" %>
-        </div>
-        <div class="col-md-2 mb-3">
-          <%= form.label :nb_atterro, "Atterrissages" %>
-          <%= form.number_field :nb_atterro, class: "form-control", step: '1' %>
-        </div>
-      </div>
 
-      <hr class="my-4">
-
-      <h5 class="mb-4">Horaires et Compteurs</h5>
-      <div class="row">
-        <div class="col-md-6 mb-3">
-          <%= form.label :debut_vol, "Début du vol" %>
-          <%= form.datetime_local_field :debut_vol, class: "form-control" %>
-        </div>
-        <div class="col-md-6 mb-3">
-          <%= form.label :fin_vol, "Fin du vol" %>
-          <%= form.datetime_local_field :fin_vol, class: "form-control", readonly: true %>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-md-3 mb-3">
-          <%= form.label :compteur_depart, "Compteur de départ" %>
-          <%= form.number_field :compteur_depart, class: "form-control", step: '0.01', id: 'vol_compteur_depart' %>
-        </div>
-        <div class="col-md-3 mb-3">
-          <%= form.label :compteur_arrivee, "Compteur d'arrivée" %>
-          <%= form.number_field :compteur_arrivee, class: "form-control", step: '0.01' %>
-        </div>
-        <div class="col-md-3 mb-3">
-          <%= form.label :duree_vol, "Durée (centièmes)" %>
-          <%= form.number_field :duree_vol, class: "form-control", readonly: true %>
-        </div>
-        <div class="col-md-3 mb-3">
-          <%= form.label :duree_vol_mn, "Durée (minutes)" %>
-          <%= form.number_field :duree_vol_mn, class: "form-control", readonly: true %>
-        </div>
-      </div>
-
-      <hr class="my-4">
-
-      <h5 class="mb-4">Détails du vol</h5>
-      <div class="row">
-        <div class="col-md-3 mb-3">
-          <%= form.label :fuel_avant_vol, "Carburant avant vol (L)" %>
-          <%= form.number_field :fuel_avant_vol, class: "form-control", step: '0.1' %>
-        </div>
-        <div class="col-md-3 mb-3">
-          <%= form.label :fuel_apres_vol, "Carburant après vol (L)" %>
-          <%= form.number_field :fuel_apres_vol, class: "form-control", step: '0.1' %>
-        </div>
-        <div class="col-md-3 mb-3">
-          <%= form.label :huile, "Niveau d'huile (L)" %>
-          <%= form.number_field :huile, class: "form-control", step: '0.1' %>
-        </div>
-        <div class="col-md-3 mb-3">
-          <%= form.label :nature, "Nature du vol" %>
-          <%= form.select :nature,
-                options_for_select([["VFR de jour", "VFR de jour"], ["VFR de nuit", "VFR de nuit"], ["IFR", "IFR"]],
-                                    (vol.nature.present?) ? vol.nature : "VFR de jour"),
-                {}, { class: "form-select" } %>
-        </div>
-      </div>
-
-      <%# La section "Instruction" n'est visible que pour les élèves %>
-      <% if current_user.eleve? %>
         <hr class="my-4">
-        <h5 class="mb-4">Instruction</h5>
-        <div class="row align-items-center">
-          <div class="col-md-4 mb-3">
-          <%= form.label :instructeur_id, "Instructeur" %>
-          <%= form.collection_select :instructeur_id, @instructeurs, :id, :name, { prompt: "Sélectionnez un instructeur" }, { class: "form-select", "aria-describedby": "instructeurHelp" } %>
-          <div id="instructeurHelp" class="form-text">Instructeur à sélectionner, même en solo.</div>
-          </div>
-          <div class="col-md-2 mb-3 ms-4">
-            <div class="form-check">
-              <%= form.check_box :solo, class: "form-check-input" %> <%= form.label :solo, "Solo", class: "form-check-label" %>
-            </div>
-          </div>
-          <div class="col-md-2 mb-3">
-            <div class="form-check">
-              <%= form.check_box :supervise, class: "form-check-input" %> <%= form.label :supervise, "Supervisé", class: "form-check-label" %>
-            </div>
-          </div>
-          <div class="col-md-2 mb-3">
-            <div class="form-check">
-              <%= form.check_box :nav, class: "form-check-input" %> <%= form.label :nav, "Navigation", class: "form-check-label" %>
-            </div>
-          </div>
-        </div>
-      <% end %>
 
-      <div class="form-actions mt-5 border-top pt-3 d-flex">
-        <button type="button" id="confirm-submission-btn" class="btn btn-success">Enregistrer le vol</button>
-        <%= link_to 'Annuler', root_path, class: 'btn btn-outline-primary ms-2 me-3' %>
-        <div id="flight-cost-display" class="align-self-center fw-bold text-success" style="font-size: 1.1rem;">
-          Coût estimé : 0.00 €
+        <h5 class="mb-4">Horaires et Compteurs</h5>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <%= form.label :debut_vol, "Début du vol" %>
+            <%= form.datetime_local_field :debut_vol, class: "form-control", id: 'vol_debut_vol' %>
+          </div>
+          <div class="col-md-6 mb-3">
+            <%= form.label :fin_vol, "Fin du vol" %>
+            <%= form.datetime_local_field :fin_vol, class: "form-control", readonly: true, id: 'vol_fin_vol' %>
+          </div>
         </div>
-        <%= link_to "Signaler une anomalie sur l'avion", "#", class: 'btn btn-outline-danger ms-auto' %>
+
+        <div class="row">
+          <div class="col-md-3 mb-3">
+            <%= form.label :compteur_depart, "Compteur de départ" %>
+            <%= form.number_field :compteur_depart, class: "form-control", step: '0.01', id: 'vol_compteur_depart' %>
+          </div>
+          <div class="col-md-3 mb-3">
+            <%= form.label :compteur_arrivee, "Compteur d'arrivée" %>
+            <%= form.number_field :compteur_arrivee, class: "form-control", step: '0.01', id: 'vol_compteur_arrivee' %>
+          </div>
+          <div class="col-md-3 mb-3">
+            <%= form.label :duree_vol, "Durée (centièmes)" %>
+            <%= form.number_field :duree_vol, class: "form-control", readonly: true, id: 'vol_duree_vol' %>
+          </div>
+          <div class="col-md-3 mb-3">
+            <%= form.label :duree_vol_mn, "Durée (minutes)" %>
+            <%= form.number_field :duree_vol_mn, class: "form-control", readonly: true, id: 'vol_duree_vol_mn' %>
+          </div>
+        </div>
+
+        <hr class="my-4">
+
+        <h5 class="mb-4">Détails du vol</h5>
+        <div class="row">
+          <div class="col-md-3 mb-3">
+            <%= form.label :fuel_avant_vol, "Carburant avant vol (L)" %>
+            <%= form.number_field :fuel_avant_vol, class: "form-control", step: '0.1', id: 'vol_fuel_avant_vol' %>
+          </div>
+          <div class="col-md-3 mb-3">
+            <%= form.label :fuel_apres_vol, "Carburant après vol (L)" %>
+            <%= form.number_field :fuel_apres_vol, class: "form-control", step: '0.1', id: 'vol_fuel_apres_vol' %>
+          </div>
+          <div class="col-md-3 mb-3">
+            <%= form.label :huile, "Niveau d'huile (L)" %>
+            <%= form.number_field :huile, class: "form-control", step: '0.1' %>
+          </div>
+          <div class="col-md-3 mb-3">
+            <%= form.label :nature, "Nature du vol" %>
+            <%= form.select :nature,
+                  options_for_select([["VFR de jour", "VFR de jour"], ["VFR de nuit", "VFR de nuit"], ["IFR", "IFR"]],
+                                      (vol.nature.present?) ? vol.nature : "VFR de jour"),
+                  {}, { class: "form-select" } %>
+          </div>
+        </div>
+
+        <%# La section "Instruction" n'est visible que pour les élèves %>
+        <% if current_user.eleve? %>
+          <hr class="my-4">
+          <h5 class="mb-4">Instruction</h5>
+          <div class="row align-items-center">
+            <div class="col-md-4 mb-3">
+            <%= form.label :instructeur_id, "Instructeur" %>
+            <%= form.collection_select :instructeur_id, @instructeurs, :id, :name, { prompt: "Sélectionnez un instructeur" }, { class: "form-select", "aria-describedby": "instructeurHelp" } %>
+            <div id="instructeurHelp" class="form-text">Instructeur à sélectionner, même en solo.</div>
+            </div>
+            <div class="col-md-2 mb-3 ms-4">
+              <div class="form-check">
+                <%= form.check_box :solo, class: "form-check-input", id: 'vol_solo' %> <%= form.label :solo, "Solo", class: "form-check-label" %>
+              </div>
+            </div>
+            <div class="col-md-2 mb-3">
+              <div class="form-check">
+                <%= form.check_box :supervise, class: "form-check-input" %> <%= form.label :supervise, "Supervisé", class: "form-check-label" %>
+              </div>
+            </div>
+            <div class="col-md-2 mb-3">
+              <div class="form-check">
+                <%= form.check_box :nav, class: "form-check-input" %> <%= form.label :nav, "Navigation", class: "form-check-label" %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+
+        <div class="form-actions mt-5 border-top pt-3 d-flex">
+          <button type="button" id="confirm-submission-btn" class="btn btn-success">Enregistrer le vol</button>
+          <%= link_to 'Annuler', root_path, class: 'btn btn-outline-primary ms-2 me-3' %>
+          <div id="flight-cost-display" class="align-self-center fw-bold text-success" style="font-size: 1.1rem;">
+            Coût estimé : 0.00 €
+          </div>
+          <%# bouton désactivé par défaut et activé si un avion est sélectionné. %>
+          <button type="button" id="report-signalement-btn" class="btn btn-outline-danger ms-auto" disabled>Signaler une anomalie</button>
+        </div>
+
       </div>
-
     </div>
-  </div>
+  </fieldset>
 <% end %>
-
-<script>
-  document.addEventListener('turbo:load', function() {
-    const compteurDepartInput = document.getElementById('vol_compteur_depart');
-    const compteurArriveeInput = document.getElementById('vol_compteur_arrivee');
-
-    function validateCompteurs() {
-      const departValue = parseFloat(compteurDepartInput.value);
-      const arriveeValue = parseFloat(compteurArriveeInput.value);
-
-      // On ne valide que si les deux champs sont remplis et valides
-      if (!isNaN(departValue) && !isNaN(arriveeValue)) {
-        if (arriveeValue <= departValue) {
-          // Affiche un message d'erreur personnalisé sur le champ
-          compteurArriveeInput.setCustomValidity("Le compteur d'arrivée doit être supérieur à celui de départ.");
-        } else {
-          // Efface le message d'erreur si la condition est respectée
-          compteurArriveeInput.setCustomValidity('');
-        }
-      } else {
-        compteurArriveeInput.setCustomValidity('');
-      }
-    }
-
-    compteurDepartInput.addEventListener('input', validateCompteurs);
-    compteurArriveeInput.addEventListener('input', validateCompteurs);
-  });
-</script>

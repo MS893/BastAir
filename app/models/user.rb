@@ -66,7 +66,11 @@ class User < ApplicationRecord
   # Transactions
   has_many :transactions
 
+  # Signalements
+  has_many :signalements, dependent: :destroy
 
+
+  
   def welcome_send
     UserMailer.welcome_email(self).deliver_now
   end
@@ -109,13 +113,22 @@ class User < ApplicationRecord
   # Méthode pour créditer le compte de l'utilisateur de manière sécurisée
   def credit_account(amount)
     # S'assure que le montant est un nombre valide et positif
-    return if amount.to_f <= 0
+    return if amount.to_d <= 0
 
     # Utilise une transaction pour garantir l'intégrité des données
-    transaction do
-      # Verrouille l'enregistrement pour éviter les conditions de concurrence
-      lock!
-      update!(solde: self.solde + amount.to_d)
+    # Si une des opérations échoue, tout est annulé (le solde et la transaction comptable).
+    ApplicationRecord.transaction do
+      # Crée l'enregistrement comptable. Le callback du modèle Transaction se chargera de la mise à jour du solde.
+      Transaction.create!(
+        user: self,
+        date_transaction: Date.today,
+        description: "Crédit du compte via paiement en ligne",
+        mouvement: 'Recette',
+        montant: amount.to_d,
+        payment_method: 'Carte bancaire', # Le paiement Stripe est par carte
+        is_checked: true, # Le paiement est confirmé par Stripe
+        source_transaction: 'Adhérent'
+      )
     end
   end
 

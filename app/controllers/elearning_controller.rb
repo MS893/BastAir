@@ -1,6 +1,6 @@
 class ElearningController < ApplicationController
-  before_action :authenticate_user!, except: [:document]
-  before_action :authorize_eleve!, except: [:document]
+  before_action :authenticate_user!, except: [:document] # Le document lui-même n'a pas besoin d'authentification
+  before_action :authorize_eleve!, only: [:index, :show] # Seuls les élèves peuvent voir la liste et la page d'un cours
   before_action :set_course, only: [:show, :document]
 
   def show
@@ -14,8 +14,7 @@ class ElearningController < ApplicationController
       # 'disposition: "inline"' demande au navigateur de l'afficher plutôt que de le télécharger
       send_data @course.document.download, filename: @course.document.filename.to_s, type: @course.document.content_type, disposition: 'inline'
     else
-      # Si aucun document n'est attaché, on redirige avec une alerte
-      flash[:alert] = "Le document pour ce cours est introuvable."
+      # Si aucun document n'est attaché, on redirige.
       redirect_to elearning_index_path, alert: "Le document pour ce cours est introuvable."
     end
   end

@@ -9,6 +9,9 @@
   </div>
 </div>
 
+
+<!-- MODALES ET TOASTS -->
+
 <!-- Fenêtre Modale de Confirmation -->
 <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
   <div class="modal-dialog">
@@ -31,38 +34,122 @@
   </div>
 </div>
 
+<!-- Fenêtre Modale de Signalement d'Anomalie -->
+<div class="modal fade" id="signalementModal" tabindex="-1" aria-labelledby="signalementModalLabel" aria-hidden="true" data-bs-focus="false">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="signalementModalLabel">
+          <i class="bi bi-exclamation-triangle-fill text-danger me-2"></i>
+          Signaler une anomalie sur l'avion
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <%# On prépare un formulaire simple. L'action sera définie par JavaScript. %>
+        <%= form_with(url: "#", method: :post, id: 'signalement-form') do |form| %>
+          <div class="mb-3">
+            <%= form.label :description, "Veuillez décrire l'anomalie constatée (pièce manquante ou cassée) avec le plus de détails possible :", class: "form-label" %>
+            <%= form.text_area :description, class: "form-control", rows: 6, name: "signalement[description]", id: "signalement_description" %>
+          </div>
+          <div class="d-flex justify-content-between mt-4">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+            <%= form.submit "Envoyer le signalement", class: "btn btn-danger" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast pour les notifications non-bloquantes -->
+<div class="toast-container position-fixed top-0 end-0 p-3">
+  <div id="notificationToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-header">
+      <i id="toast-icon" class="bi me-2"></i>
+      <strong class="me-auto" id="toast-title">Notification</strong>
+      <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+    <div class="toast-body" id="toast-body-content">
+      <!-- Le message sera injecté ici -->
+    </div>
+  </div>
+</div>
+
 
 <%# --- SCRIPTS --- %>
 <script>
-  
+
   document.addEventListener('turbo:load', function() {
-    const debutVolInput = document.getElementById('vol_debut_vol');
+    // --- INITIALISATION DES VARIABLES ---
+    const volForm = document.getElementById('vol-form');
+    if (!volForm) return; // S'arrête si le formulaire n'est pas sur la page
+
     const avionSelect = document.getElementById('vol_avion_id');
+    const debutVolInput = document.getElementById('vol_debut_vol');
     const finVolInput = document.getElementById('vol_fin_vol');
     const compteurDepartInput = document.getElementById('vol_compteur_depart');
     const compteurArriveeInput = document.getElementById('vol_compteur_arrivee');
-    const dureeVolCentiemesInput = document.getElementById('vol_duree_vol'); // Le champ pour les centièmes
-    const dureeVolMnInput = document.getElementById('vol_duree_vol_mn'); // Le champ pour les minutes
+    const dureeVolCentiemesInput = document.getElementById('vol_duree_vol');
+    const dureeVolMnInput = document.getElementById('vol_duree_vol_mn');
     const soloCheckbox = document.getElementById('vol_solo');
     const costDisplay = document.getElementById('flight-cost-display');
-    const volForm = document.getElementById('vol-form');
+    const submissionButton = document.getElementById('confirm-submission-btn');
+    const signalementButton = document.getElementById('report-signalement-btn');
+    const formFieldset = document.getElementById('vol-form-fieldset');
+
+    const requiredFields = [
+      avionSelect,
+      document.getElementById('vol_type_vol'),
+      document.getElementById('vol_depart'),
+      document.getElementById('vol_arrivee'),
+      debutVolInput,
+      compteurDepartInput,
+      compteurArriveeInput,
+      document.getElementById('vol_fuel_avant_vol'),
+      document.getElementById('vol_fuel_apres_vol'),
+      document.getElementById('vol_huile')
+    ];
+
+    // --- GESTION DES NOTIFICATIONS (TOAST) ---
+    const toastEl = document.getElementById('notificationToast');
+    const toastInstance = bootstrap.Toast.getOrCreateInstance(toastEl);
+    const toastBody = document.getElementById('toast-body-content');
+    const toastTitle = document.getElementById('toast-title');
+    const toastIcon = document.getElementById('toast-icon');
+
+    function showToast(message, type = 'info') {
+      toastBody.textContent = message;
+      
+      // Réinitialiser les classes
+      toastEl.classList.remove('bg-success', 'bg-danger', 'bg-info', 'text-white');
+      toastIcon.className = 'bi me-2';
+
+      if (type === 'success') {
+        toastEl.classList.add('bg-success', 'text-white');
+        toastIcon.classList.add('bi-check-circle-fill');
+        toastTitle.textContent = 'Succès';
+      } else if (type === 'danger') {
+        toastEl.classList.add('bg-danger', 'text-white');
+        toastIcon.classList.add('bi-exclamation-triangle-fill');
+        toastTitle.textContent = 'Erreur';
+      }
+      toastInstance.show();
+    }
+
+    // --- FONCTIONS DE CALCUL ET VALIDATION ---
 
     function calculateDurationsAndEndTime() {
       const departValue = parseFloat(compteurDepartInput.value);
       const arriveeValue = parseFloat(compteurArriveeInput.value);
       const debutVolValue = debutVolInput.value;
-
       let dureeCentiemes = 0;
 
-      if (!isNaN(departValue) && !isNaN(arriveeValue) && arriveeValue >= departValue) {
-        // 1. Calculer la durée en centièmes
+      if (!isNaN(departValue) && !isNaN(arriveeValue) && arriveeValue > departValue) {
         dureeCentiemes = arriveeValue - departValue;
         dureeVolCentiemesInput.value = dureeCentiemes.toFixed(2);
         dureeVolMnInput.value = Math.round(dureeCentiemes * 60);
 
-        calculateFlightCost(dureeCentiemes); // Appel au calcul du coût
-
-        // 2. Calculer l'heure de fin à partir de cette durée
         if (debutVolValue) {
           const dureeMinutes = Math.round(dureeCentiemes * 60);
           const debutDate = new Date(debutVolValue);
@@ -73,132 +160,181 @@
           const day = debutDate.getDate().toString().padStart(2, '0');
           const hours = debutDate.getHours().toString().padStart(2, '0');
           const minutes = debutDate.getMinutes().toString().padStart(2, '0');
-
           finVolInput.value = `${year}-${month}-${day}T${hours}:${minutes}`;
         }
       } else {
-        // Réinitialiser les champs si les compteurs sont invalides
         dureeVolCentiemesInput.value = '';
         finVolInput.value = '';
-        calculateFlightCost(0); // Réinitialise le coût à 0
       }
+      calculateFlightCost(dureeCentiemes);
     }
 
     function calculateFlightCost(dureeCentiemes) {
-      if (!volForm || !costDisplay) return;
-
+      if (!costDisplay) return;
       const tarifAvion = parseFloat(volForm.dataset.tarifAvion1);
       const tarifInstructeur = parseFloat(volForm.dataset.tarifInstructeur);
       const isEleve = volForm.dataset.userIsEleve === 'true';
       const isSolo = soloCheckbox ? soloCheckbox.checked : false;
 
       let totalCost = dureeCentiemes * tarifAvion;
-
-      // Ajouter le coût de l'instructeur si l'utilisateur est un élève et que le vol n'est pas en solo
       if (isEleve && !isSolo) {
         totalCost += dureeCentiemes * tarifInstructeur;
       }
-
       costDisplay.textContent = `Coût estimé : ${totalCost.toFixed(2)} €`;
     }
 
-    // Ajoute des écouteurs d'événements sur les champs qui déclenchent le calcul
-    if (debutVolInput && compteurDepartInput && compteurArriveeInput) {
-      debutVolInput.addEventListener('input', calculateDurationsAndEndTime);
-      compteurDepartInput.addEventListener('input', calculateDurationsAndEndTime);
-      compteurArriveeInput.addEventListener('input', calculateDurationsAndEndTime);
-    }
-
-    // Ajoute un écouteur sur la case "solo" si elle existe
-    if (soloCheckbox) {
-      soloCheckbox.addEventListener('change', () => {
-        calculateDurationsAndEndTime(); // Recalcule tout quand la case change
-      });
-    }
-
-    // Ajoute un écouteur sur le changement d'avion pour pré-remplir le compteur
-    if (avionSelect && compteurDepartInput) {
-      avionSelect.addEventListener('change', function() {
-        const avionId = this.value;
-        if (avionId) {
-          fetch(`/avions/${avionId}/last_compteur`)
-            .then(response => response.json())
-            .then(data => {
-              compteurDepartInput.value = data.compteur_depart;
-              // Déclenche le calcul des durées et de l'heure de fin
-              calculateDurationsAndEndTime();
-            });
+    function validateCounters() {
+      const departValue = parseFloat(compteurDepartInput.value);
+      const arriveeValue = parseFloat(compteurArriveeInput.value);
+      if (!isNaN(departValue) && !isNaN(arriveeValue)) {
+        if (arriveeValue <= departValue) {
+          compteurArriveeInput.setCustomValidity("Le compteur d'arrivée doit être supérieur à celui de départ.");
+        } else {
+          compteurArriveeInput.setCustomValidity('');
         }
-      });
-    }
-    // Déclenche manuellement l'événement 'change' au chargement de la page
-    // pour pré-remplir le compteur du premier avion sélectionné par défaut.
-    if (avionSelect.value) {
-      avionSelect.dispatchEvent(new Event('change'));
+      } else {
+        compteurArriveeInput.setCustomValidity('');
+      }
     }
 
-    // --- GESTION DE LA VALIDATION CLIENT POUR ACTIVER LE BOUTON ---
-    const submissionButton = document.getElementById('confirm-submission-btn');
-    const requiredFields = [
-      document.getElementById('vol_avion_id'),
-      document.getElementById('vol_type_vol'),
-      document.getElementById('vol_depart'),
-      document.getElementById('vol_arrivee'),
-      document.getElementById('vol_debut_vol'),
-      document.getElementById('vol_compteur_depart'),
-      document.getElementById('vol_compteur_arrivee'),
-      document.getElementById('vol_fuel_avant_vol'),
-      document.getElementById('vol_fuel_apres_vol'),
-      document.getElementById('vol_huile')
-    ];
+    function updateLastCounter() {
+      const avionId = avionSelect.value;
+      if (avionId) {
+        fetch(`/avions/${avionId}/last_compteur`)
+          .then(response => response.json())
+          .then(data => {
+            compteurDepartInput.value = data.compteur_depart;
+            calculateDurationsAndEndTime();
+            checkFormValidity();
+          });
+      }
+    }
 
     function checkFormValidity() {
-      // La méthode .every() vérifie si TOUS les champs ont une valeur non vide.
       const isFormValid = requiredFields.every(field => field && field.value.trim() !== '');
-      // On active ou désactive le bouton en fonction du résultat.
       submissionButton.disabled = !isFormValid;
     }
 
-    // Ajoute un écouteur d'événement 'input' ou 'change' à chaque champ requis.
+    function updateSignalementButton() {
+      const avionId = avionSelect.value;
+      // Active ou désactive le bouton de signalement
+      // en fonction de la sélection d'un avion.
+      signalementButton.disabled = !avionId;
+    }
+
+    // --- GESTION DE LA MODALE DE CONFIRMATION ---
+    const modal = new bootstrap.Modal(document.getElementById('confirmationModal'));
+    const modalSubmitButton = document.getElementById('submit-form-btn');
+
+    submissionButton.addEventListener('click', function(event) {
+      event.preventDefault();
+      modal.show();
+    });
+
+    modalSubmitButton.addEventListener('click', function() {
+      volForm.submit();
+    });
+
+    // --- ATTACHEMENT DES ECOUTEURS D'EVENEMENTS ---
+
+    // Calculs principaux
+    [debutVolInput, compteurDepartInput, compteurArriveeInput].forEach(input => {
+      input.addEventListener('input', calculateDurationsAndEndTime);
+    });
+
+    // Validation des compteurs
+    [compteurDepartInput, compteurArriveeInput].forEach(input => {
+      input.addEventListener('input', validateCounters);
+    });
+
+    // Mise à jour du coût si la case solo change
+    if (soloCheckbox) {
+      soloCheckbox.addEventListener('change', () => calculateDurationsAndEndTime());
+    }
+
+    // Mise à jour du compteur de départ et du lien d'anomalie au changement d'avion
+    avionSelect.addEventListener('change', () => {
+      updateLastCounter();
+      updateSignalementButton();
+    });
+
+    // Validation du formulaire à chaque modification de champ requis
     requiredFields.forEach(field => {
-      if (field) {
-        field.addEventListener('input', checkFormValidity);
-        field.addEventListener('change', checkFormValidity); // Pour les 'select'
+      const eventName = field.tagName === 'SELECT' ? 'change' : 'input';
+      field.addEventListener(eventName, checkFormValidity);
+    });
+
+    // --- APPELS INITIAUX AU CHARGEMENT DE LA PAGE ---
+    updateLastCounter();
+    updateSignalementButton();
+    checkFormValidity();
+
+    // --- GESTION DE LA MODALE DE SIGNALEMENT ---
+    // On désactive la gestion automatique du focus par Bootstrap (focus: false)
+    const signalementModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('signalementModal'));
+    const signalementForm = document.getElementById('signalement-form');
+    let lastFocusedElement = null; // Variable pour mémoriser l'élément qui a ouvert la modale
+
+    signalementButton.addEventListener('click', function() {
+      const avionId = avionSelect.value;
+      if (avionId) {
+        // Met à jour l'URL de soumission du formulaire de la modale
+        signalementForm.action = `/avions/${avionId}/signalements`;
+        lastFocusedElement = document.activeElement; // Mémorise le bouton cliqué
+        signalementModal.show();
       }
     });
 
-    // Vérifie la validité du formulaire au chargement de la page pour définir l'état initial du bouton.
-    checkFormValidity();
+    // Intercepte la soumission du formulaire de signalement pour le faire en AJAX
+    signalementForm.addEventListener('submit', function(event) {
+      event.preventDefault();
+      const descriptionField = document.getElementById('signalement_description');
 
-    // --- GESTION DE LA FENETRE DE CONFIRMATION ---
-    const confirmButton = document.getElementById('confirm-submission-btn');
-    const modalSubmitButton = document.getElementById('submit-form-btn');
-    const confirmationModal = new bootstrap.Modal(document.getElementById('confirmationModal'));
+      // Validation manuelle du champ description
+      if (descriptionField.value.trim() === '') {
+        showToast("Veuillez décrire l'anomalie avant d'envoyer le signalement.", 'danger');
+        descriptionField.focus();
+        return; // Arrête la soumission si le champ est vide
+      }
 
-    if (confirmButton && volForm) {
-      // 1. Quand on clique sur le bouton principal, on affiche la modale au lieu de soumettre
-      confirmButton.addEventListener('click', function(event) {
-        event.preventDefault(); // Empêche la soumission du formulaire
-        confirmationModal.show();
+      const formData = new FormData(this);
+
+      fetch(this.action, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content,
+          'Accept': 'application/json'
+        }
+      }).then(response => {
+        if (response.ok) {
+          signalementModal.hide();
+          descriptionField.value = ''; // Vide le champ pour la prochaine ouverture
+          showToast("Signalement envoyé avec succès. Merci !", 'success');
+        }
       });
+    });
 
-      // 2. Quand on clique sur "Confirmer" dans la modale, on soumet le formulaire
-      modalSubmitButton.addEventListener('click', function() {
-        volForm.submit();
-      });
-    }
+    // Ré-évalue la validité du formulaire principal lorsque la modale de signalement se ferme.
+    // C'est nécessaire car l'ouverture de la modale peut désactiver le formulaire principal.
+    const signalementModalElement = document.getElementById('signalementModal');
+    signalementModalElement.addEventListener('hidden.bs.modal', function () {
+      // Utilise setTimeout pour s'assurer que ce code s'exécute après que Bootstrap a fini son nettoyage.
+      setTimeout(() => {
+        // Force la réactivation du formulaire principal.
+        if (formFieldset) formFieldset.disabled = false;
+        // Restaure manuellement le focus sur l'élément qui a ouvert la modale.
+        if (lastFocusedElement) lastFocusedElement.focus();
+        // Met à jour l'état du bouton de soumission.
+        checkFormValidity();
+      }, 0);
+    });
 
-    // Calcul initial au chargement de la page
-    calculateDurationsAndEndTime();
-
-    // --- SCROLL VERS LES ERREURS DE VALIDATION ---
-    const errorExplanation = document.getElementById('error-explanation');
-    if (errorExplanation) {
-      errorExplanation.scrollIntoView({
-        behavior: 'smooth', // Pour un défilement fluide
-        block: 'center'     // Centre le bloc d'erreur dans la fenêtre
-      });
-    }
+    // Nettoyage avant que Turbo ne mette la page en cache
+    document.addEventListener('turbo:before-cache', function() {
+      signalementModal.dispose();
+      // On pourrait aussi disposer la modale de confirmation ici si elle posait problème
+    }, { once: true });
   });
-
+  
 </script>

@@ -45,11 +45,8 @@ class Vol < ApplicationRecord
     # Utilise une transaction pour s'assurer que les deux opérations (débit et création de transaction)
     # réussissent ou échouent ensemble, garantissant l'intégrité des données.
     ApplicationRecord.transaction do
-      # 1. Débiter le solde de l'utilisateur
-      user.lock! # Verrouille l'enregistrement utilisateur pour éviter les conditions de concurrence
-      user.update!(solde: user.solde - cost)
-
-      # 2. Créer l'enregistrement comptable correspondant
+      # Créer l'enregistrement comptable. Le callback `after_create` du modèle Transaction
+      # se chargera de mettre à jour le solde de l'utilisateur.
       Transaction.create!(
         user: user,
         date_transaction: self.debut_vol.to_date,

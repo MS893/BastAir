@@ -1,0 +1,13 @@
+<%# On enveloppe la réponse dans un Turbo Frame avec le même ID que celui de la requête %>
+<%= turbo_frame_tag "search_results" do %>
+  <ul class="list-group">
+    <% if users.empty? %>
+      <li class="list-group-item">Aucun adhérent trouvé.</li>
+    <% else %>
+      <% users.each do |user| %>
+        <%# Chaque item a des data-attributes pour que Stimulus puisse récupérer l'ID et le nom %>
+        <li class="list-group-item list-group-item-action" data-action="click->autocomplete#select" data-autocomplete-id-param="<%= user.id %>" data-autocomplete-name-param="<%= user.name %>" style="cursor: pointer;"><%= user.name %></li>
+      <% end %>
+    <% end %>
+  </ul>
+<% end %>
