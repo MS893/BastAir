@@ -17,7 +17,12 @@
         <%= link_to "Créditer mon compte", credit_path, class: "btn btn-light" %>
         <%= link_to "Mon compte", user_path(user), class: "btn btn-outline-light text-white" %>
       </div>
+      <%# Affiche un avertissement si le solde est négatif %>
+      <% if user.solde <= 0 %>
+        <p class="mt-3 small fst-italic">
+          Attention, vous ne pouvez pas voler tant que votre solde est négatif
+        </p>
+      <% end %>
     </div>
   </div>
 </div>
-

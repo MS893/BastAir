@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_31_083042) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_03_154039) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -121,6 +121,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_31_083042) do
     t.index ["user_id"], name: "index_reservations_on_user_id"
   end
 
+  create_table "signalements", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "avion_id", null: false
+    t.text "description", null: false
+    t.string "status", default: "Ouvert", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["avion_id"], name: "index_signalements_on_avion_id"
+    t.index ["user_id"], name: "index_signalements_on_user_id"
+  end
+
   create_table "tarifs", force: :cascade do |t|
     t.integer "annee"
     t.integer "tarif_horaire_avion1"
@@ -225,6 +236,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_31_083042) do
   add_foreign_key "events", "users", column: "admin_id"
   add_foreign_key "reservations", "avions"
   add_foreign_key "reservations", "users"
+  add_foreign_key "signalements", "avions"
+  add_foreign_key "signalements", "users"
   add_foreign_key "transactions", "users"
   add_foreign_key "vols", "avions"
   add_foreign_key "vols", "users"

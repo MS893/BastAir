@@ -33,6 +33,9 @@ Rails.application.routes.draw do
 
   # Route pour récupérer des informations sur les avions (ex: dernier compteur)
   resources :avions, only: [] do
+    # Route pour le formulaire de signalement pour un avion spécifique
+    resources :signalements, only: [:new, :create]
+
     member do
       get :last_compteur
     end

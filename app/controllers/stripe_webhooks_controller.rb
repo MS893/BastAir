@@ -31,8 +31,14 @@ class StripeWebhooksController < ApplicationController
     # Gérer l'événement
     case event.type
     when 'checkout.session.completed'
-      session = event.data.object # contient une session Stripe
-      handle_checkout_session(session) if session.payment_status == 'paid'
+      session = event.data.object
+      # Gère les paiements synchrones (la plupart des cartes)
+      handle_checkout_session(session) if session.payment_status == 'paid' # On vérifie que le paiement est bien passé
+    when 'checkout.session.async_payment_succeeded'
+      puts "1. paiement Stripe réussi"
+      session = event.data.object
+      # Gère les paiements asynchrones (virements, etc.)
+      handle_checkout_session(session)
     else
       puts "Unhandled event type: #{event.type}"
     end
@@ -60,6 +66,7 @@ class StripeWebhooksController < ApplicationController
         return
       end
 
+      puts "2. dans handle_checkout_session"
       # CORRECTION: La description est dans le nom du produit du premier 'line_item'.
       # Lorsque product_data est utilisé, `product` est un ID de produit (chaîne de caractères),
       # pas un objet. La description est directement accessible sur le line_item.
@@ -72,7 +79,7 @@ class StripeWebhooksController < ApplicationController
 
       # On récupère le montant de base initialement voulu par l'utilisateur (avant frais Stripe)
       # pour les cas de test où session.amount_total est 0.
-      intended_base_amount = session.metadata.intended_base_amount.to_f
+      intended_base_amount = session.metadata.intended_base_amount.to_d
 
       tarif_horaire = Tarif.order(annee: :desc).first&.tarif_horaire_avion1 || 150 # 150€ comme valeur par défaut
       prix_bloc_6h = 6 * (tarif_horaire - 5)
@@ -81,26 +88,26 @@ class StripeWebhooksController < ApplicationController
       amount_to_credit = case description
       when "PAIEMENT DE TEST"
         # Crédite un montant fixe de 100€ pour ce cas de test
-        100.0
+        100.0.to_d
       when "Achat d'un bloc de 6h de vol pour mon compte BastAir"
         # On crédite le prix du bloc + le bonus de 30€
-        prix_bloc_6h + 30.0
+        prix_bloc_6h.to_d + 30.0.to_d
       when "Achat d'un bloc de 10h de vol pour mon compte BastAir"
         # On crédite le prix du bloc + le bonus de 100€
-        prix_bloc_10h + 100.0
+        prix_bloc_10h.to_d + 100.0.to_d
       when "Montant choisi pour créditer mon compte BastAir"
         # Pour le montant libre, on crédite le montant initialement choisi par l'utilisateur
         # (avant l'ajout des frais Stripe), surtout utile pour les tests où amount_total peut être 0.
-        intended_base_amount
+        intended_base_amount.to_d
       else
         # Cas de fallback ou description non reconnue.
         # Si amount_total est 0 (test), on crédite 0 pour éviter des soldes négatifs inattendus.
         # Sinon, on prend le montant payé moins les frais.
-        session.amount_total == 0 ? 0.0 : (session.amount_total / 100.0) - 2.0
+        session.amount_total == 0 ? 0.0.to_d : (session.amount_total / 100.0).to_d - 2.0.to_d
       end
 
       # On s'assure que le montant à créditer est bien un nombre
-      return if amount_to_credit.nil? || amount_to_credit.to_f.nan?
+      return if amount_to_credit.nil? || amount_to_credit.nan?
 
       puts "Attempting to credit user #{user.email} with #{amount_to_credit}€ for product: '#{description}'"
 
