@@ -31,8 +31,10 @@
   </div>
 </div>
 
-<%# --- SCRIPT POUR LE CALCUL AUTOMATIQUE DE L'HEURE DE FIN --- %>
+
+<%# --- SCRIPTS --- %>
 <script>
+  
   document.addEventListener('turbo:load', function() {
     const debutVolInput = document.getElementById('vol_debut_vol');
     const avionSelect = document.getElementById('vol_avion_id');
@@ -41,6 +43,8 @@
     const compteurArriveeInput = document.getElementById('vol_compteur_arrivee');
     const dureeVolCentiemesInput = document.getElementById('vol_duree_vol'); // Le champ pour les centièmes
     const dureeVolMnInput = document.getElementById('vol_duree_vol_mn'); // Le champ pour les minutes
+    const soloCheckbox = document.getElementById('vol_solo');
+    const costDisplay = document.getElementById('flight-cost-display');
     const volForm = document.getElementById('vol-form');
 
     function calculateDurationsAndEndTime() {
@@ -48,11 +52,15 @@
       const arriveeValue = parseFloat(compteurArriveeInput.value);
       const debutVolValue = debutVolInput.value;
 
+      let dureeCentiemes = 0;
+
       if (!isNaN(departValue) && !isNaN(arriveeValue) && arriveeValue >= departValue) {
         // 1. Calculer la durée en centièmes
-        const dureeCentiemes = arriveeValue - departValue;
+        dureeCentiemes = arriveeValue - departValue;
         dureeVolCentiemesInput.value = dureeCentiemes.toFixed(2);
         dureeVolMnInput.value = Math.round(dureeCentiemes * 60);
+
+        calculateFlightCost(dureeCentiemes); // Appel au calcul du coût
 
         // 2. Calculer l'heure de fin à partir de cette durée
         if (debutVolValue) {
@@ -66,13 +74,32 @@
           const hours = debutDate.getHours().toString().padStart(2, '0');
           const minutes = debutDate.getMinutes().toString().padStart(2, '0');
 
-          finVolInput.value = `${year}-${month}-${day}T${hours}:${minutes}`;t
+          finVolInput.value = `${year}-${month}-${day}T${hours}:${minutes}`;
         }
       } else {
         // Réinitialiser les champs si les compteurs sont invalides
         dureeVolCentiemesInput.value = '';
         finVolInput.value = '';
+        calculateFlightCost(0); // Réinitialise le coût à 0
       }
+    }
+
+    function calculateFlightCost(dureeCentiemes) {
+      if (!volForm || !costDisplay) return;
+
+      const tarifAvion = parseFloat(volForm.dataset.tarifAvion1);
+      const tarifInstructeur = parseFloat(volForm.dataset.tarifInstructeur);
+      const isEleve = volForm.dataset.userIsEleve === 'true';
+      const isSolo = soloCheckbox ? soloCheckbox.checked : false;
+
+      let totalCost = dureeCentiemes * tarifAvion;
+
+      // Ajouter le coût de l'instructeur si l'utilisateur est un élève et que le vol n'est pas en solo
+      if (isEleve && !isSolo) {
+        totalCost += dureeCentiemes * tarifInstructeur;
+      }
+
+      costDisplay.textContent = `Coût estimé : ${totalCost.toFixed(2)} €`;
     }
 
     // Ajoute des écouteurs d'événements sur les champs qui déclenchent le calcul
@@ -80,6 +107,13 @@
       debutVolInput.addEventListener('input', calculateDurationsAndEndTime);
       compteurDepartInput.addEventListener('input', calculateDurationsAndEndTime);
       compteurArriveeInput.addEventListener('input', calculateDurationsAndEndTime);
+    }
+
+    // Ajoute un écouteur sur la case "solo" si elle existe
+    if (soloCheckbox) {
+      soloCheckbox.addEventListener('change', () => {
+        calculateDurationsAndEndTime(); // Recalcule tout quand la case change
+      });
     }
 
     // Ajoute un écouteur sur le changement d'avion pour pré-remplir le compteur
@@ -156,5 +190,15 @@
 
     // Calcul initial au chargement de la page
     calculateDurationsAndEndTime();
+
+    // --- SCROLL VERS LES ERREURS DE VALIDATION ---
+    const errorExplanation = document.getElementById('error-explanation');
+    if (errorExplanation) {
+      errorExplanation.scrollIntoView({
+        behavior: 'smooth', // Pour un défilement fluide
+        block: 'center'     // Centre le bloc d'erreur dans la fenêtre
+      });
+    }
   });
+
 </script>

@@ -1,3 +1,5 @@
+# app/mailers/user_mailer.rb
+
 class UserMailer < ApplicationMailer
   default from: 'no-reply@bastair.com'
 
@@ -6,14 +8,11 @@ class UserMailer < ApplicationMailer
     @event = attendance.event
     @participant = attendance.user 
     @organizer = @event.admin || User.find_by(admin: true) # Plan B: trouver un admin général
-
     # Si, même après le plan B, aucun organisateur n'est trouvé, on n'envoie pas d'email
     # pour éviter de faire planter l'application.
     return unless @organizer
-
     # On prépare le nom de l'organisateur ici, en un seul endroit.
     @organizer_name = @organizer.name.presence || @organizer.email
-
     mail(to: @organizer.email, subject: "Nouveau participant à votre événement : #{@event.title}")
   end
 
@@ -38,6 +37,26 @@ class UserMailer < ApplicationMailer
   def welcome_email(user)
     @user = user
     mail(to: @user.email, subject: 'Bienvenue chez BastAir !')
+  end
+
+  def expiring_fi_summary(admins, instructors)
+    @instructors = instructors
+    admin_emails = admins.pluck(:email)
+    mail(
+      to: admin_emails,
+      subject: "Résumé des qualifications d'instructeur arrivant à expiration"
+    )
+  end
+
+  def flight_confirmation_email(vol, cost)
+    @vol = vol
+    @user = vol.user
+    @cost = cost
+
+    mail(
+      to: @user.email,
+      subject: "Confirmation de votre vol du #{vol.debut_vol.strftime('%d/%m/%Y')}"
+    )
   end
 
 end

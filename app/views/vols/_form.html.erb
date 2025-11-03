@@ -1,7 +1,16 @@
-<%= form_with(model: vol, local: true, id: 'vol-form') do |form| %>
+<%# On passe les tarifs au formulaire via des attributs data pour que JS puisse les utiliser %>
+<%= form_with(model: vol, local: true, id: 'vol-form', data: {
+      'tarif-avion1': @tarif&.tarif_horaire_avion1 || 0,
+      'tarif-instructeur': @tarif&.tarif_instructeur || 0,
+      'user-is-eleve': current_user.eleve?.to_s
+    }) do |form| %>
+
   <% if vol.errors.any? %>
-    <div class="alert alert-danger">
-      <h5 class="alert-heading"><%= pluralize(vol.errors.count, "erreur") %> a empêché ce vol d'être sauvegardé :</h5>
+    <div id="error-explanation" class="alert alert-danger" role="alert">
+      <h5 class="alert-heading">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        <%= pluralize(vol.errors.count, "erreur") %> a empêché ce vol d'être sauvegardé :
+      </h5>
       <ul>
         <% vol.errors.full_messages.each do |message| %>
           <li><%= message %></li>
@@ -87,10 +96,10 @@
           <%= form.number_field :huile, class: "form-control", step: '0.1' %>
         </div>
         <div class="col-md-3 mb-3">
-          <%= form.label :jour, "Nature du vol" %>
-          <%= form.select :jour,
+          <%= form.label :nature, "Nature du vol" %>
+          <%= form.select :nature,
                 options_for_select([["VFR de jour", "VFR de jour"], ["VFR de nuit", "VFR de nuit"], ["IFR", "IFR"]],
-                                    (vol.respond_to?(:jour) && vol.jour.present?) ? vol.jour : "VFR de jour"),
+                                    (vol.nature.present?) ? vol.nature : "VFR de jour"),
                 {}, { class: "form-select" } %>
         </div>
       </div>
@@ -102,7 +111,8 @@
         <div class="row align-items-center">
           <div class="col-md-4 mb-3">
           <%= form.label :instructeur_id, "Instructeur" %>
-          <%= form.collection_select :instructeur_id, @instructeurs, :id, :name, { prompt: "Sélectionnez un instructeur" }, { class: "form-select" } %>
+          <%= form.collection_select :instructeur_id, @instructeurs, :id, :name, { prompt: "Sélectionnez un instructeur" }, { class: "form-select", "aria-describedby": "instructeurHelp" } %>
+          <div id="instructeurHelp" class="form-text">Instructeur à sélectionner, même en solo.</div>
           </div>
           <div class="col-md-2 mb-3 ms-4">
             <div class="form-check">
@@ -124,7 +134,10 @@
 
       <div class="form-actions mt-5 border-top pt-3 d-flex">
         <button type="button" id="confirm-submission-btn" class="btn btn-success">Enregistrer le vol</button>
-        <%= link_to 'Annuler', root_path, class: 'btn btn-outline-primary ms-2' %>
+        <%= link_to 'Annuler', root_path, class: 'btn btn-outline-primary ms-2 me-3' %>
+        <div id="flight-cost-display" class="align-self-center fw-bold text-success" style="font-size: 1.1rem;">
+          Coût estimé : 0.00 €
+        </div>
         <%= link_to "Signaler une anomalie sur l'avion", "#", class: 'btn btn-outline-danger ms-auto' %>
       </div>
 

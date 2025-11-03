@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  </head>
+  <body>
+    <h1>Résumé des qualifications d'instructeur arrivant à expiration</h1>
+    <p>
+      Bonjour,
+    </p>
+    <p>
+      Voici la liste des instructeurs dont la qualification (FI) arrivera à expiration dans les 30 prochains jours.
+    </p>
+    <table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse; width: 100%;">
+      <thead>
+        <tr style="background-color: #f2f2f2;">
+          <th>Instructeur</th>
+          <th>Email</th>
+          <th>Date d'expiration</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @instructors.each do |instructor| %>
+          <tr>
+            <td><%= instructor.name %></td>
+            <td><%= instructor.email %></td>
+            <td><%= instructor.fi.strftime('%d/%m/%Y') %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+    <p>
+      Chacun de ces instructeurs a reçu une notification individuelle.
+    </p>
+    <p>
+      Cordialement,<br>
+      Le système de gestion BastAir
+    </p>
+  </body>
+</html>

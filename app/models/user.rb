@@ -17,8 +17,7 @@ class User < ApplicationRecord
     president: 'president',
     tresorier: 'tresorier',
     eleve: 'eleve',
-    brevete: 'brevete',
-    instructeur: 'instructeur'
+    brevete: 'brevete'
   }
 
   # fonctions des utilisateurs
@@ -102,9 +101,9 @@ class User < ApplicationRecord
     fonction == ALLOWED_FCT[:brevete]
   end
 
-  # Méthode pour vérifier si l'utilisateur est un instructeur
+  # Un utilisateur est un instructeur si sa date FI est valide et non dépassée.
   def instructeur?
-    fonction == ALLOWED_FCT[:instructeur]
+    fi.present? && fi >= Date.today
   end
 
   # Méthode pour créditer le compte de l'utilisateur de manière sécurisée

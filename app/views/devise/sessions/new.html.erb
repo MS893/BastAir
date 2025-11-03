@@ -22,7 +22,7 @@
             <%= f.label :password, "Mot de passe", class: "form-label" %>
             <div class="input-group" data-controller="password-toggle">
               <%= f.password_field :password, autocomplete: "current-password", class: "form-control", data: { password_toggle_target: "input" } %>
-              <button class="btn btn-outline-secondary" type="button" data-action="click->password-toggle#toggle" aria-label="Afficher ou masquer le mot de passe">
+              <button class="btn btn-outline-primary" type="button" data-action="click->password-toggle#toggle" aria-label="Afficher ou masquer le mot de passe">
                 <i class="bi bi-eye-slash" data-password-toggle-target="icon"></i>
               </button>
             </div>

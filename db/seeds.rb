@@ -82,8 +82,8 @@ eleve_user = User.create!(
   num_licence: Faker::Number.number(digits: 8).to_s,
   date_licence: Faker::Date.backward(days: 365 * 5),
   medical: Faker::Date.forward(days: 365),
-  fi: Faker::Date.forward(days: 365),
-  fe: Faker::Date.forward(days: 365),
+  fi: nil,
+  fe: nil,
   controle: Faker::Date.forward(days: 365),
   solde: Faker::Number.decimal(l_digits: 3, r_digits: 2),
   cotisation_club: Faker::Date.forward(days: 365),
@@ -93,9 +93,39 @@ eleve_user = User.create!(
 )
 puts "✅ Trainee created: #{eleve_user.email}"
 
-# Crée 28 adhérents normaux (non élève)
-puts "\nCreating 28 regular members..."
-28.times do
+# Crée un instructeur
+instructeur_user = User.create!(
+  prenom: "Instructeur",
+  nom: "Qualifie",
+  email: "instructeur@bastair.com",
+  password: "password",
+  password_confirmation: "password",
+  admin: false,
+  date_naissance: Faker::Date.birthday(min_age: 40, max_age: 60),
+  lieu_naissance: Faker::Address.city,
+  profession: "Pilote de ligne",
+  adresse: Faker::Address.full_address,
+  telephone: '0607070707',
+  contact_urgence: "#{Faker::Name.name} - #{Faker::PhoneNumber.phone_number}",
+  num_ffa: Faker::Number.number(digits: 7).to_s,
+  licence_type: "CPL",
+  num_licence: Faker::Number.number(digits: 8).to_s,
+  date_licence: Faker::Date.backward(days: 365 * 10),
+  medical: Faker::Date.forward(days: 365),
+  fi: Faker::Date.forward(days: 730), # Date FI valide pour 2 ans
+  fe: nil,
+  controle: Faker::Date.forward(days: 365),
+  solde: Faker::Number.decimal(l_digits: 3, r_digits: 2),
+  cotisation_club: Faker::Date.forward(days: 365),
+  cotisation_ffa: Faker::Date.forward(days: 365),
+  autorise: true,
+  fonction: "brevete" # La fonction n'est plus 'instructeur'
+)
+puts "✅ Instructor created: #{instructeur_user.email}"
+
+# Crée 27 adhérents normaux (non élève)
+puts "\nCreating 27 regular members..."
+27.times do
   licence = ["PPL", "LAPL"].sample
   User.create!(
     prenom: Faker::Name.first_name,
@@ -114,6 +144,8 @@ puts "\nCreating 28 regular members..."
     num_licence: Faker::Number.number(digits: 8).to_s,
     date_licence: Faker::Date.backward(days: 365 * 10),
     medical: Faker::Date.forward(days: 365),
+    fi: nil,
+    fe: nil,
     controle: Faker::Date.forward(days: 365),
     solde: Faker::Number.decimal(l_digits: 2, r_digits: 2),
     cotisation_club: Faker::Date.forward(days: 365),
@@ -165,22 +197,38 @@ puts "✅ Aircraft created: #{avion.immatriculation}"
 puts "\nCreating 20 flights..."
 aerodromes = ["TFFB", "TFFS", "TFFM", "TFFR", "TFFC", "TFFA"]
 types_vol = ["Standard", "Vol découverte", "Vol d'initiation", "Vol d'essai", "Convoyage", "Vol BIA"]
-all_users = User.all
+
+# On sépare les élèves des autres pour la logique de création des vols
+eleve_users = User.where(fonction: 'eleve')
+other_users = User.where.not(fonction: 'eleve')
+all_users = eleve_users + other_users # On garde une liste complète si besoin
+
+# On récupère l'instructeur créé plus haut
+instructeur = User.find_by(email: 'instructeur@bastair.com')
+
 compteur_actuel = 123.45
 
 20.times do
-  depart_time = Faker::Time.between(from: DateTime.now - 30, to: DateTime.now + 30)
+  depart_time = Faker::Time.between(from: 30.days.ago, to: DateTime.now)
+  
+  # On choisit un utilisateur au hasard AVANT de créer le vol
+  pilote = all_users.sample
+
+  # Génère une durée de vol aléatoire entre 0.55 et 3.05 (centièmes d'heure)
+  duree_vol_aleatoire = Faker::Number.between(from: 0.55, to: 3.05).round(2)
+  
   Vol.create!(
-    user: all_users.sample, # Correctly assign a random user
+    user: pilote,           # On assigne le pilote choisi
     avion: avion,           # Assign the created aircraft
     type_vol: types_vol.sample,
     depart: aerodromes.sample,
     arrivee: aerodromes.sample,
     debut_vol: depart_time,
-    fin_vol: depart_time + 90.minutes,
+    fin_vol: depart_time + (duree_vol_aleatoire * 60).minutes,
     compteur_depart: compteur_actuel.round(2),
-    compteur_arrivee: (compteur_actuel + 1.50).round(2),
-    duree_vol: 1.50,
+    compteur_arrivee: (compteur_actuel + duree_vol_aleatoire).round(2),
+    duree_vol: duree_vol_aleatoire,
+    instructeur_id: pilote.eleve? ? instructeur.id : nil, # On définit l'instructeur si le pilote est un élève
     nb_atterro: [1, 2, 3].sample,
     solo: [true, false].sample,
     supervise: [true, false].sample,

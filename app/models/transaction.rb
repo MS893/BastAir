@@ -16,7 +16,8 @@ class Transaction < ApplicationRecord
     virement: 'Virement',
     cheque: 'Chèque',
     especes: 'Espèces',
-    carte: 'Carte bancaire'
+    carte: 'Carte bancaire',
+    prelevement: 'Prélèvement sur compte'
   }
 
   ALLOWED_TSN = {

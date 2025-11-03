@@ -4,6 +4,7 @@ class CreateVols < ActiveRecord::Migration[8.0]
       # un vol est effectué par un user et est lié à un avion
       t.references :user, foreign_key: { to_table: :users }
       t.references :avion, foreign_key: true
+      t.references :instructeur, foreign_key: { to_table: :users }, null: true
       
       t.string :type_vol        , null: false, default: 'Standard'  # standard, vol découverte, vol d'initiation, vol d'essai, convoyage, vol BIA
       t.string :depart          , null: false                       # aérodrome de départ
@@ -14,7 +15,6 @@ class CreateVols < ActiveRecord::Migration[8.0]
       t.float :compteur_arrivee , precision: 7, scale: 2, null: false
       t.float :duree_vol        , precision: 4, scale: 2, null: false
       t.integer :nb_atterro     , precision: 2, null: false, default: 1, null: false
-      t.string :instructeur
       t.boolean :solo           , null: false, default: false
       t.boolean :supervise      , null: false, default: false
       t.boolean :nav            , null: false, default: false

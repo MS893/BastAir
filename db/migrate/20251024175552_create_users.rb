@@ -18,8 +18,8 @@ class CreateUsers < ActiveRecord::Migration[8.0]
       t.string :type_medical    # Classe 1, Classe 2 ou LAPL
       t.date :medical
       t.date :nuit
-      t.date :fi
-      t.date :fe
+      t.date :fi, null: true
+      t.date :fe, null: true
       t.date :controle
       t.decimal :solde, precision: 8, scale: 2, default: 0.0, null: false
       t.date :cotisation_club
