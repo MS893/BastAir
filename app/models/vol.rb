@@ -50,7 +50,7 @@ class Vol < ApplicationRecord
       Transaction.create!(
         user: user,
         date_transaction: self.debut_vol.to_date,
-        description: "Vol du #{self.debut_vol.strftime('%d/%m/%Y')} sur #{self.avion.immatriculation}",
+        description: "#{self.avion.immatriculation} (#{self.duree_vol.to_s}h)",
         mouvement: 'Dépense',
         montant: cost,
         payment_method: 'Prélèvement sur compte',

@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF--8' http-equiv='Content-Type' />
+  </head>
+  <body>
+    <h1>Nouveau signalement sur l'avion <%= @avion.immatriculation %></h1>
+    <p>Bonjour <%= @recipient.prenom %>,</p>
+    <p>Un nouveau signalement a été enregistré par <strong><%= @user_who_reported.name %></strong> concernant l'avion <strong><%= @avion.immatriculation %></strong>.</p>
+    <p><strong>Description de l'anomalie :</strong></p>
+    <p style="padding: 10px; border: 1px solid #ccc; background-color: #f9f9f9;"><%= @signalement.description %></p>
+    <p>Merci de prendre les mesures nécessaires.</p>
+  </body>
+</html>

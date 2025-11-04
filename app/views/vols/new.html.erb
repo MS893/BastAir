@@ -113,7 +113,9 @@
 
     // --- GESTION DES NOTIFICATIONS (TOAST) ---
     const toastEl = document.getElementById('notificationToast');
-    const toastInstance = bootstrap.Toast.getOrCreateInstance(toastEl);
+    // On initialise le toast avec une durée d'affichage de 3 secondes (au lieu des 5s par défaut).
+    // La valeur est en millisecondes.
+    const toastInstance = bootstrap.Toast.getOrCreateInstance(toastEl, { delay: 3000 });
     const toastBody = document.getElementById('toast-body-content');
     const toastTitle = document.getElementById('toast-title');
     const toastIcon = document.getElementById('toast-icon');

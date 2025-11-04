@@ -12,8 +12,12 @@ class SignalementsController < ApplicationController
 
     respond_to do |format|
       if @signalement.save
-        # Envoyer un email à l'admin/mécanicien ***************************************************************************************** à faire
-        
+        # --- Envoi de l'email de notification ---
+        # On récupère tous les administrateurs et le président
+        recipients = User.where(admin: true).or(User.where(fonction: 'president'))
+        # On envoie l'email à chaque destinataire
+        recipients.each { |recipient| SignalementMailer.new_signalement_notification(recipient, @signalement).deliver_later }
+
         # Si la requête est HTML (formulaire classique), on redirige.
         format.html { redirect_to root_path, notice: "Le signalement sur l'avion #{@avion.immatriculation} a été enregistré avec succès. Merci." }
         # Si la requête est JSON (AJAX), on renvoie une réponse JSON de succès.

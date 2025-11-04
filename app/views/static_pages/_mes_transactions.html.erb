@@ -11,11 +11,12 @@
         <% @transactions.each do |transaction| %>
           <%= link_to transaction_path(transaction), class: "list-group-item list-group-item-action d-flex justify-content-between align-items-center" do %>
             <div>
-              <span class="text-muted"><%= l transaction.date_transaction, format: :short %></span> -
+              <span class="text-muted"><%= l transaction.date_transaction, format: :short %></span> : 
               <strong><%= transaction.description %></strong>
             </div>
             <span class="badge <%= transaction.mouvement == 'Recette' ? 'bg-success' : 'bg-danger' %> rounded-pill fs-6">
-              <%= number_to_currency(transaction.montant, unit: "€", separator: ",", delimiter: " ", format: "%n %u") %>
+              <%# Si c'est une dépense, on affiche un montant négatif %>
+              <%= number_to_currency(transaction.mouvement == 'Recette' ? transaction.montant : -transaction.montant, unit: "€", separator: ",", delimiter: " ", format: "%n %u") %>
             </span>
           <% end %>
         <% end %>
