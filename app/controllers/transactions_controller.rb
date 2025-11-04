@@ -120,6 +120,7 @@ class TransactionsController < ApplicationController
     redirect_to transactions_url, notice: 'La transaction a été supprimée avec succès.'
   end
 
+  
   private
 
   def set_transaction

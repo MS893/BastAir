@@ -70,7 +70,7 @@ Rails.application.routes.draw do
   end
 
   # routes pour les utilisateurs (profils, etc.) avec une route imbriquée pour les avatars
-  resources :users, only: [:show, :edit, :update], constraints: { id: /\d+/ } do
+  resources :users, only: [:index, :show, :edit, :update], constraints: { id: /\d+/ } do
     resources :avatars, only: [:create]
   end
   

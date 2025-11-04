@@ -13,7 +13,14 @@ export default class extends Controller {
   // Déclenché à chaque saisie dans le champ de recherche.
   search() {
     const query = this.inputTarget.value
-    const url = `/users/search?query=${encodeURIComponent(query)}`
+    let url = this.resultsTarget.src || window.location.pathname
+
+    // Si l'URL ne contient pas déjà de paramètres, on ajoute '?' sinon '&'
+    if (url.includes('?')) {
+      url = `${url.split('?')[0]}?query=${encodeURIComponent(query)}`
+    } else {
+      url = `${url}?query=${encodeURIComponent(query)}`
+    }
 
     // Met à jour la source du Turbo Frame, ce qui déclenche une requête vers notre action de recherche.
     this.resultsTarget.src = url

@@ -42,11 +42,14 @@
         <div class="col-md-4 mb-3"><%= form.label :payment_method, "Paiement" %> <%= form.select :payment_method, Transaction::ALLOWED_PYT.values, { prompt: 'Sélectionner...' }, class: "form-select" %></div>
       </div>
       <div class="mb-3">
-        <%= form.label :user_id, "Lié à l'adhérent (recherche)" %>
+        <%= form.label :user_id, "Lié à l'adhérent" %>
         <%# --- Début du composant d'autocomplétion --- %>
-        <div data-controller="autocomplete" class="position-relative">
-          <%# Champ de texte visible pour la recherche %>
-          <input type="text" class="form-control" data-autocomplete-target="input" data-action="input->autocomplete#search" placeholder="Taper un nom..." autocomplete="off">
+        <div data-controller="autocomplete" class="position-relative">          
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-search"></i></span>
+            <%# Champ de texte visible pour la recherche %>
+            <input type="text" class="form-control" data-autocomplete-target="input" data-action="input->autocomplete#search" placeholder="Recherche par nom ou prénom..." autocomplete="off">
+          </div>
           
           <%# Champ caché qui contiendra l'ID de l'utilisateur et sera envoyé avec le formulaire %>
           <%= form.hidden_field :user_id, data: { autocomplete_target: "hidden" } %>

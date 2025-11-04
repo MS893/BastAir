@@ -1,0 +1,23 @@
+<%# On enveloppe la liste dans le turbo-frame pour que les mises à jour AJAX fonctionnent %>
+<%= turbo_frame_tag "user_list_results" do %>
+  <div class="list-group">
+    <% if users.empty? %>
+      <div class="list-group-item">
+        Aucun adhérent ne correspond à votre recherche.
+      </div>
+    <% else %>
+      <% users.each do |user| %>
+        <%# Chaque lien cible le Turbo Frame "user_details" %>
+        <%= link_to user_path(user), class: "list-group-item list-group-item-action d-flex justify-content-between align-items-center", data: { turbo_frame: "user_details" } do %>
+          <div>
+            <h5 class="mb-1"><%= user.name %></h5>
+            <p class="mb-1 text-muted"><%= user.email %></p>
+          </div>
+          <span class="badge <%= user.admin? ? 'bg-danger' : 'bg-secondary' %> rounded-pill">
+            <%= user.fonction.capitalize %>
+          </span>
+        <% end %>
+      <% end %>
+    <% end %>
+  </div>
+<% end %>

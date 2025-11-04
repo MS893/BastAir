@@ -1,0 +1,28 @@
+<% content_for :title, "Liste des Adhérents" %>
+
+<div class="container my-5">
+  <h1 class="text-center mb-4">Liste des Adhérents</h1>
+
+  <div class="row">
+    <%# --- Colonne de gauche : Recherche et Liste --- %>
+    <div class="col-md-5">
+      <div data-controller="autocomplete">
+        <div class="input-group mb-3">
+          <span class="input-group-text"><i class="bi bi-search"></i></span>
+          <input type="text" class="form-control" placeholder="Rechercher un adhérent..." data-autocomplete-target="input" data-action="input->autocomplete#search" autocomplete="off">
+        </div>
+
+        <%= turbo_frame_tag "user_list_results", data: { autocomplete_target: "results" } do %>
+          <%= render 'user_list', users: @users %>
+        <% end %>
+      </div>
+    </div>
+
+    <%# --- Colonne de droite : Détails de l'utilisateur sélectionné --- %>
+    <div class="col-md-7">
+      <%= turbo_frame_tag "user_details" do %>
+        <div class="card h-100"><div class="card-body text-center text-muted d-flex justify-content-center align-items-center"><p>Sélectionnez un adhérent dans la liste pour voir ses détails.</p></div></div>
+      <% end %>
+    </div>
+  </div>
+</div>

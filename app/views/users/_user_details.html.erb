@@ -1,0 +1,28 @@
+<%# On enveloppe la réponse dans un Turbo Frame avec le même ID que celui de la requête %>
+<%= turbo_frame_tag "user_details" do %>
+  <div class="card shadow-sm">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+      <h4 class="mb-0"><%= user.name %></h4>
+      <span class="badge bg-light text-dark"><%= user.fonction.capitalize %></span>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-6">
+          <p><strong>Email :</strong> <%= mail_to user.email %></p>
+          <p><strong>Téléphone :</strong> <%= user.telephone %></p>
+          <p><strong>Date de naissance :</strong> <%= l user.date_naissance, format: :long if user.date_naissance %></p>
+        </div>
+        <div class="col-md-6">
+          <p><strong>Licence :</strong> <%= user.licence_type %> n°<%= user.num_licence %></p>
+          <p><strong>Date de fin de validité :</strong> <span class="fw-bold <%= user.date_licence < Date.today ? 'text-danger' : 'text-success' %>"><%= l user.date_licence, format: :long if user.date_licence %></span></p>
+          <p><strong>Visite médicale :</strong> <span class="fw-bold <%= user.medical < Date.today ? 'text-danger' : 'text-success' %>"><%= l user.medical, format: :long if user.medical %></span></p>
+        </div>
+      </div>
+      <hr>
+      <div class="d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Solde du compte : <span class="badge bg-info fs-6"><%= number_to_currency(user.solde, unit: "€", separator: ",", delimiter: " ") %></span></h5>
+        <%= link_to "Voir le profil complet", user_path(user), class: "btn btn-sm btn-outline-primary" %>
+      </div>
+    </div>
+  </div>
+<% end %>
