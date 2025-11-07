@@ -1,9 +1,33 @@
 class SignalementsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_avion
+  # On ne cherche l'avion que pour les actions `new` et `create`
+  before_action :set_avion, only: [:new, :create]
+  before_action :set_signalement, only: [:show, :edit, :update]
+  before_action :authorize_admin!, only: [:edit, :update]
 
   def new
     @signalement = @avion.signalements.new
+  end
+
+  def index
+    @signalements = Signalement.includes(:user, :avion).order(created_at: :desc).page(params[:page]).per(10)
+  end
+
+  def show
+    # @signalement est chargé par le before_action
+  end
+
+  def edit
+    # @signalement est chargé par le before_action
+    # La vue edit.html.erb sera rendue implicitement
+  end
+
+  def update
+    if @signalement.update(signalement_update_params)
+      redirect_to signalements_path, notice: 'Le statut du signalement a été mis à jour avec succès.'
+    else
+      render :edit, status: :unprocessable_entity
+    end
   end
 
   def create
@@ -32,13 +56,21 @@ class SignalementsController < ApplicationController
   
   private
 
+  def set_signalement
+    @signalement = Signalement.find(params[:id])
+  end
+
   def set_avion
     @avion = Avion.find(params[:avion_id])
   end
 
   def signalement_params
     params.require(:signalement).permit(:description)
-    # Le statut et l'urgence ne sont pas dans le formulaire simple,
-    # ils gardent leur valeur par défaut.
+  end
+
+  # On utilise une méthode de "strong parameters" distincte pour la mise à jour
+  # afin de n'autoriser que la modification du statut.
+  def signalement_update_params
+    params.require(:signalement).permit(:status)
   end
 end

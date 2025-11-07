@@ -14,8 +14,18 @@
         </div>
         <div class="col-md-6">
           <p><strong>Licence :</strong> <%= user.licence_type %> n°<%= user.num_licence %></p>
-          <p><strong>Date de fin de validité :</strong> <span class="fw-bold <%= user.date_licence < Date.today ? 'text-danger' : 'text-success' %>"><%= l user.date_licence, format: :long if user.date_licence %></span></p>
-          <p><strong>Visite médicale :</strong> <span class="fw-bold <%= user.medical < Date.today ? 'text-danger' : 'text-success' %>"><%= l user.medical, format: :long if user.medical %></span></p>
+          <p>
+            <strong>Date de fin de validité :</strong>
+            <% if user.date_licence.present? %>
+              <span class="fw-bold <%= user.date_licence < Date.today ? 'text-danger' : 'text-success' %>"><%= l user.date_licence, format: :long %></span>
+            <% end %>
+          </p>
+          <p>
+            <strong>Visite médicale :</strong>
+            <% if user.medical.present? %>
+              <span class="fw-bold <%= user.medical < Date.today ? 'text-danger' : 'text-success' %>"><%= l user.medical, format: :long %></span>
+            <% end %>
+          </p>
         </div>
       </div>
       <hr>

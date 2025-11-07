@@ -1,0 +1,42 @@
+<% content_for :title, "Mes Vols" %>
+
+<div class="container my-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="mb-0">Mes Vols</h1>
+    <%= link_to "Enregistrer un nouveau vol", new_vol_path, class: "btn btn-primary" %>
+  </div>
+
+  <% if @vols.any? %>
+    <div class="table-responsive">
+      <table class="table table-striped table-hover">
+        <thead class="table-light">
+          <tr>
+            <th>Date</th>
+            <th>Avion</th>
+            <th>Départ</th>
+            <th>Arrivée</th>
+            <th class="text-end">Durée (h)</th>
+            <th class="text-end">Atterrissages</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @vols.each do |vol| %>
+            <tr>
+              <td><%= l vol.debut_vol, format: :short if vol.debut_vol %></td>
+              <td><%= vol.avion.immatriculation %></td>
+              <td><%= vol.depart %></td>
+              <td><%= vol.arrivee %></td>
+              <td class="text-end"><%= '%.2f' % vol.duree_vol %></td>
+              <td class="text-end"><%= vol.nb_atterro %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+    <div class="d-flex justify-content-center mt-4">
+      <%= paginate @vols %>
+    </div>
+  <% else %>
+    <p class="text-center text-muted">Vous n'avez encore enregistré aucun vol.</p>
+  <% end %>
+</div>

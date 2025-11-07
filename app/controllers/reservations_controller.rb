@@ -5,18 +5,36 @@ class ReservationsController < ApplicationController
 
   def new
     @reservation = Reservation.new
-    # Vous pouvez ajouter ici la logique pour pré-remplir le formulaire si nécessaire
+    # On charge les données nécessaires pour les listes déroulantes du formulaire
+    @avions = Avion.all
+    @instructeurs = User.where("fi IS NOT NULL AND fi >= ?", Date.today).order(:nom)
   end
 
   def create
     @reservation = current_user.reservations.build(reservation_params)
+
+    # On pré-remplit le titre de l'événement avec l'immatriculation de l'avion
+    @reservation.summary = "Réservation #{Avion.find(@reservation.avion_id).immatriculation}" if @reservation.avion_id.present?
+
     if @reservation.save
+      # --- Synchronisation avec Google Calendar ---
+      # On instancie le service (qui s'authentifie via le compte de service) et on crée l'événement.
+      GoogleCalendarService.new.create_event_for_app(@reservation)
+
       redirect_to root_path, notice: 'Votre réservation a été créée avec succès.'
     else
+      # On recharge les données pour que le formulaire puisse se ré-afficher avec les erreurs
+      @avions = Avion.all
+      @instructeurs = User.where("fi IS NOT NULL AND fi >= ?", Date.today).order(:nom)
       render :new, status: :unprocessable_entity
     end
   end
 
+  def agenda
+    @calendar_id = ENV['GOOGLE_CALENDAR_ID']
+  end
+
+  
   private
 
   # vérifie si l'adhérent a un solde positif ou pas
@@ -51,6 +69,6 @@ class ReservationsController < ApplicationController
   end
 
   def reservation_params
-    params.require(:reservation).permit(:avion_id, :date_debut, :date_fin, :instruction, :fi, :type_vol)
+    params.require(:reservation).permit(:avion_id, :start_time, :end_time, :summary, :instruction, :fi, :type_vol)
   end
 end

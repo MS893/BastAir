@@ -1,0 +1,28 @@
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="mb-0">Modifier le signalement n°<%= @signalement.id %></h3>
+        </div>
+        <div class="card-body">
+          <p><strong>Avion :</strong> <%= @signalement.avion.immatriculation %></p>
+          <p><strong>Signalé par :</strong> <%= @signalement.user.full_name %></p>
+          <p><strong>Le :</strong> <%= l @signalement.created_at, format: :long %></p>
+          <p><strong>Description :</strong></p>
+          <blockquote class="blockquote text-primary"><%= @signalement.description %></blockquote>
+
+          <%= simple_form_for @signalement do |f| %>
+            <div class="d-flex align-items-center mb-3">
+              <%= f.label :status, 'Statut du signalement :', class: 'me-3 mb-0' %>
+              <%= f.input_field :status, collection: ['Ouvert', 'En cours', 'Résolu'], prompt: 'Choisir un statut', class: 'form-select w-auto' %>
+            </div>
+            
+            <%= f.button :submit, 'Mettre à jour le statut', class: 'btn btn-primary mt-4 me-2' %>
+            <%= link_to 'Annuler', signalements_path, class: 'btn btn-secondary mt-4' %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

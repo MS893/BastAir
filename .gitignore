@@ -4,9 +4,6 @@
 # belong in git's global ignore instead:
 # `$XDG_CONFIG_HOME/git/ignore` or `~/.config/git/ignore`
 
-# Ignore Google ID client
-client_secret_116956730384-s3ph8gf0op1juca1oflgu59511bjhe0g.apps.googleusercontent.com.json
-
 # Ignore bundler config.
 /.bundle
 
@@ -35,6 +32,8 @@ client_secret_116956730384-s3ph8gf0op1juca1oflgu59511bjhe0g.apps.googleuserconte
 
 # Ignore master key for decrypting credentials and more.
 /config/master.key
+# Ignore Google ID client
+/config/google/
 
 # Ignore node_modules.
 /node_modules

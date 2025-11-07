@@ -25,6 +25,9 @@ class EventsController < ApplicationController
     @event.price ||= 0
 
     if @event.save
+      # --- Synchronisation avec Google Calendar ---
+      GoogleCalendarService.new.create_event_for_app(@event)
+
       redirect_to root_path, notice: "L'événement a été créé avec succès."
     else
       render :new, status: :unprocessable_entity

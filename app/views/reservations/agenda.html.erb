@@ -1,0 +1,16 @@
+<% content_for :title, "Agenda des Réservations" %>
+
+<div class="container my-5">
+  <h1 class="text-center mb-4">Agenda des Réservations</h1>
+
+  <% if @calendar_id.present? %>
+    <div class="ratio ratio-16x9">
+      <%# On ajoute &mode=WEEK pour la vue semaine et &wkst=2 pour commencer le Lundi %>
+      <iframe src="https://calendar.google.com/calendar/embed?src=<%= u(@calendar_id) %>&ctz=Europe/Paris&mode=WEEK&wkst=2" style="border: 0" wdth="800" height="600" frameborder="0" scrolling="no"></iframe>
+    </div>
+  <% else %>
+    <div class="alert alert-warning text-center">
+      L'agenda n'est pas encore configuré. Veuillez contacter un administrateur.
+    </div>
+  <% end %>
+</div>

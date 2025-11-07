@@ -1,41 +1,48 @@
 class User < ApplicationRecord
-  # Include default devise modules. Others available are:
-  # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
+  # == Constants ==============================================================
+  # Fonctions des utilisateurs
+  ALLOWED_FCT = {
+    president: 'president',
+    tresorier: 'tresorier',
+    eleve: 'eleve',
+    brevete: 'brevete'
+  }.freeze
+  # Types de licence autorisés
+  ALLOWED_LIC = {
+    atpl: 'ATPL',
+    cpl: 'CPL',
+    ppl: 'PPL',
+    lapl: 'LAPL'
+  }.freeze
+  # Types de visite médicale autorisés
+  ALLOWED_MED = {
+    class1: 'Classe 1',
+    class2: 'Classe 2',
+    lapl: 'LAPL'
+  }.freeze
+
+  # == Devise =================================================================
+  # Include default devise modules. Others available are : :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable,
           :registerable,
           :recoverable,
           :rememberable,
           :validatable
 
-  # Turbo Streams pour la mise à jour du solde en temps réel
-  # On s'assure que le solde est toujours un Decimal, avec 0.0 par défaut.
-  attribute :solde, :decimal, default: 0.0
-  broadcasts_to ->(user) { [user, "solde"] }, inserts_by: :prepend
+  # == Associations ===========================================================
+  has_many :vols, dependent: :destroy
+  has_many :transactions, dependent: :destroy
+  has_many :attendances, dependent: :destroy
+  has_many :events, through: :attendances
+  has_many :signalements, dependent: :destroy
+  has_many :reservations, dependent: :destroy # <-- Ligne ajoutée pour corriger le bug
+  # Événements qu'un administrateur a créés
+  has_many :created_events, foreign_key: 'admin_id', class_name: 'Event', dependent: :destroy
+  has_many :attended_events, through: :attendances, source: :event
+  # ActiveStorage
+  has_one_attached :avatar, dependent: :purge
 
-  # fonctions des utilisateurs
-  ALLOWED_FCT = {
-    president: 'president',
-    tresorier: 'tresorier',
-    eleve: 'eleve',
-    brevete: 'brevete'
-  }
-
-  # fonctions des utilisateurs
-  ALLOWED_LIC = {
-    atpl: 'ATPL',
-    cpl: 'CPL',
-    ppl: 'PPL',
-    lapl: 'LAPL'
-  }
-
-  # Types de visite médicale autorisés
-  ALLOWED_MED = {
-    class1: 'Classe 1',
-    class2: 'Classe 2',
-    lapl: 'LAPL'
-  }
-
-  # Ajout des validations
+  # == Validations ============================================================
   validates :nom, presence: true
   validates :prenom, presence: true
   validates :email,
@@ -49,32 +56,25 @@ class User < ApplicationRecord
   validates :num_ffa, presence: true, format: { with: /\A\d{7}\z/, message: "doit être composé de 7 chiffres" }, allow_blank: true
   validates :type_medical, presence: true, inclusion: { in: ALLOWED_MED.values }, allow_blank: true
 
-  # ActiveStorage
-  has_one_attached :avatar, dependent: :purge
-
-  # Actions
+  # == Actions ===============================================================
   after_create :welcome_send
   after_update :check_for_negative_balance, if: :saved_change_to_solde?
 
-  # Événements qu'un administrateur a créés
-  has_many :created_events, foreign_key: 'admin_id', class_name: 'Event', dependent: :destroy
-
-  # Événements auxquels l'utilisateur participe
-  has_many :attendances, dependent: :destroy
-  has_many :attended_events, through: :attendances, source: :event
-
-  # Transactions
-  has_many :transactions
-
-  # Signalements
-  has_many :signalements, dependent: :destroy
+  # Turbo Streams pour la mise à jour du solde en temps réel
+  # On s'assure que le solde est toujours un Decimal, avec 0.0 par défaut.
+  attribute :solde, :decimal, default: 0.0
+  broadcasts_to ->(user) { [user, "solde"] }, inserts_by: :prepend
 
 
-  
+
   def welcome_send
     UserMailer.welcome_email(self).deliver_now
   end
   
+  def full_name
+    "#{prenom} #{nom}".strip
+  end
+
   # method pour retourner le nom complet de l'utilisateur
   def name
     "#{prenom} #{nom}"

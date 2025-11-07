@@ -48,6 +48,17 @@
               <li><%= link_to "Afficher les vols", vols_path, class: "dropdown-item" %></li>
             </ul>
           </div>
+          <div class="card mt-4">
+            <div class="card-body">
+              <h5 class="card-title">Intégration Google Calendar</h5>
+              <% if current_user.google_access_token.present? %>
+                <p class="text-success">Connecté à Google Calendar.</p>
+              <% else %>
+                <p>Connectez votre compte pour synchroniser les réservations.</p>
+                <%= link_to "Se connecter à Google", google_auth_redirect_path, class: "btn btn-primary" %>
+              <% end %>
+            </div>
+          </div>
         <% end %>
       </div>
     </div>

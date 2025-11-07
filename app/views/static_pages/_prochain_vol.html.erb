@@ -27,7 +27,7 @@
     <% if @next_reservation %>
       <%= link_to "Gérer mes réservations", '#', class: "btn btn-primary mt-auto" %>
     <% else %>
-      <%= link_to "Réserver un vol", '#', class: "btn btn-primary mt-auto" %>
+      <%= link_to "Réserver un vol", new_reservation_path, class: "btn btn-primary mt-auto" %>
     <% end %>
 
   </div>

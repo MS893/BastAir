@@ -2,8 +2,8 @@ class UsersController < ApplicationController
   before_action :authenticate_user!
   before_action :set_user, only: [:show]
   before_action :authorize_user, only: [:show]
-  before_action :authorize_admin!, only: [:index] # Seuls les admins peuvent voir la liste
-  
+  before_action :authorize_admin!, only: [:index] # Seuls les admins peuvent voir la liste des users
+
   def index
     @users = User.order(:nom, :prenom)
     if params[:query].present?
@@ -39,9 +39,16 @@ class UsersController < ApplicationController
     # Si ce n'est pas une requête Turbo Frame, Rails rendra implicitement `show.html.erb`.
   end
 
+  # Action pour afficher la liste des vols d'un utilisateur spécifique
+  def vols
+    @user = User.find(params[:id])
+    authorize_user # On s'assure que l'utilisateur a le droit de voir cette page
+    @vols = @user.vols.order(debut_vol: :desc).page(params[:page]).per(20)
+  end
+
   
   private
-  
+
   def set_user
     @user = User.find(params[:id])
   end

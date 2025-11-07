@@ -50,7 +50,7 @@ admin_user = User.create!(
   num_ffa: Faker::Number.number(digits: 7).to_s,
   licence_type: "ATPL",
   num_licence: Faker::Number.number(digits: 8).to_s,
-  date_licence: Faker::Date.backward(days: 365 * 5),
+  date_licence: "2026-12-31",
   medical: Faker::Date.forward(days: 365),
   fi: Faker::Date.forward(days: 365),
   fe: Faker::Date.forward(days: 365),
@@ -79,8 +79,8 @@ eleve_user = User.create!(
   contact_urgence: "#{Faker::Name.name} - #{Faker::PhoneNumber.phone_number}",
   num_ffa: Faker::Number.number(digits: 7).to_s,
   licence_type: "PPL",
-  num_licence: Faker::Number.number(digits: 8).to_s,
-  date_licence: Faker::Date.backward(days: 365 * 5),
+  num_licence: nil,
+  date_licence: nil,
   medical: Faker::Date.forward(days: 365),
   fi: nil,
   fe: nil,
@@ -110,7 +110,7 @@ instructeur_user = User.create!(
   num_ffa: Faker::Number.number(digits: 7).to_s,
   licence_type: "CPL",
   num_licence: Faker::Number.number(digits: 8).to_s,
-  date_licence: Faker::Date.backward(days: 365 * 10),
+  date_licence: Faker::Date.backward(days: 365),
   medical: Faker::Date.forward(days: 365),
   fi: Faker::Date.forward(days: 730), # Date FI valide pour 2 ans
   fe: nil,
@@ -253,8 +253,8 @@ puts "\nCreating bookings..."
   Reservation.create!(
     user: all_users.sample, # Correctly assign a random user
     avion: avion,           # Assign the created aircraft
-    date_debut: date_vol,
-    date_fin: date_vol + 60.minutes,
+    start_time: date_vol,
+    end_time: date_vol + 60.minutes,
     instruction: [true, false].sample,
     fi: "Toto",
     type_vol: types_vol.sample

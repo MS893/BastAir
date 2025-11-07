@@ -21,6 +21,9 @@
         </li>
         <% if user_signed_in? %>
           <li class="nav-item">
+            <%= link_to "Agenda", agenda_path, class: "nav-link #{'active' if current_page?(agenda_path)}" %>
+          </li>
+          <li class="nav-item">
             <%= link_to "Évènements", events_path, class: "nav-link #{'active' if current_page?(events_path)}" %>
           </li>
           <li class="nav-item">

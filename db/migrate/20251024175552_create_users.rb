@@ -27,6 +27,10 @@ class CreateUsers < ActiveRecord::Migration[8.0]
       t.boolean :autorise
       t.boolean :admin, default: false, null: false
       t.string :fonction     # president, tresorier ou secretaire pour les admins, et eleve ou brevete pour les autres
+      # pour accéder au calendar de Google
+      t.string :google_access_token
+      t.string :google_refresh_token
+      t.datetime :google_token_expires_at
 
       t.timestamps
     end

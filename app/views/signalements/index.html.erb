@@ -1,0 +1,41 @@
+<% content_for :title, "Liste des Signalements" %>
+
+<div class="container my-5">
+  <h2 class="text-center mb-4">Historique des Signalements</h2>
+
+  <% if @signalements.any? %>
+    <div class="list-group">
+      <% @signalements.each do |signalement| %>
+        <div class="list-group-item">
+          <div class="d-flex w-100 justify-content-between align-items-start">
+            <h5 class="mb-1">
+              <span class="badge bg-primary me-2"><%= signalement.avion.immatriculation %></span>
+              Signalé par : <%= signalement.user.full_name %>
+            </h5>
+            <small class="text-muted"><%= time_ago_in_words(signalement.created_at) %></small>
+          </div>
+          <p class="mb-1 mt-2"><%= signalement.description %></p>
+          <div class="d-flex justify-content-between align-items-center mt-2">
+            <small>
+              Statut :
+              <span class="badge <%= signalement_status_badge_class(signalement.status) %>"><%= signalement.status %></span>
+            </small>
+            <%# Ce lien ne s'affiche que pour les administrateurs %>
+            <% if current_user.admin? %>
+              <%= link_to 'Modifier', edit_signalement_path(signalement), class: 'btn btn-sm btn-outline-warning' %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="d-flex justify-content-center mt-4">
+      <%= paginate @signalements %>
+    </div>
+  <% else %>
+    <div class="alert alert-success text-center">
+      <i class="bi bi-check-circle-fill me-2"></i>
+      Aucun signalement à afficher. Tout est en ordre !
+    </div>
+  <% end %>
+</div>

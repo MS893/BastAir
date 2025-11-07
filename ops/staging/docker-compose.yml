@@ -1,0 +1,30 @@
+# --- ops/staging/docker-compose.yml ---
+# Usage: docker compose -f ops/staging/docker-compose.yml up -d
+
+services:
+  web:
+    build: .
+    container_name: nomapp-staging
+    environment:
+      RAILS_ENV: production
+    env_file:
+      - ../../.env
+    volumes:
+      - nomapp-staging-data:/rails/db
+    ports:
+      - "3001:3000"
+    labels:
+      - "traefik.enable=false"
+      - "traefik.http.routers.nomapp-staging.rule=Host(`staging.tondomaine.com`)"
+      - "traefik.http.routers.nomapp-staging.entrypoints=websecure"
+      - "traefik.http.routers.nomapp-staging.tls=true"
+      - "traefik.http.routers.nomapp-staging.tls.certresolver=letsencrypt"
+    networks:
+      - traefik
+
+volumes:
+  nomapp-staging-data:
+
+networks:
+  traefik:
+    external: true

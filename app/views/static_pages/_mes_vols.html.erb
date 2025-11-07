@@ -5,9 +5,9 @@
     </h5>
   </div>
   <div class="d-grid gap-2">
-    <%= link_to "Signalements sur l'avion", '#', class: "btn btn-outline-primary mt-3 ms-4 me-4" %>
+    <%= link_to "Voir les signalements", signalements_path, class: "btn btn-outline-primary mt-3 ms-4 me-4" %>
     <%= link_to "Retour de vol", new_vol_path, class: "btn btn-success mt-3 ms-4 me-4 fw-bold" %>
-    <%= link_to "Mes derniers vols", '#', class: "btn btn-outline-primary ms-4 me-4" %>
+    <%= link_to "Mes derniers vols", vols_user_path(current_user.id), class: "btn btn-outline-primary ms-4 me-4" %>
     <p class="text-center fw-bold mt-3 mb-0">Retour d'expérience suite à un souci en vol :</p>
     <%= link_to "REX FFA", 'https://rex.ffa-aero.fr/login', class: "btn btn-warning ms-4 me-4 mb-3 text-black fw-bold", target: '_blank' %>
   </div>

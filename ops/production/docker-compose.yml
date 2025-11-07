@@ -1,0 +1,30 @@
+# --- ops/production/docker-compose.yml ---
+# Usage: docker compose -f ops/production/docker-compose.yml up -d
+
+services:
+  web:
+    build: .
+    container_name: nomapp-prod
+    environment:
+      RAILS_ENV: production
+    env_file:
+      - ../../.env
+    volumes:
+      - nomapp-prod-data:/rails/db
+    ports:
+      - "3002:3000"
+    labels:
+      - "traefik.enable=false"
+      - "traefik.http.routers.nomapp-prod.rule=Host(`example.com`)"
+      - "traefik.http.routers.nomapp-prod.entrypoints=websecure"
+      - "traefik.http.routers.nomapp-prod.tls=true"
+      - "traefik.http.routers.nomapp-prod.tls.certresolver=letsencrypt"
+    networks:
+      - traefik
+
+volumes:
+  tta-prod-data:
+
+networks:
+  traefik:
+    external: true

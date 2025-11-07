@@ -1,15 +1,20 @@
 Rails.application.routes.draw do
 
   # --- Routes pour les utilisateurs et l'authentification ---
-  resources :users do
-    get :search, on: :collection # Ajoute la route GET /users/search
+  resources :users, only: [:index, :show, :edit, :update], constraints: { id: /\d+/ } do
+    collection do
+      get :search # Ajoute la route GET /users/search
+    end
+    get 'vols', on: :member # Ajoute la route GET /users/:id/vols
+    resources :avatars, only: [:create]
   end
 
   # Configuration de Devise :
   # On désactive la création de compte publique (gérée par l'admin).
   # On regroupe les routes de Devise ici pour éviter les conflits.
   devise_for :users, 
-    skip: [:registrations], # On désactive les routes d'inscription publiques
+    path: 'auth', # On préfixe les routes Devise avec 'auth' pour éviter les conflits (ex: /auth/sign_in)
+    skip: [:registrations], # On désactive les routes d'inscription publiques publiques
     controllers: { 
       sessions: 'users_auth/sessions', # Contrôleur personnalisé pour la connexion (avec reCAPTCHA)
       passwords: 'users_auth/passwords' # Contrôleur personnalisé pour les mots de passe
@@ -23,6 +28,11 @@ Rails.application.routes.draw do
     get 'users/sign_out' => 'users_auth/sessions#destroy', as: 'destroy_user_session_get'
   end
 
+  get 'agenda', to: 'reservations#agenda'
+  get 'faq', to: 'static_pages#faq'
+
+  # Routes pour la création de réservations
+  resources :reservations, only: [:new, :create]
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
   # Defines the root path route ("/")
@@ -45,6 +55,9 @@ Rails.application.routes.draw do
       get :last_compteur
     end
   end
+
+  # Route pour le liste des signalements sur un avion
+  resources :signalements, only: [:index, :show, :edit, :update]
 
   # routes pour l'administration
   namespace :admin do
@@ -69,11 +82,6 @@ Rails.application.routes.draw do
     resources :attendances, only: [:create, :destroy]
   end
 
-  # routes pour les utilisateurs (profils, etc.) avec une route imbriquée pour les avatars
-  resources :users, only: [:index, :show, :edit, :update], constraints: { id: /\d+/ } do
-    resources :avatars, only: [:create]
-  end
-  
   # Stripe Checkout
   get 'checkout', to: 'checkout#show'
   post 'checkout', to: 'checkout#create'
@@ -94,8 +102,6 @@ Rails.application.routes.draw do
   get 'agenda_instructeurs', to: 'static_pages#agenda_instructeurs'
 
   # routes pour les pages statiques du footer
-  get 'faq', to: 'static_pages#faq'
-  get 'contact', to: 'static_pages#contact'
   post 'contact', to: 'static_pages#create_contact' # Ajout de la route pour la soumission du formulaire
   get 'team', to: 'static_pages#team'
   get 'privacy_policy', to: 'static_pages#privacy_policy'
@@ -103,6 +109,12 @@ Rails.application.routes.draw do
   # Route pour gérer le téléchargement des fichiers
   get 'download/:filename', to: 'static_pages#download', as: 'download_file', constraints: { filename: /[^\/]+/ }
   
+  # --- Routes pour l'authentification Google Calendar ---
+  namespace :google_auth do
+    get 'redirect', to: 'authentication#redirect', as: 'redirect'
+    get 'callback', to: 'authentication#callback', as: 'callback'
+  end
+
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.
   # Health check

@@ -1,0 +1,31 @@
+# --- ops/dev/docker-compose.yml ---
+# Usage: docker compose -f ops/dev/docker-compose.yml up
+
+services:
+  web:
+    build: .
+    container_name: nomapp-dev
+    environment:
+      RAILS_ENV: development
+    env_file:
+      - ../../.env
+    volumes:
+      - nomapp-dev-data:/rails/db
+    ports:
+      - "3000:3000"
+    command: ["./bin/rails", "server", "-b", "0.0.0.0"]
+    labels:
+      - "traefik.enable=false"
+      - "traefik.http.routers.nomapp-dev.rule=Host(`dev.tondomaine.com`)"
+      - "traefik.http.routers.nomapp-dev.entrypoints=websecure"
+      - "traefik.http.routers.nomapp-dev.tls=true"
+      - "traefik.http.routers.nomapp-dev.tls.certresolver=letsencrypt"
+    networks:
+      - traefik
+
+volumes:
+  nomapp-dev-data:
+
+networks:
+  traefik:
+    external: true
