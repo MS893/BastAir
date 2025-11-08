@@ -3,6 +3,32 @@
 <div class="container my-5">
   <h2 class="text-center mb-4">Historique des Signalements</h2>
 
+  <%# --- Formulaire de filtres --- %>
+  <div class="card mb-4">
+    <div class="card-body">
+      <%= form_with(url: signalements_path, method: :get, class: "row g-3 align-items-center") do |form| %>
+        <div class="col-md-4">
+          <%= form.label :by_status, "Filtrer par statut :", class: "form-label" %>
+          <%= form.select :by_status, 
+                          options_for_select(Signalement::STATUS_OPTIONS, params[:by_status]), 
+                          { include_blank: 'Tous les statuts' }, 
+                          class: "form-select" %>
+        </div>
+        <div class="col-md-4">
+          <%= form.label :by_avion, "Filtrer par avion :", class: "form-label" %>
+          <%= form.select :by_avion, 
+                          options_from_collection_for_select(@avions, :id, :immatriculation, params[:by_avion]), 
+                          { include_blank: 'Tous les avions' }, 
+                          class: "form-select" %>
+        </div>
+        <div class="col-md-4 d-flex align-items-end">
+          <%= form.submit "Filtrer", class: "btn btn-primary ms-5 mt-4" %>
+          <%= link_to "Réinitialiser", signalements_path, class: "btn btn-secondary ms-3 mt-4" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
   <% if @signalements.any? %>
     <div class="list-group">
       <% @signalements.each do |signalement| %>

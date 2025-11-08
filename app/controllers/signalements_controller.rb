@@ -10,7 +10,18 @@ class SignalementsController < ApplicationController
   end
 
   def index
-    @signalements = Signalement.includes(:user, :avion).order(created_at: :desc).page(params[:page]).per(10)
+    # Pour le formulaire de filtre
+    @avions = Avion.order(:immatriculation)
+
+    # Base de la requête
+    @signalements = Signalement.includes(:user, :avion)
+
+    # Application des filtres s'ils sont présents dans les paramètres
+    @signalements = @signalements.where(status: params[:by_status]) if params[:by_status].present?
+    @signalements = @signalements.where(avion_id: params[:by_avion]) if params[:by_avion].present?
+
+    # Tri et pagination sur la collection filtrée
+    @signalements = @signalements.order(created_at: :desc).page(params[:page]).per(10)
   end
 
   def show

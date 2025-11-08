@@ -1,0 +1,48 @@
+const CACHE_NAME = `bastair-cache-<%= Time.now.to_i %>`;
+
+// Liste des URLs à mettre en cache dès l'installation du service worker.
+// Nous mettons en cache la page d'accueil (le tableau de bord) et les assets principaux.
+const PRECACHE_URLS = [
+  '/', // La page d'accueil/dashboard
+  '<%= signalements_path %>', // La page des signalements
+  '<%= faq_path %>',          // La page FAQ
+  '<%= asset_path("application.js") %>',
+  '<%= asset_path("application.css") %>'
+];
+
+// Étape d'installation : on ouvre le cache et on y ajoute nos fichiers.
+self.addEventListener('install', (event) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then(cache => cache.addAll(PRECACHE_URLS))
+      .then(() => self.skipWaiting())
+  );
+});
+
+// Étape d'activation : on supprime les anciens caches pour ne garder que le nouveau.
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames.filter(name => name.startsWith('bastair-cache-') && name !== CACHE_NAME)
+                  .map(name => caches.delete(name))
+      );
+    })
+  );
+});
+
+// Étape de fetch : on intercepte les requêtes réseau.
+self.addEventListener('fetch', (event) => {
+  // On ne gère que les requêtes GET
+  if (event.request.method !== 'GET') {
+    return;
+  }
+
+  event.respondWith(
+    caches.match(event.request)
+      .then(cachedResponse => {
+        // Si la ressource est dans le cache, on la retourne.
+        return cachedResponse || fetch(event.request);
+      })
+  );
+});

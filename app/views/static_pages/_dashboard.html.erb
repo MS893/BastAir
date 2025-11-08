@@ -1,6 +1,10 @@
 <div class="container-fluid pt-4">
   
-  <h2 class="mb-5 text-center">Bienvenue, <%= current_user.prenom %></h2>
+  <h2 class="mb-5 text-center">Bienvenue 
+    <%= current_user.prenom %>
+    <%= link_to "Proroger / renouveler ma qualification SEP", 'https://sigebelext.aviation-civile.gouv.fr/sigebelext/identificationpn.htm', class: "btn btn-outline-primary ms-5", target: '_blank' %>
+  </h2>
+
   <%= turbo_stream_from current_user %>
 
   <div class="row g-4">

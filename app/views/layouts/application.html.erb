@@ -41,6 +41,8 @@
 
     <%= javascript_importmap_tags %>
     <%= yield :head %>
+    <%= tag.link rel: "manifest", href: pwa_manifest_path %>
+
   </head>
 
   <body class="d-flex flex-column min-vh-100">

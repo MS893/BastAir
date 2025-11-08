@@ -13,3 +13,14 @@ document.addEventListener("turbo:load", function () {
     return new bootstrap.Tooltip(tooltipTriggerEl);
   });
 });
+
+// Enregistre le service worker pour la PWA
+if (navigator.serviceWorker) {
+  navigator.serviceWorker.register('/service-worker.js')
+    .then(registration => {
+      console.log('Service Worker enregistré avec succès:', registration);
+    })
+    .catch(error => {
+      console.log('Échec de l\'enregistrement du Service Worker:', error);
+    });
+}
