@@ -87,3 +87,27 @@ function syncNewSignalements() {
     });
   });
 }
+
+// --- Étape de réception des notifications Push ---
+
+// Le service worker écoute l'événement "push" envoyé par le serveur.
+self.addEventListener("push", async (event) => {
+  const { title, options } = await event.data.json();
+  // Il affiche la notification avec les informations reçues.
+  event.waitUntil(self.registration.showNotification(title, options));
+});
+
+// Le service worker écoute le clic sur une notification.
+self.addEventListener("notificationclick", function(event) {
+  event.notification.close(); // Ferme la notification
+  // Ouvre la page spécifiée dans les données de la notification.
+  event.waitUntil(
+    clients.matchAll({ type: "window" }).then((clientList) => {
+      // Si l'onglet est déjà ouvert, on le focus.
+      const client = clientList.find(c => c.url === event.notification.data.path && 'focus' in c);
+      if (client) return client.focus();
+      // Sinon, on ouvre un nouvel onglet.
+      if (clients.openWindow) return clients.openWindow(event.notification.data.path);
+    })
+  );
+});
