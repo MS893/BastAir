@@ -581,9 +581,19 @@
         // On retire la couleur verte de tous les boutons
         document.querySelectorAll('.accordion-button').forEach(button => {
           button.classList.remove('bg-success', 'text-white');
-          // On réinitialise l'état de verrouillage
-          updateAccordionLockState();
         });
+
+        // On ferme tous les accordéons et on ouvre le premier
+        const accordionCollapses = document.querySelectorAll('.accordion-collapse');
+        accordionCollapses.forEach((collapseElement, index) => {
+          const bsCollapse = new bootstrap.Collapse(collapseElement, {
+            toggle: false
+          });
+          bsCollapse.hide();
+        });
+
+        // On met à jour l'état de verrouillage après avoir géré les accordéons
+        updateAccordionLockState();
       }
     };
 
