@@ -1,6 +1,8 @@
 <div class="card h-100 shadow">
   <div class="card-body d-flex flex-column">
-    <h5 class="card-title"><i class="bi bi-airplane me-2"></i>Prochain vol</h5>
+    <h5 class="card-title"><i class="bi bi-airplane me-2"></i>Prochain vol
+        <%= link_to "CHECK-LIST", check_list_path, class: "btn btn-success ms-5 fw-bold" %>
+    </h5>
 
     <% if @next_reservation %>
 

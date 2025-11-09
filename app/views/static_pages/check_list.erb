@@ -1,0 +1,610 @@
+<% content_for :title, "Check-list" %>
+
+<div class="container my-5">
+  <div class="text-center">
+    <h4 class="mb-3">Check-List avion ✈️</h4>
+  </div>
+
+  <div class="text-center mb-4">
+    <button id="reset-checklist-btn" class="btn btn-outline-danger">
+      <i class="bi bi-arrow-counterclockwise me-2"></i>
+      Réinitialiser la check-list
+    </button>
+  </div>
+
+  <!-- Accordéon pour la C/L -->
+  <div class="accordion" id="faqAccordion">
+
+    <!-- Prévol -->
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="heading1">
+        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1" aria-expanded="true" aria-controls="collapse1">
+          1. Visite prévol
+        </button>
+      </h2>
+      <div id="collapse1" class="accordion-collapse collapse show" aria-labelledby="heading1" data-bs-parent="#faqAccordion">
+        <div class="accordion-body">
+          <h6 class="text-primary">Cabine</h6>
+          <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="prevol-canopy"><label class="form-check-label" for="prevol-canopy">Canopy — <strong>ÉTAT, PROPRETÉ, VÉRINS</strong></label></div>
+          <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="prevol-cockpit-objects"><label class="form-check-label" for="prevol-cockpit-objects">Cockpit — <strong>PAS D'OBJETS LIBRES</strong></label></div>
+          <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="prevol-engine-key"><label class="form-check-label" for="prevol-engine-key">Clé Moteur — <strong>OFF, RETIRÉE</strong></label></div>
+          <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="prevol-brs-pin"><label class="form-check-label" for="prevol-brs-pin">Goupille BRS — <strong>SÉCURISÉE</strong></label></div>
+          <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="prevol-master-on"><label class="form-check-label" for="prevol-master-on">MASTER Switch — <strong>ON</strong></label></div>
+          <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="prevol-mfd-on"><label class="form-check-label" for="prevol-mfd-on">MFD — <strong>ON, VOLTAGE > 12.8V, QTÉ CARBURANT</strong></label></div>
+          <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="prevol-lights"><label class="form-check-label" for="prevol-lights">NAV, FLASH, LDG Lights — <strong>ON, VÉRIFIER</strong></label></div>
+          <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="prevol-instrument-light"><label class="form-check-label" for="prevol-instrument-light">Lumières instruments — <strong>ON, VÉRIFIER (VOL DE NUIT)</strong></label></div>
+          <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="prevol-map-light"><label class="form-check-label" for="prevol-map-light">Lumière carte — <strong>ON, VÉRIFIER (VOL DE NUIT)</strong></label></div>
+          <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="prevol-day-night-switch"><label class="form-check-label" for="prevol-day-night-switch">Switch Jour/Nuit — <strong>VÉRIFIER LUMINOSITÉ</strong></label></div>
+          <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="prevol-flight-controls"><label class="form-check-label" for="prevol-flight-controls">Commandes de vol — <strong>LIBRES, DÉBATTEMENTS COMPLETS</strong></label></div>
+          <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="prevol-all-switches-off"><label class="form-check-label" for="prevol-all-switches-off">Tous interrupteurs — <strong>OFF</strong></label></div>
+          <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="prevol-master-off"><label class="form-check-label" for="prevol-master-off">MASTER Switch — <strong>OFF</strong></label></div>
+          <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="prevol-docs"><label class="form-check-label" for="prevol-docs">Documents obligatoires — <strong>À BORD</strong></label></div>
+
+          <hr class="my-3">
+          <h6 class="text-primary">Bord de fuite de l'aile</h6>
+          <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="prevol-wing-flap"><label class="form-check-label" for="prevol-wing-flap">Volets — <strong>ÉTAT, FIXATION, DÉBATTEMENT</strong></label></div>
+          <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="prevol-main-gear"><label class="form-check-label" for="prevol-main-gear">Train principal — <strong>ÉTAT, PRESSION PNEUS</strong></label></div>
+          <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="prevol-fence"><label class="form-check-label" for="prevol-fence">Fence — <strong>ÉTAT, COLLAGE</strong></label></div>
+          <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="prevol-aileron"><label class="form-check-label" for="prevol-aileron">Aileron — <strong>ÉTAT, FIXATION, DÉBATTEMENT</strong></label></div>
+          <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="prevol-wing-tip"><label class="form-check-label" for="prevol-wing-tip">Saumon d'aile — <strong>ÉTAT, FIXATION, FEUX</strong></label></div>
+
+          <hr class="my-3">
+          <h6 class="text-primary">Bord d'attaque de l'aile</h6>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" id="prevol-wing-surface">
+            <label class="form-check-label" for="prevol-wing-surface">Extrados — <strong>ÉTAT, PROPRETÉ</strong></label>
+            <div class="form-text text-danger ms-4">ATTENTION: La peau de l'aile est structurelle. En cas de dommage, annuler le vol.</div>
+          </div>
+          <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="prevol-leading-edge"><label class="form-check-label" for="prevol-leading-edge">Bord d'attaque — <strong>ÉTAT, PROPRETÉ, STALL STRIPS</strong></label></div>
+          <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="prevol-pitot"><label class="form-check-label" for="prevol-pitot">Sonde Pitot — <strong>RETIRER HOUSSE, ÉTAT, PROPRETÉ</strong></label></div>
+
+          <hr class="my-3">
+          <h6 class="text-primary">Autour du capot moteur</h6>
+          <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="prevol-nose-gear"><label class="form-check-label" for="prevol-nose-gear">Train avant — <strong>ÉTAT, PRESSION PNEU</strong></label></div>
+          <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="prevol-cowling"><label class="form-check-label" for="prevol-cowling">Capot moteur — <strong>ÉTAT</strong></label></div>
+          <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="prevol-propeller"><label class="form-check-label" for="prevol-propeller">Hélice et cône — <strong>ÉTAT</strong></label></div>
+          <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="prevol-engine-mount"><label class="form-check-label" for="prevol-engine-mount">Bâti moteur et échappement — <strong>ÉTAT, FIXATION</strong></label></div>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" id="prevol-oil">
+            <label class="form-check-label" for="prevol-oil">Quantité d'huile — <strong>VÉRIFIER</strong></label>
+            <div class="form-text ms-4">Purger le carter en tournant l'hélice, puis vérifier le niveau.</div>
+          </div>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" id="prevol-coolant">
+            <label class="form-check-label" for="prevol-coolant">Quantité de liquide de refroidissement — <strong>VÉRIFIER</strong></label>
+            <div class="form-text ms-4">Vérifier le vase d'expansion. Si appoint > 0.2L, annuler le vol.</div>
+          </div>
+          <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="prevol-fuel-system"><label class="form-check-label" for="prevol-fuel-system">Système carburant — <strong>PURGER</strong></label></div>
+
+          <hr class="my-3">
+          <h6 class="text-primary">Fuselage</h6>
+          <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="prevol-fuselage-surface"><label class="form-check-label" for="prevol-fuselage-surface">Surface fuselage — <strong>ÉTAT, PROPRETÉ</strong></label></div>
+          <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="prevol-antennas"><label class="form-check-label" for="prevol-antennas">Antennes — <strong>FIXATION</strong></label></div>
+          <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="prevol-static-ports"><label class="form-check-label" for="prevol-static-ports">Prises statiques — <strong>NON OBSTRUÉES</strong></label></div>
+
+          <hr class="my-3">
+          <h6 class="text-primary">Empennage</h6>
+          <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="prevol-vertical-fin"><label class="form-check-label" for="prevol-vertical-fin">Dérive — <strong>ÉTAT, FIXATION, DÉBATTEMENT</strong></label></div>
+          <div class="form-check mb-2"><input class="form-check-input" type="checkbox" id="prevol-tailplane"><label class="form-check-label" for="prevol-tailplane">Plan fixe horizontal — <strong>ÉTAT, FIXATION, JEU</strong></label></div>
+
+          <hr class="my-3">
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" id="prevol-fuel-visual">
+            <label class="form-check-label" for="prevol-fuel-visual">Quantité carburant — <strong>CONTRÔLE VISUEL</strong></label>
+            <div class="form-text ms-4">Vérifier la cohérence avec l'indication de la jauge.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Avant MeR -->
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="heading2">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2" aria-expanded="false" aria-controls="collapse2">
+          2. Avant Mise en Route
+        </button>
+      </h2>
+      <div id="collapse2" class="accordion-collapse collapse" aria-labelledby="heading2" data-bs-parent="#faqAccordion">
+        <div class="accordion-body">
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="" id="check-glareshield">
+            <label class="form-check-label" for="check-glareshield">
+              Glareshield removable extensions — <strong>INSTALL FOR NIGHT VFR</strong>
+            </label>
+          </div>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="" id="check-daynight">
+            <label class="form-check-label" for="check-daynight">
+              Day/Night Switch — <strong>OFF (DAY) / ON (NIGHT)</strong>
+            </label>
+          </div>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="" id="check-cockpitlights">
+            <label class="form-check-label" for="check-cockpitlights">
+              Cockpit lights — <strong>SET DIMMER</strong>
+            </label>
+          </div>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="" id="check-flightcontrols2">
+            <label class="form-check-label" for="check-flightcontrols2">
+              Flight controls — <strong>FREE & CORRECT</strong>
+            </label>
+          </div>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="" id="check-canopy">
+            <label class="form-check-label" for="check-canopy">
+              Canopy — <strong>CLOSE & LOCK</strong>
+            </label>
+          </div>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="" id="check-seatbelts">
+            <label class="form-check-label" for="check-seatbelts">
+              Seat belts — <strong>FASTEN</strong>
+            </label>
+          </div>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="" id="check-parkingbrake">
+            <label class="form-check-label" for="check-parkingbrake">
+              Parking brake — <strong>SET</strong>
+            </label>
+          </div>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="" id="check-circuitbreakers">
+            <label class="form-check-label" for="check-circuitbreakers">
+              Circuit breakers — <strong>CHECK ALL ENGAGED</strong>
+            </label>
+          </div>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="" id="check-gvnr">
+            <label class="form-check-label" for="check-gvnr">
+              GVNR propeller governor switch — <strong>CHECK ON</strong>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mise en Route -->
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="heading3">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse3" aria-expanded="false" aria-controls="collapse3">
+          3. Mise en route
+        </button>
+      </h2>
+      <div id="collapse3" class="accordion-collapse collapse" aria-labelledby="heading3" data-bs-parent="#faqAccordion">
+        <div class="accordion-body">
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="" id="check-fuel-valve">
+            <label class="form-check-label" for="check-fuel-valve">Fuel shut off valve — <strong>ON</strong></label>
+          </div>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="" id="check-master-switch">
+            <label class="form-check-label" for="check-master-switch">MASTER Switch — <strong>ON</strong></label>
+          </div>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="" id="check-mfd-active">
+            <label class="form-check-label" for="check-mfd-active">Garmin MFD — <strong>ACTIVE</strong></label>
+          </div>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="" id="check-mfd-select">
+            <label class="form-check-label" for="check-mfd-select">Garmin MFD — <strong>SELECT PFD + EIS MODE</strong></label>
+          </div>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="" id="check-flash-lights">
+            <label class="form-check-label" for="check-flash-lights">FLASH lights — <strong>ON</strong></label>
+          </div>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="" id="check-lane-selector">
+            <label class="form-check-label" for="check-lane-selector">LANE Selector Switch — <strong>TO BOTH</strong></label>
+          </div>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="" id="check-engine-key-lanes">
+            <label class="form-check-label" for="check-engine-key-lanes">Engine Key Switch — <strong>SWITCH TO LANES</strong></label>
+          </div>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="" id="check-lane-warnings">
+            <label class="form-check-label" for="check-lane-warnings">“LANE A” and “LANE B” warning lights — <strong>CHECK ON THEN OFF</strong></label>
+          </div>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="" id="check-engine-key-run">
+            <label class="form-check-label" for="check-engine-key-run">Engine Key Switch — <strong>RUN</strong></label>
+          </div>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="" id="check-fuel-pressure">
+            <label class="form-check-label" for="check-fuel-pressure">Fuel pressure — <strong>CHECK AT 3 BAR – 43 PSI</strong></label>
+          </div>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="" id="check-throttle-pos">
+            <label class="form-check-label" for="check-throttle-pos">Throttle position — <strong>SET ACCORDING TO TABLE</strong></label>
+          </div>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="" id="check-prop-area">
+            <label class="form-check-label" for="check-prop-area">Propeller area — <strong>CLEAR</strong></label>
+          </div>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="" id="check-engine-key-start">
+            <label class="form-check-label" for="check-engine-key-start">Engine Key Switch — <strong>SELECT START UNTIL RUNS</strong></label>
+          </div>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="" id="check-throttle-rpm">
+            <label class="form-check-label" for="check-throttle-rpm">Throttle — <strong>SET 2000 RPM</strong></label>
+          </div>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="" id="check-oil-pressure">
+            <label class="form-check-label" for="check-oil-pressure">Oil pressure — <strong>CHECK > 3 BARS WITHIN 10S</strong></label>
+          </div>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="" id="check-engine-indications">
+            <label class="form-check-label" for="check-engine-indications">Engine indications — <strong>CHECK</strong></label>
+          </div>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="" id="check-warning-lights-final">
+            <label class="form-check-label" for="check-warning-lights-final">Warning lights — <strong>CHECK LANE A, LANE B AND START PWR OFF</strong></label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Après Mise en Route -->
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="heading4">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse4" aria-expanded="false" aria-controls="collapse4">
+          4. Après Mise en Route
+        </button>
+      </h2>
+      <div id="collapse4" class="accordion-collapse collapse" aria-labelledby="heading4" data-bs-parent="#faqAccordion">
+        <div class="accordion-body">
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="" id="check-throttle-warmup">
+            <label class="form-check-label" for="check-throttle-warmup">
+              Throttle — <strong>WARM UP AT 2000 RPM (2 MIN)</strong>
+            </label>
+          </div>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="" id="check-throttle-continue">
+            <label class="form-check-label" for="check-throttle-continue">
+              Continue at 2500 RPM until oil temp reaches 50°C — <strong>CHECK</strong>
+            </label>
+          </div>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="" id="check-engine-indications-after-start">
+            <label class="form-check-label" for="check-engine-indications-after-start">
+              Engine indications — <strong>CHECK</strong>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Roulage -->
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="heading5">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse5" aria-expanded="false" aria-controls="collapse5">
+          5. Roulage
+        </button>
+      </h2>
+      <div id="collapse5" class="accordion-collapse collapse" aria-labelledby="heading5" data-bs-parent="#faqAccordion">
+        <div class="accordion-body">
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="" id="check-nav-lights">
+            <label class="form-check-label" for="check-nav-lights">
+              NAV lights — <strong>ON</strong>
+            </label>
+          </div>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="" id="check-ldg-lights">
+            <label class="form-check-label" for="check-ldg-lights">
+              LDG lights — <strong>ON FOR NIGHT VFR</strong>
+            </label>
+          </div>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="" id="check-flaps-up">
+            <label class="form-check-label" for="check-flaps-up">
+              Flaps — <strong>UP (0°)</strong>
+            </label>
+          </div>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="" id="check-parking-brake-release">
+            <label class="form-check-label" for="check-parking-brake-release">
+              Parking brake — <strong>RELEASE</strong>
+            </label>
+          </div>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="" id="check-brakes">
+            <label class="form-check-label" for="check-brakes">
+              Brakes — <strong>CHECK</strong>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Essais moteur -->
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="heading6">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse6" aria-expanded="false" aria-controls="collapse6">
+          6. Essais moteur
+        </button>
+      </h2>
+      <div id="collapse6" class="accordion-collapse collapse" aria-labelledby="heading6" data-bs-parent="#faqAccordion">
+        <div class="accordion-body">
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="" id="check-engine-parking-brakes">
+            <label class="form-check-label" for="check-engine-parking-brakes">Parking brakes — <strong>SET</strong></label>
+          </div>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="" id="check-engine-seatbelts">
+            <label class="form-check-label" for="check-engine-seatbelts">Seat belts — <strong>FASTENED, TIGHTENED</strong></label>
+          </div>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="" id="check-engine-canopy">
+            <label class="form-check-label" for="check-engine-canopy">Canopy — <strong>CLOSED AND LOCKED</strong></label>
+          </div>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="" id="check-engine-flight-controls">
+            <label class="form-check-label" for="check-engine-flight-controls">Flight controls — <strong>FREE MOVEMENT</strong></label>
+          </div>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="" id="check-engine-trims">
+            <label class="form-check-label" for="check-engine-trims">Trims — <strong>SET T/O & NEUTRAL</strong></label>
+          </div>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="" id="check-engine-flight-instruments">
+            <label class="form-check-label" for="check-engine-flight-instruments">Flight instruments — <strong>CHECK</strong></label>
+          </div>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="" id="check-engine-altimeter">
+            <label class="form-check-label" for="check-engine-altimeter">Altimeter (PFD and analog) — <strong>SET</strong></label>
+          </div>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="" id="check-engine-mfd-mode">
+            <label class="form-check-label" for="check-engine-mfd-mode">MFD — <strong>PFD + EIS MODE</strong></label>
+          </div>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="" id="check-engine-oil-pressure">
+            <label class="form-check-label" for="check-engine-oil-pressure">Oil pressure — <strong>WITHIN LIMITS</strong></label>
+          </div>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="" id="check-engine-oil-temp">
+            <label class="form-check-label" for="check-engine-oil-temp">Oil temperature — <strong>> 50°C</strong></label>
+          </div>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="" id="check-engine-throttle-3800">
+            <label class="form-check-label" for="check-engine-throttle-3800">Throttle — <strong>SET 3800 RPM</strong></label>
+          </div>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="" id="check-engine-manifold">
+            <label class="form-check-label" for="check-engine-manifold">Manifold Pressure — <strong>CHECK 18-20 in.Hg</strong></label>
+          </div>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="" id="check-engine-lane-b">
+            <label class="form-check-label" for="check-engine-lane-b">LANE Selector — <strong>SWITCH TO "B" & CHECK</strong></label>
+          </div>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="" id="check-engine-lane-both-1">
+            <label class="form-check-label" for="check-engine-lane-both-1">LANE Selector — <strong>SWITCH TO "BOTH" & CHECK</strong></label>
+          </div>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="" id="check-engine-lane-a">
+            <label class="form-check-label" for="check-engine-lane-a">LANE Selector — <strong>SWITCH TO "A" & CHECK</strong></label>
+          </div>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="" id="check-engine-lane-both-2">
+            <label class="form-check-label" for="check-engine-lane-both-2">LANE Selector — <strong>SWITCH TO "BOTH" & CHECK</strong></label>
+          </div>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="" id="check-engine-pump-1-press">
+            <label class="form-check-label" for="check-engine-pump-1-press">PUMP TEST switch — <strong>PRESS "1" & HOLD, CHECK</strong></label>
+          </div>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="" id="check-engine-pump-1-release">
+            <label class="form-check-label" for="check-engine-pump-1-release">PUMP TEST switch — <strong>RELEASE "1" & CHECK</strong></label>
+          </div>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="" id="check-engine-pump-2">
+            <label class="form-check-label" for="check-engine-pump-2">PUMP TEST switch — <strong>REPEAT FOR PUMP "2"</strong></label>
+          </div>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="" id="check-engine-idle">
+            <label class="form-check-label" for="check-engine-idle">Throttle — <strong>IDLE & CHECK 1400-1500 RPM</strong></label>
+          </div>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="" id="check-engine-aoa-test">
+            <label class="form-check-label" for="check-engine-aoa-test">AOA/Stall warning — <strong>PRESS TEST & CHECK</strong></label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Avant décollage -->
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="heading7">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse7" aria-expanded="false" aria-controls="collapse7">
+          7. Avant décollage
+        </button>
+      </h2>
+      <div id="collapse7" class="accordion-collapse collapse" aria-labelledby="heading7" data-bs-parent="#faqAccordion">
+        <div class="accordion-body">
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="" id="check-takeoff-flaps">
+            <label class="form-check-label" for="check-takeoff-flaps">
+              Flaps — <strong>T/O POSITION</strong>
+            </label>
+          </div>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="" id="check-takeoff-warnings">
+            <label class="form-check-label" for="check-takeoff-warnings">
+              Warning lights — <strong>ALL OFF</strong>
+            </label>
+          </div>
+          <div class="form-check mb-2">
+            <input class="form-check-input" type="checkbox" value="" id="check-takeoff-brs">
+            <label class="form-check-label" for="check-takeoff-brs">
+              BRS handle safety pin — <strong>REMOVE</strong>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<%# --- Script pour la sauvegarde de l'état des cases à cocher --- %>
+<script>
+  document.addEventListener('turbo:load', () => {
+    // On s'assure que ce script ne s'exécute que sur la page de la check-list
+    if (!document.getElementById('faqAccordion')) {
+      return;
+    }
+
+    const checkboxes = document.querySelectorAll('#faqAccordion .form-check-input');
+    const storageKey = 'bastairChecklistState';
+    const resetButton = document.getElementById('reset-checklist-btn');
+
+    // Fonction pour gérer l'état (verrouillé/déverrouillé) des accordéons
+    const updateAccordionLockState = () => {
+      const accordionItems = document.querySelectorAll('.accordion-item');
+      let previousSectionCompleted = true; // Permet de toujours activer la première section
+
+      accordionItems.forEach(item => {
+        const button = item.querySelector('.accordion-button');
+        const sectionCheckboxes = item.querySelectorAll('.form-check-input');
+
+        if (previousSectionCompleted) {
+          button.disabled = false; // On déverrouille le bouton
+        } else {
+          button.disabled = true; // On verrouille le bouton
+        }
+
+        // On détermine si la section actuelle est complète pour déverrouiller la suivante
+        if (sectionCheckboxes.length > 0) {
+          const allChecked = Array.from(sectionCheckboxes).every(cb => cb.checked);
+          previousSectionCompleted = allChecked;
+        }
+      });
+    };
+
+    // Fonction pour vérifier si une section est complète et mettre à jour son style
+    const checkSectionCompletion = (accordionItem) => {
+      if (!accordionItem) return;
+
+      const button = accordionItem.querySelector('.accordion-button');
+      const collapseElement = accordionItem.querySelector('.accordion-collapse');
+      const sectionCheckboxes = collapseElement.querySelectorAll('.form-check-input');
+
+      // Si une section n'a pas de cases à cocher, on ne fait rien
+      if (sectionCheckboxes.length === 0) return;
+
+      // On vérifie si toutes les cases de la section sont cochées
+      const allChecked = Array.from(sectionCheckboxes).every(cb => cb.checked);
+
+      if (allChecked) {
+        // Ajoute la couleur verte et retire la classe 'collapsed' si elle existe
+        button.classList.add('bg-success', 'text-white');
+        button.classList.remove('collapsed');
+
+        // Trouve l'élément suivant qui est un 'accordion-item'
+        const nextAccordionItem = accordionItem.nextElementSibling;
+        if (nextAccordionItem && nextAccordionItem.classList.contains('accordion-item')) {
+          const nextCollapseElement = nextAccordionItem.querySelector('.accordion-collapse');
+          // Utilise l'API de Bootstrap pour ouvrir l'accordéon suivant
+          const bsCollapse = new bootstrap.Collapse(nextCollapseElement, {
+            toggle: false // Important pour ne pas refermer s'il est déjà ouvert
+          });
+          bsCollapse.show();
+        }
+
+        // On met à jour l'état de verrouillage pour activer la section suivante
+        updateAccordionLockState();
+      } else {
+        // Retire la couleur verte si toutes les cases ne sont plus cochées
+        button.classList.remove('bg-success', 'text-white');
+      }
+    };
+
+    // Fonction pour mettre à jour le style du label (barrer le texte)
+    const updateLabelStyle = (checkbox) => {
+      // On trouve le label associé à la case à cocher
+      const label = document.querySelector(`label[for='${checkbox.id}']`);
+      if (label) {
+        if (checkbox.checked) {
+          label.classList.add('text-decoration-line-through', 'text-muted');
+        } else {
+          label.classList.remove('text-decoration-line-through', 'text-muted');
+        }
+      }
+    };
+
+    // Fonction pour sauvegarder l'état de toutes les cases
+    const saveState = () => {
+      const state = {};
+      checkboxes.forEach(checkbox => {
+        state[checkbox.id] = checkbox.checked;
+      });
+      localStorage.setItem(storageKey, JSON.stringify(state));
+    };
+
+    // Fonction pour charger l'état sauvegardé
+    const loadState = () => {
+      const savedState = localStorage.getItem(storageKey);
+      if (savedState) {
+        const state = JSON.parse(savedState);
+        checkboxes.forEach(checkbox => {
+          // On coche la case si son ID est présent et à 'true' dans la sauvegarde
+          if (state[checkbox.id]) {
+            checkbox.checked = true;
+          }
+          // On met à jour le style du label en fonction de l'état chargé
+          updateLabelStyle(checkbox);
+        });
+
+        // Après avoir chargé l'état, on vérifie la complétion de chaque section
+        document.querySelectorAll('.accordion-item').forEach(item => {
+          checkSectionCompletion(item);
+        });
+
+        // On applique l'état de verrouillage initial
+        updateAccordionLockState();
+      }
+    };
+
+    // Fonction pour réinitialiser la checklist
+    const resetChecklist = () => {
+      if (confirm("Voulez-vous vraiment réinitialiser et décocher tous les éléments ?")) {
+        checkboxes.forEach(checkbox => {
+          checkbox.checked = false;
+          updateLabelStyle(checkbox); // Mettre à jour le style de chaque label
+        });
+        saveState(); // Sauvegarder l'état vide (tout décoché)
+        // On retire la couleur verte de tous les boutons
+        document.querySelectorAll('.accordion-button').forEach(button => {
+          button.classList.remove('bg-success', 'text-white');
+          // On réinitialise l'état de verrouillage
+          updateAccordionLockState();
+        });
+      }
+    };
+
+    // On charge l'état au chargement de la page
+    loadState();
+
+    // On ajoute un écouteur sur chaque case pour mettre à jour le style, sauvegarder et vérifier la section
+    checkboxes.forEach(checkbox => {
+      checkbox.addEventListener('change', () => {
+        updateLabelStyle(checkbox);
+        saveState();
+        // On trouve l'accordéon parent et on vérifie s'il est complet
+        const parentItem = checkbox.closest('.accordion-item');
+        updateAccordionLockState(); // On met à jour l'état de verrouillage
+        checkSectionCompletion(parentItem);
+      });
+    });
+
+    // On ajoute un écouteur sur le bouton de réinitialisation
+    if (resetButton) {
+      resetButton.addEventListener('click', resetChecklist);
+    }
+  });
+</script>

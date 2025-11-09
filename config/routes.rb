@@ -30,6 +30,7 @@ Rails.application.routes.draw do
 
   get 'agenda', to: 'reservations#agenda'
   get 'faq', to: 'static_pages#faq'
+  get 'check_list', to: 'static_pages#check_list'
 
   # Routes pour la création de réservations
   resources :reservations, only: [:new, :create]
