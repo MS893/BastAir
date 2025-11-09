@@ -4,7 +4,8 @@ const CACHE_NAME = `bastair-cache-<%= Time.now.to_i %>`;
 // Nous mettons en cache la page d'accueil (le tableau de bord) et les assets principaux.
 const PRECACHE_URLS = [
   '/', // La page d'accueil/dashboard
-  '<%= check_list_path %>',          // La page FAQ
+  '<%= signalements_path %>',         // La page des signalements
+  '<%= check_list_path %>',           // La page check list
   '<%= asset_path("application.js") %>',
   '<%= asset_path("application.css") %>'
 ];
@@ -45,3 +46,44 @@ self.addEventListener('fetch', (event) => {
       })
   );
 });
+
+// --- Étape de synchronisation (Background Sync) ---
+// Cet événement est déclenché par le navigateur quand la connexion est de retour.
+self.addEventListener('sync', (event) => {
+  // On vérifie le "tag" pour savoir quel type de synchronisation effectuer.
+  if (event.tag === 'sync-new-signalement') {
+    console.log('Service Worker: Synchronisation des nouveaux signalements...');
+    event.waitUntil(syncNewSignalements());
+  }
+});
+
+// Fonction qui lit les données depuis IndexedDB et les envoie au serveur.
+function syncNewSignalements() {
+  // On doit importer la librairie idb pour interagir avec IndexedDB
+  importScripts('https://cdn.jsdelivr.net/npm/idb@7/build/umd.js');
+
+  return idb.openDB('bastair-offline-db', 1).then(db => {
+    // On récupère tous les signalements en attente
+    return db.getAll('pending-signalements').then(signalements => {
+      // On crée une promesse pour chaque envoi au serveur
+      const syncPromises = signalements.map(signalement => {
+        console.log('Service Worker: Envoi du signalement', signalement);
+        // On reconstruit la requête POST comme si elle venait du formulaire
+        return fetch(`/avions/${signalement.avion_id}/signalements`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': signalement.csrfToken
+          },
+          body: JSON.stringify({ signalement: { description: signalement.description } })
+        }).then(response => {
+          if (response.ok) {
+            // Si le serveur a bien reçu les données, on supprime l'entrée de IndexedDB
+            return db.delete('pending-signalements', signalement.id);
+          }
+        });
+      });
+      return Promise.all(syncPromises);
+    });
+  });
+}

@@ -10,25 +10,18 @@
             Signaler une anomalie sur <%= @avion.immatriculation %>
           </h3>
 
-          <%= form_with(model: [@avion, @signalement], local: true) do |form| %>
-            <% if @signalement.errors.any? %>
-              <div class="alert alert-danger">
-                <h5><%= pluralize(@signalement.errors.count, "erreur") %> a empêché le signalement :</h5>
-                <ul>
-                  <% @signalement.errors.full_messages.each { |msg| content_tag(:li, msg) } %>
-                </ul>
-              </div>
-            <% end %>
-
-            <div class="mb-3">
-              <%= form.label :description, "Veuillez décrire l'anomalie constatée avec le plus de détails possible :", class: "form-label" %>
-              <%= form.text_area :description, class: "form-control", rows: 6, required: true %>
-            </div>
-
-            <div class="d-flex justify-content-between mt-4">
-              <%= link_to "Annuler", :back, class: "btn btn-secondary" %>
-              <%= form.submit "Envoyer le signalement", class: "btn btn-danger" %>
-            </div>
+        <div class="card-body">
+          <%# On lie le contrôleur Stimulus au formulaire %>
+          <%= simple_form_for [@avion, @signalement], 
+                              html: { 
+                                data: { 
+                                  action: "submit->offline-form#submit", 
+                                  offline_form_target: "form",
+                                  avion_id: @avion.id 
+                                } 
+                              } do |f| %>
+            <%= f.input :description, as: :text, rows: 5, label: "Description du problème" %>
+            <%= f.button :submit, "Envoyer le signalement", class: "btn btn-primary" %>
           <% end %>
         </div>
       </div>
