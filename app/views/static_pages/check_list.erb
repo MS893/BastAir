@@ -6,7 +6,8 @@
   </div>
 
   <div class="text-center mb-4">
-    <button id="reset-checklist-btn" class="btn btn-outline-danger">
+    <!-- Ce bouton ouvre maintenant la fenêtre modale de confirmation -->
+    <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#confirmResetModal">
       <i class="bi bi-arrow-counterclockwise me-2"></i>
       Réinitialiser la check-list
     </button>
@@ -450,6 +451,27 @@
   </div>
 </div>
 
+<%# --- Fenêtre modale pour la confirmation de réinitialisation --- %>
+<div class="modal fade" id="confirmResetModal" tabindex="-1" aria-labelledby="confirmResetModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header border-0">
+        <h5 class="modal-title" id="confirmResetModalLabel">
+          <i class="bi bi-exclamation-triangle-fill text-danger me-2"></i>
+          Confirmation requise
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Voulez-vous vraiment réinitialiser la check-list ? Toutes les cases seront décochées.
+      </div>
+      <div class="modal-footer border-0">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+        <button type="button" class="btn btn-danger" id="confirm-reset-btn">Confirmer la réinitialisation</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <%# --- Script pour la sauvegarde de l'état des cases à cocher --- %>
 <script>
@@ -461,7 +483,8 @@
 
     const checkboxes = document.querySelectorAll('#faqAccordion .form-check-input');
     const storageKey = 'bastairChecklistState';
-    const resetButton = document.getElementById('reset-checklist-btn');
+    const confirmResetBtn = document.getElementById('confirm-reset-btn');
+    const resetModalElement = document.getElementById('confirmResetModal');
 
     // Fonction pour gérer l'état (verrouillé/déverrouillé) des accordéons
     const updateAccordionLockState = () => {
@@ -572,29 +595,27 @@
 
     // Fonction pour réinitialiser la checklist
     const resetChecklist = () => {
-      if (confirm("Voulez-vous vraiment réinitialiser et décocher tous les éléments ?")) {
-        checkboxes.forEach(checkbox => {
-          checkbox.checked = false;
-          updateLabelStyle(checkbox); // Mettre à jour le style de chaque label
-        });
-        saveState(); // Sauvegarder l'état vide (tout décoché)
-        // On retire la couleur verte de tous les boutons
-        document.querySelectorAll('.accordion-button').forEach(button => {
-          button.classList.remove('bg-success', 'text-white');
-        });
+      checkboxes.forEach(checkbox => {
+        checkbox.checked = false;
+        updateLabelStyle(checkbox); // Mettre à jour le style de chaque label
+      });
+      saveState(); // Sauvegarder l'état vide (tout décoché)
+      // On retire la couleur verte de tous les boutons
+      document.querySelectorAll('.accordion-button').forEach(button => {
+        button.classList.remove('bg-success', 'text-white');
+      });
 
-        // On ferme tous les accordéons et on ouvre le premier
-        const accordionCollapses = document.querySelectorAll('.accordion-collapse');
-        accordionCollapses.forEach((collapseElement, index) => {
-          const bsCollapse = new bootstrap.Collapse(collapseElement, {
-            toggle: false
-          });
-          bsCollapse.hide();
+      // On ferme tous les accordéons et on ouvre le premier
+      const accordionCollapses = document.querySelectorAll('.accordion-collapse');
+      accordionCollapses.forEach((collapseElement, index) => {
+        const bsCollapse = new bootstrap.Collapse(collapseElement, {
+          toggle: false
         });
+        bsCollapse.hide();
+      });
 
-        // On met à jour l'état de verrouillage après avoir géré les accordéons
-        updateAccordionLockState();
-      }
+      // On met à jour l'état de verrouillage après avoir géré les accordéons
+      updateAccordionLockState();
     };
 
     // On charge l'état au chargement de la page
@@ -612,9 +633,13 @@
       });
     });
 
-    // On ajoute un écouteur sur le bouton de réinitialisation
-    if (resetButton) {
-      resetButton.addEventListener('click', resetChecklist);
+    // On ajoute un écouteur sur le bouton de confirmation DANS la modale
+    if (confirmResetBtn && resetModalElement) {
+      const resetModal = new bootstrap.Modal(resetModalElement);
+      confirmResetBtn.addEventListener('click', () => {
+        resetChecklist();
+        resetModal.hide(); // On ferme la modale après la confirmation
+      });
     }
   });
 </script>
