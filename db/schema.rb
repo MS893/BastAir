@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_11_09_191626) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_03_154039) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -247,16 +247,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_09_191626) do
     t.index ["user_id"], name: "index_vols_on_user_id"
   end
 
-  create_table "web_push_subscriptions", force: :cascade do |t|
-    t.integer "user_id", null: false
-    t.string "endpoint"
-    t.string "p256dh"
-    t.string "auth"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["user_id"], name: "index_web_push_subscriptions_on_user_id"
-  end
-
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "attendances", "events"
@@ -270,5 +260,4 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_09_191626) do
   add_foreign_key "vols", "avions"
   add_foreign_key "vols", "users"
   add_foreign_key "vols", "users", column: "instructeur_id"
-  add_foreign_key "web_push_subscriptions", "users"
 end

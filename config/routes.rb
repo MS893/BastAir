@@ -1,4 +1,3 @@
-# config/routes.rb
 Rails.application.routes.draw do
 
   # --- Routes pour les utilisateurs et l'authentification ---
@@ -58,11 +57,8 @@ Rails.application.routes.draw do
     end
   end
 
-  # Route pour la liste des signalements sur un avion
+  # Route pour le liste des signalements sur un avion
   resources :signalements, only: [:index, :show, :edit, :update]
-
-  # Route pour les push notifications
-  resources :web_push_subscriptions, only: [:create]
 
   # routes pour l'administration
   namespace :admin do
