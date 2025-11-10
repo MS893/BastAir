@@ -12,6 +12,9 @@
           <div>
             <h5 class="mb-1"><%= user.name %></h5>
             <p class="mb-1 text-muted"><%= user.email %></p>
+            <% if user.instructeur? %>
+              <span class="badge bg-success ms-2">Instructeur</span>
+            <% end %>
           </div>
           <%
             # On définit la couleur du badge en fonction du rôle de l'utilisateur

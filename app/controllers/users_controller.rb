@@ -1,8 +1,8 @@
 class UsersController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_user, only: [:show]
+  before_action :set_user, only: [:show, :update]
   before_action :authorize_user, only: [:show]
-  before_action :authorize_admin!, only: [:index] # Seuls les admins peuvent voir la liste des users
+  before_action :authorize_admin!, only: [:index, :update] # Seuls les admins peuvent voir la liste des users et mettre à jour les rôles
 
   def index
     @users = User.order(:nom, :prenom)
@@ -46,6 +46,14 @@ class UsersController < ApplicationController
     @vols = @user.vols.order(debut_vol: :desc).page(params[:page]).per(20)
   end
 
+  def update
+    if @user.update(user_params)
+      redirect_to users_path, notice: "Les rôles de l'utilisateur #{@user.full_name} ont été mis à jour avec succès."
+    else
+      render :show, status: :unprocessable_entity
+    end
+  end
+
   
   private
 
@@ -57,6 +65,11 @@ class UsersController < ApplicationController
     unless current_user == @user || current_user.admin?
       redirect_to root_path, alert: "Vous n'êtes pas autorisé à voir cette page."
     end
+  end
+
+  def user_params
+    # Permet aux administrateurs de mettre à jour le statut admin, la fonction et la date FI
+    params.require(:user).permit(:admin, :fonction, :fi)
   end
   
 end
