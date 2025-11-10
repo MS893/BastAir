@@ -51,7 +51,10 @@ class SignalementsController < ApplicationController
         # On récupère tous les administrateurs et le président
         recipients = User.where(admin: true).or(User.where(fonction: 'president'))
         # On envoie l'email à chaque destinataire
-        recipients.each { |recipient| SignalementMailer.new_signalement_notification(recipient, @signalement).deliver_later }
+        recipients.each do |recipient|
+          SignalementMailer.new_signalement_notification(recipient, @signalement).deliver_later
+          send_push_notification(recipient, @signalement)
+        end
 
         # Si la requête est HTML (formulaire classique), on redirige.
         format.html { redirect_to root_path, notice: "Le signalement sur l'avion #{@avion.immatriculation} a été enregistré avec succès. Merci." }
@@ -83,5 +86,37 @@ class SignalementsController < ApplicationController
   # afin de n'autoriser que la modification du statut.
   def signalement_update_params
     params.require(:signalement).permit(:status)
+  end
+
+  # Méthode privée pour envoyer les notifications Push
+  def send_push_notification(user, signalement)
+    # On ne fait rien si l'utilisateur n'a pas d'abonnement aux notifications
+    return if user.web_push_subscriptions.empty?
+
+    # On prépare le contenu de la notification
+    message = {
+      title: "Nouveau Signalement sur #{signalement.avion.immatriculation}",
+      options: {
+        body: "Signalé par #{signalement.user.full_name}: \"#{signalement.description.truncate(100)}\"",
+        icon: view_context.image_path('icons/icon-192x192.png'),
+        badge: view_context.image_path('icons/icon-192x192.png'),
+        data: { path: signalements_url } # URL où rediriger l'utilisateur au clic
+      }
+    }
+
+    # On envoie la notification à tous les navigateurs abonnés de l'utilisateur
+    user.web_push_subscriptions.each do |subscription|
+      WebPush.payload_send(
+        message: JSON.generate(message),
+        endpoint: subscription.endpoint,
+        p256dh: subscription.p256dh,
+        auth: subscription.auth,
+        vapid: { public_key: Rails.application.credentials.dig(:web_push, :public_key), private_key: Rails.application.credentials.dig(:web_push, :private_key) }
+      )
+    end
+  rescue WebPush::InvalidSubscription => e
+    # Si un abonnement est invalide (ex: l'utilisateur a révoqué la permission), on le supprime.
+    puts "Abonnement invalide pour l'utilisateur #{user.id}, suppression : #{e.message}"
+    subscription.destroy
   end
 end

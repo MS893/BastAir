@@ -44,7 +44,7 @@ export default class extends Controller {
     // On informe l'utilisateur que son signalement a été sauvegardé
     // et sera envoyé plus tard.
     alert("Vous êtes hors ligne. Votre signalement a été sauvegardé et sera envoyé dès que vous retrouverez une connexion.");
-
+    
     // On redirige l'utilisateur vers la page d'accueil
     window.location.href = '/';
   }

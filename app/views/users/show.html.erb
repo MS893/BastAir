@@ -31,6 +31,17 @@
           <%= link_to "Modifier mon profil", edit_user_registration_path, class: "btn btn-primary" %>
         <% end %>
 
+        <%# On ne montre le bouton d'abonnement que si l'utilisateur n'est pas déjà abonné sur ce navigateur %>
+        <% if current_user.web_push_subscriptions.none? %>
+          <div data-controller="notifications" 
+              data-notifications-vapid-public-key-value="<%= Rails.application.credentials.dig(:web_push, :public_key) %>">
+            <button data-action="click->notifications#subscribe" class="btn btn-primary mt-4 mb-4">
+              <i class="bi bi-bell-fill me-2"></i>
+              S'abonner aux notifications
+            </button>
+          </div>
+        <% end %>
+
         <%# Menu de gestion visible uniquement pour les administrateurs %>
         <% if current_user.admin? %>
           <div class="dropdown d-inline-block ms-2">
