@@ -3,10 +3,18 @@
 <div class="container my-5">
   <h1 class="text-center mb-4">Agenda des Réservations</h1>
 
-  <% if @calendar_id.present? %>
+  <% if @calendar_ids.present? && @calendar_ids.any? %>
     <div class="ratio ratio-16x9">
-      <%# On ajoute &mode=WEEK pour la vue semaine et &wkst=2 pour commencer le Lundi %>
-      <iframe src="https://calendar.google.com/calendar/embed?src=<%= u(@calendar_id) %>&ctz=Europe/Paris&mode=WEEK&wkst=2" style="border: 0" wdth="800" height="600" frameborder="0" scrolling="no"></iframe>
+      <%
+        # On construit la base de l'URL pour l'intégration de l'agenda.
+        base_url = "https://calendar.google.com/calendar/embed?"
+        # Pour chaque ID de calendrier, on crée un paramètre "src=...".
+        calendar_params = @calendar_ids.map { |id| "src=#{u(id)}" }.join('&')
+        # On ajoute les autres paramètres pour la vue semaine, le fuseau horaire, etc.
+        other_params = "&ctz=Europe/Paris&mode=WEEK&wkst=2"
+        iframe_src = base_url + calendar_params + other_params
+      %>
+      <iframe src="<%= iframe_src %>" style="border: 0" width="800" height="600" frameborder="0" scrolling="no"></iframe>
     </div>
   <% else %>
     <div class="alert alert-warning text-center">

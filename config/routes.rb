@@ -1,3 +1,4 @@
+# config/routes.rb
 Rails.application.routes.draw do
 
   # --- Routes pour les utilisateurs et l'authentification ---
@@ -57,7 +58,7 @@ Rails.application.routes.draw do
     end
   end
 
-  # Route pour le liste des signalements sur un avion
+  # Route pour la liste des signalements sur un avion
   resources :signalements, only: [:index, :show, :edit, :update]
 
   # routes pour l'administration
@@ -80,6 +81,7 @@ Rails.application.routes.draw do
     member do
       get 'confirm_destroy'
     end
+    delete 'delete_past', on: :collection # Ajoute la route DELETE /events/delete_past
     resources :attendances, only: [:create, :destroy]
   end
 
@@ -103,7 +105,8 @@ Rails.application.routes.draw do
   get 'agenda_instructeurs', to: 'static_pages#agenda_instructeurs'
 
   # routes pour les pages statiques du footer
-  post 'contact', to: 'static_pages#create_contact' # Ajout de la route pour la soumission du formulaire
+  get 'contact', to: 'static_pages#contact' # Route pour afficher la page de contact
+  post 'contact', to: 'static_pages#create_contact' # Route pour la soumission du formulaire
   get 'team', to: 'static_pages#team'
   get 'privacy_policy', to: 'static_pages#privacy_policy'
 

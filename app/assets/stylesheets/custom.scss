@@ -1,0 +1,7 @@
+// Fichier pour les styles personnalisés de l'application.
+
+[data-bs-theme="dark"] {
+  .text-primary-dark-mode {
+    color: var(--bs-primary) !important;
+  }
+}

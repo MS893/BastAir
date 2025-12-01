@@ -26,26 +26,82 @@
     <div class="row">
       <div class="col-lg-8 mx-auto">
         <h1 class="text-center mb-4">Bast'Air</h1>
-        <h3 class="text-center mb-4">L'aéroclub de Basse Terre - Baillif</h3>
+        <%= image_tag 'TFFB (5).jpg', class: 'img-fluid rounded shadow-sm my-3', alt: 'panneau' %>
+        <h3 class="text-center mb-5">L'aéroclub de Basse Terre - Baillif</h3>
+
+        <!-- Carrousel d'images -->
+        <div id="homeCarousel" class="carousel slide shadow-lg rounded overflow-hidden mb-5" data-bs-ride="carousel">
+          <div class="carousel-indicators">
+            <button type="button" data-bs-target="#homeCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+            <button type="button" data-bs-target="#homeCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+            <button type="button" data-bs-target="#homeCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+            <button type="button" data-bs-target="#homeCarousel" data-bs-slide-to="3" aria-label="Slide 4"></button>
+            <button type="button" data-bs-target="#homeCarousel" data-bs-slide-to="4" aria-label="Slide 5"></button>
+            <button type="button" data-bs-target="#homeCarousel" data-bs-slide-to="5" aria-label="Slide 6"></button>
+            <button type="button" data-bs-target="#homeCarousel" data-bs-slide-to="6" aria-label="Slide 7"></button>
+          </div>
+          <div class="carousel-inner">
+            <div class="carousel-item active">
+              <%= image_tag 'TFFB (1).jpg', class: 'd-block w-100', alt: 'nuages' %>
+            </div>
+            <div class="carousel-item">
+              <%= image_tag 'TFFB (11).jpg', class: 'd-block w-100', alt: 'piste' %>
+            </div>
+            <div class="carousel-item">
+              <%= image_tag 'TFFB (17).jpg', class: 'd-block w-100', alt: 'nuages' %>
+            </div>
+            <div class="carousel-item">
+              <%= image_tag 'TFFB (7).jpg', class: 'd-block w-100', alt: 'accueil' %>
+            </div>
+            <div class="carousel-item">
+              <%= image_tag 'TFFB (14).jpg', class: 'd-block w-100', alt: 'piste' %>
+            </div>
+            <div class="carousel-item">
+              <%= image_tag 'TFFB (8).jpg', class: 'd-block w-100', alt: 'nuages' %>
+            </div>
+            <div class="carousel-item">
+              <%= image_tag 'TFFB.jpg', class: 'd-block w-100', alt: 'piste' %>
+            </div>
+          </div>
+        </div>
+
         <p class="lead text-center">
           Bienvenue sur la page de notre aéroclub. Découvrez notre histoire, nos valeurs et notre passion pour l'aviation.
         </p>
         <hr class="my-5">
-
+        
         <h2 class="mt-4">Notre Histoire</h2>
         <p>
           Fondé en 2025, l'aéroclub BastAir, association loi 1901, est né de la passion d'un groupe de pilotes désireux de partager leur passion.
         </p>
+        <div class="row align-items-center">
+          <div class="col-md-8">
+            <ul>
+              <li>La guadeloupe avec ses 5 aérodromes (Basse-Terre, Les Saintes, Marie Galante, Saint François, La Désirade) et son aéroport international Maryse Condé.</li>
+              <li>Les Caraïbes et toutes ses iles (Martinique, Dominique, Saint Barth, Saint Martin,...).</li>
+            </ul>
+          </div>
+          <div class="col-md-4">
+            <%= image_tag 'Gwada1.jpg', class: 'img-fluid rounded shadow-sm my-3', alt: 'carte' %>
+          </div>
+        </div>
 
         <h2 class="mt-5">Nos Installations</h2>
         <p>
           Basé sur l'aérodrome de Basse Terre Baillif (TFFB), notre club dispose d'installations modernes pour accueillir nos membres dans les meilleures conditions :
         </p>
-        <ul>
-          <li>Un club-house convivial pour les briefings et les moments de détente.</li>
-          <li>Une salle de cours équipée pour la formation théorique.</li>
-          <li>Un hangar pour notre avion, entretenu avec le plus grand soin.</li>
-        </ul>
+        <div class="row align-items-center">
+          <div class="col-md-8">
+            <ul>
+              <li>Un club-house convivial pour les briefings et les moments de détente.</li>
+              <li>Une salle de cours équipée pour la formation théorique.</li>
+              <li>Un hangar pour notre avion, entretenu avec le plus grand soin.</li>
+            </ul>
+          </div>
+          <div class="col-md-4">
+            <%= image_tag 'TFFB (10).jpg', class: 'img-fluid rounded shadow-sm my-3', alt: 'Hangar' %>
+          </div>
+        </div>
 
         <h2 class="mt-5">Envie de devenir pilote ?</h2>
         <p>
@@ -53,22 +109,38 @@
         </p>
         <ul>
           <li>Une formation en partie sur un simulateur de vol moins coûteux que l'avion pour travailler les procédures normales et d'urgence, l'exécution des check-lists, apprendre à parler à la radio, apprendre à utiliser tous les instruments de bord.</li>
-          <li>Un avion à l'avionique moderne (EFIS).</li>
+          <li>Un avion à l'avionique moderne (EFIS), comme vous pouvez le voir ci-dessous.</li>
           <li>Pour le loisir ou pour continuer vers une carrière professionnelle.</li>
           <li>Possibilité pour les jeunes d'avoir des aides financières.</li>
           <li>Formation au BIA pour les collégiens ou lycéens (se renseigner auprès de votre établissement).</li>
           <li>Stages RSFI de maintien des compétences pour les FI.</li>
-          <li>Vous n'êtes pas sûr que cela va vous plaire ? essayer evec un vol d'initiation avant de vous inscrire.</li>
+          <li>Vous n'êtes pas sûr que cela va vous plaire ? Essayez avec un vol d'initiation avant de vous inscrire.</li>
         </ul>
+        <%= image_tag 'TFFB (16).jpg', class: 'img-fluid rounded shadow-sm my-3', alt: 'piste' %>
 
         <div class="text-center mt-5">
           <%= link_to "Rejoignez-nous !", contact_path, class: "btn btn-primary btn-lg" %>
         </div>
         
         <h2 class="mt-5">Juste envie de faire un baptême ?</h2>
-        <p>
-          L'aéroclub vous propose des vols au dessus de la Guadeloupe (en fonction de la météo).
-        </p>
+        <div class="row align-items-center">
+          <div class="col-md-4">
+            <%= image_tag 'Gwada2.jpg', class: 'img-fluid rounded shadow-sm my-3', alt: 'satellite' %>
+          </div>
+          <div class="col-md-8">
+            <p>
+              L'aéroclub vous propose des vols inoubliables au-dessus de la Guadeloupe (en fonction de la météo). Découvrez les paysages époustouflants de l'île, de la Soufrière aux plages de sable fin.
+            </p>
+          </div>
+        </div>
+        <div class="row align-items-center mt-3">
+          <div class="col-md-8">
+            <p>Admirez la diversité des paysages, entre mer turquoise et végétation luxuriante. Une expérience unique à vivre ou à offrir.</p>
+          </div>
+          <div class="col-md-4">
+            <%= image_tag 'TFFB (15).jpg', class: 'img-fluid rounded shadow-sm my-3', alt: 'souffrière' %>
+          </div>
+        </div>
 
         <div class="text-center mt-5">
           <%= link_to "Venez faire un baptême !", baptemes_path, class: "btn btn-primary btn-lg" %>

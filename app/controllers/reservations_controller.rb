@@ -31,7 +31,13 @@ class ReservationsController < ApplicationController
   end
 
   def agenda
-    @calendar_id = ENV['GOOGLE_CALENDAR_ID']
+    # On rassemble tous les IDs des calendriers à afficher dans un tableau.
+    # .compact retirera les valeurs nil si une variable d'environnement n'est pas définie.
+    @calendar_ids = [
+      ENV['GOOGLE_CALENDAR_ID'], # L'agenda principal
+      ENV['GOOGLE_CALENDAR_ID_AVION_F_HGBT'],
+      ENV['GOOGLE_CALENDAR_ID_INSTRUCTEUR_HUY']
+    ].compact
   end
 
   

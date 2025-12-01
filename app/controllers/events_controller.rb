@@ -1,7 +1,7 @@
 class EventsController < ApplicationController
   before_action :authenticate_user!, only: %i[new create edit update destroy confirm_destroy] # l'utilisateur est connecté
   before_action :set_event, only: %i[show edit update destroy confirm_destroy]
-  before_action :authorize_admin!, only: %i[new create edit update destroy confirm_destroy] # seul un admin peut gérer les événements
+  before_action :authorize_admin!, only: %i[new create edit update destroy confirm_destroy delete_past] # seul un admin peut gérer les événements
 
   def index
     @events = Event.order(start_date: :asc)
@@ -69,6 +69,17 @@ class EventsController < ApplicationController
     # @event est déjà défini par `set_event`
   end
 
+  # Action pour supprimer manuellement les anciens événements
+  def delete_past
+    # On sélectionne les événements à supprimer :
+    # - Dont la date de début est antérieure à aujourd'hui.
+    # - Dont le titre n'est PAS "Objets trouvés".
+    events_to_delete = Event.where("start_date < ?", Time.zone.now.beginning_of_day)
+                            .where.not(title: "Objets trouvés")
+    
+    count = events_to_delete.destroy_all.size
+    redirect_to events_path, notice: "#{count} événement(s) passé(s) ont été supprimé(s)."
+  end
   
   private
 

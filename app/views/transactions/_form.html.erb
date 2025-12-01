@@ -55,7 +55,7 @@
           <%= form.hidden_field :user_id, data: { autocomplete_target: "hidden" } %>
 
           <%# Le Turbo Frame qui recevra et affichera les résultats de la recherche %>
-          <turbo-frame id="search_results" class="position-absolute w-100 d-none" data-autocomplete-target="results" style="z-index: 1000;"></turbo-frame>
+          <turbo-frame id="search_results" class="position-absolute w-100 d-none" data-autocomplete-target="results" src="<%= search_users_path %>" style="z-index: 1000;"></turbo-frame>
         </div>
       </div>
 

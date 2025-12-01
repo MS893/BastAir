@@ -3,7 +3,14 @@
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h1 class="mb-0">Événements à venir</h1>
     <% if user_signed_in? && current_user.admin? %>
-      <%= link_to 'Créer un événement', new_event_path, class: 'btn btn-primary' %>
+      <div class="d-flex gap-2">
+        <%# On utilise button_to pour faire une requête DELETE, ce qui est plus approprié pour une action de suppression %>
+        <%= button_to 'Supprimer les anciens', delete_past_events_path, 
+                      method: :delete, 
+                      class: 'btn btn-outline-danger',
+                      form: { data: { turbo_confirm: 'Êtes-vous sûr de vouloir supprimer tous les événements passés (sauf les objets trouvés) ? Cette action est irréversible.' } } %>
+        <%= link_to 'Créer un événement', new_event_path, class: 'btn btn-primary' %>
+      </div>
     <% end %>
   </div>
 
@@ -12,9 +19,16 @@
     <% if @events.any? %>
     
       <% @events.each do |event| %>
-        <div class="col-md-6 col-lg-4 mb-4">
+        <% is_past_event = event.start_date < Time.zone.now.beginning_of_day && event.title != "Objets trouvés" %>
+
+        <div class="col-md-6 col-lg-4 mb-4 <%= 'event-card-past' if is_past_event %>">
           <div class="card h-100 shadow-sm event-card">
-            <div class="card-header bg-gradient bg-<%= event_color_class(event.title) %> text-white">
+            <%# On change la couleur de l'en-tête pour les événements passés %>
+            <div class="card-header text-white <%= if is_past_event
+                                                    'bg-dark' # Fond gris foncé pour les événements passés
+                                                  else
+                                                    "bg-gradient bg-#{event_color_class(event.title)}" # Couleur normale sinon
+                                                  end %>">
               <h5 class="card-title mb-0 d-flex align-items-center">
                 <i class="bi <%= event_icon_class(event.title) %> me-2 fs-4"></i>
                 <span class="flex-grow-1"><%= event.title %></span>
@@ -28,7 +42,9 @@
               <p class="card-text flex-grow-1"><%= truncate(event.description, length: 100) %></p>
             </div>
             <div class="card-footer bg-transparent border-top-0 pt-0 d-flex justify-content-between align-items-center">
-              <%= link_to 'Voir les détails', event_path(event), class: "btn btn-outline-#{event_color_class(event.title)}" %>
+              <% unless is_past_event %>
+                <%= link_to 'Voir les détails', event_path(event), class: "btn btn-outline-#{event_color_class(event.title)}" %>
+              <% end %>
               <% unless event.is_free? %>
                 <span class="badge rounded-pill text-bg-<%= event_color_class(event.title) %>">Participation : <%= event.price %> €</span>
               <% end %>

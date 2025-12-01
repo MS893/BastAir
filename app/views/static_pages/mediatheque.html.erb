@@ -14,21 +14,23 @@
     <div class="col-lg-10 mx-auto">
       <h2 class="text-center mb-4">Vidéo de Présentation</h2>
       <div class="ratio ratio-16x9">
-        <%# Remplacez l'URL par le lien d'intégration de votre vidéo (YouTube, Vimeo, etc.) %>
-        <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="Vidéo de présentation" allowfullscreen></iframe>
+        <%# Utilisation du helper video_tag pour une vidéo locale (doit être dans app/assets/videos) %>
+        <%= video_tag "Gwada.mp4", controls: true, title: "Vidéo de présentation" %>
       </div>
     </div>
   </div>
 
   <!-- Section Photos -->
   <h2 class="text-center mb-4">Galerie Photos</h2>
-  <div class="row">
+  <div class="row justify-content-center">
+
     <!-- Photo 1 -->
     <div class="col-md-6 col-lg-4 mb-4">
       <div class="card">
-        <%= image_tag 'TFFB1.jpg', class: 'card-img-top', alt: 'Vue aérienne' %>
+        <%# Photo du Club House %>
+        <%= image_tag 'TFFB (10).jpg', class: 'card-img-top', alt: 'Club House' %>
         <div class="card-body">
-          <p class="card-text">L'aérodrome de Basse Terre Baillif.</p>
+          <p class="card-text">L'ambiance conviviale de notre club-house.</p>
         </div>
       </div>
     </div>
@@ -36,24 +38,37 @@
     <!-- Photo 2 -->
     <div class="col-md-6 col-lg-4 mb-4">
       <div class="card">
-        <%= image_tag 'https://placehold.co/600x400/198754/FFFFFF?text=Club+House', class: 'card-img-top', alt: 'Club House' %>
+        <%= image_tag 'TFFB (9).jpg', class: 'card-img-top', alt: 'Hangar' %>
         <div class="card-body">
-          <p class="card-text">L'ambiance conviviale de notre club-house.</p>
+          <p class="card-text">Le hangar abritant les avions de l'aéroclub.</p>
         </div>
       </div>
     </div>
-
-    <!-- Photo 3 -->
-    <div class="col-md-6 col-lg-4 mb-4">
-      <div class="card">
-        <%= image_tag 'https://placehold.co/600x400/ffc107/FFFFFF?text=Avion+au+sol', class: 'card-img-top', alt: 'Avion au sol' %>
-        <div class="card-body">
-          <p class="card-text">Préparation avant un vol d'instruction.</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Ajoutez d'autres photos ici sur le même modèle -->
 
   </div>
+
+  <!-- Carrousel d'images -->
+  <div class="row mb-5">
+    <div class="col-lg-6 mx-auto">
+      <div id="homeCarousel" class="carousel slide shadow-lg rounded overflow-hidden" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+          <button type="button" data-bs-target="#homeCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+          <button type="button" data-bs-target="#homeCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+          <button type="button" data-bs-target="#homeCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+        </div>
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <%= image_tag 'TFFB (2).jpg', class: 'd-block w-100', alt: 'nuages' %>
+          </div>
+          <div class="carousel-item">
+            <%= image_tag 'TFFB (12).jpg', class: 'd-block w-100', alt: 'piste' %>
+          </div>
+          <div class="carousel-item">
+            <%= image_tag 'TFFB (13).jpg', class: 'd-block w-100', alt: 'nuages' %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
