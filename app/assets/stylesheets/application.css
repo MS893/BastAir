@@ -131,14 +131,3 @@ h6 {
   font-weight: 700;
   /* Met le texte en gras (700 est l'équivalent de 'bold') */
 }
-
-/*
- * =============================================================================
- * STYLES DE LA PAGE BIA
- * =============================================================================
- */
-[data-bs-theme="dark"] {
-  .text-primary-dark-mode {
-    color: var(--bs-primary) !important;
-  }
-}
