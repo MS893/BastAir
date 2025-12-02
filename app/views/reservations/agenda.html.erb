@@ -1,32 +1,31 @@
 <% content_for :title, "Agenda des Réservations" %>
 
-<div class="container my-5">
-  <h1 class="text-center mb-4">Agenda des réservations, évènements et instructeurs</h1>
+<div class="container my-4">
+  <h3 class="text-center mb-2">Agenda des réservations, évènements et instructeurs</h3>
 
   <% if @calendar_ids.present? && @calendar_ids.any? %>
-    <div class="ratio ratio-16x9">
+    <div class="text-center">
       <%
         base_url = "https://calendar.google.com/calendar/embed?"
         # Palette par défaut (hex avec #)
-        colors = ['#B1365F', '#0D7813', '#1D2D50', '#7B1FA2', '#F4511E']
 
         # Option : mapping explicite id => couleur (préférable pour contrôler précisément)
         id_color_map = {
           ENV['GOOGLE_CALENDAR_ID_AVION_F_HGBT'] => '#B1365F',
           ENV['GOOGLE_CALENDAR_ID_INSTRUCTEUR_HUY'] => '#0D7813',
           ENV['GOOGLE_CALENDAR_ID_EVENTS'] => '#1D2D50'
-        }.compact
+        }.compact # .compact retire les paires nil si une variable d'env n'est pas définie
 
         # Pour chaque calendrier on ajoute src=...&color=%23HEX
         calendar_params = @calendar_ids.map.with_index do |id, idx|
-          color = id_color_map[id] || colors[idx % colors.size]
+          color = id_color_map[id] # On utilise uniquement les couleurs définies dans le mapping
           "src=#{u(id)}&color=#{u(color)}"
         end.join('&')
 
         other_params = "&ctz=Europe/Paris&mode=WEEK&wkst=2"
         iframe_src = base_url + calendar_params + other_params
       %>
-      <iframe src="<%= iframe_src %>" style="border: 0" width="800" height="600" frameborder="0" scrolling="no"></iframe>
+      <iframe src="<%= iframe_src %>" style="border: 0; width: 100%; max-width: 1200px; height: 1200px;" frameborder="0" scrolling="no"></iframe>
     </div>
   <% else %>
     <div class="alert alert-warning text-center">
