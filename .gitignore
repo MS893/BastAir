@@ -49,3 +49,4 @@ compta_manager.rb.models.tst
 /app/assets/builds/*
 !/app/assets/builds/.keep
 app/assets/images/Gwada.mp4
+*.mp4
