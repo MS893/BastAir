@@ -1,0 +1,11 @@
+<%# Fichier: app/views/comments/_form.html.erb %>
+<%# Ce formulaire est utilisé pour créer un nouveau commentaire sur la page d'un événement. %>
+
+<%= form_with(model: [event, comment]) do |form| %>
+  <div class="mb-3">
+    <%= form.label :content, 'Votre commentaire', class: 'form-label' %>
+    <%= form.text_area :content, class: 'form-control', rows: 3, placeholder: "Laissez votre commentaire ici..." %>
+  </div>
+
+  <%= form.submit 'Ajouter le commentaire', class: 'btn btn-primary' %>
+<% end %>

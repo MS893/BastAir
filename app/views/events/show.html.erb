@@ -1,84 +1,62 @@
-<% content_for :title, @event.title %>
+<%# Fichier: app/views/events/show.html.erb %>
 
-<div class="container my-5">
-  <div class="row justify-content-center">
-    <div class="col-12 col-lg-10 col-xl-8">
-      <div class="card shadow-lg">
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-md-8 offset-md-2">
+
+      <%# --- Affichage des détails de l'événement (à adapter selon votre design) --- %>
+      <div class="card mb-4">
         <% if @event.photo.attached? %>
           <%= image_tag @event.photo, class: "card-img-top", style: "max-height: 400px; object-fit: cover;" %>
         <% end %>
-
-        <div class="card-header bg-gradient bg-<%= event_color_class(@event.title) %> text-white">
-          <h2 class="mb-0 d-flex align-items-center">
-            <i class="bi <%= event_icon_class(@event.title) %> me-3 fs-2"></i>
-            <span class="flex-grow-1"><%= @event.title %></span>
-          </h2>
+        <div class="card-body">
+          <h1 class="card-title"><%= @event.title %></h1>
+          <p class="card-text"><%= @event.description %></p>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item"><strong>Date :</strong> <%= l(@event.start_date, format: :long) %></li>
+            <li class="list-group-item"><strong>Durée :</strong> <%= @event.duration %></li>
+            <li class="list-group-item"><strong>Prix :</strong> <%= @event.is_free? ? "Gratuit" : number_to_currency(@event.price) %></li>
+          </ul>
         </div>
-        <div class="card-body p-4">
-          <p class="lead"><%= @event.description %></p>
-          <hr class="my-4">
-          <div class="row">
-            <div class="col-md-6">
-              <p><strong><i class="bi bi-calendar-week me-2"></i>Date :</strong> <%= l(@event.start_date, format: :long_with_at) %></p>
-              <p><strong><i class="bi bi-clock me-2"></i>Durée :</strong> <%= @event.duration %></p>
-            </div>
-            <div class="col-md-6">
-              <p><strong><i class="bi bi-people me-2"></i>Participants :</strong> <%= t('event.participants', count: @event.users.count) %></p>
-              <%# On n'affiche le prix que s'il est supérieur à 0 %>
-              <% unless @event.is_free? %>
-                <p class="fs-5 fw-bold"><strong><i class="bi bi-tag me-2"></i>Prix :</strong> <%= number_to_currency(@event.price, unit: "€", separator: ",", delimiter: "", format: "%n %u") %></p>
-              <% end %>
-            </div>
-          </div>
-        </div>
-
-        <%# 1. L'utilisateur est-il un administrateur ? %>
-        <% if user_signed_in? && current_user.admin? %>
-          <div class="card-footer p-3 bg-light">
-            <div class="alert alert-info" role="alert">
-              <i class="bi bi-shield-lock-fill me-2"></i>Vous êtes connecté en tant qu'administrateur.
-            </div>
-            <div class="admin-section mt-3">
-              <h5 class="card-title">Liste des participants (<%= @event.users.count %>)</h5>
-              <%# ... (le code de la liste des participants reste le même) ... %>
-              <div class="d-flex justify-content-between align-items-center mt-3">
-                <%= link_to "Liste des évènements", events_path, class: "btn btn-secondary" %>
-                <div>
-                  <%= link_to 'Editer', edit_event_path(@event), class: 'btn btn-warning me-2' %>
-                  <%= link_to 'Supprimer', confirm_destroy_event_path(@event), class: 'btn btn-danger' %>
-                </div>
-              </div>
-            </div>
-          </div>
-
-        <%# 2. Sinon, est-ce un utilisateur connecté (non-admin) ? %>
-        <% elsif user_signed_in? %>
-          <div class="card-footer text-center p-3">
-            <% if @event.users.include?(current_user) %>
-              <div class="d-grid gap-2">
-                <div class="alert alert-success mb-0" role="alert">
-                  <i class="bi bi-check-circle-fill me-2"></i>Vous êtes inscrit à cet événement.
-                </div>
-                <% attendance = current_user.attendances.find_by(event_id: @event.id) %>
-                <%= button_to "Se désinscrire", event_attendance_path(@event, attendance), method: :delete, class: "btn btn-outline-danger mt-2", form: { data: { turbo_confirm: 'Êtes-vous sûr de vouloir vous désinscrire ?' } } %>
-              </div>
+        <%# --- Section Inscription à l'événement --- %>
+        <% if user_signed_in? %>
+          <div class="card-footer text-center">
+            <% if @event.attendances.exists?(user_id: current_user.id) %>
+              <%# L'utilisateur est déjà inscrit %>
+              <%= button_to "Se désinscrire de l'événement", event_attendance_path(@event, @event.attendances.find_by(user: current_user)), method: :delete, class: "btn btn-danger", data: { turbo_confirm: "Êtes-vous sûr de vouloir vous désinscrire ?" } %>
+              <p class="text-muted mt-2">Vous êtes inscrit à cet événement.</p>
             <% else %>
-              <h4 class="mb-3">S'inscrire à l'événement</h4>
-              <% if @event.is_free? %>
-                <%= button_to "Participer", event_attendances_path(@event), method: :post, class: "btn btn-success btn-lg" %>
-              <% else %>
-                <%= button_to "Acheter avec Stripe", checkout_path(event_id: @event.id), method: :post, data: { turbo: false }, class: "btn btn-primary btn-lg" %>
-              <% end %>
+              <%# L'utilisateur n'est pas encore inscrit %>
+              <%= button_to "S'inscrire à l'événement", event_attendances_path(@event), method: :post, class: "btn btn-success" %>
             <% end %>
           </div>
-
-        <%# 3. Sinon, c'est un visiteur non connecté. %>
         <% else %>
-          <div class="card-footer text-center p-4">
-            <%= link_to "Connectez-vous pour vous inscrire", new_user_session_path, class: "btn btn-primary btn-lg" %>
-          </div>
+          <p class="card-footer text-center">Vous devez être <%= link_to 'connecté', new_user_session_path %> pour vous inscrire.</p>
         <% end %>
       </div>
+
+      <%# --- Section des Commentaires --- %>
+      <hr class="my-4">
+      <h2 class="mb-3">Commentaires (<%= @event.comments.count %>)</h2>
+
+      <%# Conteneur pour la liste des commentaires %>
+      <div id="comments" class="mb-4">
+        <%# Rails va automatiquement itérer sur @event.comments et utiliser le partiel _comment.html.erb %>
+        <%= render @event.comments.order(created_at: :desc) %>
+      </div>
+
+      <%# --- Formulaire pour ajouter un nouveau commentaire --- %>
+      <% if user_signed_in? %>
+        <%# On affiche le formulaire uniquement si l'utilisateur n'a pas déjà commenté %>
+        <% if @event.comments.exists?(user_id: current_user.id) %>
+          <p class="text-muted fst-italic">Vous avez déjà commenté cet événement. Vous pouvez modifier votre commentaire ci-dessus.</p>
+        <% else %>
+          <%= render 'comments/form', event: @event, comment: @event.comments.new %>
+        <% end %>
+      <% else %>
+        <p>Vous devez être <%= link_to 'connecté', new_user_session_path %> pour laisser un commentaire.</p>
+      <% end %>
+
     </div>
   </div>
 </div>

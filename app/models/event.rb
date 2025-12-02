@@ -32,6 +32,7 @@ class Event < ApplicationRecord
   belongs_to :admin, class_name: "User"
   has_many :attendances, dependent: :destroy
   has_many :users, through: :attendances
+  has_many :comments, dependent: :destroy
 
   # Méthode pour vérifier si l'événement est gratuit
   def is_free?

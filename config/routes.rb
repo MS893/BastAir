@@ -83,6 +83,7 @@ Rails.application.routes.draw do
     end
     delete 'delete_past', on: :collection # Ajoute la route DELETE /events/delete_past
     resources :attendances, only: [:create, :destroy]
+    resources :comments, only: [:create, :edit, :update, :destroy]
   end
 
   # Stripe Checkout
