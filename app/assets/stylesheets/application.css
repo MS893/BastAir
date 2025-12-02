@@ -73,8 +73,10 @@ h6 {
 
 .dashboard-sidebar {
   width: 280px;
-  flex-shrink: 0; /* Empêche la sidebar de se rétrécir */
-  overflow-y: auto; /* Permet de scroller si le menu est trop long */
+  flex-shrink: 0;
+  /* Empêche la sidebar de se rétrécir */
+  overflow-y: auto;
+  /* Permet de scroller si le menu est trop long */
 }
 
 .dashboard-sidebar .list-group-item {
@@ -82,9 +84,11 @@ h6 {
 }
 
 .dashboard-content {
-  flex-grow: 1; /* Le contenu principal prend toute la place restante */
+  flex-grow: 1;
+  /* Le contenu principal prend toute la place restante */
   padding: 2rem;
-  overflow-y: auto; /* Permet au contenu de scroller indépendamment */
+  overflow-y: auto;
+  /* Permet au contenu de scroller indépendamment */
   display: flex;
   justify-content: center;
 }
@@ -95,7 +99,8 @@ h6 {
  * =============================================================================
  */
 .profile-card {
-  border-radius: 15px; /* Bords plus arrondis */
+  border-radius: 15px;
+  /* Bords plus arrondis */
 }
 
 .profile-avatar {
@@ -123,5 +128,17 @@ h6 {
  * =============================================================================
  */
 .price {
-  font-weight: 700; /* Met le texte en gras (700 est l'équivalent de 'bold') */
+  font-weight: 700;
+  /* Met le texte en gras (700 est l'équivalent de 'bold') */
+}
+
+/*
+ * =============================================================================
+ * STYLES DE LA PAGE BIA
+ * =============================================================================
+ */
+[data-bs-theme="dark"] {
+  .text-primary-dark-mode {
+    color: var(--bs-primary) !important;
+  }
 }
