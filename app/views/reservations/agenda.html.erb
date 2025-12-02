@@ -1,16 +1,28 @@
 <% content_for :title, "Agenda des Réservations" %>
 
 <div class="container my-5">
-  <h1 class="text-center mb-4">Agenda des Réservations</h1>
+  <h1 class="text-center mb-4">Agenda des réservations, évènements et instructeurs</h1>
 
   <% if @calendar_ids.present? && @calendar_ids.any? %>
     <div class="ratio ratio-16x9">
       <%
-        # On construit la base de l'URL pour l'intégration de l'agenda.
         base_url = "https://calendar.google.com/calendar/embed?"
-        # Pour chaque ID de calendrier, on crée un paramètre "src=...".
-        calendar_params = @calendar_ids.map { |id| "src=#{u(id)}" }.join('&')
-        # On ajoute les autres paramètres pour la vue semaine, le fuseau horaire, etc.
+        # Palette par défaut (hex avec #)
+        colors = ['#B1365F', '#0D7813', '#1D2D50', '#7B1FA2', '#F4511E']
+
+        # Option : mapping explicite id => couleur (préférable pour contrôler précisément)
+        id_color_map = {
+          ENV['GOOGLE_CALENDAR_ID_AVION_F_HGBT'] => '#B1365F',
+          ENV['GOOGLE_CALENDAR_ID_INSTRUCTEUR_HUY'] => '#0D7813',
+          ENV['GOOGLE_CALENDAR_ID_EVENTS'] => '#1D2D50'
+        }.compact
+
+        # Pour chaque calendrier on ajoute src=...&color=%23HEX
+        calendar_params = @calendar_ids.map.with_index do |id, idx|
+          color = id_color_map[id] || colors[idx % colors.size]
+          "src=#{u(id)}&color=#{u(color)}"
+        end.join('&')
+
         other_params = "&ctz=Europe/Paris&mode=WEEK&wkst=2"
         iframe_src = base_url + calendar_params + other_params
       %>
@@ -22,3 +34,8 @@
     </div>
   <% end %>
 </div>
+
+<!-- email du service account : bastair@focal-appliance-476523-a3.iam.gserviceaccount.com -->
+<!-- events : https://calendar.google.com/calendar/u/2?cid=YWNiLmJhc3RhaXJAZ21haWwuY29t -->
+<!-- avion : https://calendar.google.com/calendar/u/2?cid=MTk3NTgxNTVmZjFjODBhNjBmNDc5OTFkNTUxNjUxZmMzZjcyYjBjMzNkMWIxNzI4YzEzMjAzMTI5MzIwYTViN0Bncm91cC5jYWxlbmRhci5nb29nbGUuY29t -->
+<!-- HUY : https://calendar.google.com/calendar/u/2?cid=NDI4MTU5YzMxN2Y4MmQ5N2IyZDY2OTBmOTgyNGY3MTg2ZGI1YzhmYmQzMmM3NjM0YjMyMGUyZmU0NzMzZTY0ZkBncm91cC5jYWxlbmRhci5nb29nbGUuY29t -->

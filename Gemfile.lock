@@ -520,6 +520,7 @@ DEPENDENCIES
   faker
   google-apis-calendar_v3 (~> 0.5.0)
   google-apis-drive_v3 (~> 0.5.0)
+  googleauth
   image_processing (>= 1.2)
   importmap-rails
   jbuilder
