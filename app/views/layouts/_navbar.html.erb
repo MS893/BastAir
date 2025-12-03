@@ -75,6 +75,18 @@
       </ul>
 
       <ul class="navbar-nav ms-auto">
+        <%# MENU DÉROULANT "ADMIN" %>
+        <% if user_signed_in? && current_user.admin? %>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownAdmin" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Admin
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownAdmin">
+              <li><%= link_to "Gestion Consignes", admin_news_items_path, class: "dropdown-item" %></li>
+            </ul>
+          </li>
+        <% end %>
+
         <% if user_signed_in? %>
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">

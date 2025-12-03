@@ -1,0 +1,24 @@
+<%= form_with(model: [:admin, @news_item], local: true) do |form| %>
+  <% if @news_item.errors.any? %>
+    <div class="alert alert-danger">
+      <h2><%= pluralize(@news_item.errors.count, "erreur") %> a empêché la sauvegarde :</h2>
+      <ul>
+        <% @news_item.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="mb-3">
+    <%= form.label :title, "Titre", class: "form-label" %>
+    <%= form.text_field :title, class: "form-control" %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :content, "Contenu", class: "form-label" %>
+    <%= form.text_area :content, rows: 5, class: "form-control" %>
+  </div>
+
+  <%= form.submit "Enregistrer", class: "btn btn-primary" %>
+<% end %>

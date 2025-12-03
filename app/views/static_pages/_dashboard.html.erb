@@ -1,37 +1,60 @@
-<div class="container-fluid pt-4">
-  
-  <h2 class="mb-5 text-center">Bienvenue 
-    <%= current_user.prenom %>
-    <%= link_to "Proroger / renouveler ma qualification SEP", 'https://sigebelext.aviation-civile.gouv.fr/sigebelext/identificationpn.htm', class: "btn btn-outline-primary ms-5", target: '_blank' %>
-  </h2>
+<%# Ajout d'un style pour l'image de fond. %>
+<% content_for :head do %>
+  <style>
+    .dashboard-background {
+      background-image: url('<%= asset_path 'TFFB (1).jpg' %>');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      min-height: 100vh; /* Assure que le conteneur prend au moins toute la hauteur de l'écran */
+    }
+  </style>
+<% end %>
 
-  <%= turbo_stream_from current_user %>
+<%# On ajoute la classe "dashboard-background" au conteneur principal de la page %>
+<div class="dashboard-background">
+  <div class="container-fluid pt-4 pb-4">
+    <h2 class="mb-5">Bienvenue 
+      <%= current_user.prenom %> 
+      <%= link_to "Proroger / renouveler ma qualification SEP", 'https://sigebelext.aviation-civile.gouv.fr/sigebelext/identificationpn.htm', class: "btn btn-outline-warning ms-5", target: '_blank' %>
+    </h2>
 
-  <div class="row g-4">
-    <div class="col-lg-4">
-      <!-- Carte Solde -->
-      <%= render "static_pages/solde", user: current_user %>
+    <%= turbo_stream_from current_user %>
+
+    <div class="row g-4">
+      <div class="col-lg-4">
+        <!-- Carte Solde -->
+        <%= render "static_pages/solde", user: current_user %>
+      </div>
+      <div class="col-lg-4">
+        <!-- Carte Prochain Vol -->
+        <%= render "static_pages/prochain_vol" %>
+      </div>
+      <div class="col-lg-4">
+        <!-- Carte Mes Vols -->
+        <%= render "static_pages/mes_vols" %>
+      </div>
+      <div class="col-lg-4">
+        <!-- Carte dates limites -->
+        <%= render 'static_pages/validites', user: current_user %>
+      </div>
+      <div class="col-lg-4">
+        <!-- Carte évènements à venir -->
+        <%= render 'static_pages/evenements_a_venir' %>
+      </div>
+      <div class="col-lg-4">
+        <!-- Carte dernières transactions -->
+        <%= render 'static_pages/mes_transactions' %>
+      </div>
     </div>
-    <div class="col-lg-4">
-      <!-- Carte Prochain Vol -->
-      <%= render "static_pages/prochain_vol" %>
+
+    <!-- Nouvelle ligne pour les actualités -->
+    <div class="row g-4 mt-1">
+      <div class="col-lg-6 col-md-8 mx-auto"> <%# Diminue la largeur et centre la carte %>
+        <%= render 'static_pages/dernieres_consignes' %>
+      </div>
     </div>
-    <div class="col-lg-4">
-      <!-- Carte Mes Vols -->
-      <%= render "static_pages/mes_vols" %>
-    </div>
-    <div class="col-lg-4">
-      <!-- Carte dates limites -->
-      <%= render 'static_pages/validites', user: current_user %>
-    </div>
-    <div class="col-lg-4">
-      <!-- Carte évènements à venir -->
-      <%= render 'static_pages/evenements_a_venir' %>
-    </div>
-    <div class="col-lg-4">
-      <!-- Carte dernières transactions -->
-      <%= render 'static_pages/mes_transactions' %>
-    </div>
+    
   </div>
 
 </div>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_12_02_220017) do
+ActiveRecord::Schema[8.0].define(version: 2025_12_03_114112) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -115,6 +115,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_02_220017) do
     t.text "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "news_items", force: :cascade do |t|
+    t.string "title"
+    t.text "content"
+    t.integer "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_news_items_on_user_id"
   end
 
   create_table "reservations", force: :cascade do |t|
@@ -274,6 +283,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_02_220017) do
   add_foreign_key "comments", "events"
   add_foreign_key "comments", "users"
   add_foreign_key "events", "users", column: "admin_id"
+  add_foreign_key "news_items", "users"
   add_foreign_key "reservations", "avions"
   add_foreign_key "reservations", "users"
   add_foreign_key "signalements", "avions"

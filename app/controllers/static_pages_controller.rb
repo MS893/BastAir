@@ -29,6 +29,9 @@ class StaticPagesController < ApplicationController
     if user_signed_in?
       @transactions = current_user.transactions.order(date_transaction: :desc).limit(4)
     end
+
+    # On charge les 5 dernières actualités, de la plus récente à la plus ancienne
+    @news_items = NewsItem.order(created_at: :desc).limit(5)
   end
 
   def flotte
