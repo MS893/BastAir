@@ -4,6 +4,13 @@
 <head>
     <title>Outils - BastAir</title>
     <style>
+        body {
+            /* Utilisation de asset_path pour générer le chemin correct vers l'image */
+            background-image: url('<%= asset_path 'TFFB (1).jpg' %>');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
         .calculator {
             max-width: 400px;
             margin: auto;
@@ -81,6 +88,7 @@
             </div>
 
             <div class="calculator bg-body-secondary p-3">
+            <div class="calculator p-3">
                 <!-- Display -->
                 <div class="display-area mb-3 rounded">
                     <div id="time-list"></div>
@@ -192,6 +200,16 @@
         let totalInMinutes = 0;
         let totalDisplayMode = 'minutes'; // 'minutes' or 'hundredths'
 
+        // Sauvegarde l'état dans le localStorage
+        function saveState() {
+            const state = {
+                timeList: timeList,
+                totalInMinutes: totalInMinutes,
+                totalDisplayMode: totalDisplayMode
+            };
+            localStorage.setItem('calculatorState', JSON.stringify(state));
+        }
+
         function formatTime(totalMinutes, mode) {
             const sign = totalMinutes < 0 ? '-' : '';
             const absMinutes = Math.abs(totalMinutes);
@@ -291,6 +309,7 @@
             if (totalMinutes !== 0) {
                 timeList.push(totalMinutes);
                 clearEntry();
+                saveState(); // Sauvegarde après avoir ajouté un temps
             }
         }
 
@@ -312,6 +331,7 @@
             document.getElementById('result').innerHTML = formatTime(0, totalDisplayMode);
             document.getElementById('convert-btn').textContent = 'Convertir en cent.';
             updateDisplay();
+            saveState(); // Sauvegarde après réinitialisation
         }
 
         function calculateTotal() {
@@ -320,6 +340,7 @@
             totalDisplayMode = 'minutes';
             document.getElementById('result').innerHTML = formatTime(totalInMinutes, totalDisplayMode);
             document.getElementById('convert-btn').textContent = 'Convertir en cent.';
+            saveState(); // Sauvegarde après calcul
         }
 
         function convertTotal() {
@@ -328,9 +349,25 @@
             document.getElementById('result').innerHTML = formatTime(totalInMinutes, totalDisplayMode);
             const convertBtn = document.getElementById('convert-btn');
             convertBtn.textContent = (totalDisplayMode === 'minutes') ? 'Convertir en cent.' : 'Convertir en min.';
+            saveState(); // Sauvegarde après conversion
         }
 
-        // Initial display update
+        // Charge l'état depuis le localStorage au chargement de la page
+        function loadState() {
+            const savedState = localStorage.getItem('calculatorState');
+            if (savedState) {
+                const state = JSON.parse(savedState);
+                timeList = state.timeList || [];
+                totalInMinutes = state.totalInMinutes || 0;
+                totalDisplayMode = state.totalDisplayMode || 'minutes';
+
+                document.getElementById('result').innerHTML = formatTime(totalInMinutes, totalDisplayMode);
+                document.getElementById('convert-btn').textContent = (totalDisplayMode === 'minutes') ? 'Convertir en cent.' : 'Convertir en min.';
+            }
+        }
+
+        // Chargement initial et mise à jour de l'affichage
+        loadState();
         updateDisplay();
     </script>
 

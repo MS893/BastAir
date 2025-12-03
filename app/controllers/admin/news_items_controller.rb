@@ -1,4 +1,6 @@
 # app/controllers/admin/news_items_controller.rb
+
+# contrôleur des consignes
 class Admin::NewsItemsController < Admin::BaseController
   before_action :set_news_item, only: [:edit, :update, :destroy]
 
@@ -43,6 +45,8 @@ class Admin::NewsItemsController < Admin::BaseController
     redirect_to admin_news_items_path, notice: 'Consigne supprimée avec succès.', status: :see_other
   end
 
+
+  
   private
 
   def set_news_item
@@ -52,4 +56,5 @@ class Admin::NewsItemsController < Admin::BaseController
   def news_item_params
     params.require(:news_item).permit(:title, :content)
   end
+
 end

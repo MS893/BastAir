@@ -1,18 +1,18 @@
 <%# Ajout d'un style pour l'image de fond. %>
 <% content_for :head do %>
   <style>
-    .dashboard-background {
-      background-image: url('<%= asset_path 'TFFB (1).jpg' %>');
-      background-size: cover;
-      background-position: center;
-      background-attachment: fixed;
-      min-height: 100vh; /* Assure que le conteneur prend au moins toute la hauteur de l'écran */
+    body {
+        /* Utilisation de asset_path pour générer le chemin correct vers l'image */
+        background-image: url('<%= asset_path 'TFFB (1).jpg' %>');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
     }
   </style>
 <% end %>
 
 <%# On ajoute la classe "dashboard-background" au conteneur principal de la page %>
-<div class="dashboard-background">
+<div class="mt-1">
   <div class="container-fluid pt-4 pb-4">
     <h2 class="mb-5">Bienvenue 
       <%= current_user.prenom %> 
