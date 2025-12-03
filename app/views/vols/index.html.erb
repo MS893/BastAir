@@ -3,20 +3,26 @@
 <div class="container my-5">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <%# Utilisation du titre dynamique %>
-    <h1 class="mb-0"><%= @page_title %></h1>
-    <%= link_to '<i class="bi bi-file-earmark-spreadsheet me-2"></i>Exporter en CSV'.html_safe, vols_path(format: :csv, period: params[:period]), class: 'btn btn-success' %>
+    <h1 class="mb-0 h2"><%= @page_title %></h1>
+    <%= link_to '<i class="bi bi-file-earmark-spreadsheet me-2"></i>Exporter en CSV'.html_safe, vols_path(format: :csv, period: params[:period], pilot_id: params[:pilot_id], avion_id: params[:avion_id]), class: 'btn btn-success' %>
   </div>
 
   <%# --- FORMULAIRE DE FILTRE --- %>
   <div class="card mb-4">
-    <div class="card-body d-flex justify-content-between align-items-center">
-      <%# Groupe de boutons à gauche %>
-      <div class="btn-group" role="group">
-        <%= link_to "Aujourd'hui", vols_path(period: 'day'), class: "btn #{params[:period] == 'day' ? 'btn-primary' : 'btn-outline-primary'}" %>
-        <%= link_to "Cette semaine", vols_path(period: 'week'), class: "btn #{params[:period] == 'week' ? 'btn-primary' : 'btn-outline-primary'}" %>
-        <%= link_to "Ce mois-ci", vols_path(period: 'month'), class: "btn #{params[:period] == 'month' ? 'btn-primary' : 'btn-outline-primary'}" %>
-        <%= link_to "Cette année", vols_path(period: 'year'), class: "btn #{params[:period] == 'year' ? 'btn-primary' : 'btn-outline-primary'}" %>
-        <%= link_to "Tout voir", vols_path, class: "btn #{params[:period].blank? ? 'btn-primary' : 'btn-outline-primary'}" %>
+    <div class="card-body d-flex flex-wrap justify-content-between align-items-center">
+      <%# Formulaire de filtres %>
+      <div class="d-flex align-items-center flex-wrap">
+        <%= form_with url: vols_path, method: :get, class: "d-flex align-items-center me-3" do %>
+          <div class="btn-group me-3" role="group">
+            <%= link_to "Aujourd'hui", vols_path(period: 'day', pilot_id: params[:pilot_id], avion_id: params[:avion_id]), class: "btn #{params[:period] == 'day' ? 'btn-primary' : 'btn-outline-primary'}" %>
+            <%= link_to "Cette semaine", vols_path(period: 'week', pilot_id: params[:pilot_id], avion_id: params[:avion_id]), class: "btn #{params[:period] == 'week' ? 'btn-primary' : 'btn-outline-primary'}" %>
+            <%= link_to "Ce mois-ci", vols_path(period: 'month', pilot_id: params[:pilot_id], avion_id: params[:avion_id]), class: "btn #{params[:period] == 'month' ? 'btn-primary' : 'btn-outline-primary'}" %>
+            <%= link_to "Cette année", vols_path(period: 'year', pilot_id: params[:pilot_id], avion_id: params[:avion_id]), class: "btn #{params[:period] == 'year' ? 'btn-primary' : 'btn-outline-primary'}" %>
+            <%= link_to "Tout voir", vols_path(pilot_id: params[:pilot_id], avion_id: params[:avion_id]), class: "btn #{params[:period].blank? ? 'btn-primary' : 'btn-outline-primary'}" %>
+          </div>
+          <%= select_tag :pilot_id, options_from_collection_for_select(@pilots, :id, :name, params[:pilot_id]), include_blank: 'Tous les pilotes', class: 'form-select me-2', onchange: 'this.form.submit()' %>
+          <%= select_tag :avion_id, options_from_collection_for_select(@avions, :id, :immatriculation, params[:avion_id]), include_blank: 'Tous les avions', class: 'form-select me-2', onchange: 'this.form.submit()' %>
+        <% end %>
       </div>
 
       <%# Affichage des totaux à droite %>
@@ -41,14 +47,24 @@
           </tr>
         </thead>
         <tbody>
-          <% @vols.each do |vol| %>
-            <tr>
-              <td><%= l vol.debut_vol, format: :short_year %></td>
-              <td><%= vol.user.name %></td>
-              <td><%= vol.avion.immatriculation %></td>
-              <td><%= vol.depart %> → <%= vol.arrivee %></td>
-              <td class="text-end"><%= number_with_precision(vol.duree_vol, precision: 2) %></td>
+          <%# On groupe les vols par jour en utilisant la date de début du vol %>
+          <% @vols.group_by { |vol| vol.debut_vol.to_date }.each do |date, vols_du_jour| %>
+            <%# On affiche une ligne d'en-tête pour chaque nouvelle date %>
+            <tr class="table-group-divider">
+              <td colspan="5" class="fw-bold bg-light-subtle py-2">
+                <%= l date, format: :long %>
+              </td>
             </tr>
+            <%# On affiche ensuite tous les vols pour cette date %>
+            <% vols_du_jour.each do |vol| %>
+              <tr>
+                <td><%= l vol.debut_vol, format: :short_time %></td>
+                <td><%= vol.user.name %></td>
+                <td><%= vol.avion.immatriculation %></td>
+                <td><%= vol.depart %> → <%= vol.arrivee %></td>
+                <td class="text-end"><%= number_with_precision(vol.duree_vol, precision: 2) %></td>
+              </tr>
+            <% end %>
           <% end %>
         </tbody>
       </table>

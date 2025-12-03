@@ -156,7 +156,7 @@ puts "\nCreating 27 regular members..."
     )
     print "*" # barre de progression
   end
-puts "\n✅ 28 regular members created."
+puts "\n✅ 27 regular members created."
 puts "Total users: #{User.count}"
 
 # On réactive l'envoi d'e-mails
