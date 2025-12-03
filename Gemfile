@@ -30,6 +30,8 @@ gem 'google-apis-drive_v3', '~> 0.5.0'
 # graphiques pour la compta
 gem 'chartkick'
 gem 'rails-i18n'
+# export fichier csv
+gem 'csv'
 
 
 
