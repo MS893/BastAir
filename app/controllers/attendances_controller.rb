@@ -10,19 +10,36 @@ class AttendancesController < ApplicationController
       return
     end
 
-    # crée la participation
-    @attendance = Attendance.new(user: current_user, event: @event)
+    # Si l'événement est payant, on gère le débit du compte
+    if @event.price > 0
+      # Vérifie si le solde de l'utilisateur est suffisant
+      if current_user.solde < @event.price
+        redirect_to @event, alert: "Votre solde est insuffisant pour vous inscrire à cet événement. Veuillez créditer votre compte."
+        return
+      end
 
-    if @attendance.save
+      # On utilise une transaction pour s'assurer que l'inscription et le débit se font ensemble
+      ActiveRecord::Base.transaction do
+        current_user.update!(solde: current_user.solde - @event.price)
+        @attendance = @event.attendances.create!(user: current_user)
+      end
+
       # envoie un email de notification à l'organisateur
-      UserMailer.new_participant_notification(@attendance).deliver_now
-
-      redirect_to @event, notice: "Félicitations ! Vous êtes inscrit à l'événement."
+      UserMailer.new_participant_notification(@attendance).deliver_later
+      redirect_to @event, notice: "Félicitations ! Vous êtes inscrit à l'événement. Votre compte a été débité de #{@event.price} €."
     else
-      # en cas d'erreur, on affiche à nouveau la page de l'événement avec un message d'alerte
-      render 'events/show', status: :unprocessable_entity
+      # Si l'événement est gratuit, on crée simplement la participation
+      @attendance = @event.attendances.new(user: current_user)
+      if @attendance.save
+        UserMailer.new_participant_notification(@attendance).deliver_later
+        redirect_to @event, notice: "Félicitations ! Vous êtes inscrit à l'événement."
+      else
+        render 'events/show', status: :unprocessable_entity
+      end
     end
-    
+  rescue ActiveRecord::RecordInvalid => e
+    # Si la transaction échoue, on redirige avec un message d'erreur
+    redirect_to @event, alert: "Une erreur est survenue lors de votre inscription : #{e.message}"
   end
 
   def destroy

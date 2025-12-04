@@ -2,14 +2,6 @@
 <% if user_signed_in? %>
 
 
-  <%# --- Page tableau de bord pour les adhérents --- %>
-  <% if params[:success] %>
-    <div class="alert alert-success alert-dismissible fade show m-3" role="alert">
-      <strong>Paiement réussi !</strong> Votre compte a été crédité. Le solde peut prendre quelques instants pour se mettre à jour.
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-  <% end %>
-
   <div class="dashboard-layout d-flex">
     <!-- Tableau de bord -->
     <main class="dashboard-content"><%= render 'static_pages/dashboard' %></main>

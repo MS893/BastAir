@@ -3,26 +3,12 @@ class StaticPagesController < ApplicationController
   def home
     # Affiche un message si le paiement a été annulé
     if params[:canceled]
-      flash.now[:alert] = "Le paiement a été annulé. Vous n'êtes pas inscrit à l'événement."
+      flash.now[:alert] = "Le paiement a été annulé."
     end
 
-    # Gestion de la redirection après un paiement Stripe réussi pour un événement
-    if params[:success] && params[:session_id]
-      begin
-        session = Stripe::Checkout::Session.retrieve(params[:session_id])
-        # On s'assure que la session est bien pour un événement
-        if session.metadata.event_id
-          event = Event.find(session.metadata.event_id)
-          # On vérifie que l'utilisateur n'est pas déjà inscrit pour éviter les doublons
-          unless event.users.include?(current_user)
-            current_user.update(stripe_customer_id: session.customer) if current_user.stripe_customer_id.nil?
-            Attendance.create(user: current_user, event: event, stripe_customer_id: session.customer)
-            flash.now[:notice] = "Félicitations ! Vous êtes bien inscrit à l'événement #{event.title}."
-          end
-        end
-      rescue Stripe::InvalidRequestError => e
-        logger.error "Stripe Error: #{e.message}"
-      end
+    # Gestion de la redirection après un paiement Stripe réussi
+    if params[:success]
+      flash.now[:notice] = "Paiement réussi ! Votre compte a été crédité. Le solde peut prendre quelques instants pour se mettre à jour."
     end
 
     # On récupère les 5 dernières transactions de l'utilisateur connecté pour le dashboard
@@ -115,4 +101,5 @@ class StaticPagesController < ApplicationController
       redirect_to baptemes_path, notice: "Votre message a bien été envoyé. Nous vous répondrons dans les plus brefs délais."
     end
   end
+
 end
