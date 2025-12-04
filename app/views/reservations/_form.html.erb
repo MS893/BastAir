@@ -38,14 +38,23 @@
         </div>
       </div>
 
-      <div class="form-check form-switch mb-3">
-        <%= form.check_box :instruction, class: "form-check-input" %>
-        <%= form.label :instruction, "Vol en instruction", class: "form-check-label" %>
+      <%# On englobe la logique de l'instruction dans notre contrôleur Stimulus %>
+      <div data-controller="reservation-form">
+        <div class="form-check form-switch mb-3">
+          <%= form.check_box :instruction, class: "form-check-input", data: { action: "change->reservation-form#toggle", reservation_form_target: "instructionCheckbox" } %>
+          <%= form.label :instruction, "Vol en instruction", class: "form-check-label" %>
+        </div>
+
+        <%# Ce bloc sera affiché ou masqué par le contrôleur Stimulus %>
+        <div class="mb-3 d-none" data-reservation-form-target="instructorSelect">
+          <%= form.label :fi, "Instructeur", class: "form-label" %>
+          <%= form.collection_select :fi, @instructeurs, :id, :name, { include_blank: "Sélectionnez un instructeur" }, { class: "form-select" } %>
+        </div>
       </div>
 
       <div class="form-actions mt-4 border-top pt-3">
         <%= form.submit "Enregistrer la réservation", class: "btn btn-success" %>
-        <%= link_to 'Annuler', root_path, class: 'btn btn-outline-secondary ms-2' %>
+        <%= link_to 'Annuler', root_path, class: 'btn btn-outline-primary ms-2' %>
       </div>
     </div>
   </div>
