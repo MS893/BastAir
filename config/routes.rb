@@ -43,6 +43,9 @@ Rails.application.routes.draw do
   # routes pour la gestion de la comptabilité
   resources :transactions do
     get 'analytics', on: :collection
+    member do
+      patch :toggle_check
+    end
   end
 
   # routes pour la gestion des vols

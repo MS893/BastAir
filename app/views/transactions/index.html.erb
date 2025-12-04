@@ -8,13 +8,33 @@
     </div>
   </div>
 
-  <div class="card shadow-sm mb-4">
-    <div class="card-body text-center">
-      <h5 class="card-title text-muted"><%= @solde_title %></h5>
-      <p class="card-text fs-3 fw-bold <%= @solde_total >= 0 ? 'text-success' : 'text-danger' %>">
-        <%= number_to_currency(@solde_total, unit: "€", separator: ",", delimiter: " ", format: "%n %u") %>
-      </p>
-      <%= link_to "Voir les graphiques", analytics_transactions_path, class: "btn btn-info btn-sm mt-2" %>
+  <%# --- Cartes de résumé (Solde, Recettes, Dépenses) --- %>
+  <div class="row mb-4">
+    <div class="col-md-4">
+      <div class="card shadow-sm h-100">
+        <div class="card-body text-center">
+          <h5 class="card-title text-muted"><%= @solde_title %></h5>
+          <p class="card-text fs-3 fw-bold <%= @solde_total >= 0 ? 'text-success' : 'text-danger' %>">
+            <%= number_to_currency(@solde_total, unit: "€", separator: ",", delimiter: " ", format: "%n %u") %>
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card shadow-sm h-100">
+        <div class="card-body text-center">
+          <h5 class="card-title text-muted">Total des Recettes</h5>
+          <p class="card-text fs-3 fw-bold text-success"><%= number_to_currency(@total_recettes, unit: "€", separator: ",", delimiter: " ", format: "%n %u") %></p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card shadow-sm h-100">
+        <div class="card-body text-center">
+          <h5 class="card-title text-muted">Total des Dépenses</h5>
+          <p class="card-text fs-3 fw-bold text-danger"><%= number_to_currency(@total_depenses, unit: "€", separator: ",", delimiter: " ", format: "%n %u") %></p>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -53,36 +73,14 @@
             <th scope="col">Type</th>
             <th scope="col">Origine</th>
             <th scope="col">Adhérent</th>
+            <th scope="col" class="text-center">Statut</th>
             <th scope="col" class="text-center">Actions</th>
           </tr>
         </thead>
-        <tbody>
-          <% @transactions.each do |transaction| %>
-            <tr>
-              <td><%= l transaction.date_transaction, format: "%d %b %Y" %></td>
-              <td><%= link_to truncate(transaction.description, length: 40), transaction_path(transaction) %></td>
-              <td class="text-end fw-bold <%= transaction.mouvement == 'Recette' ? 'text-success' : 'text-danger' %>">
-                <%= number_to_currency(transaction.montant, unit: "€", separator: ",", delimiter: " ", format: "%n %u") %>
-              </td>
-              <td>
-                <span class="badge <%= transaction.mouvement == 'Recette' ? 'bg-success-subtle text-success-emphasis' : 'bg-danger-subtle text-danger-emphasis' %>"><%= transaction.mouvement %></span>
-              </td>
-              <td>
-                <span class="badge bg-secondary-subtle text-secondary-emphasis"><%= transaction.source_transaction %></span>
-              </td>
-              <td>
-                <% if transaction.user %>
-                  <%= link_to transaction.user.name, user_path(transaction.user) %>
-                <% else %>
-                  <span class="text-muted">N/A</span>
-                <% end %>
-              </td>
-              <td class="text-center">
-                <%= link_to 'Voir', transaction_path(transaction), class: 'btn btn-sm btn-outline-info' %>
-                <%= link_to 'Modifier', edit_transaction_path(transaction), class: 'btn btn-sm btn-outline-primary' %>
-              </td>
-            </tr>
-          <% end %>
+        <tbody id="transactions">
+          <%# Chaque transaction sera rendue via le partiel _transaction.html.erb %>
+          <%# L'ID `transactions` permet à Turbo de cibler le conteneur pour les ajouts/suppressions futures %>
+          <%= render @transactions %>
         </tbody>
       </table>
     </div>

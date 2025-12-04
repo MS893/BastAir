@@ -1,53 +1,75 @@
-<% content_for :title, "Analyse des Transactions" %>
+<% content_for :title, "Analyse Financière" %>
 
-<div class="container my-5">
+<div class="container mt-5">
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="mb-0">Analyse des Transactions</h1>
-    <%= link_to 'Retour à la liste', transactions_path, class: 'btn btn-secondary' %>
+    <h1 class="mb-0">Analyse Financière</h1>
   </div>
 
-  <!-- Formulaire de filtre par année -->
-  <div class="card bg-light mb-4">
+  <%# --- Filtre par année --- %>
+  <div class="card mb-4">
     <div class="card-body">
-      <%= form_with url: analytics_transactions_path, method: :get, class: "row g-3 align-items-end" do |form| %>
-        <div class="col-md-4">
-          <%= form.label :year, "Sélectionner une année :", class: "form-label" %>
-          <%= form.select :year, options_for_select(@years, @selected_year), {}, { class: "form-select" } %>
+      <%= form_with(url: analytics_transactions_path, method: :get, class: "row g-3 align-items-end") do %>
+        <div class="col-md-3">
+          <%= label_tag :year, "Choisir une année", class: "form-label" %>
+          <%= select_tag :year, options_for_select(@years, @selected_year), class: 'form-select' %>
         </div>
-        <div class="col-md-4">
-          <%= form.submit "Filtrer", class: "btn btn-primary" %>
+        <div class="col-md-3">
+          <%= submit_tag "Afficher", class: "btn btn-info" %>
         </div>
       <% end %>
     </div>
   </div>
 
-  <!-- Graphique en barres -->
-  <div class="card shadow-sm mb-4">
-    <div class="card-header">
-      <h5 class="card-title mb-0">Recettes vs Dépenses par mois pour l'année <%= @selected_year %></h5>
+  <%# --- Graphiques principaux --- %>
+  <div class="row">
+    <div class="col-12 mb-4">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Évolution du Solde Cumulé en <%= @selected_year %></h5>
+          <%= line_chart @cumulative_balance_data, thousands: " ", suffix: " €", curve: false, points: false, library: { scales: { y: { ticks: { callback: "function(value) { return value.toLocaleString('fr-FR') + ' €'; }" } } } } %>
+        </div>
+      </div>
     </div>
-    <div class="card-body">
-      <%= bar_chart @monthly_data, stacked: true, thousands: " ", suffix: " €", library: { scales: { x: { ticks: { callback: "function(value) { return value.toLocaleString('fr-FR') + ' €'; }" } } } } %>
+    <div class="col-12 mb-4">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Recettes vs Dépenses par mois en <%= @selected_year %></h5>
+          <%= column_chart @monthly_data, thousands: " ", suffix: " €", stacked: false, library: { scales: { y: { ticks: { callback: "function(value) { return value.toLocaleString('fr-FR') + ' €'; }" } } } } %>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- Graphique en camembert -->
-  <div class="card shadow-sm">
-    <div class="card-header">
-      <h5 class="card-title mb-0">Répartition par source pour l'année <%= @selected_year %></h5>
-    </div>
-    <div class="card-body">
-      <%= pie_chart @source_data, thousands: " ", suffix: " €" %>
+  <%# --- Graphique de comparaison des recettes --- %>
+  <div class="row">
+    <div class="col-12 mb-4">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">Comparaison des Recettes : <%= @selected_year %> vs <%= @selected_year - 1 %></h5>
+          <%= line_chart @revenue_comparison_data, thousands: " ", suffix: " €", library: { scales: { y: { ticks: { callback: "function(value) { return value.toLocaleString('fr-FR') + ' €'; }" } } } } %>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- Graphique en ligne du solde cumulé -->
-  <div class="card shadow-sm mt-4">
-    <div class="card-header">
-      <h5 class="card-title mb-0">Évolution du solde cumulé pour l'année <%= @selected_year %></h5>
+  <%# --- Graphiques de répartition --- %>
+  <div class="row">
+    <div class="col-lg-6 mb-4">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <h5 class="card-title">Répartition des Recettes par Source</h5>
+          <%= pie_chart @income_by_source, thousands: " ", suffix: " €" %>
+        </div>
+      </div>
     </div>
-    <div class="card-body">
-      <%= line_chart @cumulative_balance_data, thousands: " ", suffix: " €", curve: false, points: false, library: { scales: { y: { ticks: { callback: "function(value) { return value.toLocaleString('fr-FR') + ' €'; }" } } } } %>
+    <div class="col-lg-6 mb-4">
+      <div class="card shadow-sm h-100">
+        <div class="card-body">
+          <h5 class="card-title">Répartition des Dépenses par Source</h5>
+          <%= pie_chart @expenses_by_source, thousands: " ", suffix: " €" %>
+        </div>
+      </div>
     </div>
   </div>
+
 </div>

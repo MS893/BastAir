@@ -1,13 +1,18 @@
-<% content_for :title, "Modifier la transaction" %>
+<% content_for :title, "Modifier la Transaction" %>
 
-<div class="container my-5">
-  <div class="row justify-content-center">
-    <div class="col-lg-8">
-      <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="mb-0">Modifier la transaction</h1>
-        <%= link_to 'Retour à la liste', transactions_path, class: 'btn btn-secondary' %>
-      </div>
-      <%= render 'form' %>
+<div class="container mt-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="mb-0">Modifier la Transaction</h1>
+    <div>
+      <%# Le bouton Supprimer est ajouté ici %>
+      <%= button_to 'Supprimer la transaction', transaction_path(@transaction),
+          method: :delete,
+          class: 'btn btn-danger',
+          form_class: 'd-inline',
+          data: { turbo_confirm: 'Êtes-vous sûr de vouloir supprimer cette transaction ? Cette action est irréversible.' } %>
     </div>
   </div>
+
+  <%# Le formulaire est rendu via un partiel pour être réutilisé (new/edit) %>
+  <%= render 'form', transaction: @transaction %>
 </div>
