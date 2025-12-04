@@ -1,0 +1,28 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+</head>
+<body>
+  <h1>Confirmation d'annulation de votre réservation</h1>
+  <p>Bonjour <%= @user.prenom %>,</p>
+  <p>
+    Nous vous confirmons l'annulation de votre réservation pour un vol sur l'avion <strong><%= @reservation.avion.immatriculation %></strong>.
+  </p>
+  <p>
+    Détails de la réservation annulée :
+  </p>
+  <ul>
+    <li><strong>Début :</strong> <%= l @reservation.start_time, format: :long %></li>
+    <li><strong>Fin :</strong> <%= l @reservation.end_time, format: :long %></li>
+    <li><strong>Type de vol :</strong> <%= @reservation.type_vol %></li>
+  </ul>
+  <p>
+    Aucun débit ne sera effectué sur votre compte pour cette réservation.
+  </p>
+  <p>
+    L'équipe Bast'Air vous souhaite de bons vols.
+  </p>
+</body>
+</html>

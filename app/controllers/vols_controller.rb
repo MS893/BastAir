@@ -12,7 +12,65 @@ class VolsController < ApplicationController
     end
   end
 
+  def new
+    @vol = Vol.new
+    # On charge les avions et instructeurs pour les menus déroulants du formulaire
+    @avions = Avion.all
+    @instructeurs = User.where(fonction: 'instructeur').order(:prenom, :nom)
+    # Assurez-vous d'avoir au moins un tarif dans votre base de données
+    @tarif = Tarif.order(annee: :desc).first
+  end
+
+  def create
+    @vol = current_user.vols.new(vol_params)
+
+    if @vol.save
+      # On crée la transaction financière correspondante au coût du vol
+      create_flight_transaction(@vol)
+      redirect_to root_path, notice: 'Votre vol a été enregistré avec succès.'
+    else
+      # Si la sauvegarde échoue, nous devons recharger les variables pour le formulaire
+      @avions = Avion.all
+      @instructeurs = User.where(fonction: 'instructeur').order(:prenom, :nom)
+      @tarif = Tarif.order(annee: :desc).first
+      render :new, status: :unprocessable_entity
+    end
+  end
+  
+
+  
   private
+
+  def create_flight_transaction(vol)
+    # On récupère le tarif le plus récent pour le calcul
+    tarif = Tarif.order(annee: :desc).first
+    return unless tarif
+
+    # Calcul du coût de l'avion
+    cost = vol.duree_vol * tarif.tarif_horaire_avion1
+
+    # Ajout du coût de l'instructeur si le vol n'est pas en solo
+    if vol.instructeur_id.present? && !vol.solo?
+      cost += vol.duree_vol * tarif.tarif_instructeur
+    end
+
+    # On s'assure que le coût est positif avant de créer la transaction
+    return if cost <= 0
+
+    Transaction.create!(
+      user: vol.user,
+      date_transaction: vol.debut_vol.to_date,
+      description: "Vol du #{l(vol.debut_vol.to_date, format: :short_year)} sur #{vol.avion.immatriculation}",
+      mouvement: 'Dépense',
+      montant: cost.round(2), # On arrondit à 2 décimales
+      source_transaction: 'Adhérent',
+      payment_method: 'Prélèvement sur compte'
+    )
+  end
+
+  def vol_params
+    params.require(:vol).permit(:avion_id, :type_vol, :depart, :arrivee, :nb_atterro, :debut_vol, :fin_vol, :compteur_depart, :compteur_arrivee, :duree_vol, :fuel_avant_vol, :fuel_apres_vol, :huile, :nature, :instructeur_id, :solo, :supervise, :nav)
+  end
 
   def set_page_title_and_vols
     base_scope = Vol.includes(:user, :avion).order(debut_vol: :desc)
@@ -76,4 +134,5 @@ class VolsController < ApplicationController
     avion_ids = Vol.unscoped.distinct.pluck(:avion_id)
     @avions = Avion.where(id: avion_ids).order(:immatriculation)
   end
+
 end

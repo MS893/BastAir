@@ -1,31 +1,46 @@
 class TransactionsController < ApplicationController
   before_action :authenticate_user!
-  before_action :authorize_treasurer_or_admin! # S'applique à toutes les actions
+  # La gestion des transactions reste réservée aux trésoriers/admins, sauf pour l'affichage de détail et l'index (sous conditions)
+  before_action :authorize_treasurer_or_admin!, except: [:show, :index]
   before_action :set_transaction, only: %i[show edit update destroy toggle_check]
+  before_action :authorize_view_transaction!, only: [:show]
+  before_action :authorize_transactions_index!, only: [:index] # Nouvelle autorisation pour l'action index
   # Empêche la modification ou suppression d'une transaction déjà vérifiée
   before_action :prevent_modification_if_checked, only: %i[edit update destroy]
 
   def index
-    @transactions = Transaction.includes(:user).all # Eager loading pour optimiser
+    # On détermine la portée initiale des transactions en fonction du rôle de l'utilisateur.
+    if current_user.admin? || current_user.fonction == 'tresorier'
+      # Les admins/trésoriers voient toutes les transactions par défaut.
+      @transactions = Transaction.includes(:user)
+      # Ils peuvent ensuite filtrer par utilisateur spécifique si le paramètre est fourni.
+      @transactions = @transactions.where(user_id: params[:user_id]) if params[:user_id].present?
+    else
+      # Un utilisateur standard ne voit QUE ses propres transactions.
+      @transactions = current_user.transactions.includes(:user)
+    end
 
+    # Filtres existants
     @selected_month = params[:month]
     @selected_year = params[:year]
     @selected_source = params[:source]
+    
+    # Application des filtres de la vue (mois, année, source)
+    @transactions = @transactions.where("strftime('%m', date_transaction) = ?", @selected_month.to_s.rjust(2, '0')) if @selected_month.present?
+    @transactions = @transactions.where("strftime('%Y', date_transaction) = ?", @selected_year.to_s) if @selected_year.present?
+    @transactions = @transactions.where(source_transaction: @selected_source) if @selected_source.present?
 
-    if @selected_month.present?
-      @transactions = @transactions.where("strftime('%m', date_transaction) = ?", @selected_month.to_s.rjust(2, '0'))
+    # --- Calcul des totaux ---
+    # Pour un utilisateur standard, si aucun filtre n'est appliqué, on affiche son solde de référence.
+    # Sinon, on calcule le solde sur la période filtrée.
+    is_filtered = @selected_month.present? || @selected_year.present? || @selected_source.present?
+    is_standard_user = !current_user.admin? && current_user.fonction != 'tresorier'
+
+    if is_standard_user && !is_filtered
+      @solde_total = current_user.solde
+    else
+      @solde_total = @transactions.sum("CASE WHEN mouvement = 'Recette' THEN montant ELSE -montant END")
     end
-
-    if @selected_year.present?
-      @transactions = @transactions.where("strftime('%Y', date_transaction) = ?", @selected_year.to_s)
-    end
-
-    if @selected_source.present?
-      @transactions = @transactions.where(source_transaction: @selected_source)
-    end
-
-    # Calcule les totaux basés sur les transactions filtrées
-    @solde_total = @transactions.sum("CASE WHEN mouvement = 'Recette' THEN montant ELSE -montant END")
     @total_recettes = @transactions.where(mouvement: 'Recette').sum(:montant)
     @total_depenses = @transactions.where(mouvement: 'Dépense').sum(:montant)
 
@@ -194,4 +209,30 @@ class TransactionsController < ApplicationController
     end
     cumulative_balance_data
   end
+
+  # Méthode de sécurité pour la vue de détail d'une transaction
+  def authorize_view_transaction!
+    # Un trésorier ou un admin peut tout voir.
+    return if current_user.admin? || current_user.fonction == 'tresorier'
+
+    # Un utilisateur ne peut voir que ses propres transactions.
+    redirect_to root_path, alert: "Vous n'êtes pas autorisé à voir cette transaction." unless @transaction.user == current_user
+  end
+
+  # Méthode de sécurité pour l'action index des transactions
+  def authorize_transactions_index!
+    # Les administrateurs et trésoriers ont toujours accès à l'index complet.
+    return if current_user.admin? || current_user.fonction == 'tresorier'
+
+    # Si un user_id est spécifié, un utilisateur normal ne peut voir que ses propres transactions.
+    if params[:user_id].present?
+      unless params[:user_id].to_i == current_user.id
+        redirect_to root_path, alert: "Vous n'êtes pas autorisé à voir les transactions d'autres utilisateurs."
+      end
+    else
+      # Si aucun user_id n'est spécifié, un utilisateur normal ne peut pas voir l'index général.
+      redirect_to root_path, alert: "Accès réservé aux administrateurs et au trésorier pour la liste complète des transactions."
+    end
+  end
+
 end

@@ -13,7 +13,7 @@ class StaticPagesController < ApplicationController
 
     # On récupère les 5 dernières transactions de l'utilisateur connecté pour le dashboard
     if user_signed_in?
-      @transactions = current_user.transactions.order(date_transaction: :desc).limit(4)
+      @transactions = current_user.transactions.order(date_transaction: :desc).limit(5)
     end
 
     # On charge les 5 dernières actualités, de la plus récente à la plus ancienne

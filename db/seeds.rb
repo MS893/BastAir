@@ -4,17 +4,27 @@
 
 require 'faker'
 
+if Rails.env.production?
+  puts "Le script de seed est désactivé en environnement de production pour éviter toute perte de données."
+  puts "Si vous souhaitez réellement peupler votre base de données de production, veuillez le faire manuellement."
+  exit
+end
+
 puts "\nCleaning database..."
+# On détruit les tables dépendantes en premier
 Transaction.destroy_all
+Comment.destroy_all
+NewsItem.destroy_all
+Signalement.destroy_all
 Audio.destroy_all
 FlightLesson.destroy_all
 Reservation.destroy_all
 Vol.destroy_all
 Avion.destroy_all
 Tarif.destroy_all
-Attendance.destroy_all
-Event.destroy_all # Doit être détruit après Attendance
-User.destroy_all # Doit être détruit en dernier car beaucoup de tables en dépendent
+Attendance.destroy_all # Dépend de User et Event
+Event.destroy_all # Dépend de User (admin)
+User.destroy_all # Doit être détruit après toutes les tables qui ont un user_id
 Course.destroy_all
 puts "✅ Cleaned"
 
@@ -30,9 +40,9 @@ puts "\nCreating users..."
 original_delivery_method = ActionMailer::Base.delivery_method
 ActionMailer::Base.delivery_method = :test
 
+
 # 1. Création de 30 adhérents, dont un administrateur et un élève
 # ---------------------------------------------------------------
-
 # Crée un administrateur
 admin_user = User.create!(
   prenom: "Admin",
@@ -55,7 +65,7 @@ admin_user = User.create!(
   fi: Faker::Date.forward(days: 365),
   fe: Faker::Date.forward(days: 365),
   controle: Faker::Date.forward(days: 365),
-  solde: Faker::Number.decimal(l_digits: 3, r_digits: 2),
+  solde: 0.0, # On initialise le solde à 0
   cotisation_club: Faker::Date.forward(days: 365),
   cotisation_ffa: Faker::Date.forward(days: 365),
   autorise: true,
@@ -85,7 +95,7 @@ eleve_user = User.create!(
   fi: nil,
   fe: nil,
   controle: Faker::Date.forward(days: 365),
-  solde: Faker::Number.decimal(l_digits: 3, r_digits: 2),
+  solde: 0.0, # On initialise le solde à 0
   cotisation_club: Faker::Date.forward(days: 365),
   cotisation_ffa: Faker::Date.forward(days: 365),
   autorise: true,
@@ -95,8 +105,8 @@ puts "✅ Trainee created: #{eleve_user.email}"
 
 # Crée un instructeur
 instructeur_user = User.create!(
-  prenom: "Instructeur",
-  nom: "Qualifie",
+  prenom: "Christian",
+  nom: "HUY",
   email: "instructeur@bastair.com",
   password: "password",
   password_confirmation: "password",
@@ -115,7 +125,7 @@ instructeur_user = User.create!(
   fi: Faker::Date.forward(days: 730), # Date FI valide pour 2 ans
   fe: nil,
   controle: Faker::Date.forward(days: 365),
-  solde: Faker::Number.decimal(l_digits: 3, r_digits: 2),
+  solde: 0.0, # On initialise le solde à 0
   cotisation_club: Faker::Date.forward(days: 365),
   cotisation_ffa: Faker::Date.forward(days: 365),
   autorise: true,
@@ -147,7 +157,7 @@ puts "\nCreating 27 regular members..."
     fi: nil,
     fe: nil,
     controle: Faker::Date.forward(days: 365),
-    solde: Faker::Number.decimal(l_digits: 2, r_digits: 2),
+    solde: 0.0, # On initialise le solde à 0
     cotisation_club: Faker::Date.forward(days: 365),
     cotisation_ffa: Faker::Date.forward(days: 365),
     autorise: [true, true, true, false].sample, # 75% de chance d'être autorisé
@@ -159,18 +169,30 @@ puts "\nCreating 27 regular members..."
 puts "\n✅ 27 regular members created."
 puts "Total users: #{User.count}"
 
-# On réactive l'envoi d'e-mails
-ActionMailer::Base.delivery_method = original_delivery_method
+# Création de la transaction initiale de 1000€ pour chaque utilisateur
+puts "\nCreating initial 1000€ transaction for each user..."
+User.find_each do |user|
+  Transaction.create!(
+    user: user,
+    date_transaction: user.created_at.to_date,
+    description: "Crédit initial du compte",
+    mouvement: 'Recette',
+    montant: 1000.0,
+    source_transaction: 'Adhérent',
+    payment_method: 'Virement',
+    is_checked: true
+  )
+end
+puts "✅ Initial transactions created."
 
 
 # 2. Création d'un avion
 # ----------------------------------------------------
-
 puts "\nCreating aircraft..."
 avion = Avion.create!(
   immatriculation: "F-HGBT",
-  marque: "Bristell",
-  modele: "B23",
+  marque: "Elixir Aircraft",
+  modele: "Exlixir",
   conso_horaire: 18,
   certif_immat: Faker::Date.forward(days: 365),
   cert_navigabilite: Faker::Date.forward(days: 365),
@@ -191,9 +213,30 @@ avion = Avion.create!(
 puts "✅ Aircraft created: #{avion.immatriculation}"
 
 
+# 3. Création des tarifs annuels
+# ----------------------------------------------------
+# On crée les tarifs AVANT les vols pour pouvoir calculer leur coût.
+puts "\nCreating annual rates..."
+Tarif.create!(
+  annee: Date.today.year,
+  tarif_horaire_avion1: 150,
+  tarif_horaire_avion2: 0,    # Mettre à jour si autres avions (faire une migration)
+  tarif_instructeur: 10,
+  tarif_simulateur: 20,
+  cotisation_club_m21: 100,
+  cotisation_club_p21: 200,
+  cotisation_autre_ffa: 100,
+  licence_ffa: 92,
+  licence_ffa_info_pilote: 141,
+  elearning_theorique: 70,
+  pack_pilote_m21: 0,         # Offert
+  pack_pilote_p21: 75
+)
+puts "✅ Annual rates for #{Date.today.year} created."
+
+
 # 3. Création de 20 vols
 # ----------------------------------------------------
-
 puts "\nCreating 20 flights..."
 aerodromes = ["TFFB", "TFFS", "TFFM", "TFFR", "TFFC", "TFFA"]
 types_vol = ["Standard", "Vol découverte", "Vol d'initiation", "Vol d'essai", "Convoyage", "Vol BIA"]
@@ -217,9 +260,9 @@ compteur_actuel = 123.45
   # Génère une durée de vol aléatoire entre 0.55 et 3.05 (centièmes d'heure)
   duree_vol_aleatoire = Faker::Number.between(from: 0.55, to: 3.05).round(2)
   
-  Vol.create!(
-    user: pilote,           # On assigne le pilote choisi
-    avion: avion,           # Assign the created aircraft
+  vol = Vol.new(
+    user: pilote,
+    avion: avion,
     type_vol: types_vol.sample,
     depart: aerodromes.sample,
     arrivee: aerodromes.sample,
@@ -228,7 +271,7 @@ compteur_actuel = 123.45
     compteur_depart: compteur_actuel.round(2),
     compteur_arrivee: (compteur_actuel + duree_vol_aleatoire).round(2),
     duree_vol: duree_vol_aleatoire,
-    instructeur_id: pilote.eleve? ? instructeur.id : nil, # On définit l'instructeur si le pilote est un élève
+    instructeur_id: pilote.eleve? ? instructeur.id : nil,
     nb_atterro: [1, 2, 3].sample,
     solo: [true, false].sample,
     supervise: [true, false].sample,
@@ -238,7 +281,31 @@ compteur_actuel = 123.45
     fuel_apres_vol: Faker::Number.between(from: 20.0, to: 110.0).round(1),
     huile: Faker::Number.between(from: 2.0, to: 3.0).round(1)
   )
-  compteur_actuel = (compteur_actuel + 1.90).round(2)  # ajoute un petit temps au sol entre 2 vols
+
+  if vol.save
+    # Calcul du coût du vol
+    tarif = Tarif.order(annee: :desc).first
+    cost = vol.duree_vol * tarif.tarif_horaire_avion1
+    if vol.instructeur_id.present? && !vol.solo?
+      cost += vol.duree_vol * tarif.tarif_instructeur
+    end
+
+    # Création de la transaction débitant le compte du pilote
+    Transaction.create!(
+      user: vol.user,
+      date_transaction: vol.debut_vol.to_date,
+      description: "Vol du #{vol.debut_vol.to_date.strftime('%d/%m/%Y')} sur #{vol.avion.immatriculation}",
+      mouvement: 'Dépense',
+      montant: cost.round(2),
+      source_transaction: 'Adhérent',
+      payment_method: 'Prélèvement sur compte',
+      is_checked: false # à vérifier
+    )
+
+    compteur_actuel = (compteur_actuel + 1.90).round(2)  # ajoute un petit temps au sol entre 2 vols
+  else
+    puts "Error creating flight: #{vol.errors.full_messages.join(', ')}"
+  end
   print "*" # barre de progression
 end
 puts "\n✅ 20 flights created."
@@ -246,56 +313,60 @@ puts "\n✅ 20 flights created."
 
 # 4. Création de 20 réservations
 # ----------------------------------------------------
-
 puts "\nCreating bookings..."
 20.times do
-  date_vol = Faker::Time.between(from: DateTime.now + 30, to: DateTime.now + 3000)
-  Reservation.create!(
+  # On génère une date de début dans le futur, avec une heure de début entre 7h et 15h.
+  random_day = Faker::Date.between(from: 1.day.from_now, to: 60.days.from_now)
+  random_hour = rand(7..15) # Génère une heure entre 7 et 15 inclus
+  random_minute = [0, 15, 30, 45].sample # Pour des heures de début plus réalistes
+  date_debut = random_day.to_datetime.change(hour: random_hour, min: random_minute)
+  
+  # On crée l'objet réservation sans le sauvegarder tout de suite
+  reservation = Reservation.new(
     user: all_users.sample, # Correctly assign a random user
     avion: avion,           # Assign the created aircraft
-    start_time: date_vol,
-    end_time: date_vol + 60.minutes,
+    start_time: date_debut,
+    end_time: date_debut + 1.hour, # La réservation dure 1 heure
     instruction: [true, false].sample,
-    fi: "Toto",
+    fi: instructeur.id.to_s, # On utilise l'ID de l'instructeur
     type_vol: types_vol.sample
   )
+
+  # On sauvegarde la réservation. Si elle est valide, on crée l'événement Google Calendar.
+  if reservation.save
+    # On appelle le service pour créer l'événement dans Google Calendar.
+    # Le service est conçu pour gérer la création sur l'agenda de l'avion
+    # et également sur celui de l'instructeur si `instruction` est à true.
+    GoogleCalendarService.new.create_event_for_app(reservation)
+  end
 end
 puts "✅ 20 bookings created."
 
 
+# 5. Création de 10 events
+# ----------------------------------------------------
 puts "\nCreating 10 events..."
 10.times do
-  event = Event.create!(
+  # On génère une date de début dans le futur, avec une heure de début entre 7h et 15h.
+  random_day = Faker::Date.between(from: 1.day.from_now, to: 30.days.from_now)
+  random_hour = rand(7..15) # Génère une heure entre 7 et 15 inclus
+  random_minute = [0, 15, 30, 45].sample # Pour des heures de début plus réalistes
+  date_debut = random_day.to_datetime.change(hour: random_hour, min: random_minute)
+
+  event = Event.new(
     title: Event::ALLOWED_TITLES.sample, # titre parmi les titres autorisés
     description: Faker::Lorem.paragraph(sentence_count: 5),
-    start_date: Faker::Time.forward(days: 30, period: :day),
+    start_date: date_debut,
     price: 0,
     admin: admin_user # On associe l'événement à l'administrateur créé plus haut
   )
-  puts "Created event: #{event.title}"
+  if event.save
+    # On appelle le service pour créer l'événement dans Google Calendar
+    GoogleCalendarService.new.create_event_for_app(event)
+    puts "Created event: #{event.title}"
+  end
 end
 puts "✅ 10 events created."
-
-
-# 5. Création des tarifs annuels
-# ----------------------------------------------------
-puts "\nCreating annual rates..."
-Tarif.create!(
-  annee: Date.today.year,
-  tarif_horaire_avion1: 150,
-  tarif_horaire_avion2: 0,    # Mettre à jour si autres avions (faire une migration)
-  tarif_instructeur: 10,
-  tarif_simulateur: 20,
-  cotisation_club_m21: 100,
-  cotisation_club_p21: 200,
-  cotisation_autre_ffa: 100,
-  licence_ffa: 92,
-  licence_ffa_info_pilote: 141,
-  elearning_theorique: 70,
-  pack_pilote_m21: 0,         # Offert
-  pack_pilote_p21: 75
-)
-puts "✅ Annual rates for #{Date.today.year} created."
 
 
 # 6. Création des cours théoriques
@@ -356,6 +427,7 @@ podcasts_data.each do |podcast_data|
   end
 end
 puts "✅ #{Audio.count} podcast(s) created."
+
 
 # 8. Création des leçons de vol
 # ----------------------------------------------------

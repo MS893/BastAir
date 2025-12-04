@@ -1,18 +1,18 @@
 <%# On passe les tarifs au formulaire via des attributs data pour que JS puisse les utiliser %>
-<%= form_with(model: vol, local: true, id: 'vol-form', data: {
+<%= form_with(model: @vol, local: true, id: 'vol-form', data: {
       'tarif-avion1': @tarif&.tarif_horaire_avion1 || 0,
       'tarif-instructeur': @tarif&.tarif_instructeur || 0,
       'user-is-eleve': current_user.eleve?.to_s
     }) do |form| %>
 
-  <% if vol.errors.any? %>
+  <% if @vol.errors.any? %>
     <div id="error-explanation" class="alert alert-danger" role="alert">
       <h5 class="alert-heading">
         <i class="bi bi-exclamation-triangle-fill me-2"></i>
-        <%= pluralize(vol.errors.count, "erreur") %> a empêché ce vol d'être sauvegardé :
+        <%= pluralize(@vol.errors.count, "erreur") %> a empêché ce vol d'être sauvegardé :
       </h5>
       <ul>
-        <% vol.errors.full_messages.each do |message| %>
+        <% @vol.errors.full_messages.each do |message| %>
           <li><%= message %></li>
         <% end %>
       </ul>

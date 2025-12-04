@@ -3,7 +3,9 @@
 <div class="container mt-5">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h1 class="mb-0">Détail de la Transaction</h1>
+    <% if current_user&.admin? || current_user&.fonction == 'tresorier' %>
     <%= link_to 'Retour à la liste', transactions_path, class: 'btn btn-outline-primary' %>
+    <% end %>
   </div>
 
   <div class="card shadow-sm">

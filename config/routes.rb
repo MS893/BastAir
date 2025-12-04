@@ -34,7 +34,7 @@ Rails.application.routes.draw do
   get 'check_list', to: 'static_pages#check_list'
 
   # Routes pour la création de réservations
-  resources :reservations, only: [:new, :create]
+  resources :reservations, only: [:new, :create, :edit, :update, :destroy]
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
   # Defines the root path route ("/")

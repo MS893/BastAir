@@ -2,6 +2,7 @@ require 'google/apis/calendar_v3'
 require 'googleauth'
 
 class ReservationsController < ApplicationController
+  before_action :set_reservation, only: [:edit, :update, :destroy]
   before_action :authenticate_user!
   before_action :check_user_balance, only: [:new, :create]
   before_action :check_user_validities, only: [:new, :create]
@@ -31,6 +32,51 @@ class ReservationsController < ApplicationController
       @instructeurs = User.where("fi IS NOT NULL AND fi >= ?", Date.today).order(:nom)
       render :new, status: :unprocessable_entity
     end
+  end
+
+  def edit
+    # @reservation est chargé par le before_action
+    # On charge les données pour les listes déroulantes
+    @avions = Avion.all
+    @instructeurs = User.where("fi IS NOT NULL AND fi >= ?", Date.today).order(:nom)
+  end
+
+  def update
+    if @reservation.update(reservation_params)
+      # --- Synchronisation avec Google Calendar ---
+      GoogleCalendarService.new.update_event_for_app(@reservation)
+
+      redirect_to root_path, notice: 'Votre réservation a été mise à jour avec succès.'
+    else
+      @avions = Avion.all
+      @instructeurs = User.where("fi IS NOT NULL AND fi >= ?", Date.today).order(:nom)
+      render :edit, status: :unprocessable_entity
+    end
+  end
+
+  def destroy
+    # --- Règle de gestion : Annulation impossible moins de 24h avant le vol (sauf pour les admins) ---
+    if @reservation.start_time < 24.hours.from_now && !current_user.admin?
+      # --- Envoi de l'email de notification aux administrateurs ---
+      admins = User.where(admin: true)
+      admins.each do |admin|
+        UserMailer.late_cancellation_attempt_notification(admin, current_user, @reservation).deliver_later
+      end
+
+      redirect_to root_path, alert: "Annulation impossible : la réservation commence dans moins de 24 heures. Veuillez contacter un administrateur ou un instructeur pour annuler cette réservation."
+      return
+    end
+
+    # --- Synchronisation avec Google Calendar ---
+    GoogleCalendarService.new.delete_event_for_app(@reservation)
+
+    # --- Envoi de l'email de confirmation d'annulation ---
+    UserMailer.reservation_cancelled_notification(current_user, @reservation).deliver_later
+
+    # On supprime la réservation de la base de données
+    @reservation.destroy
+
+    redirect_to root_path, notice: 'Votre réservation a été annulée avec succès.', status: :see_other
   end
 
 def agenda
@@ -118,6 +164,10 @@ end
 
 
   private
+
+  def set_reservation
+    @reservation = current_user.reservations.find(params[:id])
+  end
 
   # vérifie si l'adhérent a un solde positif ou pas
   def check_user_balance

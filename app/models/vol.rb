@@ -3,6 +3,8 @@ require 'csv'
 class Vol < ApplicationRecord
   belongs_to :user
   belongs_to :avion
+  # Validation personnalisée pour les compteurs
+  validate :compteur_arrivee_superieur_au_depart
 
   # Méthode pour générer le CSV à partir d'une collection de vols
   def self.to_csv(vols)
@@ -25,4 +27,19 @@ class Vol < ApplicationRecord
       end
     end
   end
+
+
+  
+  private
+
+  def compteur_arrivee_superieur_au_depart
+    # On ne lance la validation que si les deux champs sont présents
+    return if compteur_depart.blank? || compteur_arrivee.blank?
+
+    if compteur_arrivee <= compteur_depart
+      # Ajoute une erreur sur le champ 'compteur_arrivee' si la condition n'est pas respectée
+      errors.add(:compteur_arrivee, "doit être supérieur au compteur de départ.")
+    end
+  end
+
 end

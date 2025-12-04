@@ -18,7 +18,7 @@ class GoogleCalendarService
   end
 
   def create_event(reservation)
-    # Cette méthode est maintenant un alias pour la nouvelle méthode plus générique
+    # Cette méthode est un alias
     create_event_for_app(reservation)
   end
 
@@ -61,34 +61,94 @@ class GoogleCalendarService
     end
   end
 
+  # Méthode pour mettre à jour un événement existant sur Google Calendar
+  def update_event_for_app(record)
+    # On s'assure que l'enregistrement a bien un ID d'événement Google
+    google_event_id = record.google_event_id
+    return unless google_event_id.present?
+
+    calendar_ids = []
+    event_data = nil
+
+    case record
+    when Reservation
+      calendar_ids = get_calendar_ids_for_reservation(record)
+      event_data = build_event_from_reservation(record)
+    when Event
+      calendar_ids << ENV['GOOGLE_CALENDAR_ID_EVENTS']
+      event_data = build_event_from_app_event(record)
+    end
+
+    return if calendar_ids.empty? || event_data.nil?
+
+    event = Google::Apis::CalendarV3::Event.new(**event_data)
+
+    begin
+      # On met à jour l'événement sur chaque calendrier où il a été créé
+      calendar_ids.each do |cal_id|
+        @service.update_event(cal_id, google_event_id, event)
+        puts "DEBUG: Événement Google Calendar mis à jour avec succès dans le calendrier #{cal_id}. ID : #{google_event_id}"
+      end
+    rescue Google::Apis::Error => e
+      puts "ERREUR lors de la mise à jour de l'événement Google Calendar : #{e.message}"
+    end
+  end
+
+  # Méthode pour supprimer un événement existant sur Google Calendar
+  def delete_event_for_app(record)
+    google_event_id = record.google_event_id
+    return unless google_event_id.present?
+
+    calendar_ids = []
+    case record
+    when Reservation
+      calendar_ids = get_calendar_ids_for_reservation(record)
+    when Event
+      calendar_ids << ENV['GOOGLE_CALENDAR_ID_EVENTS']
+    end
+
+    return if calendar_ids.empty?
+
+    begin
+      calendar_ids.each do |cal_id|
+        @service.delete_event(cal_id, google_event_id)
+        puts "DEBUG: Événement Google Calendar supprimé avec succès du calendrier #{cal_id}. ID : #{google_event_id}"
+      end
+    rescue Google::Apis::ClientError => e
+      # Si l'événement n'est pas trouvé (déjà supprimé), on ne lève pas d'erreur.
+      if e.status_code == 404 || e.status_code == 410
+        puts "INFO: L'événement Google Calendar #{google_event_id} n'a pas été trouvé sur le calendrier #{calendar_ids.join(', ')}. Il a probablement déjà été supprimé."
+      else
+        # Pour les autres erreurs (ex: problème de permission), on affiche le message.
+        puts "ERREUR lors de la suppression de l'événement Google Calendar : #{e.message}"
+      end
+    end
+  end
+
   
   private
 
   # Cette méthode retourne un tableau d'IDs de calendriers pertinents pour la réservation.
   def get_calendar_ids_for_reservation(reservation)
     ids = []
-
-    # Ajout de l'agenda principal par défaut (acb.bastair@gmail.com)
-    ids << ENV['GOOGLE_CALENDAR_ID'] if ENV['GOOGLE_CALENDAR_ID'].present?
-
-    # Ajout de l'agenda de l'avion si l'immatriculation correspond
+    avion_calendar_id = nil
+    
+    # On cherche d'abord un agenda spécifique à l'avion.
     avion = reservation.avion
     case avion.immatriculation
     when "F-HGBT"
-      ids << ENV['GOOGLE_CALENDAR_ID_AVION_F_HGBT'] if ENV['GOOGLE_CALENDAR_ID_AVION_F_HGBT'].present?
-    # Ajoutez d'autres cas pour les avions ici si nécessaire
+      avion_calendar_id = ENV['GOOGLE_CALENDAR_ID_AVION_F_HGBT']
+    # Ajoutez d'autres cas pour d'autres avions ici.
     end
 
-    # Ajout de l'agenda de l'instructeur si 'fi' est présent et correspond
-    # Le champ 'fi' contient l'ID de l'utilisateur instructeur.
-    if reservation.fi.present? && (instructeur = User.find_by(id: reservation.fi))
-      # On utilise le nom de famille de l'instructeur pour la comparaison.
-      # Assurez-vous que le nom correspond à ce que vous attendez (ex: "HUY").
-      case instructeur.nom 
-      when "HUY" # Remplacez "HUY" par le nom de famille exact de l'instructeur si nécessaire.
-        ids << ENV['GOOGLE_CALENDAR_ID_INSTRUCTEUR_HUY']
-      # Ajoutez d'autres cas pour les instructeurs ici si nécessaire
-      end
+    # On ajoute l'agenda de l'avion s'il a été trouvé, sinon on utilise l'agenda principal par défaut.
+    ids << (avion_calendar_id || ENV['GOOGLE_CALENDAR_ID'])
+
+    # Ajout de l'agenda de l'instructeur si le vol est en instruction.
+    if reservation.instruction? && reservation.fi.present? && (instructeur = User.find_by(id: reservation.fi))
+      # La logique pour trouver l'agenda de l'instructeur peut être affinée ici.
+      # Pour l'instant, on se base sur le nom de famille.
+      ids << ENV['GOOGLE_CALENDAR_ID_INSTRUCTEUR_HUY'] if instructeur.nom == "HUY"
     end
 
     ids.compact.uniq # Retourne les IDs uniques et non nuls
@@ -96,9 +156,22 @@ class GoogleCalendarService
 
   # Construit le hash de données pour un événement Google à partir d'une Réservation
   def build_event_from_reservation(reservation)
+    # Le summary doit inclure l'immatriculation de l'avion et le nom/prénom du user
+    summary_text = "#{reservation.user.name} - #{reservation.avion.immatriculation}"
+    
+    description_text = "Réservation de vol\n"
+    description_text += "Pilote : #{reservation.user.name}\n"
+    description_text += "Avion : #{reservation.avion.immatriculation}\n"
+    description_text += "Type de vol : #{reservation.type_vol}\n"
+    
+    if reservation.instruction? && reservation.fi.present?
+      instructeur = User.find_by(id: reservation.fi)
+      description_text += "Instructeur : #{instructeur.name}\n" if instructeur
+    end
+
     {
-      summary: reservation.summary,
-      description: "Réservé par : #{reservation.user.name}\nType de vol : #{reservation.type_vol}",
+      summary: summary_text,
+      description: description_text,
       start: { date_time: reservation.start_time.iso8601 },
       end: { date_time: reservation.end_time.iso8601 }
     }
@@ -121,4 +194,5 @@ class GoogleCalendarService
       end: { date_time: end_time.iso8601 }
     }
   end
+
 end

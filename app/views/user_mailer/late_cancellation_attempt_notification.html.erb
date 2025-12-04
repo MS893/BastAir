@@ -1,0 +1,25 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+</head>
+<body>
+  <h1>Alerte : Tentative d'annulation tardive</h1>
+  <p>Bonjour <%= @admin.prenom %>,</p>
+  <p>
+    L'utilisateur <strong><%= @user.name %></strong> (<%= @user.email %>) a tenté d'annuler une réservation moins de 24 heures avant son début.
+  </p>
+  <p>
+    Détails de la réservation concernée :
+  </p>
+  <ul>
+    <li><strong>Avion :</strong> <%= @reservation.avion.immatriculation %></li>
+    <li><strong>Début :</strong> <%= l @reservation.start_time, format: :long %></li>
+    <li><strong>Fin :</strong> <%= l @reservation.end_time, format: :long %></li>
+  </ul>
+  <p>
+    L'annulation de l'utilisateur a été automatiquement bloquée. Vous pouvez, si vous le souhaitez, contacter l'utilisateur ou annuler manuellement la réservation depuis l'interface d'administration.
+  </p>
+</body>
+</html>

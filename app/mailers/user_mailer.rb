@@ -29,6 +29,21 @@ class UserMailer < ApplicationMailer
     mail(to: @participant.email, subject: "Annulation de l'événement : #{@event_title}")
   end
 
+  # Notification d'annulation de réservation
+  def reservation_cancelled_notification(user, reservation)
+    @user = user
+    @reservation = reservation
+    mail(to: @user.email, subject: 'Confirmation d\'annulation de votre réservation')
+  end
+    
+  # Notification d'une tentative d'annulation tardive à un admin
+  def late_cancellation_attempt_notification(admin, user, reservation)
+    @admin = admin
+    @user = user
+    @reservation = reservation
+    mail(to: @admin.email, subject: "Alerte : Tentative d'annulation tardive")
+  end
+
   def negative_balance_email(user)
     @user = user
     mail(to: @user.email, subject: 'Alerte : Votre solde de compte est négatif')
