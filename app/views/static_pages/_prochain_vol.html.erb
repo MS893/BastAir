@@ -1,36 +1,41 @@
+<%# --- SECTION PROCHAIN VOL --- %>
 <div class="card h-100 shadow">
-  <div class="card-body d-flex flex-column">
-    <h5 class="card-title"><i class="bi bi-airplane me-2"></i>Prochain vol
-        <%= link_to "CHECK-LIST", check_list_path, class: "btn btn-success ms-5 fw-bold" %>
+  <div class="card-header bg-primary text-white">
+    <h5 class="card-title mb-0">
+      <i class="bi bi-airplane-engines me-2"></i>Mes prochaines réservations
+          <%= link_to "CHECK-LIST", check_list_path, class: "btn btn-success ms-5 fw-bold" %>
     </h5>
-
-    <% if @next_reservation %>
-
-      <div class="flex-grow-1">
-        <p class="card-text mb-1"><strong>Avion :</strong> <%= @next_reservation.avion.nom %></p>
-        <p class="card-text mb-1"><strong>Le :</strong> <%= l(@next_reservation.date_debut, format: :long) %></p>
-        <p class="card-text"><strong>À :</strong> <%= l(@next_reservation.date_debut, format: :short_time) %></p>
-        <p class="card-text mb-1"><strong>Le :</strong> <%= l(@next_reservation.date_debut, format: :long) %> à <%= l(@next_reservation.date_debut, format: :short_time) %></p>
-      </div>
-      <%= link_to "Voir mes réservations", '#', class: "btn btn-outline-primary mt-auto" %>
-
-    <% else %>
-
-      <p class="card-text text-muted flex-grow-1">Aucun vol programmé.</p>
-
-    <% end %>
-    
-    <div class="btn-group w-100 mb-3">
-      <%= link_to "Mes réservations", '#', class: "btn btn-outline-primary mt-auto" %>
-      <%= link_to "Agenda avion", agenda_avion_path, class: "btn btn-outline-primary mt-auto" %>
-      <%= link_to "Agenda instructeurs", agenda_instructeurs_path, class: "btn btn-outline-primary mt-auto" %>
-    </div>
-
-    <% if @next_reservation %>
-      <%= link_to "Gérer mes réservations", '#', class: "btn btn-primary mt-auto" %>
-    <% else %>
-      <%= link_to "Réserver un vol", new_reservation_path, class: "btn btn-primary mt-auto" %>
-    <% end %>
-
   </div>
+  <div class="card-body d-flex flex-column">
+    <% if @upcoming_reservations.present? && @upcoming_reservations.any? %>
+      <% @upcoming_reservations.each_with_index do |reservation, index| %>
+        <div class="reservation-item">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <p class="mb-1">Vol sur <strong><%= reservation.avion.immatriculation %></strong></p>
+              <p class="text-muted small mb-0"><%= l reservation.start_time, format: :long %></p>
+            </div>
+            <div class="d-flex">
+              <%= link_to "Modifier", edit_reservation_path(reservation), class: "btn btn-sm btn-outline-primary" %>
+              <%= button_to "Annuler", reservation_path(reservation), 
+                    method: :delete, 
+                    class: "btn btn-sm btn-outline-danger ms-2",
+                    data: { turbo_confirm: "Êtes-vous sûr de vouloir annuler cette réservation ? Cette action est irréversible." } %>
+            </div>
+          </div>
+        </div>
+        <%= tag.hr if !@upcoming_reservations.last.eql?(reservation) %>
+      <% end %>
+    <% else %>
+      <p class="text-muted m-auto">Aucune réservation à venir.</p>
+    <% end %>
+  </div>
+
+  <div class="btn-group w-100">
+    <%= link_to "Mes réservations", '#', class: "btn btn-outline-primary mt-auto" %>
+    <%= link_to "Agenda avion", agenda_avion_path, class: "btn btn-outline-primary mt-auto" %>
+    <%= link_to "Agenda instructeurs", agenda_instructeurs_path, class: "btn btn-outline-primary mt-auto" %>
+    <%= link_to "Réserver un vol", new_reservation_path, class: "btn btn-outline-primary mt-auto" %>
+  </div>
+
 </div>

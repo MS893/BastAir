@@ -14,6 +14,9 @@ class StaticPagesController < ApplicationController
     # On récupère les 5 dernières transactions de l'utilisateur connecté pour le dashboard
     if user_signed_in?
       @transactions = current_user.transactions.order(date_transaction: :desc).limit(5)
+
+      # On charge les 3 prochaines réservations de l'utilisateur
+      @upcoming_reservations = current_user.reservations.where('start_time >= ?', Time.current).order(start_time: :asc).limit(3)
     end
 
     # On charge les 5 dernières actualités, de la plus récente à la plus ancienne
