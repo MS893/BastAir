@@ -12,16 +12,16 @@
     <div class="card-body d-flex flex-wrap justify-content-between align-items-center">
       <%# Formulaire de filtres %>
       <div class="d-flex align-items-center flex-wrap">
-        <%= form_with url: vols_path, method: :get, class: "d-flex align-items-center me-3" do %>
-          <div class="btn-group me-3" role="group">
-            <%= link_to "Aujourd'hui", vols_path(period: 'day', pilot_id: params[:pilot_id], avion_id: params[:avion_id]), class: "btn #{params[:period] == 'day' ? 'btn-primary' : 'btn-outline-primary'}" %>
-            <%= link_to "Cette semaine", vols_path(period: 'week', pilot_id: params[:pilot_id], avion_id: params[:avion_id]), class: "btn #{params[:period] == 'week' ? 'btn-primary' : 'btn-outline-primary'}" %>
-            <%= link_to "Ce mois-ci", vols_path(period: 'month', pilot_id: params[:pilot_id], avion_id: params[:avion_id]), class: "btn #{params[:period] == 'month' ? 'btn-primary' : 'btn-outline-primary'}" %>
-            <%= link_to "Cette année", vols_path(period: 'year', pilot_id: params[:pilot_id], avion_id: params[:avion_id]), class: "btn #{params[:period] == 'year' ? 'btn-primary' : 'btn-outline-primary'}" %>
-            <%= link_to "Tout voir", vols_path(pilot_id: params[:pilot_id], avion_id: params[:avion_id]), class: "btn #{params[:period].blank? ? 'btn-primary' : 'btn-outline-primary'}" %>
+        <%= form_with url: vols_path, method: :get, class: "d-flex flex-wrap align-items-center me-3" do %>
+          <div class="btn-group flex-wrap me-3 mb-2 mb-md-0 mt-3" role="group">
+            <%= link_to "Aujourd'hui", vols_path(period: 'day', pilot_id: params[:pilot_id], avion_id: params[:avion_id]), class: "btn text-nowrap #{params[:period] == 'day' ? 'btn-primary' : 'btn-outline-primary'}" %>
+            <%= link_to "Cette semaine", vols_path(period: 'week', pilot_id: params[:pilot_id], avion_id: params[:avion_id]), class: "btn text-nowrap #{params[:period] == 'week' ? 'btn-primary' : 'btn-outline-primary'}" %>
+            <%= link_to "Ce mois-ci", vols_path(period: 'month', pilot_id: params[:pilot_id], avion_id: params[:avion_id]), class: "btn text-nowrap #{params[:period] == 'month' ? 'btn-primary' : 'btn-outline-primary'}" %>
+            <%= link_to "Cette année", vols_path(period: 'year', pilot_id: params[:pilot_id], avion_id: params[:avion_id]), class: "btn text-nowrap #{params[:period] == 'year' ? 'btn-primary' : 'btn-outline-primary'}" %>
+            <%= link_to "Tout voir", vols_path(pilot_id: params[:pilot_id], avion_id: params[:avion_id]), class: "btn text-nowrap #{params[:period].blank? ? 'btn-primary' : 'btn-outline-primary'}" %>
           </div>
-          <%= select_tag :pilot_id, options_from_collection_for_select(@pilots, :id, :name, params[:pilot_id]), include_blank: 'Tous les pilotes', class: 'form-select me-2', onchange: 'this.form.submit()' %>
-          <%= select_tag :avion_id, options_from_collection_for_select(@avions, :id, :immatriculation, params[:avion_id]), include_blank: 'Tous les avions', class: 'form-select me-2', onchange: 'this.form.submit()' %>
+          <%= select_tag :pilot_id, options_from_collection_for_select(@pilots, :id, :name, params[:pilot_id]), include_blank: 'Tous les pilotes', class: 'form-select me-2 mb-2 mb-md-0 mt-3', onchange: 'this.form.submit()' %>
+          <%= select_tag :avion_id, options_from_collection_for_select(@avions, :id, :immatriculation, params[:avion_id]), include_blank: 'Tous les avions', class: 'form-select me-2 mb-2 mb-md-0 mt-3', onchange: 'this.form.submit()' %>
         <% end %>
       </div>
 

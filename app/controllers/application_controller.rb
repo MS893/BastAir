@@ -2,6 +2,13 @@ class ApplicationController < ActionController::Base
   # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
   allow_browser versions: :modern
 
+  protected
+
+  # Surcharge de la méthode Devise pour rediriger systématiquement vers la page d'accueil après la connexion.
+  def after_sign_in_path_for(resource)
+    root_path
+  end
+
   private
 
   # Vérifie si l'utilisateur est un administrateur
@@ -18,4 +25,5 @@ class ApplicationController < ActionController::Base
   def authorize_treasurer_or_admin!
     redirect_to root_path, alert: "Accès réservé aux administrateurs et au trésorier." unless current_user&.admin? || current_user&.fonction == 'tresorier'
   end
+  
 end

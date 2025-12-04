@@ -1,9 +1,9 @@
 class SignalementsController < ApplicationController
   before_action :authenticate_user!
+  before_action :authorize_admin!, only: [:edit, :update, :destroy]
   # On ne cherche l'avion que pour les actions `new` et `create`
   before_action :set_avion, only: [:new, :create]
-  before_action :set_signalement, only: [:show, :edit, :update]
-  before_action :authorize_admin!, only: [:edit, :update]
+  before_action :set_signalement, only: [:show, :edit, :update, :destroy]
 
   def new
     @signalement = @avion.signalements.new
@@ -39,6 +39,12 @@ class SignalementsController < ApplicationController
     else
       render :edit, status: :unprocessable_entity
     end
+  end
+
+  def destroy
+    Rails.logger.info("Suppression - admin: #{current_user.admin?}, signalement: #{@signalement.id}")
+    @signalement.destroy
+    redirect_to signalements_path, notice: 'Le signalement a été supprimé avec succès.', status: :see_other
   end
 
   def create

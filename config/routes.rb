@@ -59,7 +59,7 @@ Rails.application.routes.draw do
   end
 
   # Route pour la liste des signalements sur un avion
-  resources :signalements, only: [:index, :show, :edit, :update]
+  resources :signalements, only: [:index, :show, :edit, :update, :destroy]
 
   # routes pour l'administration
   namespace :admin do

@@ -48,7 +48,10 @@
             </small>
             <%# Ce lien ne s'affiche que pour les administrateurs %>
             <% if current_user.admin? %>
-              <%= link_to 'Modifier', edit_signalement_path(signalement), class: 'btn btn-sm btn-outline-warning' %>
+              <div class="btn-group" role="group">
+                <%= link_to 'Modifier', edit_signalement_path(signalement), class: 'btn btn-sm btn-outline-primary' %>
+                <%= link_to 'Supprimer', signalement_path(signalement), class: 'btn btn-sm btn-outline-danger ms-3', data: { turbo_method: :delete, turbo_confirm: 'Êtes-vous sûr de vouloir supprimer ce signalement ?' } %>
+              </div>
             <% end %>
           </div>
         </div>
