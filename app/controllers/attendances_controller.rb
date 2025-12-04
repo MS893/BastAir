@@ -20,7 +20,16 @@ class AttendancesController < ApplicationController
 
       # On utilise une transaction pour s'assurer que l'inscription et le débit se font ensemble
       ActiveRecord::Base.transaction do
-        current_user.update!(solde: current_user.solde - @event.price)
+        # On crée une transaction comptable pour le débit.
+        # Le callback du modèle Transaction se chargera de mettre à jour le solde.
+        Transaction.create!(
+          user: current_user,
+          description: "Inscription à l'événement '#{@event.title}'",
+          mouvement: 'Dépense', # Une dépense pour l'utilisateur
+          montant: @event.price,
+          source_transaction: 'Adhérent',
+          payment_method: 'Prélèvement sur compte'
+        )
         @attendance = @event.attendances.create!(user: current_user)
       end
 
@@ -46,11 +55,36 @@ class AttendancesController < ApplicationController
     @event = Event.find(params[:event_id])
     attendance = current_user.attendances.find_by(event_id: @event.id)
 
-    if attendance
+    unless attendance
+      redirect_to @event, alert: "Vous n'étiez pas inscrit à cet événement."
+      return
+    end
+
+    # On empêche la désinscription si l'événement a déjà commencé
+    if @event.start_date < Time.current
+      redirect_to @event, alert: "Action impossible : l'événement a déjà commencé."
+      return
+    end
+
+    # Si l'événement était payant, on rembourse l'utilisateur
+    if @event.price > 0
+      ActiveRecord::Base.transaction do
+        # On crée une transaction comptable pour le remboursement.
+        # Le callback du modèle Transaction se chargera de mettre à jour le solde.
+        Transaction.create!(
+          user: current_user,
+          description: "Remboursement - Désinscription de l'événement '#{@event.title}'",
+          mouvement: 'Recette', # Une recette pour l'utilisateur
+          montant: @event.price,
+          source_transaction: 'Adhérent',
+          payment_method: 'Prélèvement sur compte' # Indique une opération interne
+        )
+        attendance.destroy!
+      end
+      redirect_to @event, notice: "Vous avez bien été désinscrit. Votre compte a été recrédité de #{@event.price} €."
+    else
       attendance.destroy
       redirect_to @event, notice: "Vous avez bien été désinscrit de l'événement."
-    else
-      redirect_to @event, alert: "Vous n'étiez pas inscrit à cet événement."
     end
   end
 
