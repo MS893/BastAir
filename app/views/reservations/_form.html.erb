@@ -1,0 +1,52 @@
+<%# Ce formulaire est utilisé à la fois pour la création (new) et la modification (edit) d'une réservation. %>
+<%# Il attend une variable locale `reservation` qui est passée par la vue parente. %>
+
+<%= form_with(model: reservation, local: true) do |form| %>
+  <%# Affichage des erreurs de validation s'il y en a %>
+  <% if reservation.errors.any? %>
+    <div id="error_explanation" class="alert alert-danger">
+      <h5 class="alert-heading"><%= pluralize(reservation.errors.count, "erreur") %> a empêché cette réservation d'être enregistrée :</h5>
+      <ul>
+        <% reservation.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="card shadow-sm">
+    <div class="card-body p-4">
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <%= form.label :avion_id, "Avion", class: "form-label" %>
+          <%= form.collection_select :avion_id, @avions, :id, :immatriculation, { prompt: "Sélectionnez un avion" }, { class: "form-select" } %>
+        </div>
+        <div class="col-md-6 mb-3">
+          <%= form.label :type_vol, "Type de vol", class: "form-label" %>
+          <%= form.select :type_vol, ["Standard", "Vol découverte", "Vol d'initiation", "Vol d'essai", "Convoyage", "Vol BIA"], {}, { class: "form-select" } %>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <%= form.label :start_time, "Début de la réservation", class: "form-label" %>
+          <%= form.datetime_local_field :start_time, class: "form-control" %>
+        </div>
+        <div class="col-md-6 mb-3">
+          <%= form.label :end_time, "Fin de la réservation", class: "form-label" %>
+          <%= form.datetime_local_field :end_time, class: "form-control" %>
+        </div>
+      </div>
+
+      <div class="form-check form-switch mb-3">
+        <%= form.check_box :instruction, class: "form-check-input" %>
+        <%= form.label :instruction, "Vol en instruction", class: "form-check-label" %>
+      </div>
+
+      <div class="form-actions mt-4 border-top pt-3">
+        <%= form.submit "Enregistrer la réservation", class: "btn btn-success" %>
+        <%= link_to 'Annuler', root_path, class: 'btn btn-outline-secondary ms-2' %>
+      </div>
+    </div>
+  </div>
+<% end %>

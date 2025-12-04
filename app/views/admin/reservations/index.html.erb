@@ -1,0 +1,60 @@
+<% content_for :title, "Gestion des Réservations" %>
+
+<div class="container mt-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="mb-0">Gestion des Réservations</h1>
+  </div>
+
+  <%# --- FORMULAIRE DE FILTRE --- %>
+  <div class="card mb-4">
+    <div class="card-body">
+      <%= form_with(url: admin_reservations_path, method: :get, class: "row g-3 align-items-end") do %>
+        <div class="col-md-4">
+          <%= label_tag :user_id, "Filtrer par utilisateur", class: "form-label" %>
+          <%= select_tag :user_id, options_from_collection_for_select(@users, :id, :name, params[:user_id]), { include_blank: 'Tous les utilisateurs', class: 'form-select', onchange: 'this.form.submit()' } %>
+        </div>
+        <div class="col-md-4">
+          <%= label_tag :avion_id, "Filtrer par avion", class: "form-label" %>
+          <%= select_tag :avion_id, options_from_collection_for_select(@avions, :id, :immatriculation, params[:avion_id]), { include_blank: 'Tous les avions', class: 'form-select', onchange: 'this.form.submit()' } %>
+        </div>
+        <div class="col-md-4"><%= link_to "Réinitialiser les filtres", admin_reservations_path, class: "btn btn-outline-primary" %></div>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="card shadow-sm">
+    <div class="table-responsive">
+      <table class="table table-striped table-hover mb-0">
+        <thead class="table-light">
+          <tr>
+            <th>Utilisateur</th>
+            <th>Avion</th>
+            <th>Début</th>
+            <th>Fin</th>
+            <th>Type</th>
+            <th class="text-center">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @reservations.each do |reservation| %>
+            <tr>
+              <td><%= link_to reservation.user.name, user_path(reservation.user) %></td>
+              <td><%= reservation.avion.immatriculation %></td>
+              <td><%= l reservation.start_time, format: :short_year_time %></td>
+              <td><%= l reservation.end_time, format: :short_year_time %></td>
+              <td><%= reservation.instruction? ? "Instruction" : "Solo" %></td>
+              <td class="text-center">
+                <%= link_to 'Modifier', edit_reservation_path(reservation), class: 'btn btn-sm btn-outline-primary d-inline-block' %>
+                <%= link_to 'Supprimer', reservation_path(reservation), method: :delete, class: 'btn btn-sm btn-outline-danger d-inline-block ms-3', data: { turbo_confirm: "Êtes-vous sûr de vouloir supprimer cette réservation ? Cette action est irréversible." } %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="d-flex justify-content-center mt-4">
+    <%= paginate @reservations %>
+  </div>
+</div>

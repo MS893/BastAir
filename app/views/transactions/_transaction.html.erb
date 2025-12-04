@@ -1,6 +1,7 @@
 <%# Ce partiel est utilisé pour afficher une seule ligne de transaction %>
 <%# L'ID DOM est généré automatiquement par `render @transactions` (ex: "transaction_123") %>
 <%= tag.tr id: dom_id(transaction) do %>
+
   <td><%= l transaction.date_transaction, format: "%d %b %Y" %></td>
   <td><%= link_to truncate(transaction.description, length: 40), transaction_path(transaction) %></td>
   <td class="text-end fw-bold <%= transaction.mouvement == 'Recette' ? 'text-success' : 'text-danger' %>">
@@ -12,6 +13,7 @@
   <td>
     <span class="badge bg-secondary-subtle text-secondary-emphasis"><%= transaction.source_transaction %></span>
   </td>
+
   <td>
     <% if transaction.user %>
       <%= link_to transaction.user.name, user_path(transaction.user) %>
@@ -19,23 +21,24 @@
       <span class="text-muted">N/A</span>
     <% end %>
   </td>
+
   <td class="text-center">
     <% if transaction.is_checked? %>
-    <% if current_user&.admin? || current_user&.fonction == 'tresorier' %>
-      <%= button_to 'Vérifiée', toggle_check_transaction_path(transaction), method: :patch, class: 'btn btn-sm btn-success', form_class: 'd-inline' %>
-    <% else %>
-      <%= button_to 'À vérifier', toggle_check_transaction_path(transaction), method: :patch, class: 'btn btn-sm btn-warning', form_class: 'd-inline' %>
-    <% end %>
+      <% if current_user&.admin? || current_user&.fonction == 'tresorier' %>
+        <%= button_to 'Vérifiée', toggle_check_transaction_path(transaction), method: :patch, class: 'btn btn-sm btn-success', form_class: 'd-inline' %>
+      <% else %>
+        <%= button_to 'À vérifier', toggle_check_transaction_path(transaction), method: :patch, class: 'btn btn-sm btn-warning', form_class: 'd-inline' %>
+      <% end %>
     <% end %>
   </td>
-  <td class="text-center">
-  <% if current_user&.admin? || current_user&.fonction == 'tresorier' %>
 
-    <%= link_to 'Voir', transaction_path(transaction), class: 'btn btn-sm btn-outline-info' %>
-    <%# Le bouton Modifier n'est visible que si la transaction n'est pas vérifiée %>
+  <td class="text-center">
+    <% if current_user&.admin? || current_user&.fonction == 'tresorier' %>
+      <%= link_to 'Voir', transaction_path(transaction), class: 'btn btn-sm btn-outline-info' %>
+      <%# Le bouton Modifier n'est visible que si la transaction n'est pas vérifiée %>
     <% unless transaction.is_checked? %>
       <%= link_to 'Modifier', edit_transaction_path(transaction), class: 'btn btn-sm btn-outline-primary' %>
     <% end %>
   </td>
-<% end %>
+
 <% end %>

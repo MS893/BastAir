@@ -166,7 +166,11 @@ end
   private
 
   def set_reservation
-    @reservation = current_user.reservations.find(params[:id])
+    if current_user.admin?
+      @reservation = Reservation.find(params[:id])
+    else
+      @reservation = current_user.reservations.find(params[:id])
+    end
   end
 
   # vérifie si l'adhérent a un solde positif ou pas

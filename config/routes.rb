@@ -69,6 +69,8 @@ Rails.application.routes.draw do
     resources :users, only: [:new, :create]
     # On ajoute les routes pour gérer les actualités (sauf la page "show" qui n'est pas utile ici)
     resources :news_items, except: [:show]
+    # Route pour la gestion des réservations par les admins
+    resources :reservations, only: [:index, :destroy]
   end
 
   # routes pour les cours (à compléter avec les cours du club)
