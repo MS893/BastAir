@@ -1,4 +1,4 @@
-class ReportsController < ApplicationController
+class Admin::ComptaReportController < ApplicationController
   def treasury_report
     # 1. Récupérer toutes les transactions du modèle ActiveRecord
     transactions = Transaction.all 
