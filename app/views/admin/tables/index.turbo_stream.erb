@@ -1,0 +1,13 @@
+<%# Met à jour la liste des tables à gauche pour que le lien actif soit correct %>
+<%= turbo_stream.update "tables_list" do %>
+  <%= render 'tables_list', tables: @tables, selected_table: @selected_table %>
+<% end %>
+
+<%# Met à jour le contenu de la table à droite %>
+<%= turbo_stream.update "table_content_frame" do %>
+  <% if @records %>
+    <%= render 'table_content', table_name: @selected_table, records: @records %>
+  <% else %>
+    <div class="alert alert-info mt-3">Veuillez sélectionner une table dans la liste de gauche pour voir son contenu.</div>
+  <% end %>
+<% end %>

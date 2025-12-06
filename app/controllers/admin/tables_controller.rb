@@ -5,6 +5,20 @@ module Admin
   class TablesController < ApplicationController
     before_action :authorize_admin!
 
+    # Centralise la configuration des associations à précharger pour chaque table.
+    # Clé: nom de la table.
+    # Valeur: un hash où la clé est le type d'ID (ex: :user_ids) et la valeur est la ou les colonnes correspondantes.
+    ASSOCIATIONS_TO_PRELOAD = {
+      'attendances'  => { user_ids: :user_id, event_ids: :event_id },
+      'comments'     => { user_ids: :user_id, event_ids: :event_id },
+      'events'       => { user_ids: :admin_id },
+      'news_items'   => { user_ids: :user_id },
+      'reservations' => { user_ids: :user_id, avion_ids: :avion_id },
+      'signalements' => { user_ids: :user_id, avion_ids: :avion_id },
+      'transactions' => { user_ids: :user_id },
+      'vols'         => { user_ids: [:user_id, :instructeur_id], avion_ids: :avion_id }
+    }.freeze
+
     def index
       excluded_tables = [
         'ar_internal_metadata',
@@ -18,153 +32,32 @@ module Admin
       if params[:table_name].present? && @tables.include?(params[:table_name])
         @selected_table = params[:table_name]
         @model = create_anonymous_model(params[:table_name])
-        @records = @model.all
+        
+        # 1. Construire la requête de base avec filtres et tri (sans l'exécuter)
+        filtered_records = @model.all
 
         if params[:query].present?
           query_term = "%#{params[:query].downcase}%"
-          # On construit une requête qui cherche dans toutes les colonnes de la table
-          # en les castant en texte pour une recherche universelle.
           conditions = @model.column_names.map do |col|
             "LOWER(CAST(#{col} AS TEXT)) LIKE :query"
           end.join(' OR ')
-          @records = @records.where(conditions, query: query_term)
+          filtered_records = filtered_records.where(conditions, query: query_term)
         end
 
         if params[:sort_column].present? && @model.column_names.include?(params[:sort_column])
           sort_direction = %w[asc desc].include?(params[:sort_direction]) ? params[:sort_direction] : 'asc'
-          @records = @records.order("#{params[:sort_column]} #{sort_direction}")
+          filtered_records = filtered_records.order("#{params[:sort_column]} #{sort_direction}")
         end
 
-        @records = @records.page(params[:page]).per(10)
+        # 2. Précharger les données associées en utilisant la requête filtrée (avant pagination)
+        preload_associations(filtered_records)
 
-        # Initialise les hashes d'associations avant de charger les données
-        @users_by_id = {}
-        @avions_by_id = {}
-        @events_by_id = {}
-  
-        # Détermine quels IDs charger selon la table
-        if @selected_table == 'attendances'
-          # Charger TOUS les user_id et event_id avant pagination
-          all_records = @model.all
-          if params[:query].present?
-            query_term = "%#{params[:query].downcase}%"
-            conditions = @model.column_names.map { |col| "LOWER(CAST(#{col} AS TEXT)) LIKE :query" }.join(' OR ')
-            all_records = all_records.where(conditions, query: query_term)
-          end
-          if params[:sort_column].present? && @model.column_names.include?(params[:sort_column])
-            sort_direction = %w[asc desc].include?(params[:sort_direction]) ? params[:sort_direction] : 'asc'
-            all_records = all_records.order("#{params[:sort_column]} #{sort_direction}")
-          end
-          user_ids = all_records.pluck(:user_id).uniq
-          event_ids = all_records.pluck(:event_id).uniq
-          @users_by_id = User.where(id: user_ids).index_by(&:id)
-          @events_by_id = Event.where(id: event_ids).index_by(&:id)
-        elsif @selected_table == 'comments'
-          # Charger TOUS les user_id et event_id avant pagination
-          all_records = @model.all
-          if params[:query].present?
-            query_term = "%#{params[:query].downcase}%"
-            conditions = @model.column_names.map { |col| "LOWER(CAST(#{col} AS TEXT)) LIKE :query" }.join(' OR ')
-            all_records = all_records.where(conditions, query: query_term)
-          end
-          if params[:sort_column].present? && @model.column_names.include?(params[:sort_column])
-            sort_direction = %w[asc desc].include?(params[:sort_direction]) ? params[:sort_direction] : 'asc'
-            all_records = all_records.order("#{params[:sort_column]} #{sort_direction}")
-          end
-          user_ids = all_records.pluck(:user_id).uniq
-          event_ids = all_records.pluck(:event_id).uniq
-          @users_by_id = User.where(id: user_ids).index_by(&:id)
-          @events_by_id = Event.where(id: event_ids).index_by(&:id)
-        elsif @selected_table == 'events'
-          # Charger TOUS les admin_id avant pagination
-          all_records = @model.all
-          if params[:query].present?
-            query_term = "%#{params[:query].downcase}%"
-            conditions = @model.column_names.map { |col| "LOWER(CAST(#{col} AS TEXT)) LIKE :query" }.join(' OR ')
-            all_records = all_records.where(conditions, query: query_term)
-          end
-          if params[:sort_column].present? && @model.column_names.include?(params[:sort_column])
-            sort_direction = %w[asc desc].include?(params[:sort_direction]) ? params[:sort_direction] : 'asc'
-            all_records = all_records.order("#{params[:sort_column]} #{sort_direction}")
-          end
-          admin_ids = all_records.pluck(:admin_id).uniq
-          @users_by_id = User.where(id: admin_ids).index_by(&:id)
-        elsif @selected_table == 'news_items'
-          # Charger TOUS les user_id avant pagination
-          all_records = @model.all
-          if params[:query].present?
-            query_term = "%#{params[:query].downcase}%"
-            conditions = @model.column_names.map { |col| "LOWER(CAST(#{col} AS TEXT)) LIKE :query" }.join(' OR ')
-            all_records = all_records.where(conditions, query: query_term)
-          end
-          if params[:sort_column].present? && @model.column_names.include?(params[:sort_column])
-            sort_direction = %w[asc desc].include?(params[:sort_direction]) ? params[:sort_direction] : 'asc'
-            all_records = all_records.order("#{params[:sort_column]} #{sort_direction}")
-          end
-          user_ids = all_records.pluck(:user_id).uniq
-          @users_by_id = User.where(id: user_ids).index_by(&:id)
-        elsif @selected_table == 'reservations'
-          # Charger TOUS les user_id et avion_id avant pagination
-          all_records = @model.all
-          if params[:query].present?
-            query_term = "%#{params[:query].downcase}%"
-            conditions = @model.column_names.map { |col| "LOWER(CAST(#{col} AS TEXT)) LIKE :query" }.join(' OR ')
-            all_records = all_records.where(conditions, query: query_term)
-          end
-          if params[:sort_column].present? && @model.column_names.include?(params[:sort_column])
-            sort_direction = %w[asc desc].include?(params[:sort_direction]) ? params[:sort_direction] : 'asc'
-            all_records = all_records.order("#{params[:sort_column]} #{sort_direction}")
-          end
-          user_ids = all_records.pluck(:user_id).uniq
-          avion_ids = all_records.pluck(:avion_id).uniq
-          @users_by_id = User.where(id: user_ids).index_by(&:id)
-          @avions_by_id = Avion.where(id: avion_ids).index_by(&:id)
-        elsif @selected_table == 'signalements'
-          # Charger TOUS les user_id et avion_id avant pagination
-          all_records = @model.all
-          if params[:query].present?
-            query_term = "%#{params[:query].downcase}%"
-            conditions = @model.column_names.map { |col| "LOWER(CAST(#{col} AS TEXT)) LIKE :query" }.join(' OR ')
-            all_records = all_records.where(conditions, query: query_term)
-          end
-          if params[:sort_column].present? && @model.column_names.include?(params[:sort_column])
-            sort_direction = %w[asc desc].include?(params[:sort_direction]) ? params[:sort_direction] : 'asc'
-            all_records = all_records.order("#{params[:sort_column]} #{sort_direction}")
-          end
-          user_ids = all_records.pluck(:user_id).uniq
-          avion_ids = all_records.pluck(:avion_id).uniq
-          @users_by_id = User.where(id: user_ids).index_by(&:id)
-          @avions_by_id = Avion.where(id: avion_ids).index_by(&:id)
-        elsif @selected_table == 'transactions'
-          # Charger TOUS les user_id avant pagination
-          all_records = @model.all
-          if params[:query].present?
-            query_term = "%#{params[:query].downcase}%"
-            conditions = @model.column_names.map { |col| "LOWER(CAST(#{col} AS TEXT)) LIKE :query" }.join(' OR ')
-            all_records = all_records.where(conditions, query: query_term)
-          end
-          if params[:sort_column].present? && @model.column_names.include?(params[:sort_column])
-            sort_direction = %w[asc desc].include?(params[:sort_direction]) ? params[:sort_direction] : 'asc'
-            all_records = all_records.order("#{params[:sort_column]} #{sort_direction}")
-          end
-          user_ids = all_records.pluck(:user_id).uniq
-          @users_by_id = User.where(id: user_ids).index_by(&:id)
-        elsif @selected_table == 'vols'
-          # Pour vols : charger TOUS les user_id et instructeur_id, avant pagination
-          all_records = @model.all
-          if params[:query].present?
-            query_term = "%#{params[:query].downcase}%"
-            conditions = @model.column_names.map { |col| "LOWER(CAST(#{col} AS TEXT)) LIKE :query" }.join(' OR ')
-            all_records = all_records.where(conditions, query: query_term)
-          end
-          if params[:sort_column].present? && @model.column_names.include?(params[:sort_column])
-            sort_direction = %w[asc desc].include?(params[:sort_direction]) ? params[:sort_direction] : 'asc'
-            all_records = all_records.order("#{params[:sort_column]} #{sort_direction}")
-          end
-          user_ids = (all_records.pluck(:user_id) + all_records.pluck(:instructeur_id)).compact.uniq
-          avion_ids = all_records.pluck(:avion_id).uniq
-          @users_by_id = User.where(id: user_ids).index_by(&:id)
-          @avions_by_id = Avion.where(id: avion_ids).index_by(&:id)
+        # 3. Paginer les résultats pour l'affichage
+        @records = filtered_records.page(params[:page]).per(10)
+
+        respond_to do |format|
+          format.html # pour le chargement initial de la page
+          format.turbo_stream # pour les mises à jour via Turbo
         end
       end
     end
@@ -225,6 +118,31 @@ module Admin
 
 
     private
+
+    def preload_associations(records)
+      @users_by_id = {}
+      @avions_by_id = {}
+      @events_by_id = {}
+
+      config = ASSOCIATIONS_TO_PRELOAD[@selected_table]
+      return unless config
+
+      ids_to_fetch = { user_ids: [], avion_ids: [], event_ids: [] }
+
+      config.each do |id_group, columns|
+        # `columns` peut être un symbole unique ou un tableau de symboles
+        Array(columns).each do |column|
+          # Utilise `pluck` sur la relation `records` (qui est filtrée mais pas encore paginée)
+          # pour récupérer tous les IDs pertinents.
+          ids_to_fetch[id_group] += records.pluck(column)
+        end
+      end
+
+      # Charge les enregistrements associés en une seule requête par modèle
+      @users_by_id = User.where(id: ids_to_fetch[:user_ids].compact.uniq).index_by(&:id) if ids_to_fetch[:user_ids].present?
+      @avions_by_id = Avion.where(id: ids_to_fetch[:avion_ids].compact.uniq).index_by(&:id) if ids_to_fetch[:avion_ids].present?
+      @events_by_id = Event.where(id: ids_to_fetch[:event_ids].compact.uniq).index_by(&:id) if ids_to_fetch[:event_ids].present?
+    end
 
     helper_method :translate_table_name
     def translate_table_name(table_name)

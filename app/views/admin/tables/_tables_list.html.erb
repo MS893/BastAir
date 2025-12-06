@@ -1,0 +1,9 @@
+<p>Sélectionnez une table pour afficher son contenu.</p>
+<div class="list-group">
+  <% tables.each do |table| %>
+    <%# On ajoute `format: :turbo_stream` pour s'assurer que le contrôleur rendra la bonne vue %>
+    <%= link_to translate_table_name(table), admin_tables_path(table_name: table, format: :turbo_stream), 
+        class: "list-group-item list-group-item-action #{'active' if selected_table == table}",
+        data: { turbo_prefetch: false } %>
+  <% end %>
+</div>

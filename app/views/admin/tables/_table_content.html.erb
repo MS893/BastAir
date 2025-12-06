@@ -35,6 +35,8 @@
     </table>
   </div>
 
-  <%= paginate records %>
+  <div data-turbo-prefetch="false">
+    <%= paginate records %>
+  </div>
 
 <% end %>
