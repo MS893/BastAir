@@ -67,6 +67,12 @@ module Admin::TablesHelper
       return content_tag(:span, value, style: 'white-space: nowrap;')
     end
 
+    # Cas spécial pour le champ 'fi' de la table 'reservations' qui contient un ID d'instructeur
+    if table_name == 'reservations' && column == 'fi' && value.present?
+      instructeur = @users_by_id[value.to_i]
+      return instructeur ? "#{instructeur.prenom} #{instructeur.nom}" : "ID: #{value}"
+    end
+
     # Gestion des clés étrangères
     if column.end_with?('_id')
       return display_association_name(record, column, table_name, value) || "ID: #{value}"
@@ -88,6 +94,12 @@ module Admin::TablesHelper
   # Formate un attribut pour l'affichage dans la page de détail d'un enregistrement.
   def display_record_attribute(record, attr_name, associated_records)
     value = record.public_send(attr_name)
+
+    # Cas spécial pour le champ 'fi' de la table 'reservations' qui contient un ID d'instructeur
+    if record.class.table_name == 'reservations' && attr_name == 'fi' && value.present?
+      instructor = User.find_by(id: value.to_i)
+      return instructor ? "#{instructor.prenom} #{instructor.nom}" : "Instructeur ID: #{value}"
+    end
 
     if associated_records.key?(attr_name) && (associated_record = associated_records[attr_name])
       # Clé étrangère avec enregistrement associé chargé

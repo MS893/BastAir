@@ -24,8 +24,9 @@
     <div class="card-body">
       <%# On utilise une structure de divs au lieu de <dl> pour un contrôle parfait de l'alignement vertical %>
       <div class="record-attributes">
-        <% @record.attributes.each do |attr_name, _attr_value| %>
-          <div class="row border-bottom">
+        <% attributes = @record.attributes %>
+        <% attributes.each_with_index do |(attr_name, _attr_value), index| %>
+          <div class="row <%= 'border-bottom' unless index == attributes.size - 1 %>">
             <div class="col-sm-3 fw-bold py-2"><%= attr_name.humanize %></div>
             <div class="col-sm-9 py-2">
             <%= display_record_attribute(@record, attr_name, @associated_records) %>

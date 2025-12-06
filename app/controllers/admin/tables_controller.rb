@@ -91,6 +91,12 @@ module Admin
       @table_name = params[:table_name]
       @model = create_anonymous_model(@table_name)
       @record = @model.find(params[:id])
+
+      # Prépare la liste des instructeurs pour le formulaire d'édition des réservations.
+      # Un instructeur est un utilisateur avec une date de qualification FI valide.
+      if @table_name == 'reservations'
+        @instructors_for_select = User.where('fi IS NOT NULL AND fi >= ?', Date.today).order(:nom, :prenom).map { |u| ["#{u.prenom} #{u.nom}", u.id] }
+      end
       set_foreign_key_options
     end
 

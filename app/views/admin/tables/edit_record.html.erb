@@ -15,8 +15,12 @@
 
     <%
       # Filtrer les colonnes non éditables
+      non_editable_columns = ['id', 'created_at', 'updated_at']
+      if @table_name == 'attendances'
+        non_editable_columns << 'stripe_customer_id'
+      end
       editable_columns = @model.columns.reject do |column|
-        ['id', 'created_at', 'updated_at'].include?(column.name)
+        non_editable_columns.include?(column.name)
       end
     %>
 
@@ -31,6 +35,12 @@
               <%= form.label attr_name, class: 'form-label' %>
               <% if @foreign_key_options.key?(attr_name) %>
                 <%= form.select attr_name, options_for_select(@foreign_key_options[attr_name], attr_value), { include_blank: true }, class: 'form-select' %>
+              <% elsif @table_name == 'reservations' && attr_name == 'fi' %>
+                <%= form.select :fi, options_for_select(@instructors_for_select, @record.fi.to_i), { include_blank: 'Aucun' }, class: 'form-select' %>
+              <% elsif @table_name == 'users' && attr_name == 'fi' %>
+                <%= form.date_field :fi, value: @record.fi, class: 'form-control' %>
+              <% elsif @table_name == 'users' && attr_name == 'fe' %>
+                <%= form.date_field :fe, value: @record.fe, class: 'form-control' %>
               <% else %>
                 <% case col1.type %>
                 <% when :boolean %>
@@ -56,6 +66,12 @@
               <%= form.label attr_name, class: 'form-label' %>
               <% if @foreign_key_options.key?(attr_name) %>
                 <%= form.select attr_name, options_for_select(@foreign_key_options[attr_name], attr_value), { include_blank: true }, class: 'form-select' %>
+              <% elsif @table_name == 'reservations' && attr_name == 'fi' %>
+                <%= form.select :fi, options_for_select(@instructors_for_select, @record.fi.to_i), { include_blank: 'Aucun' }, class: 'form-select' %>
+              <% elsif @table_name == 'users' && attr_name == 'fi' %>
+                <%= form.date_field :fi, value: @record.fi, class: 'form-control' %>
+              <% elsif @table_name == 'users' && attr_name == 'fe' %>
+                <%= form.date_field :fe, value: @record.fe, class: 'form-control' %>
               <% else %>
                 <% case col2.type %>
                 <% when :boolean %>
@@ -85,6 +101,12 @@
           <%= form.label attr_name, class: 'form-label' %>
           <% if @foreign_key_options.key?(attr_name) %>
               <%= form.select attr_name, options_for_select(@foreign_key_options[attr_name], attr_value), { include_blank: 'Sélectionner...' }, class: 'form-select' %>
+          <% elsif @table_name == 'reservations' && attr_name == 'fi' %>
+            <%= form.select :fi, options_for_select(@instructors_for_select, @record.fi.to_i), { include_blank: 'Aucun' }, class: 'form-select' %>
+          <% elsif @table_name == 'users' && attr_name == 'fi' %>
+            <%= form.date_field :fi, value: @record.fi, class: 'form-control' %>
+          <% elsif @table_name == 'users' && attr_name == 'fe' %>
+            <%= form.date_field :fe, value: @record.fe, class: 'form-control' %>
           <% else %>
             <% case column.type %>
             <% when :boolean %>
