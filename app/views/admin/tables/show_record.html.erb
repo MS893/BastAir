@@ -22,32 +22,17 @@
 
   <div class="card">
     <div class="card-body">
-      <dl class="row">
-        <% @record.attributes.each do |attr_name, attr_value| %>
-          <dt class="col-sm-3"><%= attr_name.humanize %></dt>
-          <dd class="col-sm-9 mb-3">
-            <% if @associated_records.key?(attr_name) && (associated_record = @associated_records[attr_name]) %>
-              <%# Cas spécial pour afficher un lien vers l'utilisateur associé %>
-              <% if associated_record.is_a?(User) %>
-                <p><%= "#{associated_record.prenom} #{associated_record.nom}" %></p>
-              <% else %>
-                <%# Affiche un attribut pertinent de l'enregistrement associé s'il en a un %>
-                <%= associated_record.try(:name) || associated_record.try(:title) || "Enregistrement ##{attr_value}" %>
-              <% end %>
-            <% elsif attr_name.end_with?('_id') && attr_value.present? %>
-              <%# Si la clé étrangère n'a pas pu être résolue, on affiche juste l'ID %>
-              <p>ID: <%= attr_value %></p>
-            <% else %>
-              <%# Affichage normal pour les autres attributs %>
-              <% if attr_value.is_a?(Date) || attr_value.is_a?(Time) || attr_value.is_a?(ActiveSupport::TimeWithZone) %>
-                <p><%= l(attr_value, format: :long) %></p>
-              <% else %>
-                <p><%= attr_value.presence || 'N/A' %></p>
-              <% end %>
-            <% end %>
-          </dd>
+      <%# On utilise une structure de divs au lieu de <dl> pour un contrôle parfait de l'alignement vertical %>
+      <div class="record-attributes">
+        <% @record.attributes.each do |attr_name, _attr_value| %>
+          <div class="row border-bottom">
+            <div class="col-sm-3 fw-bold py-2"><%= attr_name.humanize %></div>
+            <div class="col-sm-9 py-2">
+            <%= display_record_attribute(@record, attr_name, @associated_records) %>
+            </div>
+          </div>
         <% end %>
-      </dl>
+      </div>
     </div>
   </div>
 </div>

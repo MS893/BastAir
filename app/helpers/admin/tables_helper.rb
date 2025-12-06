@@ -85,6 +85,31 @@ module Admin::TablesHelper
     end
   end
 
+  # Formate un attribut pour l'affichage dans la page de détail d'un enregistrement.
+  def display_record_attribute(record, attr_name, associated_records)
+    value = record.public_send(attr_name)
+
+    if associated_records.key?(attr_name) && (associated_record = associated_records[attr_name])
+      # Clé étrangère avec enregistrement associé chargé
+      if associated_record.is_a?(User)
+        "#{associated_record.prenom} #{associated_record.nom}"
+      else
+        associated_record.try(:name) || associated_record.try(:title) || "Enregistrement ##{value}"
+      end
+    elsif attr_name.end_with?('_id')
+      value.present? ? "ID: #{value}" : 'N/A'
+    elsif value.is_a?(TrueClass) || value.is_a?(FalseClass)
+      # Affichage des booléens
+      value ? content_tag(:span, 'Oui', class: 'badge bg-success') : content_tag(:span, 'Non', class: 'badge bg-danger')
+    elsif value.is_a?(Date) || value.is_a?(Time)
+      # Formatage des dates et heures
+      l(value, format: :long)
+    else
+      # Valeur par défaut, avec gestion des valeurs vides
+      value.presence || content_tag(:em, 'N/A', class: 'text-muted')
+    end
+  end
+
   private
 
   # Retourne le texte personnalisé pour un en-tête de colonne.

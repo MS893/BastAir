@@ -7,16 +7,20 @@
       <p>Sélectionnez une table pour afficher son contenu.</p>
       <div class="list-group">
         <% @tables.each do |table| %>
-          <%= link_to translate_table_name(table), admin_tables_path(table_name: table), class: "list-group-item list-group-item-action #{'active' if @selected_table == table}" %>
+          <%= link_to translate_table_name(table), admin_tables_path(table_name: table), 
+              class: "list-group-item list-group-item-action #{'active' if @selected_table == table}",
+              data: { turbo_frame: 'table_content_frame' } %>
         <% end %>
       </div>
     </div>
 
     <div class="col-md-10 mt-3">
-      <% if @records %>
-        <%= render 'table_content', table_name: @selected_table, records: @records %>
-      <% else %>
-        <div class="alert alert-info mt-3">Veuillez sélectionner une table dans la liste de gauche pour voir son contenu.</div>
+      <%= turbo_frame_tag "table_content_frame" do %>
+        <% if @records %>
+          <%= render 'table_content', table_name: @selected_table, records: @records %>
+        <% else %>
+          <div class="alert alert-info mt-3">Veuillez sélectionner une table dans la liste de gauche pour voir son contenu.</div>
+        <% end %>
       <% end %>
     </div>
 
