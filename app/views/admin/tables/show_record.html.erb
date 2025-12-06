@@ -2,9 +2,20 @@
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h1>Détail de l'enregistrement #<%= @record.id %></h1>
     <div>
-      <%= link_to 'Modifier', admin_edit_table_record_path(table_name: @table_name, id: @record.id), class: 'btn btn-primary me-2' %>
-      <%= link_to 'Supprimer', admin_table_record_path(table_name: @table_name, id: @record.id),
-          data: { turbo_method: :delete, turbo_confirm: 'Êtes-vous sûr de vouloir supprimer cet enregistrement ?' }, class: 'btn btn-danger me-2' %>
+      <% if @table_name == 'transactions' %>
+        <% if current_user.tresorier? %>
+          <%= link_to 'Modifier', admin_edit_table_record_path(table_name: @table_name, id: @record.id), class: 'btn btn-primary me-2' %>
+          <%= link_to 'Supprimer', admin_table_record_path(table_name: @table_name, id: @record.id),
+              data: { turbo_method: :delete,
+                      turbo_confirm: "Êtes-vous sûr de vouloir supprimer cette transaction ?\n\nCette action est irréversible et sera enregistrée." },
+              class: 'btn btn-danger me-2' %>
+        <% else %>
+          <p>Seul le trésorier peut modifier ou supprimer une écriture comptable.</p>
+        <% end %>
+      <% else %>
+        <%= link_to 'Modifier', admin_edit_table_record_path(table_name: @table_name, id: @record.id), class: 'btn btn-primary me-2' %>
+        <%= link_to 'Supprimer', admin_table_record_path(table_name: @table_name, id: @record.id), data: { turbo_method: :delete, turbo_confirm: 'Êtes-vous sûr de vouloir supprimer cet enregistrement ?' }, class: 'btn btn-danger me-2' %>
+      <% end %>
       <%= link_to 'Retour à la liste', admin_tables_path(table_name: @table_name), class: 'btn btn-secondary' %>
     </div>
   </div>
