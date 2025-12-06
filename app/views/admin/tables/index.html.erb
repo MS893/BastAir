@@ -1,4 +1,8 @@
-<div class="container mt-4">
+<div class="container mt-4" data-controller="progress-bar">
+  <%# Barre de progression contrôlée par Stimulus %>
+  <div class="progress-bar" data-progress-bar-target="bar" style="position: fixed; top: 0; left: 0; height: 3px; background-color: #0d6efd; width: 0; opacity: 0; z-index: 2000; transition: width 300ms ease-out, opacity 150ms 150ms ease-in;">
+  </div>
+
   <h1>Gestion des bases de données</h1>
 
   <div class="row">
