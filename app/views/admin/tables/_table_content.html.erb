@@ -1,0 +1,201 @@
+<h5>Contenu de la table : <%= translate_table_name(table_name) %> (<%= table_name %>)</h5>
+
+<%= form_with(url: admin_tables_path, method: :get, data: { turbo_frame: "table_content_frame", turbo_action: "advance" }) do |form| %>
+  <%= form.hidden_field :table_name, value: table_name %>
+  <div class="input-group my-3">
+    <%= form.search_field :query, value: params[:query], class: 'form-control', placeholder: 'Rechercher dans cette table...', 'aria-label': 'Rechercher' %>
+    <div class="input-group-append">
+      <%= form.submit 'Rechercher', class: 'btn btn-outline-primary ms-3' %>
+    </div>
+  </div>
+<% end %>
+
+<div id="table_content_frame">
+
+  <% if records.empty? %>
+    <div class="alert alert-warning">Cette table est vide.</div>
+  <% else %>
+    <div class="table-responsive">
+      <table class="table table-striped table-bordered">
+        <thead class="thead-dark">
+          <tr>
+            <%
+              hidden_columns = ['created_at', 'updated_at']
+              if table_name == 'attendances'
+                hidden_columns += ['stripe_customer_id']
+              elsif table_name == 'users'
+                hidden_columns += [
+                  'date_naissance',
+                  'lieu_naissance',
+                  'profession',
+                  'adresse',
+                  'email',
+                  'encrypted_password',
+                  'num_ffa',
+                  'num_licence',
+                  'date_licence',
+                  'type_medical',
+                  'medical',
+                  'nuit',
+                  'fi',
+                  'fe',
+                  'controle',
+                  'cotisation_club',
+                  'cotisation_ffa',
+                  'google_access_token',
+                  'google_refresh_token',
+                  'google_token_expires_at',
+                  'reset_password_token',
+                  'reset_password_sent_at',
+                  'remember_created_at'
+                ]
+              elsif table_name == 'avions'
+                hidden_columns += [
+                  'marque',
+                  'modele',
+                  'conso_horaire',
+                  'certif_immat',
+                  'cert_navigabilite',
+                  'cert_examen_navigabilite',
+                  'licence_station_aeronef',
+                  'cert_limitation_nuisances',
+                  'fiche_pesee'
+                ]
+              elsif table_name == 'reservations'
+                hidden_columns += [
+                  'summary',
+                  'description',
+                  'location',
+                  'attendees',
+                  'google_event_id',
+                  'recurrence',
+                  'reminders_data',
+                  'conference_data',
+                  'colorId',
+                  'source',
+                  'extended_properties',
+                  'sharedExtendedProperties'
+                ]
+              elsif table_name == 'tarifs'
+                # Masque la colonne 'tarif_horaire_avions_2' si le tarif est égal à 0
+                hidden_columns += [
+                  'tarif_horaire_avion2'
+                ]
+              elsif table_name == 'transactions'
+                hidden_columns += [
+                  'piece_justificative',
+                  'attachment_url'
+                ]
+              elsif table_name == 'vols'
+                hidden_columns += [
+                  'depart',
+                  'arrivee',
+                  'compteur_depart',
+                  'compteur_arrivee',
+                  'nature',
+                  'fuel_avant_vol',
+                  'fuel_apres_vol',
+                  'huile'
+                ]
+              end
+              visible_columns = records.first.attributes.keys - hidden_columns
+            %>
+            <% visible_columns.each do |col| %>
+              <th>
+                <%
+                  current_sort_direction = params[:sort_column] == col ? (params[:sort_direction] == 'asc' ? 'desc' : 'asc') : 'asc'
+                  sort_icon = if params[:sort_column] == col
+                                params[:sort_direction] == 'asc' ? ' &#9650;' : ' &#9660;' # Flèche haut ou bas
+                              else
+                                ''
+                              end
+                %>
+                <%
+                  header_text = col.humanize
+                  if table_name == 'avions' && col == 'immatriculation'
+                    header_text = 'Immat'
+                  elsif table_name == 'vols' && col == 'nb_atterro'
+                    header_text = 'Nb att'
+                  end
+                %>
+                <%= link_to admin_tables_path(table_name: table_name, page: params[:page], query: params[:query], sort_column: col, sort_direction: current_sort_direction), data: { turbo_frame: "table_content_frame", turbo_action: "advance" } do %>
+                  <%= header_text %>
+                  <%= raw sort_icon %>
+                <% end %>
+              </th>
+            <% end %>
+          </tr>
+        </thead>
+        <tbody>
+          <% records.each do |record| %>
+            <tr data-controller="clickable-row" data-clickable-row-url-value="<%= admin_show_table_record_path(table_name: table_name, id: record.id) %>" style="cursor: pointer;">
+              <% visible_columns.each do |col| %>
+                <td>
+                  <% if table_name == 'attendances' && col == 'user_id' %>
+                    <% user = @users_by_id[record.user_id] %>
+                    <%= user ? "#{user.prenom} #{user.nom}" : "ID: #{record.user_id}" %>
+                  <% elsif table_name == 'attendances' && col == 'event_id' %>
+                    <% event = @events_by_id[record.event_id] %>
+                    <%= event ? event.title : "ID: #{record.event_id}" %>
+                  <% elsif table_name == 'comments' && col == 'user_id' %>
+                    <% user = @users_by_id[record.user_id] %>
+                    <%= user ? "#{user.prenom} #{user.nom}" : "ID: #{record.user_id}" %>
+                  <% elsif table_name == 'comments' && col == 'event_id' %>
+                    <% event = @events_by_id[record.event_id] %>
+                    <%= event ? event.title : "ID: #{record.event_id}" %>
+                  <% elsif (table_name == 'reservations' || table_name == 'signalements') && col == 'user_id' %>
+                    <% user = @users_by_id[record.user_id] %>
+                    <%= user ? "#{user.prenom} #{user.nom}" : "ID: #{record.user_id}" %>
+                  <% elsif (table_name == 'reservations' || table_name == 'signalements') && col == 'avion_id' %>
+                    <% avion = @avions_by_id[record.avion_id] %>
+                    <span style="white-space: nowrap;"><%= avion ? avion.immatriculation : "ID: #{record.avion_id}" %></span>
+                  <% elsif table_name == 'avions' && col == 'immatriculation' %>
+                    <span style="white-space: nowrap;"><%= record.immatriculation %></span>
+                  <% elsif table_name == 'events' && col == 'admin_id' %>
+                    <% user = @users_by_id[record.admin_id] %>
+                    <%= user ? "#{user.prenom} #{user.nom}" : "ID: #{record.admin_id}" %>
+                  <% elsif table_name == 'news_items' && col == 'user_id' %>
+                    <% user = @users_by_id[record.user_id] %>
+                    <%= user ? "#{user.prenom} #{user.nom}" : "ID: #{record.user_id}" %>
+                  <% elsif table_name == 'transactions' && col == 'user_id' %>
+                    <% user = @users_by_id[record.user_id] %>
+                    <%= user ? "#{user.prenom} #{user.nom}" : "ID: #{record.user_id}" %>
+                  <% elsif table_name == 'vols' && col == 'user_id' %>
+                    <% user = @users_by_id[record.user_id] %>
+                    <%= user ? "#{user.prenom} #{user.nom}" : "ID: #{record.user_id}" %>
+                  <% elsif table_name == 'vols' && col == 'avion_id' %>
+                    <% avion = @avions_by_id[record.avion_id] %>
+                    <span style="white-space: nowrap;"><%= avion ? avion.immatriculation : "ID: #{record.avion_id}" %></span>
+                  <% elsif table_name == 'vols' && col == 'instructeur_id' %>
+                    <% user = @users_by_id[record.instructeur_id] %>
+                    <%= user ? "#{user.prenom} #{user.nom}" : "ID: #{record.instructeur_id}" %>
+                  <% else %>
+                    <% value = record[col] %>
+                    <% column_object = @model.column_for_attribute(col) %>
+                    <% if column_object.type == :boolean %>
+                      <% if value %>
+                        <span class="badge bg-success">Oui</span>
+                      <% else %>
+                        <span class="badge bg-danger">Non</span>
+                      <% end %>
+                    <% elsif column_object.type == :datetime || column_object.type == :timestamp %>
+                      <%= value.strftime('%d/%m/%y %H:%M UTC') if value.present? %>
+                    <% elsif column_object.type == :date %>
+                      <%= value.strftime('%d/%m/%y') if value.present? %>
+                    <% else %>
+                      <%= truncate(value.to_s, length: 70) %>
+                    <% end %>
+                  <% end %>
+                </td>
+              <% end %>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <%= paginate records %>
+
+  <% end %>
+
+</div>

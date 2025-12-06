@@ -1,0 +1,112 @@
+<div class="container mt-4">
+  <h1>Modifier l'enregistrement #<%= @record.id %> de la table <%= @table_name.humanize %></h1>
+
+  <%= form_with(model: @record, url: admin_update_table_record_path(table_name: @table_name, id: @record.id), method: :patch, local: true, scope: :record) do |form| %>
+    <% if @record.errors.any? %>
+      <div class="alert alert-danger">
+        <h5><%= pluralize(@record.errors.count, "erreur") %> a empêché la sauvegarde :</h5>
+        <ul>
+          <% @record.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <%
+      # Filtrer les colonnes non éditables
+      editable_columns = @model.columns.reject do |column|
+        ['id', 'created_at', 'updated_at'].include?(column.name)
+      end
+    %>
+
+    <% if editable_columns.count > 8 %>
+      <%# Si plus de 8 champs, regrouper par 2 sur une ligne %>
+      <% editable_columns.each_slice(2) do |col1, col2| %>
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <% if col1 %>
+              <% attr_name = col1.name %>
+              <% attr_value = @record.send(attr_name) %>
+              <%= form.label attr_name, class: 'form-label' %>
+              <% if @foreign_key_options.key?(attr_name) %>
+                <%= form.select attr_name, options_for_select(@foreign_key_options[attr_name], attr_value), { include_blank: true }, class: 'form-select' %>
+              <% else %>
+                <% case col1.type %>
+                <% when :boolean %>
+                  <%= form.check_box attr_name, class: 'form-check-input' %>
+                <% when :date %>
+                  <%= form.date_field attr_name, value: attr_value, class: 'form-control' %>
+                <% when :datetime, :timestamp %>
+                  <%= form.datetime_field attr_name, value: attr_value, class: 'form-control' %>
+                <% when :text %>
+                  <%= form.text_area attr_name, value: attr_value, class: 'form-control' %>
+                <% when :integer, :float, :decimal %>
+                  <%= form.number_field attr_name, value: attr_value, class: 'form-control' %>
+                <% else %>
+                  <%= form.text_field attr_name, value: attr_value, class: 'form-control' %>
+                <% end %>
+              <% end %>
+            <% end %>
+          </div>
+          <div class="col-md-6">
+            <% if col2 %>
+              <% attr_name = col2.name %>
+              <% attr_value = @record.send(attr_name) %>
+              <%= form.label attr_name, class: 'form-label' %>
+              <% if @foreign_key_options.key?(attr_name) %>
+                <%= form.select attr_name, options_for_select(@foreign_key_options[attr_name], attr_value), { include_blank: true }, class: 'form-select' %>
+              <% else %>
+                <% case col2.type %>
+                <% when :boolean %>
+                  <%= form.check_box attr_name, class: 'form-check-input' %>
+                <% when :date %>
+                  <%= form.date_field attr_name, value: attr_value, class: 'form-control' %>
+                <% when :datetime, :timestamp %>
+                  <%= form.datetime_field attr_name, value: attr_value, class: 'form-control' %>
+                <% when :text %>
+                  <%= form.text_area attr_name, value: attr_value, class: 'form-control' %>
+                <% when :integer, :float, :decimal %>
+                  <%= form.number_field attr_name, value: attr_value, class: 'form-control' %>
+                <% else %>
+                  <%= form.text_field attr_name, value: attr_value, class: 'form-control' %>
+                <% end %>
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    <% else %>
+      <%# Sinon, un champ par ligne %>
+      <% editable_columns.each do |column| %>
+        <% attr_name = column.name %>
+        <% attr_value = @record.send(attr_name) %>
+        <div class="mb-3">
+          <%= form.label attr_name, class: 'form-label' %>
+          <% if @foreign_key_options.key?(attr_name) %>
+              <%= form.select attr_name, options_for_select(@foreign_key_options[attr_name], attr_value), { include_blank: 'Sélectionner...' }, class: 'form-select' %>
+          <% else %>
+            <% case column.type %>
+            <% when :boolean %>
+              <%= form.check_box attr_name, class: 'form-check-input' %>
+            <% when :date %>
+              <%= form.date_field attr_name, value: attr_value, class: 'form-control' %>
+            <% when :datetime, :timestamp %>
+              <%= form.datetime_field attr_name, value: attr_value, class: 'form-control' %>
+            <% when :text %>
+              <%= form.text_area attr_name, value: attr_value, class: 'form-control' %>
+            <% when :integer, :float, :decimal %>
+              <%= form.number_field attr_name, value: attr_value, class: 'form-control' %>
+            <% else %>
+              <%= form.text_field attr_name, value: attr_value, class: 'form-control' %>
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
+    <% end %>
+
+    <%= form.submit "Mettre à jour", class: 'btn btn-primary mb-5 me-3 mt-3' %>
+    <%= link_to 'Annuler', admin_tables_path(table_name: @table_name), class: 'btn btn-secondary mb-5 mt-3' %>
+  <% end %>
+
+</div>

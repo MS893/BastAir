@@ -1,0 +1,25 @@
+<div class="container mt-4">
+  <h1>Gestion des bases de données</h1>
+
+  <div class="row">
+
+    <div class="col-md-2 mt-3">
+      <p>Sélectionnez une table pour afficher son contenu.</p>
+      <div class="list-group">
+        <% @tables.each do |table| %>
+          <%= link_to translate_table_name(table), admin_tables_path(table_name: table), class: "list-group-item list-group-item-action #{'active' if @selected_table == table}" %>
+        <% end %>
+      </div>
+    </div>
+
+    <div class="col-md-10 mt-3">
+      <% if @records %>
+        <%= render 'table_content', table_name: @selected_table, records: @records %>
+      <% else %>
+        <div class="alert alert-info mt-3">Veuillez sélectionner une table dans la liste de gauche pour voir son contenu.</div>
+      <% end %>
+    </div>
+
+  </div>
+
+</div>

@@ -71,6 +71,14 @@ Rails.application.routes.draw do
     resources :news_items, except: [:show]
     # Route pour la gestion des réservations par les admins
     resources :reservations, only: [:index, :destroy]
+    resources :tables, only: [:index], param: :table_name # Cette ligne reste inchangée
+    delete 'tables/:table_name/records/:id', to: 'tables#destroy_record', as: 'table_record'
+    get 'tables/:table_name/records/:id/edit', to: 'tables#edit_record', as: 'edit_table_record'
+    patch 'tables/:table_name/records/:id', to: 'tables#update_record', as: 'update_table_record'
+    get 'tables/:table_name/records/:id', to: 'tables#show_record', as: 'show_table_record'
+    resources :compta_report, only: [] do
+      get 'treasury_report', on: :collection
+    end
   end
 
   # routes pour les cours (à compléter avec les cours du club)
