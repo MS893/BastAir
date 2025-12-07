@@ -1,4 +1,7 @@
+# app/helpers/application_helper.rb
+
 module ApplicationHelper
+
   def bootstrap_class_for_flash(type)
     case type
       when 'notice' then "alert-info"
@@ -7,4 +10,5 @@ module ApplicationHelper
       when 'alert' then "alert-warning"
     end
   end
+
 end

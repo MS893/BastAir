@@ -36,7 +36,7 @@
             </ul>
           </li>
           <!-- MENU DÉROULANT "ÉLÈVES" -->
-          <% if current_user.fonction == 'eleve' || current_user.admin? %>
+          <% if current_user.fonction == 'eleve' || current_user.admin? || current_user.fonction == 'instructeur' %>
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownEleves" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 Élèves
