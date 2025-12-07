@@ -141,7 +141,7 @@ module Admin::TablesHelper
     return unless value
 
     case column
-    when 'user_id', 'admin_id', 'instructeur_id'
+    when 'user_id', 'instructeur_id', 'admin_id'
       user = @users_by_id[value]
       user ? "#{user.prenom} #{user.nom}" : nil
     when 'event_id'

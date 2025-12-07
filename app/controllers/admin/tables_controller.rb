@@ -11,7 +11,7 @@ module Admin
     ASSOCIATIONS_TO_PRELOAD = {
       'attendances'  => { user_ids: :user_id, event_ids: :event_id },
       'comments'     => { user_ids: :user_id, event_ids: :event_id },
-      'events'       => { user_ids: :admin_id },
+      'events'       => { user_ids: :admin_id }, # admin_id est un user_id
       'news_items'   => { user_ids: :user_id },
       'reservations' => { user_ids: :user_id, avion_ids: :avion_id },
       'signalements' => { user_ids: :user_id, avion_ids: :avion_id },
@@ -71,7 +71,11 @@ module Admin
       # Détecte les clés étrangères et charge les enregistrements associés pour un affichage plus riche.
       @model.columns.each do |column|
         if column.name.end_with?('_id') && column.name != 'id'
-          associated_model_name = column.name.chomp('_id').classify
+          associated_model_name = if column.name == 'admin_id'
+                                    'User'
+                                  else
+                                    column.name.chomp('_id').classify
+                                  end
           begin
             associated_model_class = associated_model_name.constantize
             if associated_model_class < ActiveRecord::Base
@@ -91,13 +95,65 @@ module Admin
       @table_name = params[:table_name]
       @model = create_anonymous_model(@table_name)
       @record = @model.find(params[:id])
+      @type_vols = ["Vol découverte", "Vol d'initiation", "Vol d'essai", "Convoyage", "Vol BIA"] # Maintenu pour 'reservations' et 'vols'
 
       # Prépare la liste des instructeurs pour le formulaire d'édition des réservations.
       # Un instructeur est un utilisateur avec une date de qualification FI valide.
       if @table_name == 'reservations'
         @instructors_for_select = User.where('fi IS NOT NULL AND fi >= ?', Date.today).order(:nom, :prenom).map { |u| ["#{u.prenom} #{u.nom}", u.id] }
+        @google_calendar_colors = {
+          '1' => 'Lavande',
+          '2' => 'Sauge',
+          '3' => 'Mauve',
+          '4' => 'Rose',
+          '5' => 'Jaune',
+          '6' => 'Orange',
+          '7' => 'Cyan',
+          '8' => 'Gris',
+          '9' => 'Bleu',
+          '10' => 'Vert',
+          '11' => 'Rouge'
+        }.invert.to_a # On inverse pour avoir [Nom, ID]
+        @reservation_visibilities = ['public', 'private']
+        @reservation_statuses = ['confirmed', 'tentative', 'cancelled']
+        @reservation_time_zones = ['Europe/Paris', 'America/Martinique', 'America/Cayenne', 'Indian/Reunion', 'Pacific/Noumea', 'Pacific/Tahiti', 'Pacific/Marquesas', 'Pacific/Gambier']
+      elsif @table_name == 'signalements'
+        # Prépare la liste des statuts pour le formulaire d'édition des signalements.
+        @signalement_statuses = ['Ouvert', 'En cours', 'Résolu']
+      elsif @table_name == 'users'
+        # Prépare la liste des fonctions pour le formulaire d'édition des utilisateurs.
+        @user_fonctions = User::ALLOWED_FCT.values
+        @user_medical_types = User::ALLOWED_MED.values
+        @user_licence_types = User::ALLOWED_LIC.values
+      elsif @table_name == 'events'
+        @event_titles = Event::ALLOWED_TITLES
+      elsif @table_name == 'vols'
+        @instructors_for_select = User.where('fi IS NOT NULL AND fi >= ?', Date.today).order(:nom, :prenom).map { |u| ["#{u.prenom} #{u.nom}", u.id] }
+        @nature_vols = ["VFR de jour", "VFR de nuit", "IFR"]
+      elsif @table_name == 'tarifs'
+        current_year = Date.current.year
+        @tarif_annee_options = (current_year..current_year + 2).to_a
       end
       set_foreign_key_options
+    end
+
+    def new_record
+      @table_name = params[:table_name]
+      @model = create_anonymous_model(@table_name)
+      @record = @model.new
+
+      # Préparation des données spécifiques pour le formulaire de création
+      if @table_name == 'tarifs'
+        @record.annee = Date.current.year
+        current_year = Date.current.year
+        @tarif_annee_options = (current_year..current_year + 2).to_a
+      end
+
+      # Prépare les options pour toutes les clés étrangères (ex: avion_id pour un vol)
+      set_foreign_key_options
+
+      # On réutilise la vue d'édition pour le formulaire de création
+      render :edit_record
     end
 
     def update_record
@@ -109,6 +165,19 @@ module Admin
         redirect_to admin_tables_path(table_name: @table_name), notice: "L'enregistrement a été mis à jour avec succès."
       else
         render :edit_record, status: :unprocessable_entity
+      end
+    end
+
+    def create_record
+      @table_name = params[:table_name]
+      @model = create_anonymous_model(@table_name)
+      @record = @model.new(record_params)
+
+      if @record.save
+        redirect_to admin_tables_path(table_name: @table_name), notice: "L'enregistrement a été créé avec succès."
+      else
+        # Si la sauvegarde échoue, il faut re-préparer les données pour le formulaire
+        new_record # Appelle new_record pour re-préparer @instructors_for_select, etc. et re-rendre la vue
       end
     end
 
@@ -180,6 +249,14 @@ module Admin
         self.table_name = table_name
         def self.model_name; ActiveModel::Name.new(self, nil, "Record") end
 
+        # Ajout de validations spécifiques à la table
+        if table_name == 'tarifs'
+          validates :annee, uniqueness: { scope: :avion_id, message: "Un tarif existe déjà pour cet avion et cette année." }
+          validates :avion_id, presence: { message: "Veuillez sélectionner un avion." }
+          validates :tarif_horaire_avion1, presence: { message: "Le tarif horaire de l'avion est obligatoire." }
+          validates :tarif_instructeur, presence: { message: "Le tarif instructeur est obligatoire." }
+        end
+
         # Ajoute dynamiquement des validations basées sur les propriétés des colonnes
         self.columns.each do |column|
           # Exclut les colonnes 'id', 'created_at', 'updated_at' des validations automatiques
@@ -210,15 +287,38 @@ module Admin
         # Vérifie si c'est une clé étrangère (se termine par _id, mais n'est pas 'id' lui-même)
         if column.name.end_with?('_id') && column.name != 'id'
           # Déduit le nom du modèle associé (ex: 'user_id' -> 'User')
-          associated_model_name = column.name.chomp('_id').classify
+          associated_model_name = if column.name == 'admin_id'
+                                    'User'
+                                  else
+                                    column.name.chomp('_id').classify
+                                  end
           begin
             associated_model_class = associated_model_name.constantize
             # S'assure que c'est bien un modèle ActiveRecord
             if associated_model_class < ActiveRecord::Base
               # Détermine un attribut ou une méthode d'affichage approprié pour la liste déroulante
-              if associated_model_class.column_names.include?('prenom') && associated_model_class.column_names.include?('nom')
+              if column.name == 'admin_id'
+                # Cas spécial pour admin_id (table events) : ne lister que les admins
+                @foreign_key_options[column.name] = User.where(admin: true).order(:nom, :prenom).map { |record| ["#{record.prenom} #{record.nom}", record.id] }
+              elsif %w[comments attendances news_items signalements transactions].include?(@table_name) && column.name == 'user_id'
+                # Cas spécial pour user_id (tables comments, attendances, news_items, signalements, transactions) : ne lister que les admins
+                @foreign_key_options[column.name] = { options: User.where(admin: true).order(:nom, :prenom).map { |record| ["#{record.prenom} #{record.nom}", record.id] }, selected: @record.user_id }
+              elsif associated_model_class.column_names.include?('prenom') && associated_model_class.column_names.include?('nom')
                 # Cas spécial pour les modèles avec prénom et nom (comme User)
                 @foreign_key_options[column.name] = associated_model_class.all.map { |record| ["#{record.prenom} #{record.nom}", record.id] }
+              elsif associated_model_class.column_names.include?('immatriculation')
+                # Cas spécial pour les modèles avec une immatriculation (comme Avion)
+                @foreign_key_options[column.name] = associated_model_class.order(:immatriculation).map { |record| [record.immatriculation, record.id] }
+              elsif associated_model_class.column_names.include?('title')
+                # Cas spécial pour les modèles avec un titre (comme Event), en s'assurant de l'unicité du titre.
+                options = associated_model_class.select('MIN(id) as id, title').group(:title).order(:title).map { |r| [r.title, r.id] }
+                current_value = @record.send(column.name)
+                # S'assure que l'ID actuel est dans la liste, même si ce n'est pas le MIN(id)
+                unless options.any? { |opt| opt[1] == current_value }
+                  current_event = associated_model_class.find_by(id: current_value)
+                  options << [current_event.title, current_event.id] if current_event
+                end
+                @foreign_key_options[column.name] = options
               else
                 display_attribute = if associated_model_class.column_names.include?('name')
                                       'name'
