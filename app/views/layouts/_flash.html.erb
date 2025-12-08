@@ -1,7 +1,11 @@
-
-<% flash.each do |type, msg| %>
-  <div class="alert <%= bootstrap_class_for_flash(type) %> alert-dismissible fade show m-3" role="alert">
-    <%= msg %>
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-  </div>
-<% end %>
+<%# Ce conteneur est la cible pour les mises à jour Turbo Stream des messages flash %>
+<div id="flash-messages" class="container mt-3">
+  <% flash.each do |type, message| %>
+    <%# On mappe les types de flash Rails (notice, alert) aux classes Bootstrap (success, danger) %>
+    <% bs_class = (type == 'notice') ? 'success' : 'danger' %>
+    <div class="alert alert-<%= bs_class %> alert-dismissible fade show" role="alert">
+      <%= message %>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  <% end %>
+</div>

@@ -8,9 +8,9 @@ class ReservationsController < ApplicationController
   before_action :check_user_validities, only: [:new, :create]
 
   def new
-    @reservation = Reservation.new
+    @reservation = Reservation.new(avion_id: Avion.order(:immatriculation).first&.id)
     # On charge les données nécessaires pour les listes déroulantes du formulaire
-    @avions = Avion.all
+    @avions = Avion.order(:immatriculation)
     @instructeurs = User.where("fi IS NOT NULL AND fi >= ?", Date.today).order(:nom)
   end
 
@@ -46,7 +46,9 @@ class ReservationsController < ApplicationController
       # --- Synchronisation avec Google Calendar ---
       GoogleCalendarService.new.update_event_for_app(@reservation)
 
-      redirect_to root_path, notice: 'Votre réservation a été mise à jour avec succès.'
+      # On redirige vers la page admin si on vient de là, sinon vers le dashboard.
+      redirect_to params[:redirect_to].presence || root_path, notice: 'Votre réservation a été mise à jour avec succès.'
+
     else
       @avions = Avion.all
       @instructeurs = User.where("fi IS NOT NULL AND fi >= ?", Date.today).order(:nom)
@@ -67,8 +69,18 @@ class ReservationsController < ApplicationController
       return
     end
 
-    # --- Synchronisation avec Google Calendar ---
-    GoogleCalendarService.new.delete_event_for_app(@reservation)
+    # --- Synchronisation de la suppression avec Google Calendar ---
+    calendar_service = GoogleCalendarService.new
+
+    # 1. Si c'est un vol en instruction, on supprime aussi l'événement de l'agenda de l'instructeur.
+    if @reservation.instruction? && @reservation.fi.present?
+      Rails.logger.info "Tentative de suppression de l'événement de l'instructeur pour la réservation ##{@reservation.id}..."
+      calendar_service.delete_instructor_event(@reservation)
+    end
+
+    # 2. On supprime l'événement principal de l'agenda de l'avion.
+    Rails.logger.info "Tentative de suppression de l'événement principal (avion) pour la réservation ##{@reservation.id}..."
+    calendar_service.delete_event_for_app(@reservation)
 
     # --- Envoi de l'email de confirmation d'annulation ---
     UserMailer.reservation_cancelled_notification(current_user, @reservation).deliver_later

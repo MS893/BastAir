@@ -8,54 +8,7 @@
           <h4 class="mb-0">Nouvelle Réservation</h4>
         </div>
         <div class="card-body">
-          <%= form_with(model: @reservation, local: true) do |form| %>
-            <% if @reservation.errors.any? %>
-              <div class="alert alert-danger">
-                <h5><%= pluralize(@reservation.errors.count, "erreur") %> a empêché cette réservation d'être sauvegardée :</h5>
-                <ul>
-                  <% @reservation.errors.full_messages.each do |message| %>
-                    <li><%= message %></li>
-                  <% end %>
-                </ul>
-              </div>
-            <% end %>
-
-            <div class="mb-3">
-              <%= form.label :avion_id, "Avion" %>
-              <%= form.collection_select :avion_id, @avions, :id, :immatriculation, { prompt: "Sélectionnez un avion" }, { class: "form-select" } %>
-            </div>
-
-            <div class="row">
-              <div class="col-md-6 mb-3">
-                <%= form.label :start_time, "Début de la réservation" %>
-                <%= form.datetime_local_field :start_time, class: "form-control" %>
-              </div>
-              <div class="col-md-6 mb-3">
-                <%= form.label :end_time, "Fin de la réservation" %>
-                <%= form.datetime_local_field :end_time, class: "form-control" %>
-              </div>
-            </div>
-
-            <div class="mb-3">
-              <%= form.label :type_vol, "Type de vol" %>
-              <%= form.select :type_vol, ["Local", "Navigation", "Mania"], {}, { class: "form-select" } %>
-            </div>
-
-            <div class="form-check form-switch mb-3">
-              <%= form.check_box :instruction, class: "form-check-input" %>
-              <%= form.label :instruction, "Vol en instruction", class: "form-check-label" %>
-            </div>
-
-            <div class="mb-3">
-              <%= form.label :fi, "Instructeur" %>
-              <%= form.collection_select :fi, @instructeurs, :name, :name, { include_blank: "Pas d'instructeur" }, { class: "form-select" } %>
-            </div>
-
-            <div class="form-actions mt-4 border-top pt-3">
-              <%= form.submit "Enregistrer la réservation", class: "btn btn-success" %>
-              <%= link_to 'Annuler', root_path, class: 'btn btn-outline-primary ms-2' %>
-            </div>
-          <% end %>
+          <%= render 'form', reservation: @reservation %>
         </div>
       </div>
     </div>

@@ -13,6 +13,7 @@ class CreateReservations < ActiveRecord::Migration[8.0]
       t.text :attendees                         # tableau d'objets avec les emails des participants (il faudra le mettre au format json texte sérialisé)
       t.string :time_zone
       t.string :google_event_id
+      t.string :google_instructor_event_id
       t.text :recurrence      # Un tableau de chaînes définissant la répétition de l'événement (format [iCalendar RRULE])
       t.text :reminders_data, default: nil      # La gestion des rappels pour les participants (méthode et temps avant l'événement)
       t.string :status, default: 'confirmed'    # Le statut de l'événement (confirmed, tentative, cancelled)

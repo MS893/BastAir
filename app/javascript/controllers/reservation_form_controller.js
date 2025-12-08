@@ -1,18 +1,22 @@
 import { Controller } from "@hotwired/stimulus"
 
-// Connects to data-controller="reservation-form"
+// Se connecte à data-controller="reservation-form"
 export default class extends Controller {
-  static targets = [ "instructionCheckbox", "instructorSelect" ]
+  // Définit les "cibles" que notre contrôleur peut manipuler.
+  // Ici, c'est la div qui contient la liste des instructeurs.
+  static targets = [ "instructorSelect" ]
 
+  // Cette méthode est appelée automatiquement lorsque le contrôleur est chargé.
   connect() {
-    // On vérifie l'état initial de la case à cocher au chargement de la page
-    // pour afficher le menu si la réservation est déjà en instruction (cas de la modification).
-    this.toggle();
+    // On appelle immédiatement la méthode pour définir l'état initial du formulaire.
+    this.toggleInstructor()
   }
 
-  toggle() {
-    // On affiche ou on masque le menu déroulant en fonction de l'état de la case à cocher.
-    // La classe 'd-none' de Bootstrap est utilisée pour masquer l'élément.
-    this.instructorSelectTarget.classList.toggle("d-none", !this.instructionCheckboxTarget.checked);
+  // Cette méthode est appelée à chaque fois que la case à cocher change.
+  toggleInstructor() {
+    // On récupère l'état de la case à cocher.
+    const isInstruction = this.element.querySelector('#reservation_instruction').checked
+    // On affiche ou on masque la div des instructeurs en fonction de l'état.
+    this.instructorSelectTarget.style.display = isInstruction ? "block" : "none"
   }
 }

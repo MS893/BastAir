@@ -1,0 +1,24 @@
+<% content_for :title, "Paramètres de l'application" %>
+
+<div class="container my-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <h4 class="mb-0">Paramètres de l'application</h4>
+        </div>
+        <div class="card-body">
+          <%= form_with(model: @time_zone, url: admin_setting_path, method: :patch) do |form| %>
+            <div class="mb-3">
+              <%= form.label :val, "Fuseau horaire pour les réservations", class: "form-label" %>
+              <%= form.select :val, options_for_select(@available_time_zones, @time_zone.val), {}, { class: "form-select" } %>
+              <div class="form-text">Ce fuseau horaire sera utilisé pour la création des événements dans Google Calendar.</div>
+            </div>
+
+            <%= form.submit "Enregistrer", class: "btn btn-success" %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

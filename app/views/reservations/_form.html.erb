@@ -1,11 +1,8 @@
-<%# Ce formulaire est utilisé à la fois pour la création (new) et la modification (edit) d'une réservation. %>
-<%# Il attend une variable locale `reservation` qui est passée par la vue parente. %>
-
-<%= form_with(model: reservation, local: true) do |form| %>
-  <%# Affichage des erreurs de validation s'il y en a %>
+<%# On connecte le contrôleur Stimulus au formulaire %>
+<%= form_with(model: reservation, local: true, data: { controller: "reservation-form" }) do |form| %>
   <% if reservation.errors.any? %>
-    <div id="error_explanation" class="alert alert-danger">
-      <h5 class="alert-heading"><%= pluralize(reservation.errors.count, "erreur") %> a empêché cette réservation d'être enregistrée :</h5>
+    <div class="alert alert-danger">
+      <h5><%= pluralize(reservation.errors.count, "erreur") %> a empêché cette réservation d'être sauvegardée :</h5>
       <ul>
         <% reservation.errors.full_messages.each do |message| %>
           <li><%= message %></li>
@@ -14,48 +11,44 @@
     </div>
   <% end %>
 
-  <div class="card shadow-sm">
-    <div class="card-body p-4">
-      <div class="row">
-        <div class="col-md-6 mb-3">
-          <%= form.label :avion_id, "Avion", class: "form-label" %>
-          <%= form.collection_select :avion_id, @avions, :id, :immatriculation, { prompt: "Sélectionnez un avion" }, { class: "form-select" } %>
-        </div>
-        <div class="col-md-6 mb-3">
-          <%= form.label :type_vol, "Type de vol", class: "form-label" %>
-          <%= form.select :type_vol, ["Standard", "Vol découverte", "Vol d'initiation", "Vol d'essai", "Convoyage", "Vol BIA"], {}, { class: "form-select" } %>
-        </div>
-      </div>
+  <%# Champ caché pour gérer la redirection après une mise à jour depuis la page admin %>
+  <%= hidden_field_tag :redirect_to, params[:redirect_to] if params[:redirect_to].present? %>
 
-      <div class="row">
-        <div class="col-md-6 mb-3">
-          <%= form.label :start_time, "Début de la réservation", class: "form-label" %>
-          <%= form.datetime_local_field :start_time, class: "form-control" %>
-        </div>
-        <div class="col-md-6 mb-3">
-          <%= form.label :end_time, "Fin de la réservation", class: "form-label" %>
-          <%= form.datetime_local_field :end_time, class: "form-control" %>
-        </div>
-      </div>
+  <div class="mb-3">
+    <%= form.label :avion_id, "Avion" %>
+    <%= form.collection_select :avion_id, @avions, :id, :immatriculation, { prompt: "Sélectionnez un avion" }, { class: "form-select" } %>
+  </div>
 
-      <%# On englobe la logique de l'instruction dans notre contrôleur Stimulus %>
-      <div data-controller="reservation-form">
-        <div class="form-check form-switch mb-3">
-          <%= form.check_box :instruction, class: "form-check-input", data: { action: "change->reservation-form#toggle", reservation_form_target: "instructionCheckbox" } %>
-          <%= form.label :instruction, "Vol en instruction", class: "form-check-label" %>
-        </div>
-
-        <%# Ce bloc sera affiché ou masqué par le contrôleur Stimulus %>
-        <div class="mb-3 d-none" data-reservation-form-target="instructorSelect">
-          <%= form.label :fi, "Instructeur", class: "form-label" %>
-          <%= form.collection_select :fi, @instructeurs, :id, :name, { include_blank: "Sélectionnez un instructeur" }, { class: "form-select" } %>
-        </div>
-      </div>
-
-      <div class="form-actions mt-4 border-top pt-3">
-        <%= form.submit "Enregistrer la réservation", class: "btn btn-success" %>
-        <%= link_to 'Annuler', root_path, class: 'btn btn-outline-primary ms-2' %>
-      </div>
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <%= form.label :start_time, "Début de la réservation" %>
+      <%= form.datetime_local_field :start_time, class: "form-control" %>
     </div>
+    <div class="col-md-6 mb-3">
+      <%= form.label :end_time, "Fin de la réservation" %>
+      <%= form.datetime_local_field :end_time, class: "form-control" %>
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :type_vol, "Type de vol" %>
+    <%= form.select :type_vol, ["Local", "Navigation", "Mania"], {}, { class: "form-select" } %>
+  </div>
+
+  <div class="form-check form-switch mb-3">
+    <%# On ajoute un `data-action` pour déclencher notre JavaScript au changement %>
+    <%= form.check_box :instruction, { class: "form-check-input", data: { action: "reservation-form#toggleInstructor" } } %>
+    <%= form.label :instruction, "Vol en instruction", class: "form-check-label" %>
+  </div>
+
+  <%# On enveloppe la liste des instructeurs dans une div avec un `data-target` %>
+  <div class="mb-3" data-reservation-form-target="instructorSelect">
+    <%= form.label :fi, "Instructeur" %>
+    <%= form.collection_select :fi, @instructeurs, :name, :name, { include_blank: "Pas d'instructeur" }, { class: "form-select" } %>
+  </div>
+
+  <div class="form-actions mt-4 border-top pt-3">
+    <%= form.submit "Enregistrer la réservation", class: "btn btn-success" %>
+    <%= link_to 'Annuler', root_path, class: 'btn btn-outline-primary ms-2' %>
   </div>
 <% end %>

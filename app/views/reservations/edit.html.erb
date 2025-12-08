@@ -2,10 +2,15 @@
 
 <div class="container my-5">
   <div class="row justify-content-center">
-    <div class="col-lg-8">
-      <h1 class="text-center mb-4">Modifier ma réservation</h1>
-      <%# On réutilise le même formulaire que pour la création %>
-      <%= render 'form', reservation: @reservation %>
+    <div class="col-md-8">
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <h4 class="mb-0">Modifier la Réservation</h4>
+        </div>
+        <div class="card-body">
+          <%= render 'form', reservation: @reservation %>
+        </div>
+      </div>
     </div>
   </div>
 </div>

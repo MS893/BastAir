@@ -128,7 +128,7 @@ module Admin
         }.invert.to_a # On inverse pour avoir [Nom, ID]
         @reservation_visibilities = ['public', 'private']
         @reservation_statuses = ['confirmed', 'tentative', 'cancelled']
-        @reservation_time_zones = ['Europe/Paris', 'America/Martinique', 'America/Cayenne', 'Indian/Reunion', 'Pacific/Noumea', 'Pacific/Tahiti', 'Pacific/Marquesas', 'Pacific/Gambier']
+        @reservation_time_zones = Setting::ALLOWED_TIME_ZONES
       elsif @table_name == 'signalements'
         # Prépare la liste des statuts pour le formulaire d'édition des signalements.
         @signalement_statuses = ['Ouvert', 'En cours', 'Résolu']

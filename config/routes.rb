@@ -90,6 +90,7 @@ Rails.application.routes.draw do
     resources :google_calendars, only: [:index] do
       delete 'clear', on: :collection
     end
+    resource :setting, only: [:edit, :update], path: 'parametres'
   end
 
   # routes pour les cours (à compléter avec les cours du club)

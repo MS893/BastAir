@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_12_08_081611) do
+ActiveRecord::Schema[8.0].define(version: 2025_12_08_163735) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -159,6 +159,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_08_081611) do
     t.text "attendees"
     t.string "time_zone"
     t.string "google_event_id"
+    t.string "google_instructor_event_id"
     t.text "recurrence"
     t.text "reminders_data"
     t.string "status", default: "confirmed"
@@ -175,6 +176,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_08_081611) do
     t.datetime "updated_at", null: false
     t.index ["avion_id"], name: "index_reservations_on_avion_id"
     t.index ["user_id"], name: "index_reservations_on_user_id"
+  end
+
+  create_table "settings", force: :cascade do |t|
+    t.string "var", null: false
+    t.text "val"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["var"], name: "index_settings_on_var", unique: true
   end
 
   create_table "signalements", force: :cascade do |t|

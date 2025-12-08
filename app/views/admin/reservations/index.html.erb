@@ -37,15 +37,15 @@
         </thead>
         <tbody>
           <% @reservations.each do |reservation| %>
-            <tr>
+            <tr id="<%= dom_id(reservation) %>">
               <td><%= link_to reservation.user.name, user_path(reservation.user) %></td>
               <td><%= reservation.avion.immatriculation %></td>
               <td><%= l reservation.start_time, format: :short_year_time %></td>
               <td><%= l reservation.end_time, format: :short_year_time %></td>
               <td><%= reservation.instruction? ? "Instruction" : "Solo" %></td>
               <td class="text-center">
-                <%= link_to 'Modifier', edit_reservation_path(reservation), class: 'btn btn-sm btn-outline-primary d-inline-block' %>
-                <%= link_to 'Supprimer', reservation_path(reservation), method: :delete, class: 'btn btn-sm btn-outline-danger d-inline-block ms-3', data: { turbo_confirm: "Êtes-vous sûr de vouloir supprimer cette réservation ? Cette action est irréversible." } %>
+                <%= link_to 'Modifier', edit_reservation_path(reservation, redirect_to: admin_reservations_path), class: 'btn btn-sm btn-outline-primary d-inline-block' %>
+                <%= button_to 'Supprimer', admin_reservation_path(reservation), method: :delete, class: 'btn btn-sm btn-outline-danger', form_class: 'd-inline-block ms-3', form: { data: { turbo_confirm: "Êtes-vous sûr de vouloir supprimer cette réservation ? Cette action est irréversible." } } %>
               </td>
             </tr>
           <% end %>
