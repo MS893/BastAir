@@ -17,8 +17,9 @@ gem "image_processing", ">= 1.2"
 # Active Storage pour le chargement de fichiers
 gem "activestorage"
 gem 'active_storage_validations'
-# administration
-
+# exportation au format pdf
+gem 'wicked_pdf'
+gem 'wkhtmltopdf-binary'
 # ajout captcha Google
 gem 'recaptcha', require: 'recaptcha/rails'
 # gestion des tâches automatiques

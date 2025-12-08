@@ -1,0 +1,2 @@
+class Immob < ApplicationRecord
+end

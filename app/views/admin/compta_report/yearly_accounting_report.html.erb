@@ -1,0 +1,13 @@
+<% content_for :title, "Bilan comptable de l'année #{@year}" %>
+
+<%# On charge la librairie Chart.js pour afficher les graphiques %>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div class="container mt-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="mb-0">Bilan Comptable au 31/12/<%= @year %></h1>
+    <%= link_to 'Retour aux transactions', transactions_path, class: 'btn btn-outline-primary' %>
+  </div>
+
+  <%= render 'report_content' %>
+</div>

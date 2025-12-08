@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Rapport PDF</title>
+  <%# wicked_pdf_stylesheet_link_tag inclut le CSS de votre application dans le PDF %>
+  <%= wicked_pdf_stylesheet_link_tag "application", media: "all" %>
+  <%# wicked_pdf_javascript_include_tag inclut le JS, nécessaire pour les graphiques %>
+  <%= wicked_pdf_javascript_include_tag "application" %>
+</head>
+<body>
+  <%= yield %>
+</body>
+</html>

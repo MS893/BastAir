@@ -4,6 +4,11 @@ class Transaction < ApplicationRecord
   # mais ce n'est pas obligatoire (ex: subvention, achat fournisseur).
   belongs_to :user, optional: true
 
+  # Par défaut, n'affiche que les transactions non supprimées
+  default_scope { where(deleted_at: nil) }
+  # Permet de récupérer les transactions supprimées
+  scope :discarded, -> { unscoped.where.not(deleted_at: nil) }
+
   # == Enums ==================================================================
   # Définit des méthodes pratiques pour gérer les valeurs possibles de ces colonnes.
   # Par exemple, `transaction.recette?` ou `Transaction.recette` pour trouver toutes les recettes.
@@ -20,15 +25,36 @@ class Transaction < ApplicationRecord
     prelevement: 'Prélèvement sur compte'
   }
 
-  ALLOWED_TSN = {
-    adherent: 'Adhérent',
-    subvention: 'Subvention',
-    donateur: 'Donateur',
-    fournisseur: 'Fournisseur',
-    maintenance: 'Maintenance',
-    charge: 'Charge',
-    investissement: 'Investissement'
-  }
+  # --- Libellés pour les recettes ---
+  INCOME_SOURCES = {
+    heures_vol: 'Heures de Vol / Location Avions',
+    frais_instructeur: "Frais d'Instructeur",
+    cotisations: 'Cotisations des Membres',
+    subventions: "Subventions d'Exploitation",
+    produits_manifestations: 'Produits Manifestations / Boutique',
+    produits_financiers: 'Produits Financiers (Intérêts)',
+    produits_exceptionnels: 'Produits Exceptionnels',
+    reprises_amortissements: 'Reprises sur Amortissements'
+  }.freeze
+
+  # --- Libellés pour les dépenses ---
+  EXPENSE_SOURCES = {
+    achat_carburant: 'Achat Carburant (AvGas / Kérosène)',
+    entretien_reparations: 'Entretien & Réparations Avions',
+    assurances: 'Assurances (Flotte, Hangar)',
+    loyer_redevances: 'Loyer Hangar / Redevances Aéronautiques',
+    charges_personnel: 'Charges de Personnel (Salaires & Sociales)',
+    fournitures_bureau: 'Fournitures de Bureau & Petit Matériel',
+    frais_postaux_telecom: 'Frais Postaux & Télécommunications',
+    impots_taxes: 'Impôts & Taxes (hors résultat)',
+    frais_representation: 'Frais de Représentation & Réception',
+    charges_interets: "Charges d'Intérêts d'Emprunt",
+    charges_exceptionnelles: 'Charges Exceptionnelles',
+    dotations_amortissements: 'Dotations aux Amortissements'
+  }.freeze
+
+  # On fusionne les deux listes pour la validation globale
+  ALLOWED_TSN = INCOME_SOURCES.merge(EXPENSE_SOURCES).freeze
 
   # == Validations ============================================================
   # S'assure que les données essentielles sont toujours présentes.
@@ -44,6 +70,18 @@ class Transaction < ApplicationRecord
   after_initialize :set_default_date, if: :new_record?
   after_create :update_user_balance
 
+  # Méthodes pour la suppression logique (soft delete)
+  def discard
+    update(deleted_at: Time.current)
+  end
+
+  def restore
+    update(deleted_at: nil)
+  end
+
+  def discarded?
+    deleted_at.present?
+  end
   
   private
 

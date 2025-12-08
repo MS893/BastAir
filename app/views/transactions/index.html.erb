@@ -5,6 +5,7 @@
     <h1 class="mb-0">Liste des Transactions</h1>
     <% if current_user&.admin? || current_user&.fonction == 'tresorier' %>
       <div>
+        <%= link_to "Bilan comptable de l'année", yearly_accounting_report_admin_compta_report_index_path, class: 'btn btn-success' %>
         <%= link_to 'Nouvelle Transaction', new_transaction_path, class: 'btn btn-primary ms-2' %>
       </div>
     <% end %>

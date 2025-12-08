@@ -5,7 +5,7 @@
   </div>
   <div class="card-body">
     <%# On utilise form_with, comme dans le formulaire de création d'adhérent %>
-    <%= form_with(model: @transaction, local: true) do |form| %>
+    <%= form_with(model: @transaction, local: true, data: { controller: "transaction-form" }) do |form| %>
 
       <%# Affichage des erreurs, inspiré du formulaire de création d'adhérent %>
       <% if @transaction.errors.any? %>
@@ -37,8 +37,15 @@
       <hr class="my-4">
       <h5 class="mb-3">Catégorisation</h5>
       <div class="row">
-        <div class="col-md-4 mb-3"><%= form.label :mouvement, "Type" %> <%= form.select :mouvement, Transaction::ALLOWED_MVT.values, { prompt: 'Sélectionner...' }, class: "form-select" %></div>
-        <div class="col-md-4 mb-3"><%= form.label :source_transaction, "Origine" %> <%= form.select :source_transaction, Transaction::ALLOWED_TSN.values, { prompt: 'Sélectionner...' }, class: "form-select" %></div>
+        <div class="col-md-4 mb-3">
+          <%= form.label :mouvement, "Type" %>
+          <%= form.select :mouvement, Transaction::ALLOWED_MVT.values, { prompt: 'Sélectionner...' }, class: "form-select", data: { transaction_form_target: "mouvement", action: "change->transaction-form#updateSourceOptions" } %>
+        </div>
+        <div class="col-md-4 mb-3">
+          <%= form.label :source_transaction, "Origine" %>
+          <%# La collection est vide, car elle sera remplie dynamiquement par Stimulus %>
+          <%= form.select :source_transaction, [], { prompt: 'Sélectionner un type...' }, class: "form-select", data: { transaction_form_target: "source" } %>
+        </div>
         <div class="col-md-4 mb-3"><%= form.label :payment_method, "Paiement" %> <%= form.select :payment_method, Transaction::ALLOWED_PYT.values, { prompt: 'Sélectionner...' }, class: "form-select" %></div>
       </div>
       <div class="mb-3">

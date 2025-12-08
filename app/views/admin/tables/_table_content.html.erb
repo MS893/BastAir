@@ -33,7 +33,7 @@
       </thead>
       <tbody>
         <% records.each do |record| %>
-          <tr data-controller="clickable-row" data-clickable-row-url-value="<%= admin_show_table_record_path(table_name: table_name, id: record.id) %>" style="cursor: pointer;">
+          <tr class="<%= 'table-danger-discarded' if table_name == 'transactions' && record.try(:discarded?) %>" data-controller="clickable-row" data-clickable-row-url-value="<%= admin_show_table_record_path(table_name: table_name, id: record.id) %>" style="cursor: pointer;">
             <% visible_columns.each do |col| %>
               <td><%= display_cell_content(record, col, table_name) %></td>
             <% end %>

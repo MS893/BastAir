@@ -12,7 +12,10 @@
   <% url = @record.new_record? ? admin_create_table_record_path(table_name: @table_name) : admin_update_table_record_path(table_name: @table_name, id: @record.id) %>
   <% method = @record.new_record? ? :post : :patch %>
 
-  <%= form_with(model: @record, url: url, method: method, scope: :record, data: { turbo: false }) do |form| %>
+  <%# On connecte le contrôleur Stimulus uniquement pour la table des transactions %>
+  <% form_data = @table_name == 'transactions' ? { controller: "transaction-form", turbo: false } : { turbo: false } %>
+
+  <%= form_with(model: @record, url: url, method: method, scope: :record, data: form_data) do |form| %>
     
     <% if @record.errors.any? %>
       <div class="alert alert-danger">
@@ -65,7 +68,14 @@
             <% attr_name = col1.name %>
             <% attr_value = @record.send(attr_name) %>
             <%= form.label attr_name, class: 'form-label' %>
-            <% if (options_data = @foreign_key_options[attr_name]) %>
+            <%# --- Logique pour le formulaire de transaction dynamique --- %>
+            <% if @table_name == 'transactions' && attr_name == 'mouvement' %>
+              <%= form.select attr_name, Transaction::ALLOWED_MVT.values, { selected: attr_value }, class: 'form-select', data: { transaction_form_target: "mouvement", action: "change->transaction-form#updateSourceOptions" } %>
+            <% elsif @table_name == 'transactions' && attr_name == 'source_transaction' %>
+              <%# La collection est vide, car elle sera remplie dynamiquement par Stimulus %>
+              <%= form.select attr_name, [], { selected: attr_value }, class: 'form-select', data: { transaction_form_target: "source" } %>
+            <%# --- Fin de la logique spécifique --- %>
+            <% elsif (options_data = @foreign_key_options[attr_name]) %>
               <% if options_data.is_a?(Hash) %>
                 <%= form.select attr_name, options_for_select(options_data[:options], options_data[:selected]), { include_blank: 'Sélectionner...' }, class: 'form-select' %>
               <% else %>
@@ -128,7 +138,14 @@
             <% attr_name = col2.name %>
             <% attr_value = @record.send(attr_name) %>
             <%= form.label attr_name, class: 'form-label' %>
-            <% if (options_data = @foreign_key_options[attr_name]) %>
+            <%# --- Logique pour le formulaire de transaction dynamique --- %>
+            <% if @table_name == 'transactions' && attr_name == 'mouvement' %>
+              <%= form.select attr_name, Transaction::ALLOWED_MVT.values, { selected: attr_value }, class: 'form-select', data: { transaction_form_target: "mouvement", action: "change->transaction-form#updateSourceOptions" } %>
+            <% elsif @table_name == 'transactions' && attr_name == 'source_transaction' %>
+              <%# La collection est vide, car elle sera remplie dynamiquement par Stimulus %>
+              <%= form.select attr_name, [], { selected: attr_value }, class: 'form-select', data: { transaction_form_target: "source" } %>
+            <%# --- Fin de la logique spécifique --- %>
+            <% elsif (options_data = @foreign_key_options[attr_name]) %>
               <% if options_data.is_a?(Hash) %>
                 <%= form.select attr_name, options_for_select(options_data[:options], options_data[:selected]), { include_blank: 'Sélectionner...' }, class: 'form-select' %>
               <% else %>

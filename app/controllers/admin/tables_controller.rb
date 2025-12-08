@@ -16,6 +16,7 @@ module Admin
       'reservations' => { user_ids: :user_id, avion_ids: :avion_id },
       'signalements' => { user_ids: :user_id, avion_ids: :avion_id },
       'transactions' => { user_ids: :user_id },
+      'immobs'       => { transaction_ids: :purchase_transaction_id },
       'vols'         => { user_ids: [:user_id, :instructeur_id], avion_ids: :avion_id }
     }.freeze
 
@@ -34,7 +35,11 @@ module Admin
         @model = create_anonymous_model(params[:table_name])
         
         # 1. Construire la requête de base avec filtres et tri (sans l'exécuter)
-        filtered_records = @model.all
+        filtered_records =  if @selected_table == 'transactions'
+                              Transaction.unscoped # Inclut les transactions "discarded"
+                            else
+                              @model.all
+                            end
 
         if params[:query].present?
           query_term = "%#{params[:query].downcase}%"
@@ -65,10 +70,14 @@ module Admin
     def show_record
       @table_name = params[:table_name]
       @model = create_anonymous_model(@table_name)
-      @record = @model.find(params[:id])
+      if @table_name == 'transactions'
+        @record = Transaction.unscoped.find(params[:id]) # Permet de trouver les transactions même si elles sont supprimées logiquement
+      else
+        @record = @model.find(params[:id])
+      end
       @associated_records = {}
 
-      # Détecte les clés étrangères et charge les enregistrements associés pour un affichage plus riche.
+      # Détecte les clés étrangères et charge les enregistrements associés.
       @model.columns.each do |column|
         if column.name.end_with?('_id') && column.name != 'id'
           associated_model_name = if column.name == 'admin_id'
@@ -76,6 +85,9 @@ module Admin
                                   else
                                     column.name.chomp('_id').classify
                                   end
+          if column.name == 'purchase_transaction_id'
+            associated_model_name = 'Transaction'
+          end
           begin
             associated_model_class = associated_model_name.constantize
             if associated_model_class < ActiveRecord::Base
@@ -140,13 +152,26 @@ module Admin
     def new_record
       @table_name = params[:table_name]
       @model = create_anonymous_model(@table_name)
-      @record = @model.new
 
-      # Préparation des données spécifiques pour le formulaire de création
+      # On pré-remplit le formulaire avec les paramètres passés dans l'URL, si présents.
+      # C'est utile pour créer une immobilisation depuis une transaction.
+      allowed_initial_params = @model.column_names.map(&:to_sym)
+      @record = @model.new(params.permit(allowed_initial_params))
+
+      # --- Préparation des données spécifiques pour le formulaire de création ---
       if @table_name == 'tarifs'
-        @record.annee = Date.current.year
-        current_year = Date.current.year
-        @tarif_annee_options = (current_year..current_year + 2).to_a
+        # On cherche le tarif le plus récent pour pré-remplir les champs
+        latest_tarif = Tarif.order(annee: :desc).first
+        if latest_tarif
+          # On initialise le nouvel enregistrement avec les attributs de l'ancien
+          @record = @model.new(latest_tarif.attributes.except('id', 'created_at', 'updated_at'))
+          # On incrémente l'année
+          @record.annee = latest_tarif.annee + 1
+        else
+          # Comportement par défaut si aucun tarif n'existe
+          @record.annee = Date.current.year
+        end
+        @tarif_annee_options = ((@record.annee - 1)..(@record.annee + 2)).to_a
       end
 
       # Prépare les options pour toutes les clés étrangères (ex: avion_id pour un vol)
@@ -182,27 +207,74 @@ module Admin
     end
 
     def destroy_record
-      table_name = params[:table_name]
-      model = create_anonymous_model(table_name)
-      record = model.find(params[:id])
-      record.destroy
+      @table_name = params[:table_name]
+      @model = create_anonymous_model(@table_name)
+      notice_message = "L'enregistrement a été supprimé avec succès."
+      
+      if @table_name == 'transactions'
+        @record = Transaction.unscoped.find(params[:id]) # On doit pouvoir trouver la transaction même si elle est déjà "supprimée"
+        if params[:force] == 'true'
+          action_type = 'delete'
+          log_details = "Suppression DÉFINITIVE de la transaction: #{@record.description} d'un montant de #{@record.montant} €"
+          @record.destroy! # Suppression physique forcée
+          notice_message = "La transaction a été supprimée définitivement."
+        else
+          action_type = 'discard'
+          log_details = "Mise à la corbeille de la transaction: #{@record.description} d'un montant de #{@record.montant} €"
+          @record.discard # Marque la transaction comme supprimée logiquement
+          notice_message = "La transaction a été mise à la corbeille."
+        end
+      else
+        @record = @model.find(params[:id])
+        action_type = 'delete'
+        log_details = "Suppression de l'enregistrement: #{@record.id} de la table #{@table_name}"
+        @record.destroy # Suppression physique pour les autres tables
+      end
 
-      redirect_to admin_tables_path(table_name: table_name), notice: "L'enregistrement a été supprimé avec succès."
+      # --- Journalisation de l'action de suppression ---
+      if @table_name == 'transactions' # Log uniquement pour les transactions
+        ActivityLog.create!(
+          user: current_user,
+          action: action_type,
+          record_type: @table_name,
+          record_id: @record.id,
+          details: log_details
+        )
+      end
+
+      redirect_to admin_tables_path(table_name: @table_name), notice: notice_message, status: :see_other
+    end
+
+    def restore_record
+      @table_name = params[:table_name]
+      @record = Transaction.unscoped.find(params[:id]) # On doit pouvoir trouver la transaction même si elle est "supprimée"
+      @record.restore # Restaure la transaction
+
+      ActivityLog.create!(
+        user: current_user,
+        action: 'restore',
+        record_type: @table_name,
+        record_id: @record.id,
+        details: "Restauration de la transaction: #{@record.description} d'un montant de #{@record.montant} €"
+      )
+
+      redirect_to admin_tables_path(table_name: @table_name), notice: "La transaction a été restaurée avec succès.", status: :see_other
     end
 
 
-
+    
     private
 
     def preload_associations(records)
       @users_by_id = {}
       @avions_by_id = {}
       @events_by_id = {}
+      @transactions_by_id = {}
 
       config = ASSOCIATIONS_TO_PRELOAD[@selected_table]
       return unless config
 
-      ids_to_fetch = { user_ids: [], avion_ids: [], event_ids: [] }
+      ids_to_fetch = { user_ids: [], avion_ids: [], event_ids: [], transaction_ids: [] }
 
       config.each do |id_group, columns|
         # `columns` peut être un symbole unique ou un tableau de symboles
@@ -217,9 +289,9 @@ module Admin
       @users_by_id = User.where(id: ids_to_fetch[:user_ids].compact.uniq).index_by(&:id) if ids_to_fetch[:user_ids].present?
       @avions_by_id = Avion.where(id: ids_to_fetch[:avion_ids].compact.uniq).index_by(&:id) if ids_to_fetch[:avion_ids].present?
       @events_by_id = Event.where(id: ids_to_fetch[:event_ids].compact.uniq).index_by(&:id) if ids_to_fetch[:event_ids].present?
+      @transactions_by_id = Transaction.where(id: ids_to_fetch[:transaction_ids].compact.uniq).index_by(&:id) if ids_to_fetch[:transaction_ids].present?
     end
 
-    helper_method :translate_table_name
     def translate_table_name(table_name)
       translations = {
         'attendances' => 'Participants',
@@ -230,6 +302,7 @@ module Admin
         'events' => 'Evènements',
         'flight_lessons' => 'Instruction',
         'news_items' => 'Consignes',
+        'immobs' => 'Immobilisations',
         'reservations' => 'Réservations',
         'signalements' => 'Signalements',
         'tarifs' => 'Tarifs',
@@ -240,6 +313,7 @@ module Admin
       translations.fetch(table_name, table_name.humanize)
     end
 
+    helper_method :translate_table_name
 
     def create_anonymous_model(table_name)
       # Crée une classe anonyme pour interagir avec n'importe quelle table.
@@ -292,6 +366,9 @@ module Admin
                                   else
                                     column.name.chomp('_id').classify
                                   end
+          if column.name == 'purchase_transaction_id' # This is correct for set_foreign_key_options
+            associated_model_name = 'Transaction'
+          end
           begin
             associated_model_class = associated_model_name.constantize
             # S'assure que c'est bien un modèle ActiveRecord
@@ -319,6 +396,13 @@ module Admin
                   options << [current_event.title, current_event.id] if current_event
                 end
                 @foreign_key_options[column.name] = options
+              elsif column.name == 'purchase_transaction_id' # This is correct for set_foreign_key_options
+                # Cas spécial pour la transaction d'achat d'une immobilisation.
+                # Si l'ID est déjà présent (pré-rempli), on ne génère pas la liste déroulante.
+                # Le formulaire utilisera un champ caché à la place.
+                next if @record.purchase_transaction_id.present?
+
+                @foreign_key_options[column.name] = associated_model_class.order(date_transaction: :desc).map { |record| ["#{l(record.date_transaction, format: :short)} - #{record.description.truncate(50)}", record.id] }
               else
                 display_attribute = if associated_model_class.column_names.include?('name')
                                       'name'
@@ -346,5 +430,4 @@ module Admin
       params.require(:record).permit(@model.column_names - excluded_params)
     end
   end
-  
 end

@@ -1,0 +1,294 @@
+<%# --- FORMULAIRE DE SÉLECTION DE L'ANNÉE --- %>
+<%# On n'affiche pas le formulaire dans le rendu PDF %>
+<% unless request.format.pdf? %>
+  <div class="card mb-4">
+    <div class="card-body">
+      <%= form_with(url: yearly_accounting_report_admin_compta_report_index_path, method: :get, class: "row g-3 align-items-end") do %>
+        <div class="col-md-3">
+          <%= label_tag :year, "Choisir une année", class: "form-label" %>
+          <%= select_tag :year, options_for_select(@available_years, @year), class: 'form-select' %>
+        </div>
+        <div class="col-md-3">
+          <%= submit_tag "Afficher", class: "btn btn-primary" %>
+          <%= link_to "Exporter en PDF", yearly_accounting_report_admin_compta_report_index_path(format: :pdf, year: @year), class: "btn btn-danger ms-2", target: "_blank" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+
+<%# --- TABLEAU DU BILAN COMPTABLE --- %>
+<div class="card shadow-sm" style="page-break-inside: avoid; margin-bottom: 2rem;">
+  <div class="card-body">
+    <div class="row">
+      <%# === COLONNE ACTIF === %>
+      <div class="col-lg-12">
+        <h3 class="text-center mb-3">ACTIF (Emplois/Biens)</h3>
+        <table class="table table-bordered">
+          <thead class="table-light">
+            <tr>
+              <th>Postes</th>
+              <th class="text-end" style="white-space: nowrap; padding-left: 1rem;">31/12/<%= @year %> (N)</th>
+              <th class="text-end" style="white-space: nowrap; padding-left: 1rem;">31/12/<%= @year_n_minus_1 %> (N-1)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="fw-bold">
+              <td>I. ACTIF IMMOBILISÉ</td>
+            </tr>
+            <tr>
+              <td class="ps-4">21 - Matériel et Outillage</td>
+              <td class="text-end" style="padding-left: 1rem;"><%= number_to_currency(@valeur_nette_immos_n) %></td>
+              <td class="text-end" style="padding-left: 1rem;"><%= number_to_currency(@valeur_nette_immos_n_minus_1) %></td>
+            </tr>
+            <tr>
+              <td class="fw-bold">II. ACTIF CIRCULANT</td>
+            </tr>
+            <tr>
+              <td class="ps-4">37 - Stocks de Marchandises</td>
+              <td class="text-end" style="padding-left: 1rem;"><%= number_to_currency(0) %></td>
+              <td class="text-end" style="padding-left: 1rem;"><%= number_to_currency(0) %></td>
+            </tr>
+            <tr>
+              <td class="ps-4">41 - Créances (Adhérents, Subventions)</td>
+              <td class="text-end" style="padding-left: 1rem;"><%= number_to_currency(0) %></td>
+              <td class="text-end" style="padding-left: 1rem;"><%= number_to_currency(0) %></td>
+            </tr>
+            <tr>
+              <td class="ps-4">51 - Disponibilités (Trésorerie)</td>
+              <td class="text-end" style="padding-left: 1rem;"><%= number_to_currency(@tresorerie_fin_n) %></td>
+              <td class="text-end" style="padding-left: 1rem;"><%= number_to_currency(@tresorerie_fin_n_minus_1) %></td>
+            </tr>
+          </tbody>
+          <tfoot class="table-group-divider">
+            <tr class="fw-bold table-light">
+              <td>TOTAL ACTIF</td>
+              <td class="text-end" style="padding-left: 1rem;"><%= number_to_currency(@valeur_nette_immos_n + @tresorerie_fin_n) %></td>
+              <td class="text-end" style="padding-left: 1rem;"><%= number_to_currency(@valeur_nette_immos_n_minus_1 + @tresorerie_fin_n_minus_1) %></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <%# === COLONNE PASSIF === %>
+      <div class="col-lg-12 mt-4">
+        <h3 class="text-center mb-3 mt-4">PASSIF (Ressources/Origine des fonds)</h3>
+        <table class="table table-bordered">
+          <thead class="table-light">
+            <tr>
+              <th>Postes</th>
+              <th class="text-end" style="white-space: nowrap; padding-left: 1rem;">31/12/<%= @year %> (N)</th>
+              <th class="text-end" style="white-space: nowrap; padding-left: 1rem;">31/12/<%= @year_n_minus_1 %> (N-1)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="fw-bold">I. FONDS PROPRES (Fonds Associatifs)</td>
+            </tr>
+            <tr>
+              <td class="ps-4">10 - Fonds associatifs sans droit de reprise</td>
+              <td class="text-end" style="padding-left: 1rem;"><%= number_to_currency(0) %></td>
+              <td class="text-end" style="padding-left: 1rem;"><%= number_to_currency(0) %></td>
+            </tr>
+            <tr>
+              <td class="ps-4">11 - Report à nouveau (Solde début d'exercice)</td>
+              <td class="text-end" style="padding-left: 1rem;"><%= number_to_currency(@fonds_propres_debut_n) %></td>
+              <td class="text-end" style="padding-left: 1rem;"><%= number_to_currency(@fonds_propres_debut_n_minus_1) %></td>
+            </tr>
+            <tr>
+              <td class="ps-4">12 - Résultat de l'exercice (Excédent ou Déficit)</td>
+              <td class="text-end" style="padding-left: 1rem;"><%= number_to_currency(@resultat_exercice_n) %></td>
+              <td class="text-end" style="padding-left: 1rem;"><%= number_to_currency(@resultat_exercice_n_minus_1) %></td>
+            </tr>
+            <tr class="fw-bold">
+              <td>II. DETTES</td>
+            </tr>
+            <tr>
+              <td class="ps-4">16 - Emprunts</td>
+              <td class="text-end" style="padding-left: 1rem;"><%= number_to_currency(0) %></td>
+              <td class="text-end" style="padding-left: 1rem;"><%= number_to_currency(0) %></td>
+            </tr>
+            <tr>
+              <td class="ps-4">40 - Dettes Fournisseurs</td>
+              <td class="text-end" style="padding-left: 1rem;"><%= number_to_currency(0) %></td>
+              <td class="text-end" style="padding-left: 1rem;"><%= number_to_currency(0) %></td>
+            </tr>
+            <tr>
+              <td class="ps-4">43 - Dettes Sociales et Fiscales</td>
+              <td class="text-end" style="padding-left: 1rem;"><%= number_to_currency(0) %></td>
+              <td class="text-end" style="padding-left: 1rem;"><%= number_to_currency(0) %></td>
+            </tr>
+          </tbody>
+          <tfoot class="table-group-divider">
+            <tr class="fw-bold table-light">
+              <td>TOTAL PASSIF</td>
+              <td class="text-end" style="padding-left: 1rem;"><%= number_to_currency(@fonds_propres_debut_n + @resultat_exercice_n) %></td>
+              <td class="text-end" style="padding-left: 1rem;"><%= number_to_currency(@fonds_propres_debut_n_minus_1 + @resultat_exercice_n_minus_1) %></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%# --- SECTION DES GRAPHIQUES (uniquement pour l'affichage HTML) --- %>
+<% unless request.format.pdf? %>
+  <div class="row mt-5">
+    <div class="col-lg-6">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <%= pie_chart @recettes_n_details, title: "Répartition des Produits (N)", donut: true, legend: 'bottom' %>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <%= pie_chart @depenses_n_details, title: "Répartition des Charges (N)", donut: true, legend: 'bottom' %>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<%# --- TABLEAU DU COMPTE DE RÉSULTAT --- %>
+<div class="card shadow-sm" style="page-break-inside: avoid;">
+  <div class="card-header">
+    <h3 class="mb-0 mt-3 text-center">Compte de Résultat - Exercice <%= @year %></h3>
+  </div>
+  <div class="card-body">
+    <table class="table table-bordered">
+      <thead class="table-light">
+        <tr>
+          <th>Postes</th>
+          <th class="text-end" style="white-space: nowrap; padding-left: 1rem;">Exercice <%= @year %> (N)</th>
+          <th class="text-end" style="white-space: nowrap; padding-left: 1rem;">Exercice <%= @year_n_minus_1 %> (N-1)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%# --- PRODUITS --- %>
+        <tr class="table-success-subtle">
+          <td class="fw-bold">I. PRODUITS D'EXPLOITATION (Recettes)</td>
+        </tr>
+        <% @all_categories.sort.each do |category| %>
+          <% if @recettes_n_details[category].to_f > 0 || @recettes_n_minus_1_details[category].to_f > 0 %>
+            <tr>
+              <td class="ps-4">
+                <%
+                  # On mappe les nouvelles catégories de recettes aux comptes comptables
+                  label = case category # La variable 'category' contient le libellé de la transaction
+                          when "Heures de Vol / Location Avions" then "706 - Heures de Vol / Location Avions"
+                          when "Frais d'Instructeur" then "706 - Frais d'Instructeur"
+                          when "Cotisations des Membres" then "756 - Cotisations des Membres"
+                          when "Subventions d'Exploitation" then "74 - Subventions d'Exploitation"
+                          when "Produits Manifestations / Boutique" then "707 - Produits Manifestations / Boutique"
+                          # Les autres catégories de recettes n'ont pas de compte spécifique dans cet exemple
+                          else category 
+                          end
+                %>
+                <%= label %>
+              </td>
+              <td class="text-end" style="padding-left: 1rem;"><%= number_to_currency(@recettes_n_details[category]) %></td>
+              <td class="text-end" style="padding-left: 1rem;"><%= number_to_currency(@recettes_n_minus_1_details[category]) %></td>
+            </tr>
+          <% end %>
+        <% end %>
+
+        <tr class="table-success-subtle">
+          <td class="fw-bold">II. PRODUITS FINANCIERS</td>
+        </tr>
+        <tr>
+          <td class="ps-4">76 - Revenus de placements</td>
+          <td class="text-end" style="padding-left: 1rem;"><%= number_to_currency(0) %></td>
+          <td class="text-end" style="padding-left: 1rem;"><%= number_to_currency(0) %></td>
+        </tr>
+        <tr class="table-success-subtle">
+          <td class="fw-bold">III. PRODUITS EXCEPTIONNELS</td>
+        </tr>
+        <tr>
+          <td class="ps-4">77 - Produits exceptionnels</td>
+          <td class="text-end" style="padding-left: 1rem;"><%= number_to_currency(0) %></td>
+          <td class="text-end" style="padding-left: 1rem;"><%= number_to_currency(0) %></td>
+        </tr>
+        <tr class="fw-bold table-light">
+          <td>TOTAL DES PRODUITS</td>
+          <td class="text-end fw-bold" style="padding-left: 1rem;"><%= number_to_currency(@recettes_n) %></td>
+          <td class="text-end fw-bold" style="padding-left: 1rem;"><%= number_to_currency(@recettes_n_minus_1) %></td>
+        </tr>
+
+
+        <%# --- CHARGES --- %>
+        <tr class="table-danger-subtle">
+          <td class="fw-bold">I. CHARGES D'EXPLOITATION (Dépenses)</td>
+        </tr>
+        <% @all_categories.sort.each do |category| %>
+          <% if @depenses_n_details[category].to_f > 0 || @depenses_n_minus_1_details[category].to_f > 0 %>
+            <tr>
+              <td class="ps-4">
+                <%
+                  # On mappe les nouvelles catégories de dépenses aux comptes comptables
+                  label = case category # La variable 'category' contient le libellé de la transaction
+                          when "Achat Carburant (AvGas / Kérosène)" then "6022 - Achat Carburant"
+                          when "Entretien & Réparations Avions" then "615 - Entretien & Réparations Avions"
+                          when "Assurances (Flotte, Hangar)" then "616 - Assurances"
+                          when "Loyer Hangar / Redevances Aéronautiques" then "613 - Loyer Hangar / Redevances"
+                          when "Charges de Personnel (Salaires & Sociales)" then "64 - Charges de Personnel"
+                          when "Fournitures de Bureau & Petit Matériel" then "606 - Fournitures de Bureau"
+                          when "Frais Postaux & Télécommunications" then "626 - Frais Postaux & Télécommunications"
+                          when "Impôts & Taxes (hors résultat)" then "63 - Impôts & Taxes"
+                          # Les autres catégories de dépenses n'ont pas de compte spécifique dans cet exemple
+                          else category 
+                          end
+                %>
+                <%= label %>
+              </td>
+              <td class="text-end" style="padding-left: 1rem;"><%= number_to_currency(@depenses_n_details[category]) %></td>
+              <td class="text-end" style="padding-left: 1rem;"><%= number_to_currency(@depenses_n_minus_1_details[category]) %></td>
+            </tr>
+          <% end %>
+        <% end %>
+        <tr>
+          <td class="ps-4">68 - Dotations aux amortissements</td>
+          <td class="text-end" style="padding-left: 1rem;"><%= number_to_currency(@dotation_amortissement_n) %></td>
+          <td class="text-end" style="padding-left: 1rem;"><%= number_to_currency(@dotation_amortissement_n_minus_1) %></td>
+        </tr>
+      </tbody>
+      <tbody>
+        <tr class="table-danger-subtle">
+          <td class="fw-bold">II. CHARGES FINANCIÈRES</td>
+        </tr>
+        <tr>
+          <td class="ps-4">66 - Charges d'intérêts sur emprunts</td>
+          <td class="text-end" style="padding-left: 1rem;"><%= number_to_currency(0) %></td>
+          <td class="text-end" style="padding-left: 1rem;"><%= number_to_currency(0) %></td>
+        </tr>
+        <tr class="table-danger-subtle">
+          <td class="fw-bold">III. CHARGES EXCEPTIONNELLES</td>
+        </tr>
+        <tr>
+          <td class="ps-4">67 - Charges exceptionnelles</td>
+          <td class="text-end" style="padding-left: 1rem;"><%= number_to_currency(0) %></td>
+          <td class="text-end" style="padding-left: 1rem;"><%= number_to_currency(0) %></td>
+        </tr>
+        <tr class="fw-bold table-light">
+          <td>TOTAL DES CHARGES</td>
+          <td class="text-end fw-bold" style="padding-left: 1rem;"><%= number_to_currency(@depenses_n + @dotation_amortissement_n) %></td>
+          <td class="text-end fw-bold" style="padding-left: 1rem;"><%= number_to_currency(@depenses_n_minus_1 + @dotation_amortissement_n_minus_1) %></td>
+        </tr>
+      </tbody>
+      <tfoot class="table-group-divider">
+        <%# --- RÉSULTAT --- %>
+        <tr class="fw-bold table-light">
+          <td>RÉSULTAT DE L'EXERCICE (Excédent ou Déficit)</td>
+          <td class="text-end <%= @resultat_exercice_n >= 0 ? 'text-success' : 'text-danger' %>" style="padding-left: 1rem;">
+            <%= number_to_currency(@resultat_exercice_n) %>
+          </td>
+          <td class="text-end <%= @resultat_exercice_n_minus_1 >= 0 ? 'text-success' : 'text-danger' %>" style="padding-left: 1rem;">
+            <%= number_to_currency(@resultat_exercice_n_minus_1) %>
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+</div>

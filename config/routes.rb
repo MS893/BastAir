@@ -33,6 +33,9 @@ Rails.application.routes.draw do
   get 'faq', to: 'static_pages#faq'
   get 'check_list', to: 'static_pages#check_list'
 
+  # Route pour l'API des catégories de transaction
+  get 'categories', to: 'categories#index'
+
   # Routes pour la création de réservations
   resources :reservations, only: [:new, :create, :edit, :update, :destroy]
 
@@ -75,11 +78,17 @@ Rails.application.routes.draw do
     delete 'tables/:table_name/records/:id', to: 'tables#destroy_record', as: 'table_record'
     get 'tables/:table_name/records/:id/edit', to: 'tables#edit_record', as: 'edit_table_record'
     patch 'tables/:table_name/records/:id', to: 'tables#update_record', as: 'update_table_record'
+    patch 'tables/:table_name/records/:id/restore', to: 'tables#restore_record', as: 'restore_table_record'
     get 'tables/:table_name/records/new', to: 'tables#new_record', as: 'new_table_record'
     post 'tables/:table_name/records', to: 'tables#create_record', as: 'create_table_record'
     get 'tables/:table_name/records/:id', to: 'tables#show_record', as: 'show_table_record'
     resources :compta_report, only: [] do
       get 'treasury_report', on: :collection
+      get 'yearly_accounting_report', on: :collection
+    end
+    # Route pour la gestion des agendas Google
+    resources :google_calendars, only: [:index] do
+      delete 'clear', on: :collection
     end
   end
 

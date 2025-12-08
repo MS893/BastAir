@@ -1,3 +1,4 @@
+# config/schedule.rb
 
 # Learn more: http://github.com/javan/whenever
 
@@ -24,3 +25,7 @@ every 1.day, at: '4:00 am' do
   rake "validity:check_and_notify"
 end
 
+# Archive les anciens événements Google Calendar le 1er de chaque mois à 5h du matin
+# every 1.month, at: '5:00 am' do
+#  rake "calendar:archive_old_events"
+# end

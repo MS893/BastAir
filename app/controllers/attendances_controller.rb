@@ -27,7 +27,7 @@ class AttendancesController < ApplicationController
           description: "Inscription à l'événement '#{@event.title}'",
           mouvement: 'Dépense', # Une dépense pour l'utilisateur
           montant: @event.price,
-          source_transaction: 'Adhérent',
+          source_transaction: 'Charges Exceptionnelles', # TEMPORAIRE : À revoir avec une catégorie plus appropriée pour les frais d'inscription
           payment_method: 'Prélèvement sur compte'
         )
         @attendance = @event.attendances.create!(user: current_user)
@@ -76,7 +76,7 @@ class AttendancesController < ApplicationController
           description: "Remboursement - Désinscription de l'événement '#{@event.title}'",
           mouvement: 'Recette', # Une recette pour l'utilisateur
           montant: @event.price,
-          source_transaction: 'Adhérent',
+          source_transaction: 'Cotisations des Membres', # Mis à jour pour correspondre aux nouvelles catégories
           payment_method: 'Prélèvement sur compte' # Indique une opération interne
         )
         attendance.destroy!

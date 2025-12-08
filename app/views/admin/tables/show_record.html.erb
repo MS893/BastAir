@@ -2,21 +2,23 @@
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h1>Détail de l'enregistrement #<%= @record.id %></h1>
     <div>
-      <% if @table_name == 'transactions' %>
-        <% if current_user.tresorier? %>
-          <%= link_to 'Modifier', admin_edit_table_record_path(table_name: @table_name, id: @record.id), class: 'btn btn-primary me-2' %>
-          <%= link_to 'Supprimer', admin_table_record_path(table_name: @table_name, id: @record.id),
-              data: { turbo_method: :delete,
-                      turbo_confirm: "Êtes-vous sûr de vouloir supprimer cette transaction ?\n\nCette action est irréversible et sera enregistrée." },
-              class: 'btn btn-danger me-2' %>
-        <% else %>
-          <p>Seul le trésorier peut modifier ou supprimer une écriture comptable.</p>
+      <div class="d-flex gap-2">
+        <%# Pour les actions qui modifient des données (POST, PATCH, DELETE) %>
+        <%# La confirmation est gérée par un `onsubmit` JavaScript directement sur le formulaire. %>
+        <% if @table_name == 'transactions' && current_user.tresorier? %>
+          <% if @record.discarded? %>
+            <%= button_to 'Restaurer', admin_restore_table_record_path(table_name: @table_name, id: @record.id), method: :patch, class: 'btn btn-success', data: { turbo: false }, form: { onsubmit: "return confirm('Êtes-vous sûr de vouloir restaurer cette transaction ?');" } %>
+            <%= button_to 'Supprimer Définitivement', admin_table_record_path(table_name: @table_name, id: @record.id, force: true), method: :delete, class: 'btn btn-danger', data: { turbo: false }, form: { onsubmit: "return confirm('ATTENTION : Cette action est irréversible. Continuer ?');" } %>
+          <% else %>
+            <%= link_to 'Modifier', admin_edit_table_record_path(table_name: @table_name, id: @record.id), class: 'btn btn-primary', data: { turbo: false } %>
+            <%= button_to 'Mettre à la corbeille', admin_table_record_path(table_name: @table_name, id: @record.id), method: :delete, class: 'btn btn-warning', data: { turbo: false }, form: { onsubmit: "return confirm('Êtes-vous sûr de vouloir mettre cette transaction à la corbeille ?');" } %>
+          <% end %>
+        <% elsif @table_name != 'transactions' %>
+          <%= link_to 'Modifier', admin_edit_table_record_path(table_name: @table_name, id: @record.id), class: 'btn btn-primary', data: { turbo: false } %>
+          <%= button_to 'Supprimer', admin_table_record_path(table_name: @table_name, id: @record.id), method: :delete, class: 'btn btn-danger', data: { turbo: false }, form: { onsubmit: "return confirm('Êtes-vous sûr de vouloir supprimer cet enregistrement ?');" } %>
         <% end %>
-      <% else %>
-        <%= link_to 'Modifier', admin_edit_table_record_path(table_name: @table_name, id: @record.id), class: 'btn btn-primary me-2' %>
-        <%= link_to 'Supprimer', admin_table_record_path(table_name: @table_name, id: @record.id), data: { turbo_method: :delete, turbo_confirm: 'Êtes-vous sûr de vouloir supprimer cet enregistrement ?' }, class: 'btn btn-danger me-2' %>
-      <% end %>
-      <%= link_to 'Retour à la liste', admin_tables_path(table_name: @table_name), class: 'btn btn-secondary' %>
+        <%= link_to 'Retour à la liste', admin_tables_path(table_name: @table_name), class: 'btn btn-secondary', data: { turbo: false } %>
+      </div>
     </div>
   </div>
 

@@ -125,6 +125,86 @@ class GoogleCalendarService
     end
   end
 
+  # Récupère la liste de tous les calendriers accessibles par le compte de service
+  def list_calendars
+    # On récupère les IDs des calendriers depuis les variables d'environnement
+    calendar_ids = [
+      ENV['GOOGLE_CALENDAR_ID'],
+      ENV['GOOGLE_CALENDAR_ID_EVENTS'],
+      ENV['GOOGLE_CALENDAR_ID_AVION_F_HGBT'],
+      ENV['GOOGLE_CALENDAR_ID_INSTRUCTEUR_HUY']
+    ].compact.uniq
+
+    # Pour chaque ID, on récupère les détails du calendrier (nom, etc.)
+    calendar_ids.map do |cal_id|
+      # On utilise get_calendar, qui récupère un calendrier par son ID, et non get_calendar_list.
+      @service.get_calendar(cal_id)
+    end
+  end
+
+  # Supprime tous les événements d'un calendrier spécifique
+  def clear_calendar(calendar_id)
+    raise "L'ID du calendrier ne peut pas être vide." if calendar_id.blank?
+
+    puts "INFO: Début de la suppression de tous les événements du calendrier #{calendar_id}."
+    page_token = nil
+    begin
+      loop do
+        response = @service.list_events(calendar_id, page_token: page_token)
+        response.items.each do |event|
+          @service.delete_event(calendar_id, event.id)
+          puts "  - Événement supprimé : #{event.summary} (ID: #{event.id})"
+        end
+        page_token = response.next_page_token
+        break unless page_token
+      end
+    rescue Google::Apis::Error => e
+      raise "Erreur lors de la communication avec l'API Google : #{e.message}"
+    end
+    puts "INFO: Tous les événements du calendrier #{calendar_id} ont été supprimés."
+  end
+
+  # Archive old events in a specific calendar by changing their title and color
+  def archive_old_events(calendar_id, older_than_date)
+    raise "Calendar ID cannot be blank." if calendar_id.blank?
+    raise "Cutoff date must be a valid date." unless older_than_date.is_a?(Time) || older_than_date.is_a?(Date)
+
+    archived_count = 0
+    page_token = nil
+    
+    # The time must be in RFC3339 format for the API
+    time_max = older_than_date.to_datetime.rfc3339
+
+    begin
+      loop do
+        # Fetch events that end before the cutoff date
+        response = @service.list_events(
+          calendar_id,
+          page_token: page_token,
+          time_max: time_max,
+          single_events: true, # Expands recurring events into single instances
+          order_by: 'startTime'
+        )
+
+        response.items.each do |event|
+          # Skip if already archived
+          next if event.summary&.start_with?('[ARCHIVÉ]')
+
+          event.summary = "[ARCHIVÉ] #{event.summary}"
+          event.color_id = '8' # '8' corresponds to gray in Google Calendar
+          @service.update_event(calendar_id, event.id, event)
+          archived_count += 1
+          puts "  - Archived event: #{event.summary}"
+        end
+        page_token = response.next_page_token
+        break unless page_token
+      end
+    rescue Google::Apis::Error => e
+      raise "Error communicating with Google API: #{e.message}"
+    end
+    archived_count
+  end
+
   
   private
 

@@ -1,0 +1,26 @@
+<% content_for :title, "Gestion des Agendas Google" %>
+
+<div class="container mt-5">
+
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="mb-0">Gestion des Agendas Google</h1>
+  </div>
+
+  <div class="card border-danger">
+    <div class="card-header bg-danger text-white">
+      <h5 class="mb-0">Zone de Danger : Vider un agenda</h5>
+    </div>
+    <div class="card-body">
+      <p class="text-danger"><strong>Attention :</strong> Cette action est irréversible. Elle supprimera définitivement tous les événements de l'agenda que vous sélectionnez.</p>
+
+      <%= form_with(url: clear_admin_google_calendars_path, method: :delete) do |form| %>
+        <div class="mb-3">
+          <%= form.label :calendar_id, "Choisir un agenda à vider", class: "form-label" %>
+          <%= form.select :calendar_id, options_for_select(@calendars.map { |cal| [cal.summary, cal.id] }), { include_blank: '--- Sélectionner un calendrier ---' }, class: 'form-select', required: true %>
+        </div>
+        <%= form.submit "Supprimer TOUS les événements de cet agenda", class: 'btn btn-danger', data: { turbo_confirm: "Êtes-vous absolument sûr de vouloir vider cet agenda ? Cette action ne peut pas être annulée." } %>
+      <% end %>
+    </div>
+  </div>
+  
+</div>

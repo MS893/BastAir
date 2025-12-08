@@ -127,7 +127,7 @@ class User < ApplicationRecord
         montant: amount.to_d,
         payment_method: 'Carte bancaire', # Le paiement Stripe est par carte
         is_checked: true, # Le paiement est confirmé par Stripe
-        source_transaction: 'Adhérent'
+        source_transaction: 'Cotisations des Membres'
       )
     end
   end

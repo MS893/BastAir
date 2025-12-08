@@ -16,7 +16,7 @@
 
   <td>
     <% if transaction.user %>
-      <%= link_to transaction.user.name, user_path(transaction.user) %>
+      <%= transaction.user.name %>
     <% else %>
       <span class="text-muted">N/A</span>
     <% end %>
@@ -24,11 +24,9 @@
 
   <td class="text-center">
     <% if transaction.is_checked? %>
-      <% if current_user&.admin? || current_user&.fonction == 'tresorier' %>
-        <%= button_to 'Vérifiée', toggle_check_transaction_path(transaction), method: :patch, class: 'btn btn-sm btn-success', form_class: 'd-inline' %>
-      <% else %>
-        <%= button_to 'À vérifier', toggle_check_transaction_path(transaction), method: :patch, class: 'btn btn-sm btn-warning', form_class: 'd-inline' %>
-      <% end %>
+      <%= button_to 'Vérifiée', toggle_check_transaction_path(transaction), method: :patch, class: 'btn btn-sm btn-success', form_class: 'd-inline' %>
+    <% else %>
+      <%= button_to 'À vérifier', toggle_check_transaction_path(transaction), method: :patch, class: 'btn btn-sm btn-warning', form_class: 'd-inline' %>
     <% end %>
   </td>
 
@@ -38,6 +36,11 @@
       <%# Le bouton Modifier n'est visible que si la transaction n'est pas vérifiée %>
     <% unless transaction.is_checked? %>
       <%= link_to 'Modifier', edit_transaction_path(transaction), class: 'btn btn-sm btn-outline-primary' %>
+
+      <%# Si c'est un investissement, on propose de créer l'immobilisation associée %>
+      <% if transaction.source_transaction == 'Investissement' && Immobilisation.find_by(purchase_transaction_id: transaction.id).nil? %>
+        <%= link_to 'Créer Immo', new_admin_table_record_path(table_name: 'immobs', description: transaction.description, valeur_acquisition: transaction.montant, date_acquisition: transaction.date_transaction, purchase_transaction_id: transaction.id), class: 'btn btn-sm btn-outline-success', title: "Créer l'immobilisation associée" %>
+      <% end %>
     <% end %>
     <% end %>
   </td>

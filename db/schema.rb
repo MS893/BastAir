@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_12_03_114112) do
+ActiveRecord::Schema[8.0].define(version: 2025_12_08_081611) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -37,6 +37,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_03_114112) do
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "activity_logs", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.string "action"
+    t.string "record_type"
+    t.integer "record_id"
+    t.text "details"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_activity_logs_on_user_id"
   end
 
   create_table "attendances", force: :cascade do |t|
@@ -117,6 +128,17 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_03_114112) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "immobs", force: :cascade do |t|
+    t.string "description"
+    t.date "date_acquisition"
+    t.decimal "valeur_acquisition", precision: 10, scale: 2
+    t.integer "duree_amortissement"
+    t.integer "purchase_transaction_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["purchase_transaction_id"], name: "index_immobs_on_purchase_transaction_id"
+  end
+
   create_table "news_items", force: :cascade do |t|
     t.string "title"
     t.text "content"
@@ -170,6 +192,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_03_114112) do
     t.integer "annee"
     t.integer "tarif_horaire_avion1"
     t.integer "tarif_horaire_avion2"
+    t.integer "tarif_horaire_avion3"
+    t.integer "tarif_horaire_avion4"
+    t.integer "tarif_horaire_avion5"
+    t.integer "tarif_horaire_avion6"
     t.integer "tarif_instructeur"
     t.integer "tarif_simulateur"
     t.integer "cotisation_club_m21"
@@ -195,6 +221,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_03_114112) do
     t.boolean "is_checked"
     t.string "source_transaction"
     t.string "attachment_url"
+    t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_transactions_on_user_id"
@@ -266,23 +293,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_03_114112) do
     t.index ["user_id"], name: "index_vols_on_user_id"
   end
 
-  create_table "web_push_subscriptions", force: :cascade do |t|
-    t.integer "user_id", null: false
-    t.string "endpoint"
-    t.string "p256dh"
-    t.string "auth"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["user_id"], name: "index_web_push_subscriptions_on_user_id"
-  end
-
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "activity_logs", "users"
   add_foreign_key "attendances", "events"
   add_foreign_key "attendances", "users"
   add_foreign_key "comments", "events"
   add_foreign_key "comments", "users"
   add_foreign_key "events", "users", column: "admin_id"
+  add_foreign_key "immobs", "transactions", column: "purchase_transaction_id"
   add_foreign_key "news_items", "users"
   add_foreign_key "reservations", "avions"
   add_foreign_key "reservations", "users"
@@ -292,5 +311,4 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_03_114112) do
   add_foreign_key "vols", "avions"
   add_foreign_key "vols", "users"
   add_foreign_key "vols", "users", column: "instructeur_id"
-  add_foreign_key "web_push_subscriptions", "users"
 end

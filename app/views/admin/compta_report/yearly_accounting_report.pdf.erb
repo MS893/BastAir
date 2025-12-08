@@ -1,0 +1,11 @@
+<%# Ce template est spécifiquement pour le rendu PDF %>
+<div class="container mt-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">Bilan Comptable au 31/12/<%= @year %></h2>
+  </div>
+
+  <%# On inclut le contenu partagé, mais sans les éléments interactifs comme les formulaires %>
+  <%# Pour simplifier, nous réutilisons le même partiel, mais dans un projet plus grand, %>
+  <%# on pourrait avoir un partiel spécifique pour le PDF. %>
+  <%= render partial: 'report_content', formats: [:html] %>
+</div>

@@ -6,8 +6,37 @@ require 'faker'
 
 if Rails.env.production?
   puts "Le script de seed est désactivé en environnement de production pour éviter toute perte de données."
-  puts "Si vous souhaitez réellement peupler votre base de données de production, veuillez le faire manuellement."
+  puts "Si vous souhaitez ajouter des données en production, il faut le faire manuellement (via la gestion des BDD)."
   exit
+end
+
+puts "\n--- Gestion des Agendas Google ---"
+print "Voulez-vous effacer les rendez-vous des agendas ? (o/N) "
+response = STDIN.gets.chomp.downcase
+
+if response == 'o'
+  puts "Effacement des événements des agendas Google en cours..."
+  begin
+    service = GoogleCalendarService.new
+    calendar_ids = [
+      ENV['GOOGLE_CALENDAR_ID_EVENTS'],
+      ENV['GOOGLE_CALENDAR_ID_AVION_F_HGBT'],
+      ENV['GOOGLE_CALENDAR_ID_INSTRUCTEUR_HUY']
+    ].compact.uniq
+
+    if calendar_ids.empty?
+      puts "⚠️  Aucun ID de calendrier Google trouvé dans les variables d'environnement."
+    else
+      calendar_ids.each do |cal_id|
+        puts "\nTraitement de l'agenda : #{cal_id}"
+        service.clear_calendar(cal_id)
+      end
+      puts "✅ Tous les événements ont été effacés des agendas."
+    end
+  rescue => e
+    puts "❌ Erreur lors de la communication avec l'API Google Calendar : #{e.message}"
+    puts "Veuillez vérifier vos credentials et la configuration de l'API."
+  end
 end
 
 puts "\nCleaning database..."
@@ -122,14 +151,14 @@ instructeur_user = User.create!(
   num_licence: Faker::Number.number(digits: 8).to_s,
   date_licence: Faker::Date.backward(days: 365),
   medical: Faker::Date.forward(days: 365),
-  fi: Faker::Date.forward(days: 730), # Date FI valide pour 2 ans
+  fi: Faker::Date.forward(days: 730), # Date FI valide pour 2 ans (c'est la présence d'une date valide qui donne le statut d'instructeur)
   fe: nil,
   controle: Faker::Date.forward(days: 365),
   solde: 0.0, # On initialise le solde à 0
   cotisation_club: Faker::Date.forward(days: 365),
   cotisation_ffa: Faker::Date.forward(days: 365),
   autorise: true,
-  fonction: "brevete" # La fonction n'est plus 'instructeur'
+  fonction: "tresorier"
 )
 puts "✅ Instructor created: #{instructeur_user.email}"
 
@@ -178,7 +207,7 @@ User.find_each do |user|
     description: "Crédit initial du compte",
     mouvement: 'Recette',
     montant: 1000.0,
-    source_transaction: 'Adhérent',
+    source_transaction: 'Cotisations des Membres', # Mis à jour pour correspondre aux nouvelles catégories
     payment_method: 'Virement',
     is_checked: true
   )
@@ -186,7 +215,7 @@ end
 puts "✅ Initial transactions created."
 
 
-# 2. Création d'un avion
+# 2. Création d'un avion / achat
 # ----------------------------------------------------
 puts "\nCreating aircraft..."
 avion = Avion.create!(
@@ -211,7 +240,26 @@ avion = Avion.create!(
   potentiel_moteur: 2000.00
 )
 puts "✅ Aircraft created: #{avion.immatriculation}"
-
+# Création de la transaction d'achat de l'avion et de l'immobilisation correspondante
+puts "\nCreating aircraft purchase transaction and immobilization..."
+purchase_date = 2.years.ago.to_date
+aircraft_purchase_transaction = Transaction.create!(
+  date_transaction: purchase_date,
+  description: "Achat avion Elixir F-HGBT",
+  mouvement: 'Dépense',
+  montant: 300000.0,
+  source_transaction: 'Charges Exceptionnelles', # Remplacé par une catégorie valide
+  payment_method: 'Virement',
+  is_checked: true
+)
+Immobilisation.create!(
+  description: "Avion Elixir F-HGBT",
+  date_acquisition: purchase_date,
+  valeur_acquisition: 300000.0,
+  duree_amortissement: 7, # en années
+  purchase_transaction: aircraft_purchase_transaction
+)
+puts "✅ Aircraft immobilization created."
 
 # 3. Création des tarifs annuels
 # ----------------------------------------------------
@@ -220,7 +268,11 @@ puts "\nCreating annual rates..."
 Tarif.create!(
   annee: Date.today.year,
   tarif_horaire_avion1: 150,
-  tarif_horaire_avion2: 0,    # Mettre à jour si autres avions (faire une migration)
+  tarif_horaire_avion2: 0,
+  tarif_horaire_avion3: 0,
+  tarif_horaire_avion4: 0,
+  tarif_horaire_avion5: 0,
+  tarif_horaire_avion6: 0,    # Mettre à jour si autres avions (faire un rollback puis une migration)
   tarif_instructeur: 10,
   tarif_simulateur: 20,
   cotisation_club_m21: 100,
@@ -297,7 +349,7 @@ compteur_actuel = 123.45
       description: "Vol du #{vol.debut_vol.to_date.strftime('%d/%m/%Y')} sur #{vol.avion.immatriculation}",
       mouvement: 'Dépense',
       montant: cost.round(2),
-      source_transaction: 'Adhérent',
+      source_transaction: 'Heures de Vol / Location Avions', # Remplacé par une catégorie valide
       payment_method: 'Prélèvement sur compte',
       is_checked: false # à vérifier
     )
@@ -492,7 +544,7 @@ puts "\nCreating 20 transactions..."
 
 payment_methods = ['Carte bancaire', 'Virement', 'Chèque', 'Espèces']
 descriptions_recette = ["Crédit compte", "Achat bloc 6h", "Paiement cotisation annuelle", "Participation événement BBQ"]
-descriptions_depense = ["Heure de vol F-HGBT", "Achat casque", "Taxe atterrissage", "Remboursement"]
+descriptions_depense = ["Heure de vol F-HGBT", "Achat casque", "Taxe atterrissage", "Remboursement", "Achat essence", "Location hangar"]
 
 20.times do
   mouvement = ['Recette', 'Dépense'].sample

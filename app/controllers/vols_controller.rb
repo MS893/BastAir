@@ -63,7 +63,7 @@ class VolsController < ApplicationController
       description: "Vol du #{l(vol.debut_vol.to_date, format: :short_year)} sur #{vol.avion.immatriculation}",
       mouvement: 'Dépense',
       montant: cost.round(2), # On arrondit à 2 décimales
-      source_transaction: 'Adhérent',
+      source_transaction: 'Charges Exceptionnelles', # TEMPORAIRE : À revoir avec une catégorie plus appropriée pour les frais de vol adhérent
       payment_method: 'Prélèvement sur compte'
     )
   end

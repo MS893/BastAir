@@ -93,6 +93,8 @@
               <li><%= link_to '<i class="bi bi-calendar-check me-2"></i>Gestion des Réservations'.html_safe, admin_reservations_path, class: "dropdown-item" %></li>
               <li><hr class="dropdown-divider"></li>
               <li><%= link_to '<i class="bi bi-server me-2"></i>Gérer les tables (BDD)'.html_safe, admin_tables_path, class: "dropdown-item" %></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><%= link_to '<i class="bi bi-wrench-adjustable me-2"></i>Effacer les agendas Google (IRREVERSIBLE)'.html_safe, admin_google_calendars_path, class: "dropdown-item" %></li>
             </ul>
           </li>
         <% end %>
