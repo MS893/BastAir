@@ -185,7 +185,10 @@ module Admin
       @table_name = params[:table_name]
       @model = create_anonymous_model(@table_name)
       @record = @model.find(params[:id])
+
       set_foreign_key_options # Pour que le formulaire puisse être re-rendu correctement en cas d'erreur
+      process_reservation_datetime_params if @table_name == 'reservations'
+
       if @record.update(record_params)
         redirect_to admin_tables_path(table_name: @table_name), notice: "L'enregistrement a été mis à jour avec succès."
       else
@@ -198,11 +201,17 @@ module Admin
       @model = create_anonymous_model(@table_name)
       @record = @model.new(record_params)
 
+      process_reservation_datetime_params if @table_name == 'reservations'
+
       if @record.save
         redirect_to admin_tables_path(table_name: @table_name), notice: "L'enregistrement a été créé avec succès."
       else
-        # Si la sauvegarde échoue, il faut re-préparer les données pour le formulaire
-        new_record # Appelle new_record pour re-préparer @instructors_for_select, etc. et re-rendre la vue
+        # Si la sauvegarde échoue, on ne recrée pas un nouvel objet.
+        # On prépare les données nécessaires pour le formulaire (clés étrangères, etc.)
+        # et on ré-affiche le formulaire d'édition avec l'objet @record actuel, qui contient les erreurs.
+        set_foreign_key_options
+        
+        render :edit_record, status: :unprocessable_entity
       end
     end
 
@@ -322,6 +331,8 @@ module Admin
       Class.new(ApplicationRecord) do
         self.table_name = table_name
         def self.model_name; ActiveModel::Name.new(self, nil, "Record") end
+        # On ajoute des accesseurs pour nos champs virtuels si c'est une réservation
+        attr_accessor :start_date, :start_hour, :start_minute, :end_date, :end_hour, :end_minute if table_name == 'reservations'
 
         # Ajout de validations spécifiques à la table
         if table_name == 'tarifs'
@@ -424,10 +435,32 @@ module Admin
       end
     end
 
+    # Gère la combinaison des champs de date et d'heure pour les réservations
+    def process_reservation_datetime_params
+      # La logique est maintenant dans record_params pour s'assurer que les validations du modèle passent.
+    end
+
     def record_params
-      # Permet dynamiquement à tous les attributs d'être mis à jour, sauf l'ID.
+      record_params = params.require(:record)
+
+      if @table_name == 'reservations'
+        # On combine les champs séparés en vrais champs datetime AVANT la validation.
+        if record_params[:start_date].present? && record_params[:start_hour].present? && record_params[:start_minute].present?
+          record_params[:start_time] = Time.zone.parse("#{record_params[:start_date]} #{record_params[:start_hour]}:#{record_params[:start_minute]}")
+        end
+        if record_params[:end_date].present? && record_params[:end_hour].present? && record_params[:end_minute].present?
+          record_params[:end_time] = Time.zone.parse("#{record_params[:end_date]} #{record_params[:end_hour]}:#{record_params[:end_minute]}")
+        end
+      end
+
       excluded_params = ['id', 'created_at', 'updated_at']
-      params.require(:record).permit(@model.column_names - excluded_params)
+
+            permitted_params = @model.column_names - excluded_params # Autorise les vrais champs du modèle
+      if @table_name == 'reservations'
+        # On autorise explicitement les champs virtuels du formulaire pour qu'ils ne soient pas filtrés
+        permitted_params += ['start_date', 'start_hour', 'start_minute', 'end_date', 'end_hour', 'end_minute']
+      end
+      record_params.permit(permitted_params.uniq)
     end
   end
 end

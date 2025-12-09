@@ -1,11 +1,11 @@
 <div class="container mt-4">
+
   <div class="d-flex justify-content-between align-items-center mb-4">
     <% if @record.new_record? %>
       <h1>Créer un enregistrement dans la table <%= translate_table_name(@table_name) %></h1>
     <% else %>
       <h1>Modifier l'enregistrement #<%= @record.id %> de la table <%= translate_table_name(@table_name) %></h1>
     <% end %>
-
   </div>
 
   <%# Définit dynamiquement l'URL et la méthode du formulaire pour la création ou la mise à jour %>

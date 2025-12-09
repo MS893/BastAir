@@ -280,6 +280,43 @@ class GoogleCalendarService
     end
   end
 
+  # Supprime l'événement de l'instructeur en utilisant le nom et l'ID stocké
+  def delete_instructor_event_by_id(instructor_name, instructor_event_id)
+    Rails.logger.info "🔍 [GoogleCalendarService] delete_instructor_event_by_id called with: instructor_name=#{instructor_name}, event_id=#{instructor_event_id}"
+    
+    return false unless instructor_event_id.present? && instructor_name.present?
+
+    # On utilise la même table de correspondance que pour la création
+    instructor_calendar_id = case instructor_name
+                            when "Christian HUY"
+                              ENV['GOOGLE_CALENDAR_ID_INSTRUCTEUR_HUY']
+                            # Ajoutez d'autres instructeurs ici
+                            else
+                              Rails.logger.warn "🔍 [GoogleCalendarService] Instructeur '#{instructor_name}' non trouvé dans la configuration"
+                              nil
+                            end
+
+    return false unless instructor_calendar_id.present?
+    
+    Rails.logger.info "🔍 [GoogleCalendarService] Tentative suppression event #{instructor_event_id} du calendrier #{instructor_calendar_id}"
+
+    begin
+      @service.delete_event(instructor_calendar_id, instructor_event_id)
+      Rails.logger.info "[GoogleCalendarService] ✅ Événement instructeur (ID: #{instructor_event_id}) supprimé avec succès du calendrier #{instructor_calendar_id}."
+      return true
+    rescue Google::Apis::ClientError => e
+      if e.status_code == 404 || e.status_code == 410
+        Rails.logger.warn "[GoogleCalendarService] ⚠️ Événement instructeur (ID: #{instructor_event_id}) non trouvé. Il a probablement déjà été supprimé."
+        return true
+      else
+        Rails.logger.error "[GoogleCalendarService] ❌ Erreur API lors de la suppression de l'événement instructeur (status #{e.status_code}): #{e.message}"
+        return false
+      end
+    rescue => e
+      Rails.logger.error "[GoogleCalendarService] ❌ Erreur inattendue: #{e.class}: #{e.message}"
+      return false
+    end
+  end
 
   
   private

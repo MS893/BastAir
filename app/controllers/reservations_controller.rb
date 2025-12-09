@@ -16,9 +16,23 @@ class ReservationsController < ApplicationController
 
   def create
     @reservation = current_user.reservations.build(reservation_params)
+    
+    # Combiner les champs date/heure en timestamps
+    if params[:reservation][:start_date].present? && params[:reservation][:start_hour].present?
+      start_datetime = "#{params[:reservation][:start_date]} #{params[:reservation][:start_hour]}:#{params[:reservation][:start_minute]}:00"
+      @reservation.start_time = DateTime.parse(start_datetime)
+    end
+    
+    if params[:reservation][:end_date].present? && params[:reservation][:end_hour].present?
+      end_datetime = "#{params[:reservation][:end_date]} #{params[:reservation][:end_hour]}:#{params[:reservation][:end_minute]}:00"
+      @reservation.end_time = DateTime.parse(end_datetime)
+    end
 
     # On pré-remplit le titre de l'événement avec l'immatriculation de l'avion
-    @reservation.summary = "Réservation #{Avion.find(@reservation.avion_id).immatriculation}" if @reservation.avion_id.present?
+    if @reservation.avion_id.present?
+      avion = Avion.find_by(id: @reservation.avion_id)
+      @reservation.summary = "Réservation #{avion.immatriculation}" if avion.present?
+    end
 
     if @reservation.save
       # --- Synchronisation avec Google Calendar ---
@@ -39,14 +53,64 @@ class ReservationsController < ApplicationController
     # On charge les données pour les listes déroulantes
     @avions = Avion.all
     @instructeurs = User.where("fi IS NOT NULL AND fi >= ?", Date.today).order(:nom)
+    
+    # Décomposer start_time et end_time pour le formulaire
+    if @reservation.start_time.present?
+      @reservation.start_date = @reservation.start_time.to_date
+      @reservation.start_hour = @reservation.start_time.hour
+      @reservation.start_minute = @reservation.start_time.min
+    end
+    
+    if @reservation.end_time.present?
+      @reservation.end_date = @reservation.end_time.to_date
+      @reservation.end_hour = @reservation.end_time.hour
+      @reservation.end_minute = @reservation.end_time.min
+    end
   end
 
   def update
+    # Garder trace de l'ancien instructeur ET de l'event_id instructeur
+    old_fi = @reservation.fi
+    old_instruction = @reservation.instruction?
+    old_instructor_event_id = @reservation.google_instructor_event_id
+    
+    # Combiner les champs date/heure en timestamps
+    if params[:reservation][:start_date].present? && params[:reservation][:start_hour].present?
+      start_datetime = "#{params[:reservation][:start_date]} #{params[:reservation][:start_hour]}:#{params[:reservation][:start_minute]}:00"
+      params[:reservation][:start_time] = DateTime.parse(start_datetime)
+    end
+    
+    if params[:reservation][:end_date].present? && params[:reservation][:end_hour].present?
+      end_datetime = "#{params[:reservation][:end_date]} #{params[:reservation][:end_hour]}:#{params[:reservation][:end_minute]}:00"
+      params[:reservation][:end_time] = DateTime.parse(end_datetime)
+    end
+    
     if @reservation.update(reservation_params)
-      # --- Synchronisation avec Google Calendar ---
-      GoogleCalendarService.new.update_event_for_app(@reservation)
+      calendar_service = GoogleCalendarService.new
+  
+      # --- Vérifier si l'instruction a été désactivée ---
+      if old_instruction && !@reservation.instruction? && old_instructor_event_id.present?
+        # L'instruction a été retirée : supprimer l'événement de l'agenda de l'instructeur
+        Rails.logger.info "🔍 DEBUG: Instruction retirée, suppression de l'événement instructeur"
+        Rails.logger.info "🔍 DEBUG: old_fi=#{old_fi}, old_instructor_event_id=#{old_instructor_event_id}"
+        calendar_service.delete_instructor_event_by_id(old_fi, old_instructor_event_id)
+        @reservation.update(google_instructor_event_id: nil)
+      elsif old_instruction && @reservation.instruction? && old_fi != @reservation.fi
+        # L'instructeur a changé
+        if old_fi.present? && old_instructor_event_id.present?
+          Rails.logger.info "🔍 DEBUG: Instructeur changé, suppression de l'ancien événement"
+          calendar_service.delete_instructor_event_by_id(old_fi, old_instructor_event_id)
+        end
+        # Créer le nouvel événement instructeur
+        if @reservation.fi.present?
+          Rails.logger.info "🔍 DEBUG: Création du nouvel événement instructeur"
+          calendar_service.create_instructor_event(@reservation)
+        end
+      end
+  
+      # --- Synchronisation avec Google Calendar pour l'événement avion ---
+      calendar_service.update_event_for_app(@reservation)
 
-      # On redirige vers la page admin si on vient de là, sinon vers le dashboard.
       redirect_to params[:redirect_to].presence || root_path, notice: 'Votre réservation a été mise à jour avec succès.'
 
     else
@@ -217,6 +281,7 @@ end
   end
 
   def reservation_params
-    params.require(:reservation).permit(:avion_id, :start_time, :end_time, :summary, :instruction, :fi, :type_vol)
+    params.require(:reservation).permit(:avion_id, :start_time, :end_time, :summary, :instruction, :fi, :type_vol, :start_date, :start_hour, :start_minute, :end_date, :end_hour, :end_minute)
   end
+  
 end

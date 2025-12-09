@@ -20,13 +20,30 @@
   </div>
 
   <div class="row">
-    <div class="col-md-6 mb-3">
-      <%= form.label :start_time, "Début de la réservation" %>
-      <%= form.datetime_local_field :start_time, class: "form-control" %>
+    <div class="col-md-2 mb-3">
+      <%= form.label :start_date, "Date de début" %>
+      <%# La valeur est maintenant gérée par l'attribut virtuel du modèle %>
+      <%= form.date_field :start_date, class: "form-control", data: { reservation_form_target: "startDate", action: "change->reservation-form#updateEndDate" } %>
     </div>
-    <div class="col-md-6 mb-3">
-      <%= form.label :end_time, "Fin de la réservation" %>
-      <%= form.datetime_local_field :end_time, class: "form-control" %>
+    <div class="col-md-2 mb-3">
+      <%= form.label :start_hour, "Heure" %>
+      <%= form.select :start_hour, (7..17).map { |h| [h.to_s.rjust(2, '0'), h] }, {}, { class: "form-select", data: { reservation_form_target: "startTime", action: "change->reservation-form#adjustEndTime" } } %>
+    </div>
+    <div class="col-md-2 mb-3">
+      <%= form.label :start_minute, "Min" %>
+      <%= form.select :start_minute, (0..45).step(15).map { |m| [m.to_s.rjust(2, '0'), m] }, {}, { class: "form-select", data: { action: "change->reservation-form#adjustEndTime" } } %>
+    </div>
+    <div class="col-md-2 mb-3">
+      <%= form.label :end_date, "Date de fin" %>
+      <%= form.date_field :end_date, class: "form-control", data: { reservation_form_target: "endDate" } %>
+    </div>
+    <div class="col-md-2 mb-3">
+      <%= form.label :end_hour, "Heure" %>
+      <%= form.select :end_hour, (7..18).map { |h| [h.to_s.rjust(2, '0'), h] }, {}, { class: "form-select", data: { reservation_form_target: "endTime" } } %>
+    </div>
+    <div class="col-md-2 mb-3">
+      <%= form.label :end_minute, "Min" %>
+      <%= form.select :end_minute, (0..45).step(15).map { |m| [m.to_s.rjust(2, '0'), m] }, {}, { class: "form-select" } %>
     </div>
   </div>
 

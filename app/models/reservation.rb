@@ -1,18 +1,36 @@
 class Reservation < ApplicationRecord
 
+  # == Attributs virtuels pour le formulaire de saisie de date/heure ==
+  attr_accessor :start_date, :start_hour, :start_minute, :end_date, :end_hour, :end_minute  
+
   # == Associations ===========================================================
   belongs_to :user
   belongs_to :avion
 
+  # == Callbacks ==============================================================
+  after_initialize :set_virtual_datetime_attributes, if: :new_record?
+
   # == Validations ============================================================
   validates :start_time, :end_time, presence: true
-  
-  # --- DÉBUT DE L'AJOUT ---
   validate :end_time_after_start_time
   validate :no_overlapping_reservations
-  validate :within_allowed_hours
+  validate :within_allowed_hours  
 
+
+  
   private
+
+  # Initialise les attributs virtuels de date/heure.
+  # - Pour un nouvel enregistrement, il met des valeurs par défaut.
+  # - Pour un enregistrement existant, il les peuple à partir de start_time/end_time.
+  def set_virtual_datetime_attributes
+    self.start_date ||= (start_time || Time.zone.now).to_date
+    self.start_hour ||= 7
+    self.start_minute ||= 0
+    self.end_date ||= (end_time || Time.zone.now).to_date
+    self.end_hour ||= 7
+    self.end_minute ||= 15
+  end
 
   # S'assure que l'heure de fin est bien après l'heure de début.
   def end_time_after_start_time
