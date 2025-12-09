@@ -13,7 +13,9 @@
           <div class="d-flex justify-content-between align-items-center">
             <div>
               <p class="mb-1">Vol sur <strong><%= reservation.avion.immatriculation %></strong></p>
-              <p class="text-muted small mb-0"><%= l reservation.start_time, format: :long %></p>
+              <p class="text-muted small mb-0">
+                <%= "#{l(reservation.start_time, format: '%A %d %B %Y')} de #{l(reservation.start_time, format: :short_time)} à #{l(reservation.end_time, format: :short_time)}" %>
+              </p>
             </div>
             <div class="d-flex">
               <%= link_to "Modifier", edit_reservation_path(reservation), class: "btn btn-sm btn-outline-primary" %>

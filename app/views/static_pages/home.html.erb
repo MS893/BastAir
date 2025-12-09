@@ -20,8 +20,12 @@
         <h1 class="text-center mb-4">Bast'Air</h1>
         <h3 class="text-center mb-5">L'aéroclub de Basse Terre - Baillif</h3>
 
+        <!-- Carrousel d'images
+
+        -->
+
         <!-- Carrousel d'images -->
-        <div id="homeCarousel" class="carousel slide shadow-lg rounded overflow-hidden mb-5" data-bs-ride="carousel">
+        <div id="homeCarousel" class="carousel slide shadow-lg rounded overflow-hidden mb-5" data-bs-ride="carousel" data-bs-keyboard="true" data-bs-carousel-init>
           <div class="carousel-indicators">
             <button type="button" data-bs-target="#homeCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
             <button type="button" data-bs-target="#homeCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
@@ -31,30 +35,67 @@
             <button type="button" data-bs-target="#homeCarousel" data-bs-slide-to="5" aria-label="Slide 6"></button>
             <button type="button" data-bs-target="#homeCarousel" data-bs-slide-to="6" aria-label="Slide 7"></button>
           </div>
-          <div class="carousel-inner">
-            <div class="carousel-item active">
+          <div class="carousel-inner text-white">
+            <div class="carousel-item active" data-bs-interval="3500">
               <%= image_tag 'TFFB (1).jpg', class: 'd-block w-100', alt: 'nuages' %>
+              <div class="carousel-caption d-none d-md-block text-white">
+                <h4>Un ciel incroyable</h4>
+                <p>Un ciel différent tous les jours, avec des nuages magnifiques ou un grand ciel bleu.</p>
+              </div>
             </div>
-            <div class="carousel-item">
+            <div class="carousel-item" data-bs-interval="3500">
               <%= image_tag 'TFFB (11).jpg', class: 'd-block w-100', alt: 'piste' %>
+              <div class="carousel-caption d-none d-md-block text-white">
+                <h4>Une belle piste</h4>
+                <p>Une piste en dur de 615m quotidiennement entretenue. Un décollage face à la mer inoubliable.</p>
+              </div>
             </div>
-            <div class="carousel-item">
+            <div class="carousel-item" data-bs-interval="3500">
               <%= image_tag 'TFFB (17).jpg', class: 'd-block w-100', alt: 'nuages' %>
+              <div class="carousel-caption d-none d-md-block text-white">
+                <h4>Un "espace de jeu" immense</h4>
+                <p>Des conditions météoroloques parfois difficles qui nous empêchent de voler, mais généralement clémentes.</p>
+              </div>
             </div>
-            <div class="carousel-item">
+            <div class="carousel-item" data-bs-interval="3500">
               <%= image_tag 'TFFB (7).jpg', class: 'd-block w-100', alt: 'accueil' %>
+              <div class="carousel-caption d-none d-md-block text-white">
+                <h4>Les infrastructures</h4>
+                <p>Des batiments confortables et propres pour vous accueillir.</p>
+              </div>
             </div>
-            <div class="carousel-item">
+            <div class="carousel-item" data-bs-interval="3500">
               <%= image_tag 'TFFB (14).jpg', class: 'd-block w-100', alt: 'piste' %>
+              <div class="carousel-caption d-none d-md-block text-white">
+                <h4>La piste 14-32</h4>
+                <p>Some representative placeholder content for the third slide.</p>
+              </div>
             </div>
-            <div class="carousel-item">
+            <div class="carousel-item" data-bs-interval="3500">
               <%= image_tag 'TFFB (8).jpg', class: 'd-block w-100', alt: 'nuages' %>
+              <div class="carousel-caption d-none d-md-block text-white">
+                <h4>Des couchers de soleil magnifiques</h4>
+                <p>Atterrir à la tombée de la nuitapès avoir contemplé le soleil disparaître sous l'horizon.</p>
+              </div>
             </div>
-            <div class="carousel-item">
+            <div class="carousel-item" data-bs-interval="3500">
               <%= image_tag 'TFFB.jpg', class: 'd-block w-100', alt: 'piste' %>
+              <div class="carousel-caption d-none d-md-block text-white">
+                <h4>Le décollage en piste 32</h4>
+                <p>Face à la mer, on profite tout de suite du paysage.</p>
+              </div>
             </div>
           </div>
+          <button class="carousel-control-prev" type="button" data-bs-target="#homeCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Préc</span>
+          </button>
+          <button class="carousel-control-next" type="button" data-bs-target="#homeCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Suiv</span>
+          </button>
         </div>
+
 
         <p class="lead text-center">
           Bienvenue sur la page de notre aéroclub. Découvrez notre histoire, nos valeurs et notre passion pour l'aviation.

@@ -7,7 +7,8 @@ export default class extends Controller {
     "instructorSelect",
     "startDate", "endDate",
     "startTime", // Heure de début (select)
-    "startMinute", // Minute de début (select)
+    "startMinute",// Minute de début (select)
+    "endMinute",
     "endTime", // Heure de fin (select)
   ]
 
@@ -15,7 +16,11 @@ export default class extends Controller {
   connect() {
     // On appelle immédiatement la méthode pour définir l'état initial du formulaire.
     this.toggleInstructor()
-    this.initTimeInputs()
+    // On vérifie si le formulaire est pour une nouvelle réservation (pas d'ID dans l'URL)
+    // ou une modification. On n'ajuste l'heure que pour les nouvelles réservations.
+    if (!window.location.pathname.includes('/edit')) {
+      this.adjustEndTime();
+    }
   }
 
   // Cette méthode est appelée à chaque fois que la case à cocher change.
@@ -31,9 +36,7 @@ export default class extends Controller {
   // --- Logique pour les dates et heures ---
 
   // Initialise les champs de saisie de l'heure
-  initTimeInputs() {
-    // Plus nécessaire avec les listes déroulantes
-  }
+  // La méthode initTimeInputs n'est plus nécessaire, son rôle est pris par adjustEndTime au `connect`.
 
   // Met à jour la date de fin quand la date de début change
   updateEndDate() {
@@ -46,15 +49,25 @@ export default class extends Controller {
 
   // S'assure que l'heure de fin est toujours après l'heure de début
   adjustEndTime() {
-    // Cette logique est maintenant simplifiée car gérée par les options des listes déroulantes.
-    // On pourrait ajouter une validation plus complexe si nécessaire, mais pour l'instant,
-    // la logique de base est de s'assurer que la date de fin suit la date de début.
-    const startDateValue = this.startDateTarget.value;
-    const endDateValue = this.endDateTarget.value;
+    // Récupère l'heure de début sélectionnée et la convertit en nombre.
+    const startHour = parseInt(this.startTimeTarget.value);
 
-    // Si la date de fin devient antérieure à la date de début, on la réinitialise.
-    if (endDateValue < startDateValue) {
-      this.endDateTarget.value = startDateValue;
+    // Calcule l'heure de fin (heure de début + 1).
+    let endHour = startHour + 1;
+
+    // Gère le cas où l'heure de fin dépasse la limite de 18h.
+    // Si startHour est 17, endHour sera 18. Si startHour est plus grand, on réinitialise.
+    if (endHour > 18) {
+      endHour = 18; // On plafonne à 18, qui est la dernière option valide.
+    }
+
+    // Met à jour l'heure de fin dans le selecteur.
+    // La valeur doit être une chaîne de caractères pour correspondre aux options du <select>.
+    this.endTimeTarget.value = endHour.toString();
+
+    // Met les minutes de fin à 00.
+    if (this.hasEndMinuteTarget) {
+      this.endMinuteTarget.value = "0";
     }
   }
 

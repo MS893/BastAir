@@ -43,7 +43,7 @@
     </div>
     <div class="col-md-2 mb-3">
       <%= form.label :end_minute, "Min" %>
-      <%= form.select :end_minute, (0..45).step(15).map { |m| [m.to_s.rjust(2, '0'), m] }, {}, { class: "form-select" } %>
+      <%= form.select :end_minute, (0..45).step(15).map { |m| [m.to_s.rjust(2, '0'), m] }, {}, { class: "form-select", data: { reservation_form_target: "endMinute" } } %>
     </div>
   </div>
 

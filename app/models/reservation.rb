@@ -14,7 +14,8 @@ class Reservation < ApplicationRecord
   validates :start_time, :end_time, presence: true
   validate :end_time_after_start_time
   validate :no_overlapping_reservations
-  validate :within_allowed_hours  
+  validate :within_allowed_hours
+  validate :instructor_required_if_instruction
 
 
   
@@ -64,6 +65,13 @@ class Reservation < ApplicationRecord
     # On vérifie si l'heure de début est en dehors de la plage 7h - 17h (inclu)
     if start_time.hour < 7 || start_time.hour > 17
       errors.add(:start_time, "doit être entre 7h00 et 17h00")
+    end
+  end
+
+  # S'assure qu'un instructeur est sélectionné si le vol est en instruction.
+  def instructor_required_if_instruction
+    if instruction? && fi.blank?
+      errors.add(:fi, "doit être sélectionné pour un vol en instruction")
     end
   end
 

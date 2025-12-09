@@ -34,22 +34,22 @@
         <!-- Carte Mes Vols -->
         <%= render "static_pages/mes_vols" %>
       </div>
-      <div class="col-lg-4">
+      <div class="col-lg-4 mb-5">
         <!-- Carte dates limites -->
         <%= render 'static_pages/validites', user: current_user %>
       </div>
-      <div class="col-lg-4">
+      <div class="col-lg-4 mb-5">
         <!-- Carte évènements à venir -->
         <%= render 'static_pages/evenements_a_venir' %>
       </div>
-      <div class="col-lg-4">
+      <div class="col-lg-4 mb-5">
         <!-- Carte dernières transactions -->
         <%= render 'static_pages/mes_transactions' %>
       </div>
     </div>
 
     <!-- Nouvelle ligne pour les actualités -->
-    <div class="row g-4 mt-1">
+    <div class="row g-4 mt-5">
       <div class="col-lg-6 col-md-8 mx-auto"> <%# Diminue la largeur et centre la carte %>
         <%= render 'static_pages/dernieres_consignes' %>
       </div>

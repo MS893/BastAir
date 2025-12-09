@@ -88,28 +88,33 @@ class ReservationsController < ApplicationController
     if @reservation.update(reservation_params)
       calendar_service = GoogleCalendarService.new
   
-      # --- Vérifier si l'instruction a été désactivée ---
+      # --- Logique de synchronisation Google Calendar ---
+
       if old_instruction && !@reservation.instruction? && old_instructor_event_id.present?
         # L'instruction a été retirée : supprimer l'événement de l'agenda de l'instructeur
         Rails.logger.info "🔍 DEBUG: Instruction retirée, suppression de l'événement instructeur"
-        Rails.logger.info "🔍 DEBUG: old_fi=#{old_fi}, old_instructor_event_id=#{old_instructor_event_id}"
         calendar_service.delete_instructor_event_by_id(old_fi, old_instructor_event_id)
         @reservation.update(google_instructor_event_id: nil)
+        calendar_service.update_event_for_app(@reservation) # On met à jour l'event avion (ex: description)
+
       elsif old_instruction && @reservation.instruction? && old_fi != @reservation.fi
-        # L'instructeur a changé
+        # Cas 2: L'instructeur a changé
         if old_fi.present? && old_instructor_event_id.present?
           Rails.logger.info "🔍 DEBUG: Instructeur changé, suppression de l'ancien événement"
           calendar_service.delete_instructor_event_by_id(old_fi, old_instructor_event_id)
         end
-        # Créer le nouvel événement instructeur
-        if @reservation.fi.present?
-          Rails.logger.info "🔍 DEBUG: Création du nouvel événement instructeur"
-          calendar_service.create_instructor_event(@reservation)
-        end
+        calendar_service.create_instructor_event_only(@reservation) if @reservation.fi.present?
+        calendar_service.update_event_for_app(@reservation) # On met à jour l'event avion
+
+      elsif !old_instruction && @reservation.instruction? && @reservation.fi.present?
+        # Cas 3: L'instruction vient d'être ajoutée
+        Rails.logger.info "🔍 DEBUG: Instruction ajoutée, création de l'événement instructeur"
+        calendar_service.create_instructor_event_only(@reservation)
+        calendar_service.update_event_for_app(@reservation) # On met à jour l'event avion
+      else
+        # Cas 4: Autre mise à jour (heure, etc.)
+        calendar_service.update_event_for_app(@reservation)
       end
-  
-      # --- Synchronisation avec Google Calendar pour l'événement avion ---
-      calendar_service.update_event_for_app(@reservation)
 
       redirect_to params[:redirect_to].presence || root_path, notice: 'Votre réservation a été mise à jour avec succès.'
 

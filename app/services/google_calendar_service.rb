@@ -169,6 +169,36 @@ class GoogleCalendarService
     end
   end
 
+  def create_instructor_event_only(reservation)
+    # This method is specifically for creating an instructor event when one is added to an existing reservation.
+    return unless reservation.instruction? && reservation.fi.present?
+
+    # 1. Find the instructor's calendar ID using the existing pattern.
+    instructor_name = reservation.fi
+    instructor_calendar_id =  case instructor_name
+                              when "Christian HUY"
+                                ENV['GOOGLE_CALENDAR_ID_INSTRUCTEUR_HUY']
+                              # Add other instructors here
+                              end
+
+    return unless instructor_calendar_id.present?
+
+    # 2. Build the event data using the existing reservation helper, then customize the summary.
+    event_data = build_event_from_reservation(reservation).merge(
+      summary: "Instruction avec #{reservation.user.name}"
+    )
+    instructor_event = Google::Apis::CalendarV3::Event.new(**event_data)
+
+    begin
+      # 3. Insert the event and update the reservation record with the new event ID.
+      created_event = @service.insert_event(instructor_calendar_id, instructor_event)
+      reservation.update_column(:google_instructor_event_id, created_event.id)
+      Rails.logger.info "✅ Événement instructeur créé avec succès : #{created_event.id}"
+    rescue Google::Apis::ClientError => e
+      Rails.logger.error "💥 Erreur lors de la création de l'événement instructeur : #{e.message}"
+    end
+  end
+
   # Récupère la liste de tous les calendriers accessibles par le compte de service
   def list_calendars
     # On récupère les IDs des calendriers depuis les variables d'environnement
