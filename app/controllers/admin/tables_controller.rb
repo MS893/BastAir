@@ -29,7 +29,35 @@ module Admin
         'active_storage_variant_records',
         'web_push_subscriptions'
       ]
-      @tables = (ActiveRecord::Base.connection.tables - excluded_tables).sort
+
+      # On définit manuellement l'ordre des tables pour un contrôle total.
+      ordered_tables = [
+        'activity_logs',  # Activity Log
+        'users',          # Adhérents
+        'avions',         # Avions
+        'comments',       # Commentaires
+        'transactions',   # Comptabilité
+        'news_items',     # Consignes
+        'courses',        # Cours
+        'events',         # Evènements
+        'immobs',         # Immobilisations
+        'flight_lessons', # Instruction
+        'settings',       # Paramètres
+        'attendances',    # Participants
+        'penalites',      # Pénalités
+        'audios',         # Podcasts
+        'reservations',   # Réservations
+        'signalements',   # Signalements
+        'tarifs',         # Tarifs
+        'vols'            # Vols
+      ]
+
+      # On s'assure que seules les tables existantes sont affichées, tout en conservant l'ordre défini.
+      all_existing_tables = ActiveRecord::Base.connection.tables - excluded_tables
+      @tables = all_existing_tables.sort_by do |table_name|
+        ordered_tables.index(table_name) || Float::INFINITY
+      end
+
       if params[:table_name].present? && @tables.include?(params[:table_name])
         @selected_table = params[:table_name]
         @model = create_anonymous_model(params[:table_name])
@@ -62,7 +90,10 @@ module Admin
 
         respond_to do |format|
           format.html # pour le chargement initial de la page
-          format.turbo_stream # pour les mises à jour via Turbo
+          # Pour les mises à jour via Turbo, on s'assure de re-rendre la liste des tables et le contenu de la table sélectionnée.
+          # Le rendu se fait via la vue `index.turbo_stream.erb` qui est implicitement appelée.
+          # Nous nous assurons que les variables d'instance sont correctement définies pour cette vue.
+          format.turbo_stream
         end
       end
     end
