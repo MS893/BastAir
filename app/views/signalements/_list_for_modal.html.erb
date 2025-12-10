@@ -1,0 +1,13 @@
+<%# Ce partial est rendu via une requête fetch dans la modale de signalement de la page de saisie de vol %>
+
+<% if @signalements.any? %>
+  <hr>
+  <h6 class="mb-3">Signalements déjà en cours :</h6>
+  <ul class="list-group list-group-flush">
+    <% @signalements.each do |signalement| %>
+      <li class="list-group-item px-0 py-1">
+        <small><strong><%= signalement.status.capitalize %>:</strong> <%= signalement.description %></small>
+      </li>
+    <% end %>
+  </ul>
+<% end %>

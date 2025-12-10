@@ -116,6 +116,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_08_163735) do
     t.string "title"
     t.text "description"
     t.integer "price"
+    t.string "google_event_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["admin_id"], name: "index_events_on_admin_id"

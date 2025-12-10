@@ -29,6 +29,13 @@
     </div>
   </div>
 
+  <%# --- Bouton de création (s'affiche uniquement si un avion est filtré) --- %>
+  <% if params[:by_avion].present? && (current_user.admin? || current_user.instructor?) %>
+    <div class="text-center mb-4">
+      <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#newSignalementModal">Nouveau signalement pour l'avion sélectionné</button>
+    </div>
+  <% end %>
+
   <% if @signalements.any? %>
     <div class="list-group">
       <% @signalements.each do |signalement| %>
@@ -46,8 +53,8 @@
               Statut :
               <span class="badge <%= signalement_status_badge_class(signalement.status) %>"><%= signalement.status %></span>
             </small>
-            <%# Ce lien ne s'affiche que pour les administrateurs %>
-            <% if current_user.admin? %>
+            <%# Ce lien ne s'affiche que pour les administrateurs et les instructeurs %>
+            <% if current_user.admin? || current_user.instructor? %>
               <div class="btn-group" role="group">
                 <%= link_to 'Modifier', edit_signalement_path(signalement), class: 'btn btn-sm btn-outline-primary' %>
                 <%= link_to 'Supprimer', signalement_path(signalement), class: 'btn btn-sm btn-outline-danger ms-3', data: { turbo_method: :delete, turbo_confirm: 'Êtes-vous sûr de vouloir supprimer ce signalement ?' } %>
@@ -68,3 +75,8 @@
     </div>
   <% end %>
 </div>
+
+<%# --- Rendu de la fenêtre modale --- %>
+<% if params[:by_avion].present? && (current_user.admin? || current_user.instructor?) %>
+  <%= render 'modal_new', avion: @selected_avion, signalement: @signalement %>
+<% end %>

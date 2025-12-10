@@ -9,7 +9,9 @@ export default class extends Controller {
     "startTime", // Heure de début (select)
     "startMinute",// Minute de début (select)
     "endMinute",
-    "endTime", // Heure de fin (select)
+    "endTime", // Heure de fin (select),
+    "avionSelect", // Le select pour l'avion
+    "signalementsFrame" // Le Turbo Frame pour les signalements
   ]
 
   // Cette méthode est appelée automatiquement lorsque le contrôleur est chargé.
@@ -17,6 +19,8 @@ export default class extends Controller {
     // On appelle immédiatement la méthode pour définir l'état initial du formulaire.
     this.toggleInstructor()
     // On vérifie si le formulaire est pour une nouvelle réservation (pas d'ID dans l'URL)
+    // On charge les signalements pour l'avion sélectionné par défaut.
+    this.updateSignalements();
     // ou une modification. On n'ajuste l'heure que pour les nouvelles réservations.
     if (!window.location.pathname.includes('/edit')) {
       this.adjustEndTime();
@@ -71,4 +75,18 @@ export default class extends Controller {
     }
   }
 
+  // Met à jour le Turbo Frame des signalements quand un avion est sélectionné
+  updateSignalements() {
+    const avionId = this.avionSelectTarget.value;
+
+    if (avionId) {
+      // Construit l'URL pour l'action signalements_list
+      const url = `/avions/${avionId}/signalements_list`;
+      // Met à jour l'attribut 'src' du turbo-frame, ce qui déclenchera le chargement
+      this.signalementsFrameTarget.src = url;
+    } else {
+      // Si aucun avion n'est sélectionné, on vide le contenu du frame
+      this.signalementsFrameTarget.innerHTML = "";
+    }
+  }
 }

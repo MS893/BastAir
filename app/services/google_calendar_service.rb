@@ -348,6 +348,50 @@ class GoogleCalendarService
     end
   end
 
+  # Nouvelle méthode dédiée à la mise à jour d'un événement (modèle Event) sur Google Calendar
+  def update_google_event_for_app_event(app_event)
+    google_event_id = app_event.google_event_id
+    calendar_id = ENV['GOOGLE_CALENDAR_ID_EVENTS']
+
+    # On ne fait rien si l'ID de l'événement ou du calendrier est manquant
+    return unless google_event_id.present? && calendar_id.present?
+
+    # On construit les nouvelles données de l'événement à partir de l'objet mis à jour
+    event_data = build_event_from_app_event(app_event)
+    event = Google::Apis::CalendarV3::Event.new(**event_data)
+
+    begin
+      @service.update_event(calendar_id, google_event_id, event)
+      Rails.logger.info "[GoogleCalendarService] Événement (ID: #{google_event_id}) mis à jour avec succès dans le calendrier #{calendar_id}."
+    rescue Google::Apis::ClientError => e
+      Rails.logger.error "[GoogleCalendarService] Erreur API lors de la mise à jour de l'événement pour Event ##{app_event.id}: #{e.message}"
+    rescue => e
+      Rails.logger.error "[GoogleCalendarService] Erreur inattendue lors de la mise à jour de l'événement pour Event ##{app_event.id}: #{e.class}: #{e.message}"
+    end
+  end
+
+  # Nouvelle méthode dédiée à la suppression d'un événement (modèle Event) de Google Calendar
+  def delete_google_event_for_app_event(app_event)
+    google_event_id = app_event.google_event_id
+    calendar_id = ENV['GOOGLE_CALENDAR_ID_EVENTS']
+
+    # On ne fait rien si l'ID de l'événement ou du calendrier est manquant
+    return unless google_event_id.present? && calendar_id.present?
+
+    begin
+      @service.delete_event(calendar_id, google_event_id)
+      Rails.logger.info "[GoogleCalendarService] Événement (ID: #{google_event_id}) supprimé avec succès du calendrier #{calendar_id}."
+    rescue Google::Apis::ClientError => e
+      # Si l'événement n'est pas trouvé (code 404 ou 410), c'est qu'il a déjà été supprimé. On ne lève pas d'erreur.
+      if e.status_code == 404 || e.status_code == 410
+        Rails.logger.warn "[GoogleCalendarService] L'événement Google Calendar #{google_event_id} n'a pas été trouvé. Il a probablement déjà été supprimé."
+      else
+        # Pour toute autre erreur API, on la journalise.
+        Rails.logger.error "[GoogleCalendarService] Erreur API lors de la suppression de l'événement pour Event ##{app_event.id}: #{e.message}"
+      end
+    end
+  end
+
   
   private
 

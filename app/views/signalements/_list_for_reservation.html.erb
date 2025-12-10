@@ -1,0 +1,33 @@
+<%# Ce partial est rendu dans le Turbo Frame de la page de réservation %>
+
+<%# On définit les classes CSS en fonction de la présence de signalements %>
+<% if @signalements.any? %>
+  <% card_class = "border-warning" %>
+  <% header_class = "bg-warning text-dark" %>
+<% else %>
+  <% card_class = "border-success" %>
+  <% header_class = "bg-success text-white" %>
+<% end %>
+
+<div class="card <%= card_class %> mt-5">
+  <div class="card-header <%= header_class %>">
+    <h5 class="mb-0">
+      <i class="bi bi-exclamation-triangle-fill me-2"></i>
+      Signalements en cours sur cet avion
+    </h5>
+  </div>
+  <% if @signalements.any? %>
+    <ul class="list-group list-group-flush">
+      <% @signalements.each do |signalement| %>
+        <li class="list-group-item">
+          <strong><%= signalement.status.capitalize %>:</strong> <%= signalement.description %>
+          <small class="d-block text-muted">Signalé il y a <%= time_ago_in_words(signalement.created_at) %></small>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <div class="card-body text-center">
+      <i class="bi bi-check-circle-fill me-2"></i> Aucun signalement en cours sur cet avion.
+    </div>
+  <% end %>
+</div>

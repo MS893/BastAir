@@ -56,6 +56,9 @@
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
             <%= form.submit "Envoyer le signalement", class: "btn btn-danger" %>
           </div>
+          <%# Zone où sera injectée la liste des signalements existants %>
+          <div id="existing-signalements-list" class="mt-5">
+          </div>
         <% end %>
       </div>
     </div>
@@ -266,9 +269,19 @@
       field.addEventListener(eventName, checkFormValidity);
     });
 
+    function selectFirstAvion() {
+      // Si aucun avion n'est sélectionné (l'index est 0, correspondant au prompt "Sélectionnez un avion")
+      // et qu'il y a au moins un avion dans la liste (plus d'une option).
+      if (avionSelect.selectedIndex === 0 && avionSelect.options.length > 1) {
+        avionSelect.selectedIndex = 1; // On sélectionne le premier véritable avion
+        // On déclenche manuellement les fonctions qui dépendent de la sélection de l'avion.
+        updateLastCounter();
+        updateSignalementButton();
+      }
+    }
+
     // --- APPELS INITIAUX AU CHARGEMENT DE LA PAGE ---
-    updateLastCounter();
-    updateSignalementButton();
+    selectFirstAvion();
     checkFormValidity();
 
     // --- GESTION DE LA MODALE DE SIGNALEMENT ---
@@ -276,12 +289,28 @@
     const signalementModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('signalementModal'));
     const signalementForm = document.getElementById('signalement-form');
     let lastFocusedElement = null; // Variable pour mémoriser l'élément qui a ouvert la modale
+    const existingSignalementsList = document.getElementById('existing-signalements-list');
+
+    function fetchAndDisplaySignalements(avionId) {
+      // Vide la liste précédente
+      existingSignalementsList.innerHTML = '<div class="text-center"><div class="spinner-border spinner-border-sm" role="status"><span class="visually-hidden">Loading...</span></div></div>';
+
+      // On ajoute un paramètre `source=modal` pour que le contrôleur puisse différencier cette requête.
+      fetch(`/avions/${avionId}/signalements_list?source=modal`, {
+        headers: { 'Accept': 'text/html' }
+      })
+      .then(response => response.text())
+      .then(html => {
+        existingSignalementsList.innerHTML = html;
+      });
+    }
 
     signalementButton.addEventListener('click', function() {
       const avionId = avionSelect.value;
       if (avionId) {
         // Met à jour l'URL de soumission du formulaire de la modale
         signalementForm.action = `/avions/${avionId}/signalements`;
+        fetchAndDisplaySignalements(avionId); // Récupère et affiche les signalements
         lastFocusedElement = document.activeElement; // Mémorise le bouton cliqué
         signalementModal.show();
       }
@@ -321,6 +350,7 @@
     // C'est nécessaire car l'ouverture de la modale peut désactiver le formulaire principal.
     const signalementModalElement = document.getElementById('signalementModal');
     signalementModalElement.addEventListener('hidden.bs.modal', function () {
+      existingSignalementsList.innerHTML = ''; // Vide la liste des signalements à la fermeture
       // Utilise setTimeout pour s'assurer que ce code s'exécute après que Bootstrap a fini son nettoyage.
       setTimeout(() => {
         // Force la réactivation du formulaire principal.

@@ -2,6 +2,7 @@ class EventsController < ApplicationController
   before_action :authenticate_user!, only: %i[new create edit update destroy confirm_destroy] # l'utilisateur est connecté
   before_action :set_event, only: %i[show edit update destroy confirm_destroy]
   before_action :authorize_admin!, only: %i[new create edit update destroy confirm_destroy delete_past] # seul un admin peut gérer les événements
+  before_action :combine_date_and_time, only: %i[ create update ]
 
   def index
     @events = Event.order(start_date: :asc)
@@ -42,6 +43,9 @@ class EventsController < ApplicationController
     if @event.update(event_params)
       # on envoie un email pour informer les participants de l'event de la modif
       @event.users.each do |participant|
+        # --- Synchronisation avec Google Calendar ---
+        GoogleCalendarService.new.update_google_event_for_app_event(@event)
+        
         UserMailer.event_updated_notification(participant, @event).deliver_later
       end
       redirect_to @event, notice: "L'événement a été mis à jour avec succès."
@@ -59,6 +63,9 @@ class EventsController < ApplicationController
     participants.each do |participant|
       UserMailer.event_destroyed_notification(participant, event_title, was_paid).deliver_later
     end
+
+    # --- Synchronisation avec Google Calendar ---
+    GoogleCalendarService.new.delete_google_event_for_app_event(@event)
 
     @event.destroy
     redirect_to events_path, notice: "L'événement a été supprimé avec succès."
@@ -81,10 +88,24 @@ class EventsController < ApplicationController
     redirect_to events_path, notice: "#{count} événement(s) passé(s) ont été supprimé(s)."
   end
   
+
+
   private
 
   def set_event
     @event = Event.find(params[:id])
+  end
+
+  def combine_date_and_time
+    if params[:event][:start_date].present? && params[:event][:start_date_hour].present? && params[:event][:start_date_minute].present?
+      date = Date.parse(params[:event][:start_date])
+      hour = params[:event][:start_date_hour].to_i
+      minute = params[:event][:start_date_minute].to_i
+      
+      # On reconstruit le paramètre start_date avec la date et l'heure
+      # avant qu'il ne soit utilisé par event_params
+      params[:event][:start_date] = Time.zone.local(date.year, date.month, date.day, hour, minute)
+    end
   end
 
   def event_params

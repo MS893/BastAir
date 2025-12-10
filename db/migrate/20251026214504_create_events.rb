@@ -8,6 +8,7 @@ class CreateEvents < ActiveRecord::Migration[8.0]
       t.string :title
       t.text :description
       t.integer :price        # correspond au nombre d'euros que coûte l'événement
+      t.string :google_event_id
 
       t.timestamps
     end

@@ -1,0 +1,5 @@
+<%# Ce partial sert de conteneur pour la réponse Turbo Frame de la page de réservation. %>
+<%# Il enveloppe la liste des signalements dans le turbo_frame_tag attendu. %>
+<%= turbo_frame_tag "signalements_avion" do %>
+  <%= render 'signalements/list_for_reservation', signalements: signalements %>
+<% end %>

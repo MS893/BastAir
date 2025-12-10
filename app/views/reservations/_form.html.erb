@@ -16,7 +16,12 @@
 
   <div class="mb-3">
     <%= form.label :avion_id, "Avion" %>
-    <%= form.collection_select :avion_id, @avions, :id, :immatriculation, { prompt: "Sélectionnez un avion" }, { class: "form-select" } %>
+    <%# Ce champ va déclencher l'action `updateSignalements` du contrôleur Stimulus %>
+    <%= form.collection_select :avion_id, @avions, :id, :immatriculation, {}, { 
+      class: "form-select", 
+      "data-reservation-form-target": "avionSelect",
+      "data-action": "change->reservation-form#updateSignalements"
+    } %>
   </div>
 
   <div class="row">
@@ -64,8 +69,12 @@
     <%= form.collection_select :fi, @instructeurs, :name, :name, { include_blank: "Pas d'instructeur" }, { class: "form-select" } %>
   </div>
 
-  <div class="form-actions mt-4 border-top pt-3">
+  <div class="form-actions mt-4 mb-5 border-top pt-3">
     <%= form.submit "Enregistrer la réservation", class: "btn btn-success" %>
     <%= link_to 'Annuler', root_path, class: 'btn btn-outline-primary ms-2' %>
   </div>
+
+  <%# Ce Turbo Frame sera mis à jour dynamiquement avec les signalements de l'avion sélectionné %>
+  <%# Pour une réservation existante, on charge les signalements tout de suite %>
+  <%= turbo_frame_tag "signalements_avion", src: (signalements_list_avion_path(reservation.avion) if reservation.persisted?), data: { reservation_form_target: "signalementsFrame" } %>
 <% end %>

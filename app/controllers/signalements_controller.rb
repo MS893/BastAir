@@ -2,12 +2,8 @@ class SignalementsController < ApplicationController
   before_action :authenticate_user!
   before_action :authorize_admin!, only: [:edit, :update, :destroy]
   # On ne cherche l'avion que pour les actions `new` et `create`
-  before_action :set_avion, only: [:new, :create]
+  before_action :set_avion, only: [:create]
   before_action :set_signalement, only: [:show, :edit, :update, :destroy]
-
-  def new
-    @signalement = @avion.signalements.new
-  end
 
   def index
     # Pour le formulaire de filtre
@@ -17,8 +13,14 @@ class SignalementsController < ApplicationController
     @signalements = Signalement.includes(:user, :avion)
 
     # Application des filtres s'ils sont présents dans les paramètres
-    @signalements = @signalements.where(status: params[:by_status]) if params[:by_status].present?
-    @signalements = @signalements.where(avion_id: params[:by_avion]) if params[:by_avion].present?
+    if params[:by_status].present?
+      @signalements = @signalements.where(status: params[:by_status])
+    end
+    if params[:by_avion].present?
+      @signalements = @signalements.where(avion_id: params[:by_avion])
+      @selected_avion = Avion.find(params[:by_avion])
+      @signalement = @selected_avion.signalements.new # Pour la modale de création
+    end
 
     # Tri et pagination sur la collection filtrée
     @signalements = @signalements.order(created_at: :desc).page(params[:page]).per(10)
@@ -60,11 +62,15 @@ class SignalementsController < ApplicationController
         recipients.each { |recipient| SignalementMailer.new_signalement_notification(recipient, @signalement).deliver_later }
 
         # Si la requête est HTML (formulaire classique), on redirige.
-        format.html { redirect_to root_path, notice: "Le signalement sur l'avion #{@avion.immatriculation} a été enregistré avec succès. Merci." }
+        format.html { redirect_to signalements_path, notice: "Le signalement sur l'avion #{@avion.immatriculation} a été enregistré avec succès." }
         # Si la requête est JSON (AJAX), on renvoie une réponse JSON de succès.
         format.json { render json: { status: 'success', message: 'Signalement enregistré.' }, status: :created }
       else
-        format.html { render :new, status: :unprocessable_entity }
+        # En cas d'échec, on redirige vers la page d'index avec un message d'erreur.
+        # Cela évite de rendre la page "new" qui n'est plus utilisée.
+        # On ajoute les paramètres de filtre pour que l'utilisateur retrouve son contexte.
+        error_message = @signalement.errors.full_messages.to_sentence.presence || "Une erreur est survenue."
+        format.html { redirect_to signalements_path(by_avion: @avion.id), alert: "Le signalement n'a pas pu être créé : #{error_message}" }
         format.json { render json: @signalement.errors, status: :unprocessable_entity }
       end
     end

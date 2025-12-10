@@ -48,13 +48,15 @@
       </div>
     </div>
 
-    <!-- Nouvelle ligne pour les actualités -->
-    <div class="row g-4 mt-5">
-      <div class="col-lg-6 col-md-8 mx-auto"> <%# Diminue la largeur et centre la carte %>
-        <%= render 'static_pages/dernieres_consignes' %>
+    <%# On n'affiche la section des consignes que si il y en a au moins une. %>
+    <% if @news_items.present? %>
+      <!-- Consignes aux pilotes -->
+      <div class="row g-4 mt-5">
+        <div class="col-lg-6 col-md-8 mx-auto">
+          <%= render 'static_pages/dernieres_consignes' %>
+        </div>
       </div>
-    </div>
-    
+    <% end %>
   </div>
 
 </div>

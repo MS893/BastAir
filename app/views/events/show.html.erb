@@ -18,6 +18,15 @@
             <li class="list-group-item"><strong>Prix :</strong> <%= @event.is_free? ? "Gratuit" : number_to_currency(@event.price) %></li>
           </ul>
         </div>
+
+        <%# --- Section pour les administrateurs --- %>
+        <% if user_signed_in? && current_user.admin? %>
+          <div class="card-footer d-flex justify-content-center gap-2">
+            <%= link_to 'Modifier', edit_event_path(@event), class: 'btn btn-sm btn-warning' %>
+            <%= button_to 'Supprimer', event_path(@event), method: :delete, data: { turbo_confirm: 'Êtes-vous sûr de vouloir supprimer cet événement ? Cette action est irréversible.' }, class: 'btn btn-sm btn-danger' %>
+          </div>
+        <% end %>
+
         <%# --- Section Inscription à l'événement --- %>
         <% if user_signed_in? %>
           <div class="card-footer text-center">
