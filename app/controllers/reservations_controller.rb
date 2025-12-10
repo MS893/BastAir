@@ -123,23 +123,60 @@ class ReservationsController < ApplicationController
       @instructeurs = User.where("fi IS NOT NULL AND fi >= ?", Date.today).order(:nom)
       render :edit, status: :unprocessable_entity
     end
+
   end
 
   def destroy
-    # --- Règle de gestion : Annulation impossible moins de 24h avant le vol (sauf pour les admins) ---
-    if @reservation.start_time < 24.hours.from_now && !current_user.admin?
-      # --- Envoi de l'email de notification aux administrateurs ---
-      admins = User.where(admin: true)
-      admins.each do |admin|
-        UserMailer.late_cancellation_attempt_notification(admin, current_user, @reservation).deliver_later
+    # Début de la transaction pour s'assurer que tout est annulé si une partie échoue
+    calendar_service = GoogleCalendarService.new
+    time_before_flight = @reservation.start_time - Time.current
+    cancellation_reason = params[:cancellation_reason]
+    penalty_amount = 0
+
+    # --- Gestion des annulations tardives ---
+    if time_before_flight < 48.hours
+      
+      # 1. Déterminer le montant de la pénalité
+      if time_before_flight < 12.hours
+        penalty_amount = 20
+      elsif time_before_flight < 24.hours
+        penalty_amount = 10
+      elsif time_before_flight < 48.hours
+        penalty_amount = 5
       end
 
-      redirect_to root_path, alert: "Annulation impossible : la réservation commence dans moins de 24 heures. Veuillez contacter un administrateur ou un instructeur pour annuler cette réservation."
-      return
+      # 2. Créer un enregistrement dans la table des pénalités
+      penalite = Penalite.new(
+          user: @reservation.user,
+          avion_immatriculation: @reservation.avion.immatriculation,
+          reservation_start_time: @reservation.start_time,
+          reservation_end_time: @reservation.end_time,
+          instructor_name: @reservation.fi,
+          cancellation_reason: cancellation_reason,
+          penalty_amount: penalty_amount,
+          status: 'En attente'
+      )
+      unless penalite.save
+        Rails.logger.error "ERREUR lors de la création de la pénalité : #{penalite.errors.full_messages.to_sentence}"
+      end
+
+      # 3. Envoyer les emails de notification
+      admins = User.where(admin: true)
+      admins.each do |admin|
+        UserMailer.late_cancellation_notification(admin, current_user, @reservation, cancellation_reason).deliver_later
+      end
+
+      # Envoi de l'email à l'instructeur si le vol était en instruction
+      if @reservation.instruction? && @reservation.fi.present?
+        first_name, last_name = @reservation.fi.split(' ', 2)
+        instructor = User.find_by(prenom: first_name, nom: last_name)
+        if instructor
+          UserMailer.late_cancellation_notification_to_instructor(instructor, current_user, @reservation, cancellation_reason).deliver_later
+        end
+      end
     end
 
-    # --- Synchronisation de la suppression avec Google Calendar ---
-    calendar_service = GoogleCalendarService.new
+    # --- Suppression de la réservation et des événements du calendrier ---
 
     # 1. Si c'est un vol en instruction, on supprime aussi l'événement de l'agenda de l'instructeur.
     if @reservation.instruction? && @reservation.fi.present?
@@ -160,87 +197,88 @@ class ReservationsController < ApplicationController
     redirect_to root_path, notice: 'Votre réservation a été annulée avec succès.', status: :see_other
   end
 
-def agenda
-  # affichage des différents agendas
-  Rails.logger.info("=== ACTION AGENDA APPELÉE ===")
-  scope = Google::Apis::CalendarV3::AUTH_CALENDAR_READONLY
+  def agenda
+    # affichage des différents agendas
+    Rails.logger.info("=== ACTION AGENDA APPELÉE ===")
+    scope = Google::Apis::CalendarV3::AUTH_CALENDAR_READONLY
 
-  # initialisation des credentials (service account)
-  key_env = ENV['GOOGLE_APPLICATION_CREDENTIALS']
-  keyfile = key_env.present? ? Rails.root.join(key_env) : Rails.root.join('config', 'gcal-service-account.json')
-  Rails.logger.info("Keyfile path: #{keyfile} / exists: #{File.exist?(keyfile)}")
+    # initialisation des credentials (service account)
+    key_env = ENV['GOOGLE_APPLICATION_CREDENTIALS']
+    keyfile = key_env.present? ? Rails.root.join(key_env) : Rails.root.join('config', 'gcal-service-account.json')
+    Rails.logger.info("Keyfile path: #{keyfile} / exists: #{File.exist?(keyfile)}")
 
-  unless File.exist?(keyfile)
-    Rails.logger.error("Fichier de clé introuvable: #{keyfile}")
-    @calendar_ids = []
-    flash.now[:alert] = "Clé Google introuvable côté serveur."
-    return
-  end
-
-  begin
-    sa_creds = Google::Auth::ServiceAccountCredentials.make_creds(json_key_io: File.open(keyfile), scope: scope)
-    sa_creds.fetch_access_token!
-    service = Google::Apis::CalendarV3::CalendarService.new
-    service.authorization = sa_creds
-
-    # 1) Essai : liste des calendars accessibles
-    clist = service.list_calendar_lists
-    Rails.logger.info("calendar_list.items.count = #{clist.items.size}")
-    clist.items.each { |c| Rails.logger.info("Found (list): #{c.summary} | #{c.id}") }
-
-    if clist.items.any?
-      @calendar_ids = clist.items.map(&:id)
+    unless File.exist?(keyfile)
+      Rails.logger.error("Fichier de clé introuvable: #{keyfile}")
+      @calendar_ids = []
+      flash.now[:alert] = "Clé Google introuvable côté serveur."
       return
     end
 
-    # 2) Fallback : tenter d'accéder directement aux IDs connus (depuis .env)
-    candidates = [
-      ENV['GOOGLE_CALENDAR_ID'],
-      ENV['GOOGLE_CALENDAR_ID_EVENTS'],
-      ENV['GOOGLE_CALENDAR_ID_AVION_F_HGBT'],
-      ENV['GOOGLE_CALENDAR_ID_INSTRUCTEUR_HUY']
-    ].compact.uniq
+    begin
+      sa_creds = Google::Auth::ServiceAccountCredentials.make_creds(json_key_io: File.open(keyfile), scope: scope)
+      sa_creds.fetch_access_token!
+      service = Google::Apis::CalendarV3::CalendarService.new
+      service.authorization = sa_creds
 
-    Rails.logger.info("Trying explicit calendar ids: #{candidates.inspect}")
-    found = []
+      # 1) Essai : liste des calendars accessibles
+      clist = service.list_calendar_lists
+      Rails.logger.info("calendar_list.items.count = #{clist.items.size}")
+      clist.items.each { |c| Rails.logger.info("Found (list): #{c.summary} | #{c.id}") }
 
-    candidates.each do |cid|
-      begin
-        cal = service.get_calendar(cid)
-        Rails.logger.info("GET calendar success: #{cal.summary} | #{cal.id}")
-        found << cal.id
-
-        # lister les ACL pour diagnostic
-        begin
-          acls = service.list_acl(cid)
-          acls.items.each do |acl|
-            Rails.logger.info("ACL #{cid}: scope=#{acl.scope&.type}/#{acl.scope&.value} role=#{acl.role}")
-          end
-        rescue => e
-          Rails.logger.error("Cannot list ACL for #{cid}: #{e.class}: #{e.message}")
-        end
-
-      rescue Google::Apis::ClientError => e
-        Rails.logger.error("GET calendar #{cid} failed (ClientError): #{e.message}")
-      rescue Google::Apis::AuthorizationError => e
-        Rails.logger.error("GET calendar #{cid} failed (AuthorizationError): #{e.message}")
-      rescue => e
-        Rails.logger.error("GET calendar #{cid} failed (Other): #{e.class}: #{e.message}")
+      if clist.items.any?
+        @calendar_ids = clist.items.map(&:id)
+        return
       end
+
+      # 2) Fallback : tenter d'accéder directement aux IDs connus (depuis .env)
+      candidates = [
+        ENV['GOOGLE_CALENDAR_ID'],
+        ENV['GOOGLE_CALENDAR_ID_EVENTS'],
+        ENV['GOOGLE_CALENDAR_ID_AVION_F_HGBT'],
+        ENV['GOOGLE_CALENDAR_ID_INSTRUCTEUR_HUY']
+      ].compact.uniq
+
+      Rails.logger.info("Trying explicit calendar ids: #{candidates.inspect}")
+      found = []
+
+      candidates.each do |cid|
+        begin
+          cal = service.get_calendar(cid)
+          Rails.logger.info("GET calendar success: #{cal.summary} | #{cal.id}")
+          found << cal.id
+
+          # lister les ACL pour diagnostic
+          begin
+            acls = service.list_acl(cid)
+            acls.items.each do |acl|
+              Rails.logger.info("ACL #{cid}: scope=#{acl.scope&.type}/#{acl.scope&.value} role=#{acl.role}")
+            end
+          rescue => e
+            Rails.logger.error("Cannot list ACL for #{cid}: #{e.class}: #{e.message}")
+          end
+
+        rescue Google::Apis::ClientError => e
+          Rails.logger.error("GET calendar #{cid} failed (ClientError): #{e.message}")
+        rescue Google::Apis::AuthorizationError => e
+          Rails.logger.error("GET calendar #{cid} failed (AuthorizationError): #{e.message}")
+        rescue => e
+          Rails.logger.error("GET calendar #{cid} failed (Other): #{e.class}: #{e.message}")
+        end
+      end
+
+      @calendar_ids = found
+      if @calendar_ids.empty?
+        flash.now[:alert] = "Aucun agenda accessible. Vérifiez le partage avec #{sa_creds.issuer || 'le service account'} et les permissions."
+      end
+
+    rescue => e
+      Rails.logger.error("[Google Calendar] #{e.class}: #{e.message}")
+      Rails.logger.error(e.backtrace.join("\n"))
+      @calendar_ids = []
+      flash.now[:alert] = "Erreur lors de la connexion à l'API Google Calendar."
     end
 
-    @calendar_ids = found
-    if @calendar_ids.empty?
-      flash.now[:alert] = "Aucun agenda accessible. Vérifiez le partage avec #{sa_creds.issuer || 'le service account'} et les permissions."
-    end
-
-  rescue => e
-    Rails.logger.error("[Google Calendar] #{e.class}: #{e.message}")
-    Rails.logger.error(e.backtrace.join("\n"))
-    @calendar_ids = []
-    flash.now[:alert] = "Erreur lors de la connexion à l'API Google Calendar."
   end
-end
 
 
 
@@ -286,7 +324,7 @@ end
   end
 
   def reservation_params
-    params.require(:reservation).permit(:avion_id, :start_time, :end_time, :summary, :instruction, :fi, :type_vol, :start_date, :start_hour, :start_minute, :end_date, :end_hour, :end_minute)
+    params.require(:reservation).permit(:avion_id, :start_time, :end_time, :summary, :instruction, :fi, :type_vol, :start_date, :start_hour, :start_minute, :end_date, :end_hour, :end_minute, :cancellation_reason)
   end
   
 end

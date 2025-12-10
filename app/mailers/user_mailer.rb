@@ -44,6 +44,31 @@ class UserMailer < ApplicationMailer
     mail(to: @admin.email, subject: "Alerte : Tentative d'annulation tardive")
   end
 
+  # Notification d'une annulation tardive (< 48h) à un admin
+  def late_cancellation_notification(admin, user, reservation, reason)
+    @admin = admin
+    @user = user
+    @reservation = reservation
+    @reason = reason
+    mail(to: @admin.email, subject: "Info : Annulation tardive de réservation")
+  end
+
+  # Notification d'une annulation tardive (< 48h) à un instructeur
+  def late_cancellation_notification_to_instructor(instructor, user, reservation, reason)
+    @instructor = instructor
+    @user = user
+    @reservation = reservation
+    @reason = reason
+    mail(to: @instructor.email, subject: "Info : Annulation d'un vol en instruction")
+  end
+
+  # Notification à l'utilisateur qu'une pénalité a été appliquée
+  def penalty_applied_notification(user, penalite)
+    @user = user
+    @penalite = penalite
+    mail(to: @user.email, subject: "Application d'une pénalité pour annulation tardive")
+  end
+
   def negative_balance_email(user)
     @user = user
     mail(to: @user.email, subject: 'Alerte : Votre solde de compte est négatif')

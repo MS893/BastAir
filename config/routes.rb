@@ -70,6 +70,7 @@ Rails.application.routes.draw do
 
   # routes pour l'administration
   namespace :admin do
+
     resources :users, only: [:new, :create]
     # On ajoute les routes pour gérer les actualités (sauf la page "show" qui n'est pas utile ici)
     resources :news_items, except: [:show]
@@ -87,11 +88,20 @@ Rails.application.routes.draw do
       get 'treasury_report', on: :collection
       get 'yearly_accounting_report', on: :collection
     end
+
+    # Routes spécifiques pour la gestion des pénalités
+    resources :penalites, only: [] do
+      patch 'apply', on: :member
+      patch 'cancel', on: :member
+    end
+
     # Route pour la gestion des agendas Google
     resources :google_calendars, only: [:index] do
       delete 'clear', on: :collection
     end
+
     resource :setting, only: [:edit, :update], path: 'parametres'
+    
   end
 
   # routes pour les cours (à compléter avec les cours du club)

@@ -24,10 +24,20 @@
   <div class="table-responsive">
     <table class="table table-striped table-bordered">
       <thead class="thead-dark">
+        <%
+          visible_columns = records.first.attributes.keys - hidden_columns_for(table_name)
+          # On cache les colonnes admin_id et admin_comment spécifiquement pour la table des pénalités
+          if table_name == 'penalites'
+            visible_columns -= ['admin_id', 'admin_comment']
+          end
+        %>
         <tr>
-          <% visible_columns = records.first.attributes.keys - hidden_columns_for(table_name) %>
           <% visible_columns.each do |col| %>
-            <th><%= sortable_header(col, table_name, params) %></th>
+            <% if table_name == 'penalites' && col == 'avion_immatriculation' %>
+              <th><%= sortable_header(col, table_name, params).gsub(col.humanize, 'Avion').html_safe %></th>
+            <% else %>
+              <th><%= sortable_header(col, table_name, params) %></th>
+            <% end %>
           <% end %>
         </tr>
       </thead>
@@ -35,7 +45,16 @@
         <% records.each do |record| %>
           <tr class="<%= 'table-danger-discarded' if table_name == 'transactions' && record.try(:discarded?) %>" data-controller="clickable-row" data-clickable-row-url-value="<%= admin_show_table_record_path(table_name: table_name, id: record.id) %>" style="cursor: pointer;">
             <% visible_columns.each do |col| %>
-              <td><%= display_cell_content(record, col, table_name) %></td>
+              <td>
+                <% if table_name == 'penalites' && col == 'user_id' %>
+                  <% user = User.find_by(id: record.user_id) %>
+                  <%= user.present? ? user.name : "Utilisateur inconnu (ID: #{record.user_id})" %>
+                <% elsif table_name == 'penalites' && col == 'avion_immatriculation' %>
+                  <span style="white-space: nowrap;"><%= record.avion_immatriculation %></span>
+                <% else %>
+                  <%= display_cell_content(record, col, table_name) %>
+                <% end %>
+              </td>
             <% end %>
           </tr>
         <% end %>

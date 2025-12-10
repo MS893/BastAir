@@ -59,4 +59,24 @@
     <% end %>
   </div>
 
+  <!-- ================================================== -->
+  <!--         Fenêtre Modale pour l'Annulation           -->
+  <!-- ================================================== -->
+  <div class="modal fade" id="cancellationModal" tabindex="-1" aria-labelledby="cancellationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header bg-danger text-white">
+          <h5 class="modal-title" id="cancellationModalLabel">Confirmation d'annulation</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Vous êtes sur le point d'annuler cette réservation.</p>
+
+          <!-- Le formulaire sera injecté ici par JavaScript -->
+          <div id="modal-cancellation-form-content"></div>
+
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

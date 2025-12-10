@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_12_08_163735) do
+ActiveRecord::Schema[8.0].define(version: 2025_12_10_090000) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -147,6 +147,23 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_08_163735) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_news_items_on_user_id"
+  end
+
+  create_table "penalites", force: :cascade do |t|
+    t.integer "user_id"
+    t.string "avion_immatriculation"
+    t.datetime "reservation_start_time"
+    t.datetime "reservation_end_time"
+    t.string "instructor_name"
+    t.text "cancellation_reason"
+    t.decimal "penalty_amount", precision: 8, scale: 2
+    t.string "status", default: "En attente"
+    t.integer "admin_id"
+    t.text "admin_comment"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["admin_id"], name: "index_penalites_on_admin_id"
+    t.index ["user_id"], name: "index_penalites_on_user_id"
   end
 
   create_table "reservations", force: :cascade do |t|
@@ -313,6 +330,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_08_163735) do
   add_foreign_key "events", "users", column: "admin_id"
   add_foreign_key "immobs", "transactions", column: "purchase_transaction_id"
   add_foreign_key "news_items", "users"
+  add_foreign_key "penalites", "users"
+  add_foreign_key "penalites", "users", column: "admin_id"
   add_foreign_key "reservations", "avions"
   add_foreign_key "reservations", "users"
   add_foreign_key "signalements", "avions"

@@ -18,11 +18,15 @@
               </p>
             </div>
             <div class="d-flex">
+              <%# Calcul du temps restant avant le vol %>
+              <% time_before_flight = reservation.start_time - Time.current %>
+
               <%= link_to "Modifier", edit_reservation_path(reservation), class: "btn btn-sm btn-outline-primary" %>
-              <%= button_to "Annuler", reservation_path(reservation), 
-                    method: :delete, 
-                    class: "btn btn-sm btn-outline-danger ms-2",
-                    data: { turbo_confirm: "Êtes-vous sûr de vouloir annuler cette réservation ? Cette action est irréversible." } %>
+              <%= button_tag "Annuler", type: 'button', class: 'btn btn-sm btn-outline-danger ms-2',
+                    'data-bs-toggle': 'modal',
+                    'data-bs-target': '#cancellationModal',
+                    'data-reservation-id': reservation.id,
+                    'data-time-before-flight': time_before_flight %>
             </div>
           </div>
         </div>

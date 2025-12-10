@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  <style>
+    body { font-family: sans-serif; line-height: 1.5; }
+    .container { padding: 20px; border: 1px solid #ddd; border-radius: 5px; max-width: 600px; margin: auto; }
+    .header { font-size: 1.2em; font-weight: bold; color: #dc3545; }
+    ul { list-style-type: none; padding: 0; }
+    .penalty-box { background-color: #f8d7da; border-left: 4px solid #dc3545; padding: 10px; margin-top: 15px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <p class="header">Application d'une pénalité pour annulation tardive</p>
+    <p>
+      Bonjour <%= @user.prenom %>,
+    </p>
+    <p>
+      Suite à l'annulation tardive de votre réservation, une pénalité a été appliquée sur votre compte.
+    </p>
+    <p>Détails de la réservation annulée :</p>
+    <ul>
+      <li><strong>Avion :</strong> <%= @penalite.avion_immatriculation %></li>
+      <li><strong>Début du vol prévu :</strong> <%= l(@penalite.reservation_start_time, format: :long) %></li>
+    </ul>
+    <div class="penalty-box">
+      <strong>Montant de la pénalité : <%= number_to_currency(@penalite.penalty_amount) %></strong>
+      <p>Cette pénalité a été débitée de votre solde.</p>
+    </div>
+    <p class="mt-3">
+      Pour toute question, n'hésitez pas à contacter un membre du bureau.
+    </p>
+    <p>
+      Cordialement,<br>
+      L'équipe Bast'Air
+    </p>
+  </div>
+</body>
+</html>

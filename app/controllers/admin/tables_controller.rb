@@ -317,6 +317,8 @@ module Admin
         'tarifs' => 'Tarifs',
         'transactions' => 'Comptabilité',
         'users' => 'Adhérents',
+        'penalites' => 'Pénalités',
+        'settings' => 'Paramètres',
         'vols' => 'Vols'
       }
       translations.fetch(table_name, table_name.humanize)

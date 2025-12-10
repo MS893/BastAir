@@ -15,7 +15,7 @@
 
     <div class="col-md-2 mt-3 mb-5">
       <%= turbo_frame_tag "tables_list" do %>
-        <%= render 'tables_list', tables: @tables, selected_table: @selected_table %>
+        <%= render 'tables_list', tables: @tables.sort_by { |table| translate_table_name(table) }, selected_table: @selected_table %>
       <% end %>
     </div>
 

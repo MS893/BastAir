@@ -69,6 +69,9 @@ puts "\nCreating users..."
 original_delivery_method = ActionMailer::Base.delivery_method
 ActionMailer::Base.delivery_method = :test
 
+# initialisation du fuseau horaire
+Setting.create(time_zone: 'Europe/Paris')
+puts "✅ Fuseau horaire initialisé à Paris"
 
 # 1. Création de 30 adhérents, dont un administrateur et un élève
 # ---------------------------------------------------------------

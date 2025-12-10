@@ -13,7 +13,17 @@
             <%= link_to 'Modifier', admin_edit_table_record_path(table_name: @table_name, id: @record.id), class: 'btn btn-primary', data: { turbo: false } %>
             <%= button_to 'Mettre à la corbeille', admin_table_record_path(table_name: @table_name, id: @record.id), method: :delete, class: 'btn btn-warning', data: { turbo: false }, form: { onsubmit: "return confirm('Êtes-vous sûr de vouloir mettre cette transaction à la corbeille ?');" } %>
           <% end %>
+        <% elsif @table_name == 'penalites' %>
+          <% if @record.status != 'Appliquée' %>
+            <%= link_to 'Appliquer la pénalité', apply_admin_penalite_path(@record), data: { "turbo-method": :patch }, class: 'btn btn-success me-2' %>
+          <% end %>
+          <% if @record.status != 'Annulée' %>
+            <%= link_to 'Annuler la pénalité', cancel_admin_penalite_path(@record), data: { "turbo-method": :patch, turbo_confirm: 'Êtes-vous sûr de vouloir annuler cette pénalité ?' }, class: 'btn btn-warning me-2' %>
+          <% end %>
+          <%# On garde un bouton supprimer pour le nettoyage, mais on peut le commenter/retirer plus tard %>
+          <%= link_to 'Supprimer', admin_table_record_path(table_name: @table_name, id: @record.id), data: { "turbo-method": :delete, turbo_confirm: 'Êtes-vous sûr de vouloir supprimer DÉFINITIVEMENT cet enregistrement ?' }, class: 'btn btn-danger' %>
         <% elsif @table_name != 'transactions' %>
+          <%# Comportement par défaut pour les autres tables %>
           <%= link_to 'Modifier', admin_edit_table_record_path(table_name: @table_name, id: @record.id), class: 'btn btn-primary', data: { turbo: false } %>
           <%= button_to 'Supprimer', admin_table_record_path(table_name: @table_name, id: @record.id), method: :delete, class: 'btn btn-danger', data: { turbo: false }, form: { onsubmit: "return confirm('Êtes-vous sûr de vouloir supprimer cet enregistrement ?');" } %>
         <% end %>

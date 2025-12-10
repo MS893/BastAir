@@ -7,6 +7,59 @@
     <main class="dashboard-content"><%= render 'static_pages/dashboard' %></main>
   </div>
 
+  <%# Script pour la modale d'annulation, uniquement si l'utilisateur est connecté %>
+  <script type="text/javascript">
+    document.addEventListener('turbo:load', function() {
+      const cancellationModal = document.getElementById('cancellationModal');
+      if (cancellationModal) {
+        cancellationModal.addEventListener('show.bs.modal', function (event) {
+          const button = event.relatedTarget; // Le bouton qui a déclenché la modale
+          const reservationId = button.getAttribute('data-reservation-id');
+          const timeBeforeFlight = parseFloat(button.getAttribute('data-time-before-flight'));
+          const formContent = document.getElementById('modal-cancellation-form-content');
+
+          // Construire le formulaire dynamiquement
+          let formHTML = `<form action="/reservations/${reservationId}" method="post">
+                            <input type="hidden" name="_method" value="delete">
+                            <input type="hidden" name="authenticity_token" value="${document.querySelector('meta[name="csrf-token"]').content}">`;
+
+          // Si l'annulation a lieu entre 24h et 48h, on ajoute le champ "raison"
+          if (timeBeforeFlight < 12 * 3600) { // Moins de 12h
+            formHTML +=  `<div class="alert alert-danger" role="alert">
+                            <strong>Pénalité de 20€ :</strong> Vous annulez moins de 12 heures avant le vol.
+                            <small class="d-block mt-1">Si un administrateur estime votre raison valable, vous n'aurez pas la pénalité d'annulation tardive.</small>
+                          </div>`;
+          } else if (timeBeforeFlight < 24 * 3600) { // Moins de 24h
+            formHTML +=  `<div class="alert alert-danger" role="alert">
+                            <strong>Pénalité de 10€ :</strong> Vous annulez moins de 24 heures avant le vol.
+                            <small class="d-block mt-1">Si un administrateur estime votre raison valable, vous n'aurez pas la pénalité d'annulation tardive.</small>
+                          </div>`;
+          } else if (timeBeforeFlight < 48 * 3600) { // Moins de 48h
+            formHTML +=  `<div class="alert alert-warning" role="alert">
+                            <strong>Attention :</strong> Annulation tardive.
+                            <small class="d-block mt-1">Une pénalité de 5€ peut être appliquée si la raison n'est pas jugée valable.</small>
+                          </div>`;
+          }
+
+          // On ajoute le champ "raison" si l'annulation est à moins de 48h
+          if (timeBeforeFlight < 48 * 3600) {
+            formHTML += `<div class="mb-3">
+                            <label for="cancellation_reason" class="form-label">Raison de l'annulation (obligatoire) :</label>
+                            <textarea name="cancellation_reason" id="cancellation_reason" class="form-control" rows="3" required></textarea>
+                          </div>`;
+          }
+
+          formHTML +=  `<div class="modal-footer border-0 p-0 pt-3">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Ne pas annuler</button>
+                          <button type="submit" class="btn btn-danger">Confirmer l'annulation</button>
+                        </div></form>`;
+
+          formContent.innerHTML = formHTML;
+        });
+      }
+    });
+  </script>
+
 
 <% else %>
 
