@@ -73,6 +73,18 @@ h6 {
   flex: 1;
 }
 
+.dashboard-sidebar {
+  width: 280px;
+  flex-shrink: 0;
+  /* Empêche la sidebar de se rétrécir */
+  overflow-y: auto;
+  /* Permet de scroller si le menu est trop long */
+}
+
+.dashboard-sidebar .list-group-item {
+  border-color: rgba(255, 255, 255, 0.125) !important;
+}
+
 .dashboard-content {
   flex-grow: 1;
   /* Le contenu principal prend toute la place restante */
