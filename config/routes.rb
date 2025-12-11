@@ -26,6 +26,7 @@ Rails.application.routes.draw do
   # tout en utilisant le contrôleur par défaut de Devise pour les registrations.
   as :user do
     get 'users/edit' => 'devise/registrations#edit', as: 'edit_user_registration'
+    get 'users/edit_profil' => 'users#edit_profil', as: 'edit_profil_user'
     put 'users' => 'devise/registrations#update', as: 'user_registration'
     get 'users/sign_out' => 'users_auth/sessions#destroy', as: 'destroy_user_session_get'
   end
