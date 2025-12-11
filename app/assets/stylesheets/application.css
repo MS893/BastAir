@@ -121,3 +121,40 @@ h6 {
   font-weight: 700;
   /* Met le texte en gras (700 est l'équivalent de 'bold') */
 }
+
+/*
+ * =============================================================================
+ * COULEURS PERSONNALISÉES POUR LES ÉVÉNEMENTS
+ * =============================================================================
+ */
+.bg-violet {
+  /* On utilise !important pour s'assurer que notre style surcharge celui de Bootstrap */
+  background-color: #8A2BE2 !important;
+  /* Un joli violet */
+  color: white !important;
+  /* Assure que le texte reste blanc et lisible */
+}
+
+.bg-rose {
+  background-color: #c41d79 !important;
+  /* Un rose vif */
+  color: white !important;
+}
+
+.bg-marron {
+  background-color: #a89d00 !important;
+  /* Un marron sellerie */
+  color: white !important;
+}
+
+.bg-turquoise {
+  background-color: #40E0D0 !important;
+  /* Un turquoise éclatant */
+  color: white !important;
+}
+
+.bg-bordeaux {
+  background-color: #800020 !important;
+  /* Un bordeaux profond */
+  color: white !important;
+}

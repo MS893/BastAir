@@ -29,12 +29,17 @@ module EventsHelper
     when "Sortie club"
       "success" # Vert
     when "Objets trouvés"
-      "warning" # Orange
-    when "Aide nettoyage locaux", "Aide journée portes ouvertes", "Aide vols BIA"
-      "danger" # Gris foncé
+      "marron" # Marron défini dans le css
+    when "Aide nettoyage locaux"
+      "bordeaux" # Bordeaux défini dans le css
+    when "Aide journée portes ouvertes"
+      "violet" # Violet défini dans le css
+    when "Aide vols BIA"
+      "turquoise" # Turquoise défini dans le css
     else
       "primary" # Bleu
     end
   end
 
 end
+
