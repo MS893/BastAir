@@ -1,4 +1,5 @@
 # config/routes.rb
+
 Rails.application.routes.draw do
 
   # --- Routes pour les utilisateurs et l'authentification ---
