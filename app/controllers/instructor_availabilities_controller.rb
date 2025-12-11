@@ -24,7 +24,7 @@ class InstructorAvailabilitiesController < ApplicationController
 
     # On recrée uniquement les disponibilités pour les créneaux cochés
     submitted_slots.each do |slot|
-      day, period = slot.split('-')
+      day, period = slot.split('-', 2) # On limite la division à 2 pour gérer "apres-midi"
       current_user.instructor_availabilities.create(day: day, period: period)
     end
 

@@ -10,30 +10,34 @@ class ReservationsController < ApplicationController
   def index
     # On récupère les réservations à venir de l'utilisateur, paginées
     @upcoming_reservations = current_user.reservations.where('start_time >= ?', Time.current).order(start_time: :asc).page(params[:upcoming_page]).per(10)
+
     # On récupère les réservations passées de l'utilisateur, paginées
     @past_reservations = current_user.reservations.where('start_time < ?', Time.current).order(start_time: :desc).page(params[:past_page]).per(10)
   end
 
   def new
     @reservation = Reservation.new(avion_id: Avion.order(:immatriculation).first&.id)
+
     # On charge les données nécessaires pour les listes déroulantes du formulaire
     @avions = Avion.order(:immatriculation)
-    @instructeurs = User.where("fi IS NOT NULL AND fi >= ?", Date.today).order(:nom)
+    @instructeurs = available_instructors(Date.today, 7, 0) # Valeurs par défaut
   end
 
   def create
     @reservation = current_user.reservations.build(reservation_params)
-    
+
     # Combiner les champs date/heure en timestamps
     if params[:reservation][:start_date].present? && params[:reservation][:start_hour].present?
       start_datetime = "#{params[:reservation][:start_date]} #{params[:reservation][:start_hour]}:#{params[:reservation][:start_minute]}:00"
       @reservation.start_time = DateTime.parse(start_datetime)
     end
-    
+
     if params[:reservation][:end_date].present? && params[:reservation][:end_hour].present?
       end_datetime = "#{params[:reservation][:end_date]} #{params[:reservation][:end_hour]}:#{params[:reservation][:end_minute]}:00"
       @reservation.end_time = DateTime.parse(end_datetime)
     end
+    @avions = Avion.order(:immatriculation)
+    @instructeurs = User.where("fi IS NOT NULL AND fi >= ?", Date.today).order(:nom)
 
     # On pré-remplit le titre de l'événement avec l'immatriculation de l'avion
     if @reservation.avion_id.present?
@@ -48,7 +52,7 @@ class ReservationsController < ApplicationController
 
       redirect_to root_path, notice: 'Votre réservation a été créée avec succès.'
     else
-      # On recharge les données pour que le formulaire puisse se ré-afficher avec les erreurs
+      # On recharge les données pour que le formulaire puisse se réafficher avec les erreurs
       @avions = Avion.all
       @instructeurs = User.where("fi IS NOT NULL AND fi >= ?", Date.today).order(:nom)
       render :new, status: :unprocessable_entity
@@ -59,7 +63,7 @@ class ReservationsController < ApplicationController
     # @reservation est chargé par le before_action
     # On charge les données pour les listes déroulantes
     @avions = Avion.all
-    @instructeurs = User.where("fi IS NOT NULL AND fi >= ?", Date.today).order(:nom)
+    @instructeurs = available_instructors(@reservation.start_time.to_date, @reservation.start_time.hour, @reservation.start_time.min)
     
     # Décomposer start_time et end_time pour le formulaire
     if @reservation.start_time.present?
@@ -214,6 +218,42 @@ class ReservationsController < ApplicationController
     redirect_to root_path, notice: 'Votre réservation a été annulée avec succès.', status: :see_other
   end
 
+  # Méthode pour récupérer les instructeurs disponibles en fonction de la date et de l'heure
+  def available_instructors(date, hour, minute)
+    # Convertir les paramètres en Time
+    start_time = Time.new(date.year, date.month, date.day, hour, minute)
+
+    # Déterminer le jour et la période de la réservation
+    reservation_day = start_time.strftime('%A').downcase # ex: "monday"
+
+    # Les jours en base sont en français (ex: "lundi")
+    day_translation = { "monday" => "lundi", "tuesday" => "mardi", "wednesday" => "mercredi", "thursday" => "jeudi", "friday" => "vendredi", "saturday" => "samedi", "sunday" => "dimanche" }
+    reservation_day_fr = day_translation[reservation_day]
+
+    # Définir les périodes possibles en fonction de l'heure de début
+    # Matin: jusqu'à 13h
+    # Après-midi: à partir de 12h
+    possible_periods = []
+    possible_periods << 'apres-midi' if start_time.hour >= 12
+
+    # Récupérer les IDs des instructeurs disponibles
+    available_instructor_ids = InstructorAvailability.where(day: reservation_day_fr, period: possible_periods).pluck(:user_id).uniq
+
+    # Récupérer les instructeurs disponibles
+    instructors = User.where(id: available_instructor_ids).where("fi IS NOT NULL AND fi >= ?", Date.today).order(:nom)
+
+    return instructors
+  end
+
+  def fetch_available_instructors
+    date = params[:date].present? ? Date.parse(params[:date]) : Date.today
+    hour = params[:hour].present? ? params[:hour].to_i : 7
+    minute = params[:minute].present? ? params[:minute].to_i : 0
+
+    @instructeurs = available_instructors(date, hour, minute)
+    render partial: 'reservations/instructor_options', locals: { instructeurs: @instructeurs }
+  end
+
   def agenda
     # affichage des différents agendas
     Rails.logger.info("=== ACTION AGENDA APPELÉE ===")
@@ -299,6 +339,7 @@ class ReservationsController < ApplicationController
 
 
 
+  
   private
 
   def set_reservation

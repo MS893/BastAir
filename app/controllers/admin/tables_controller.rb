@@ -12,6 +12,7 @@ module Admin
       'attendances'  => { user_ids: :user_id, event_ids: :event_id },
       'comments'     => { user_ids: :user_id, event_ids: :event_id },
       'events'       => { user_ids: :admin_id }, # admin_id est un user_id
+      'instructor_availabilities' => { user_ids: :user_id },
       'news_items'   => { user_ids: :user_id },
       'reservations' => { user_ids: :user_id, avion_ids: :avion_id },
       'signalements' => { user_ids: :user_id, avion_ids: :avion_id },
@@ -32,24 +33,25 @@ module Admin
 
       # On définit manuellement l'ordre des tables pour un contrôle total.
       ordered_tables = [
-        'activity_logs',  # Activity Log
-        'users',          # Adhérents
-        'avions',         # Avions
-        'comments',       # Commentaires
-        'transactions',   # Comptabilité
-        'news_items',     # Consignes
-        'courses',        # Cours
-        'events',         # Evènements
-        'immobs',         # Immobilisations
-        'flight_lessons', # Instruction
-        'settings',       # Paramètres
-        'attendances',    # Participants
-        'penalites',      # Pénalités
-        'audios',         # Podcasts
-        'reservations',   # Réservations
-        'signalements',   # Signalements
-        'tarifs',         # Tarifs
-        'vols'            # Vols
+        'activity_logs',                # Activity Log
+        'users',                        # Adhérents
+        'avions',                       # Avions
+        'comments',                     # Commentaires
+        'instructor_availabilities',    # Disponibilités FI
+        'transactions',                 # Comptabilité
+        'news_items',                   # Consignes
+        'courses',                      # Cours
+        'events',                       # Evènements
+        'immobs',                       # Immobilisations
+        'flight_lessons',               # Instruction
+        'settings',                     # Paramètres
+        'attendances',                  # Participants
+        'penalites',                    # Pénalités
+        'audios',                       # Podcasts
+        'reservations',                 # Réservations
+        'signalements',                 # Signalements
+        'tarifs',                       # Tarifs
+        'vols'                          # Vols
       ]
 
       # On s'assure que seules les tables existantes sont affichées, tout en conservant l'ordre défini.
@@ -337,6 +339,7 @@ module Admin
         'attendances' => 'Participants',
         'audios' => 'Podcasts',
         'avions' => 'Avions',
+        'instructor_availabilities' => 'Disponibilités FI',
         'comments' => 'Commentaires',
         'courses' => 'Cours',
         'events' => 'Evènements',

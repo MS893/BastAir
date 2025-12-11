@@ -21,6 +21,8 @@ export default class extends Controller {
     // On vérifie si le formulaire est pour une nouvelle réservation (pas d'ID dans l'URL)
     // On charge les signalements pour l'avion sélectionné par défaut.
     this.updateSignalements();
+    // On charge les dispos instructeurs.
+    this.updateInstructors();
     // ou une modification. On n'ajuste l'heure que pour les nouvelles réservations.
     if (!window.location.pathname.includes('/edit')) {
       this.adjustEndTime();
@@ -89,4 +91,28 @@ export default class extends Controller {
       this.signalementsFrameTarget.innerHTML = "";
     }
   }
+  
+  // --- Logique pour les instructeurs ---
+  updateInstructors() {
+  const date = this.startDateTarget.value
+  const hour = this.startHourTarget.value
+  const minute = this.startMinuteTarget.value
+
+  // On s'assure que la date est bien sélectionnée
+  if (!date) return;
+
+  const url = `/reservations/fetch_available_instructors?date=${date}&hour=${hour}&minute=${minute}`
+
+  fetch(url, {
+    headers: {
+      "Accept": "text/vnd.turbo-stream.html",
+    }
+  })
+    .then(response => response.text())
+    .then(html => {
+      this.instructorSelectTarget.innerHTML = html
+    })
+    .catch(error => console.error("Error fetching instructors:", error));
+  }
+
 }

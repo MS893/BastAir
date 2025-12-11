@@ -16,6 +16,7 @@ class Reservation < ApplicationRecord
   validate :no_overlapping_reservations
   validate :within_allowed_hours
   validate :instructor_required_if_instruction
+  validate :instructor_is_available, if: -> { instruction? && fi.present? }
 
 
   
@@ -75,4 +76,38 @@ class Reservation < ApplicationRecord
     end
   end
 
+  # S'assure que l'instructeur est disponible sur le créneau de la réservation.
+  def instructor_is_available
+    return if start_time.blank?
+
+    # Retrouver l'objet User de l'instructeur à partir de son nom complet
+    first_name, last_name = fi.split(' ', 2)
+    instructor = User.find_by(prenom: first_name, nom: last_name)
+
+    unless instructor
+      errors.add(:fi, "Instructeur '#{fi}' introuvable.")
+      return
+    end
+
+    # Déterminer le jour et la période de la réservation
+    reservation_day = start_time.strftime('%A').downcase # ex: "monday"
+    # Les jours en base sont en français (ex: "lundi")
+    day_translation = { "monday" => "lundi", "tuesday" => "mardi", "wednesday" => "mercredi", "thursday" => "jeudi", "friday" => "vendredi", "saturday" => "samedi", "sunday" => "dimanche" }
+    reservation_day_fr = day_translation[reservation_day]
+
+    # Définir les périodes possibles en fonction de l'heure de début
+    # Matin: jusqu'à 13h
+    # Après-midi: à partir de 12h
+    possible_periods = []
+    possible_periods << 'matin' if start_time.hour <= 13
+    possible_periods << 'apres-midi' if start_time.hour >= 12
+
+    # S'il n'y a aucune période possible (ex: vol à 5h du matin), on bloque.
+    return errors.add(:base, "La réservation est en dehors des créneaux de disponibilité (matin/après-midi).") if possible_periods.empty?
+
+    # Vérifier si au moins une disponibilité correspondante existe pour l'une des périodes possibles.
+    is_available = instructor.instructor_availabilities.where(day: reservation_day_fr, period: possible_periods).exists?
+
+    errors.add(:base, "L'instructeur n'est pas disponible sur ce créneau.") unless is_available
+  end
 end

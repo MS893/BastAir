@@ -37,7 +37,9 @@ Rails.application.routes.draw do
   get 'categories', to: 'categories#index'
 
   # Routes pour la création de réservations
-  resources :reservations, only: [:index, :new, :create, :edit, :update, :destroy]
+  resources :reservations, only: [:index, :new, :create, :edit, :update, :destroy] do
+    get 'fetch_available_instructors', on: :collection, as: :fetch_available_instructors
+  end
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
   # Defines the root path route ("/")

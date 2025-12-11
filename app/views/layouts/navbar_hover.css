@@ -1,0 +1,10 @@
+/* app/assets/stylesheets/navbar_hover.css */
+
+/* S'applique uniquement aux écrans plus larges que 992px (breakpoint 'lg' de Bootstrap) */
+@media (min-width: 992px) {
+  /* Affiche le menu déroulant au survol de son conteneur */
+  .navbar-nav .nav-item.dropdown:hover .dropdown-menu {
+    display: block;
+    margin-top: 0; /* Optionnel: supprime un petit espace qui peut apparaître */
+  }
+}

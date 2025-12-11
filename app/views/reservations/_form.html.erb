@@ -78,3 +78,5 @@
   <%# Pour une réservation existante, on charge les signalements tout de suite %>
   <%= turbo_frame_tag "signalements_avion", src: (signalements_list_avion_path(reservation.avion) if reservation.persisted?), data: { reservation_form_target: "signalementsFrame" } %>
 <% end %>
+
+
