@@ -35,6 +35,7 @@ class User < ApplicationRecord
   has_many :attendances, dependent: :destroy
   has_many :events, through: :attendances
   has_many :signalements, dependent: :destroy
+  has_many :instructor_availabilities, dependent: :destroy
   has_many :reservations, dependent: :destroy # <-- Ligne ajoutée pour corriger le bug
   # Événements qu'un administrateur a créés
   has_many :created_events, foreign_key: 'admin_id', class_name: 'Event', dependent: :destroy

@@ -37,7 +37,7 @@ Rails.application.routes.draw do
   get 'categories', to: 'categories#index'
 
   # Routes pour la création de réservations
-  resources :reservations, only: [:new, :create, :edit, :update, :destroy]
+  resources :reservations, only: [:index, :new, :create, :edit, :update, :destroy]
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
   # Defines the root path route ("/")
@@ -143,6 +143,10 @@ Rails.application.routes.draw do
   get 'agenda_avion', to: 'static_pages#agenda_avion'
   get 'agenda_instructeurs', to: 'static_pages#agenda_instructeurs'
 
+  # Route pour la gestion des disponibilités des instructeurs
+  get 'mes_disponibilites', to: 'instructor_availabilities#edit', as: 'edit_instructor_availabilities'
+  patch 'mes_disponibilites', to: 'instructor_availabilities#update', as: 'update_instructor_availabilities'
+  
   # routes pour les pages statiques du footer
   get 'contact', to: 'static_pages#contact' # Route pour afficher la page de contact
   post 'contact', to: 'static_pages#create_contact' # Route pour la soumission du formulaire

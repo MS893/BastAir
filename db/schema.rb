@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_12_10_090000) do
+ActiveRecord::Schema[8.0].define(version: 2025_12_11_071918) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -138,6 +138,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_10_090000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["purchase_transaction_id"], name: "index_immobs_on_purchase_transaction_id"
+  end
+
+  create_table "instructor_availabilities", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.string "day", null: false
+    t.string "period", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id", "day", "period"], name: "index_instructor_availabilities_on_user_id_and_day_and_period", unique: true
+    t.index ["user_id"], name: "index_instructor_availabilities_on_user_id"
   end
 
   create_table "news_items", force: :cascade do |t|
@@ -329,6 +339,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_10_090000) do
   add_foreign_key "comments", "users"
   add_foreign_key "events", "users", column: "admin_id"
   add_foreign_key "immobs", "transactions", column: "purchase_transaction_id"
+  add_foreign_key "instructor_availabilities", "users"
   add_foreign_key "news_items", "users"
   add_foreign_key "penalites", "users"
   add_foreign_key "penalites", "users", column: "admin_id"

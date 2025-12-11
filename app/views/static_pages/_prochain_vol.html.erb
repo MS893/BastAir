@@ -2,7 +2,7 @@
 <div class="card h-100 shadow">
   <div class="card-header bg-primary text-white">
     <h5 class="card-title mb-0">
-      <i class="bi bi-airplane-engines me-2"></i>Mes prochaines réservations
+      <i class="bi bi-calendar-date me-2"></i>Mes prochaines réservations
           <%= link_to "CHECK-LIST", check_list_path, class: "btn btn-success ms-5 fw-bold" %>
     </h5>
   </div>
@@ -38,8 +38,12 @@
   </div>
 
   <div class="btn-group w-100">
-    <%= link_to "Mes réservations", '#', class: "btn btn-outline-primary mt-auto" %>
-    <%= link_to "Agenda avion", agenda_avion_path, class: "btn btn-outline-primary mt-auto" %>
+    <%= link_to "Mes réservations", 
+                reservations_path, 
+                class: "btn btn-sm btn-outline-primary #{'disabled' if @upcoming_reservations_count <= 3}",
+                aria: { disabled: @upcoming_reservations_count <= 3 },
+                tabindex: ('-1' if @upcoming_reservations_count <= 3) 
+    %>
     <%= link_to "Agenda instructeurs", agenda_instructeurs_path, class: "btn btn-outline-primary mt-auto" %>
     <%= link_to "Réserver un vol", new_reservation_path, class: "btn btn-outline-primary mt-auto" %>
   </div>

@@ -6,10 +6,64 @@
     Consultez ici les disponibilités des instructeurs pour planifier vos leçons.
   </p>
 
-  <div class="card">
-    <div class="card-body">
-      <p class="card-text text-muted">L'affichage de l'agenda des instructeurs sera implémenté ici. Vous pourrez voir les créneaux de disponibilité pour chaque instructeur.</p>
-      <%# TODO: Intégrer un calendrier (par exemple, FullCalendar.js ou simple_calendar) %>
+  <% if @instructor_status && @instructor_status[:is_instructor] %>
+    <div class="text-center mb-4">
+      <%= link_to "Gérer mes disponibilités", edit_instructor_availabilities_path, class: "btn btn-primary" %>
     </div>
+  <% end %>
+
+  <div class="table-responsive" >
+    <table class="table table-bordered text-center" id="instructor-schedule">
+      <thead>
+        <tr>
+          <th style="width: 10%;"></th>
+          <% %w[Lundi Mardi Mercredi Jeudi Vendredi Samedi Dimanche].each do |day_name| %>
+            <th><%= day_name %></th>
+          <% end %>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th class="align-middle">Matin</th>
+          <% %w[lundi mardi mercredi jeudi vendredi samedi dimanche].each do |day| %> 
+            <td class="agenda-cell" data-day="<%= day %>" data-period="matin">
+              <% if @availabilities_by_slot && @availabilities_by_slot["#{day}-matin"] %>
+                <% @availabilities_by_slot["#{day}-matin"].each do |availability| %>
+                  <span class="instructor-name instructor-<%= availability.user_id %>">
+                    <%= availability.user.full_name %>
+                  </span>
+                <% end %>
+              <% end %>
+            </td>
+          <% end %>
+        </tr>
+        <tr>
+          <th class="align-middle">Après-midi</th>
+          <% %w[lundi mardi mercredi jeudi vendredi samedi dimanche].each do |day| %> 
+            <td class="agenda-cell" data-day="<%= day %>" data-period="apres-midi">
+              <% if @availabilities_by_slot && @availabilities_by_slot["#{day}-apres-midi"] %>
+                <% @availabilities_by_slot["#{day}-apres-midi"].each do |availability| %>
+                  <span class="instructor-name instructor-<%= availability.user_id %>">
+                    <%= availability.user.full_name %>
+                  </span>
+                <% end %>
+              <% end %>
+            </td>
+          <% end %>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </div>
+
+<style>
+  .agenda-cell {
+    min-height: 150px;
+    vertical-align: top;
+    padding: 8px;
+  }
+  .instructor-name {
+    display: block;
+    padding: 2px 0;
+  }
+</style>

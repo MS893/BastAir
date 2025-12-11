@@ -7,6 +7,13 @@ class ReservationsController < ApplicationController
   before_action :check_user_balance, only: [:new, :create]
   before_action :check_user_validities, only: [:new, :create]
 
+  def index
+    # On récupère les réservations à venir de l'utilisateur, paginées
+    @upcoming_reservations = current_user.reservations.where('start_time >= ?', Time.current).order(start_time: :asc).page(params[:upcoming_page]).per(10)
+    # On récupère les réservations passées de l'utilisateur, paginées
+    @past_reservations = current_user.reservations.where('start_time < ?', Time.current).order(start_time: :desc).page(params[:past_page]).per(10)
+  end
+
   def new
     @reservation = Reservation.new(avion_id: Avion.order(:immatriculation).first&.id)
     # On charge les données nécessaires pour les listes déroulantes du formulaire
@@ -132,46 +139,56 @@ class ReservationsController < ApplicationController
     time_before_flight = @reservation.start_time - Time.current
     cancellation_reason = params[:cancellation_reason]
     penalty_amount = 0
-
+    
     # --- Gestion des annulations tardives ---
-    if time_before_flight < 48.hours
-      
+    # On récupère les seuils de pénalité depuis le cache pour optimiser.
+    # Le cache expirera après 1 heure, ou lorsque les paramètres seront modifiés.
+    penalty_settings = Rails.cache.fetch('penalty_settings', expires_in: 1.hour) do
+      settings_hash = Setting.where("var LIKE 'penalty_%'").pluck(:var, :val).to_h
+      (1..3).map do |i|
+        delay = settings_hash["penalty_delay_#{i}"].to_i
+        amount = settings_hash["penalty_amount_#{i}"].to_i
+        delay > 0 && amount > 0 ? { delay: delay, amount: amount } : nil
+      end.compact.sort_by { |h| h[:delay] } # On trie par délai (12h, 24h, 48h)
+    end
+    
+    # On trouve le premier seuil qui correspond
+    applicable_penalty = penalty_settings.find { |p| time_before_flight < p[:delay].hours }
+    
+    if applicable_penalty
       # 1. Déterminer le montant de la pénalité
-      if time_before_flight < 12.hours
-        penalty_amount = 20
-      elsif time_before_flight < 24.hours
-        penalty_amount = 10
-      elsif time_before_flight < 48.hours
-        penalty_amount = 5
-      end
-
-      # 2. Créer un enregistrement dans la table des pénalités
-      penalite = Penalite.new(
-          user: @reservation.user,
-          avion_immatriculation: @reservation.avion.immatriculation,
-          reservation_start_time: @reservation.start_time,
-          reservation_end_time: @reservation.end_time,
-          instructor_name: @reservation.fi,
-          cancellation_reason: cancellation_reason,
-          penalty_amount: penalty_amount,
-          status: 'En attente'
-      )
-      unless penalite.save
-        Rails.logger.error "ERREUR lors de la création de la pénalité : #{penalite.errors.full_messages.to_sentence}"
-      end
-
-      # 3. Envoyer les emails de notification
-      admins = User.where(admin: true)
-      admins.each do |admin|
-        UserMailer.late_cancellation_notification(admin, current_user, @reservation, cancellation_reason).deliver_later
-      end
-
-      # Envoi de l'email à l'instructeur si le vol était en instruction
-      if @reservation.instruction? && @reservation.fi.present?
-        first_name, last_name = @reservation.fi.split(' ', 2)
-        instructor = User.find_by(prenom: first_name, nom: last_name)
-        if instructor
-          UserMailer.late_cancellation_notification_to_instructor(instructor, current_user, @reservation, cancellation_reason).deliver_later
+      penalty_amount = applicable_penalty[:amount]
+      # On vérifie que l'annulation a lieu dans la fenêtre de temps de la plus grande pénalité
+      # (ex: si les délais sont 12, 24, 48, on crée une pénalité si l'annulation est à moins de 48h)
+      if time_before_flight < penalty_settings.last[:delay].hours
+        # 2. Créer un enregistrement dans la table des pénalités
+        penalite = Penalite.new(
+            user: @reservation.user,
+            avion_immatriculation: @reservation.avion.immatriculation,
+            reservation_start_time: @reservation.start_time,
+            reservation_end_time: @reservation.end_time,
+            instructor_name: @reservation.fi,
+            cancellation_reason: cancellation_reason,
+            penalty_amount: penalty_amount,
+            status: 'En attente'
+        )
+        unless penalite.save
+          Rails.logger.error "ERREUR lors de la création de la pénalité : #{penalite.errors.full_messages.to_sentence}"
+        end
+  
+        # 3. Envoyer les emails de notification
+        admins = User.where(admin: true)
+        admins.each do |admin|
+          UserMailer.late_cancellation_notification(admin, current_user, @reservation, cancellation_reason).deliver_later
+        end
+  
+        # Envoi de l'email à l'instructeur si le vol était en instruction
+        if @reservation.instruction? && @reservation.fi.present?
+          first_name, last_name = @reservation.fi.split(' ', 2)
+          instructor = User.find_by(prenom: first_name, nom: last_name)
+          if instructor
+            UserMailer.late_cancellation_notification_to_instructor(instructor, current_user, @reservation, cancellation_reason).deliver_later
+          end
         end
       end
     end

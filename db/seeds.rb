@@ -40,21 +40,26 @@ if response == 'o'
 end
 
 puts "\nCleaning database..."
-# On détruit les tables dépendantes en premier
-Transaction.destroy_all
+# On détruit les tables en respectant l'ordre des dépendances pour éviter les erreurs de clé étrangère.
+# 1. Modèles qui dépendent d'autres modèles (ex: User, Event, Avion)
+Attendance.destroy_all
 Comment.destroy_all
 NewsItem.destroy_all
-Signalement.destroy_all
-Audio.destroy_all
-FlightLesson.destroy_all
+Immobilisation.destroy_all # Doit être détruit avant Transaction
+Penalite.destroy_all
 Reservation.destroy_all
+Signalement.destroy_all
+Transaction.destroy_all
 Vol.destroy_all
+# 2. Modèles dont d'autres dépendent
+Event.destroy_all
+User.destroy_all
 Avion.destroy_all
-Tarif.destroy_all
-Attendance.destroy_all # Dépend de User et Event
-Event.destroy_all # Dépend de User (admin)
-User.destroy_all # Doit être détruit après toutes les tables qui ont un user_id
+# 3. Modèles généralement indépendants
+Audio.destroy_all
 Course.destroy_all
+FlightLesson.destroy_all
+Tarif.destroy_all
 puts "✅ Cleaned"
 
 puts "Réinitialisation des IDs de séquence pour SQLite..."
@@ -63,15 +68,24 @@ ActiveRecord::Base.connection.tables.each do |t|
 end
 puts "✅ Cleaned"
 
-puts "\nCreating users..."
-
 # On désactive temporairement l'envoi d'e-mails pour éviter les erreurs de letter_opener
 original_delivery_method = ActionMailer::Base.delivery_method
 ActionMailer::Base.delivery_method = :test
 
 # initialisation du fuseau horaire
-Setting.create(time_zone: 'Europe/Paris')
+Setting.create(var: 'time_zone', val: 'Europe/Paris')
 puts "✅ Fuseau horaire initialisé à Paris"
+
+# initialisation des pénalités
+Setting.create(var: 'penalty_delay_1', val: '48')
+Setting.create(var: 'penalty_amount_1', val: '5')
+Setting.create(var: 'penalty_delay_2', val: '24')
+Setting.create(var: 'penalty_amount_2', val: '10')
+Setting.create(var: 'penalty_delay_3', val: '12')
+Setting.create(var: 'penalty_amount_3', val: '20')
+puts "✅ Paramètres de pénalité créés"
+
+puts "\nCreating users..."
 
 # 1. Création de 30 adhérents, dont un administrateur et un élève
 # ---------------------------------------------------------------

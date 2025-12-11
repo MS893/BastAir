@@ -9,6 +9,21 @@
 
   <%# Script pour la modale d'annulation, uniquement si l'utilisateur est connecté %>
   <script type="text/javascript">
+    <%# On charge les paramètres de pénalité depuis la BDD et on les prépare pour JS %>
+    <%
+      # On récupère les seuils de pénalité depuis le cache pour optimiser.
+      # Le cache expirera après 1 heure, ou lorsque les paramètres seront modifiés.
+      penalty_settings = Rails.cache.fetch('penalty_settings', expires_in: 1.hour) do
+        settings_hash = Setting.where("var LIKE 'penalty_%'").pluck(:var, :val).to_h
+        (1..3).map do |i|
+          delay = settings_hash["penalty_delay_#{i}"].to_i
+          amount = settings_hash["penalty_amount_#{i}"].to_i
+          delay > 0 && amount > 0 ? { delay: delay, amount: amount } : nil
+        end.compact.sort_by { |h| h[:delay] } # Tri par délai croissant (ex: 12, 24, 48)
+      end
+    %>
+    const penaltySettings = <%= raw penalty_settings.to_json %>;
+
     document.addEventListener('turbo:load', function() {
       const cancellationModal = document.getElementById('cancellationModal');
       if (cancellationModal) {
@@ -23,26 +38,21 @@
                             <input type="hidden" name="_method" value="delete">
                             <input type="hidden" name="authenticity_token" value="${document.querySelector('meta[name="csrf-token"]').content}">`;
 
-          // Si l'annulation a lieu entre 24h et 48h, on ajoute le champ "raison"
-          if (timeBeforeFlight < 12 * 3600) { // Moins de 12h
-            formHTML +=  `<div class="alert alert-danger" role="alert">
-                            <strong>Pénalité de 20€ :</strong> Vous annulez moins de 12 heures avant le vol.
-                            <small class="d-block mt-1">Si un administrateur estime votre raison valable, vous n'aurez pas la pénalité d'annulation tardive.</small>
-                          </div>`;
-          } else if (timeBeforeFlight < 24 * 3600) { // Moins de 24h
-            formHTML +=  `<div class="alert alert-danger" role="alert">
-                            <strong>Pénalité de 10€ :</strong> Vous annulez moins de 24 heures avant le vol.
-                            <small class="d-block mt-1">Si un administrateur estime votre raison valable, vous n'aurez pas la pénalité d'annulation tardive.</small>
-                          </div>`;
-          } else if (timeBeforeFlight < 48 * 3600) { // Moins de 48h
-            formHTML +=  `<div class="alert alert-warning" role="alert">
-                            <strong>Attention :</strong> Annulation tardive.
-                            <small class="d-block mt-1">Une pénalité de 5€ peut être appliquée si la raison n'est pas jugée valable.</small>
+          // On cherche la première règle de pénalité qui s'applique
+          const applicablePenalty = penaltySettings.find(p => timeBeforeFlight < p.delay * 3600);
+          const maxPenaltyDelay = penaltySettings.length > 0 ? Math.max(...penaltySettings.map(p => p.delay)) : 0;
+
+          if (applicablePenalty) {
+            const alertClass = applicablePenalty.delay <= 24 ? 'alert-danger' : 'alert-warning';
+            formHTML +=  `<div class="alert ${alertClass}" role="alert">
+                            <strong>Pénalité de ${applicablePenalty.amount}€ :</strong> Vous annulez moins de ${applicablePenalty.delay} heures avant le vol.
+                            <small class="d-block mt-1">Si un administrateur estime votre raison valable, la pénalité pourra être annulée.</small>
                           </div>`;
           }
 
-          // On ajoute le champ "raison" si l'annulation est à moins de 48h
-          if (timeBeforeFlight < 48 * 3600) {
+          // On ajoute le champ "raison" si l'annulation est dans le délai de la plus grande pénalité
+          // (ex: si la plus grande pénalité est à 48h, on demande la raison en dessous de 48h)
+          if (maxPenaltyDelay > 0 && timeBeforeFlight < maxPenaltyDelay * 3600) {
             formHTML += `<div class="mb-3">
                             <label for="cancellation_reason" class="form-label">Raison de l'annulation (obligatoire) :</label>
                             <textarea name="cancellation_reason" id="cancellation_reason" class="form-control" rows="3" required></textarea>

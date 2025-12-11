@@ -1,0 +1,42 @@
+<% content_for :title, "Gérer mes disponibilités" %>
+
+<div class="container my-5">
+  <h1 class="text-center mb-4">Gérer mes disponibilités</h1>
+  <p class="lead text-center mb-5">
+    Cochez les créneaux pour lesquels vous êtes disponible.
+  </p>
+
+  <%= form_with url: update_instructor_availabilities_path, method: :patch, local: true do |form| %>
+    <div class="table-responsive">
+      <table class="table table-bordered text-center">
+        <thead>
+          <tr>
+            <th style="width: 10%;"></th>
+            <% %w[Lundi Mardi Mercredi Jeudi Vendredi Samedi Dimanche].each do |day_name| %>
+              <th><%= day_name %></th>
+            <% end %>
+          </tr>
+        </thead>
+        <tbody>
+          <% %w[matin apres-midi].each do |period| %>
+            <tr>
+              <th class="align-middle"><%= period.capitalize %></th>
+              <% %w[lundi mardi mercredi jeudi vendredi samedi dimanche].each do |day| %>
+                <td class="align-middle">
+                  <div class="form-check d-flex justify-content-center">
+                    <%= check_box_tag "availabilities[#{day}-#{period}]", 1, @availability_grid[day][period], class: 'form-check-input', style: 'width: 1.5em; height: 1.5em;' %>
+                  </div>
+                </td>
+              <% end %>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="text-center mt-4">
+      <%= form.submit "Enregistrer mes disponibilités", class: "btn btn-primary btn-lg" %>
+      <%= link_to "Annuler", agenda_instructeurs_path, class: "btn btn-secondary btn-lg" %>
+    </div>
+  <% end %>
+</div>

@@ -17,6 +17,7 @@ class StaticPagesController < ApplicationController
 
       # On charge les 3 prochaines réservations de l'utilisateur
       @upcoming_reservations = current_user.reservations.where('start_time >= ?', Time.current).order(start_time: :asc).limit(3)
+      @upcoming_reservations_count = current_user.reservations.where('start_time >= ?', Time.current).count
     end
 
     # On charge les 5 dernières actualités, de la plus récente à la plus ancienne
@@ -61,7 +62,20 @@ class StaticPagesController < ApplicationController
   end
 
   def agenda_instructeurs
-    # Logique pour récupérer les disponibilités des instructeurs à venir
+    # On récupère toutes les disponibilités et on les groupe par créneau (ex: "lundi-matin").
+    # On inclut :user pour éviter les requêtes N+1 dans la vue.
+    @availabilities_by_slot = InstructorAvailability.includes(:user).all.group_by do |availability|
+      "#{availability.day}-#{availability.period}"
+    end
+
+    # On prépare les données pour la vue afin de gérer les clics des instructeurs
+    if user_signed_in?
+      @instructor_status = {
+        is_instructor: current_user.instructeur?,
+        fi_present: current_user.fi.present?,
+        fi_expired: current_user.fi.present? && current_user.fi < Date.today
+      }
+    end
   end
 
   def documents_divers

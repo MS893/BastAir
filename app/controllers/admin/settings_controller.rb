@@ -20,4 +20,5 @@ class Admin::SettingsController < ApplicationController
       render :edit, status: :unprocessable_entity
     end
   end
+
 end

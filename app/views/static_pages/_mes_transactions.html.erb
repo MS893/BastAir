@@ -4,7 +4,7 @@
   <div class="card h-100 shadow">
     <div class="card-header bg-info text-white">
       <h5 class="card-title mb-0">
-        <i class="fas fa-glass-cheers me-2"></i>Mes dernières transactions
+        <i class="bi bi-currency-euro me-2"></i>Mes dernières transactions
         <%# On affiche le bouton seulement si l'utilisateur a plus de 5 transactions (qui tiennent dans la card) %>
         <% if current_user.transactions.count > 5 %>
           <%= link_to "Voir toutes mes transactions", 
