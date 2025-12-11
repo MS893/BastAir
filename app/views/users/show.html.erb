@@ -28,7 +28,7 @@
       <%# --- BOUTONS D'ACTION --- %>
       <div class="mt-4">
         <% if current_user == @user %>
-          <%= link_to "Modifier mon profil", edit_user_registration_path, class: "btn btn-primary" %>
+          <%= link_to "Modifier mon profil", edit_profil_user_path, class: "btn btn-primary" %>
         <% end %>
 
         <% if current_user.admin? %>

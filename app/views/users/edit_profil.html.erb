@@ -3,12 +3,25 @@
 <div class="row justify-content-center">
   <div class="col-md-6">
 
-      <h2>Modifier mon profil</h2>
-      <%# A FAIRE : ajouter d'autres champs (tel, adresse, personne à prévenir) %>
+    <h2>Modifier mon profil</h2>
 
+    <%= form_for(current_user, url: update_profil_user_path(current_user), html: { method: :patch, multipart: true }) do |f| %>
+      <%# A FAIRE : ajouter d'autres champs (personne à prévenir) %>
+
+      <%# --- CHAMPS DU FORMULAIRE --- %>
       <div class="mb-3">
         <%= f.label :email, class: "form-label" %><br />
         <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "form-control" %>
+      </div>
+
+      <div class="mb-3">
+        <%= f.label :telephone, class: "form-label" %><br />
+        <%= f.text_field :telephone, class: "form-control" %>
+      </div>
+
+      <div class="mb-3">
+        <%= f.label :adresse, class: "form-label" %><br />
+        <%= f.text_area :adresse, class: "form-control" %>
       </div>
 
       <div class="mb-3">
@@ -18,8 +31,9 @@
 
       <div class="d-flex justify-content-between align-items-center">
         <%= f.submit "Mettre à jour", class: "btn btn-primary" %>
-        <%= link_to "Retour à l'accueil", root_path, class: "btn btn-secondary" %>
+        <%= link_to "Retour au profil", user_path(current_user), class: "btn btn-secondary" %>
       </div>
-
+    <% end %>
+    
   </div>
 </div>

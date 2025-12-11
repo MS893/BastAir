@@ -1,7 +1,7 @@
 class UsersController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_user, only: [:show, :update]
-  before_action :authorize_user, only: [:show]
+  before_action :set_user, only: [:show, :update, :update_profil]
+  before_action :authorize_user, only: [:show, :update_profil]
   before_action :authorize_admin!, only: [:index, :update] # Seuls les admins peuvent voir la liste des users et mettre à jour les rôles
 
   def index
@@ -54,11 +54,21 @@ class UsersController < ApplicationController
     end
   end
 
+  # Nouvelle action pour la mise à jour du profil par l'utilisateur lui-même
+  def update_profil
+    if @user.update(profile_params)
+      redirect_to user_path(@user), notice: "Votre profil a été mis à jour avec succès."
+    else
+      # En cas d'erreur, on affiche à nouveau la page d'édition
+      render 'edit_profil', status: :unprocessable_entity
+    end
+  end
+
   
   private
 
   def set_user
-    @user = User.find(params[:id])
+    @user = User.find(params[:id]) # @user est déjà défini ici, pas besoin de current_user
   end
 
   def authorize_user
@@ -70,6 +80,11 @@ class UsersController < ApplicationController
   def user_params
     # Permet aux administrateurs de mettre à jour le statut admin, la fonction et la date FI
     params.require(:user).permit(:admin, :fonction, :fi)
+  end
+
+  # Nouveaux "strong parameters" pour la mise à jour du profil
+  def profile_params
+    params.require(:user).permit(:email, :telephone, :adresse, :avatar)
   end
   
 end
