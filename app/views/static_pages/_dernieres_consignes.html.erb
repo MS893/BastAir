@@ -8,8 +8,8 @@
     </h5>
   </div>
   <div class="card-body">
-    <% if @news_items.any? %>
-      <% @news_items.each do |news| %>
+    <% if news_items.any? %>
+      <% news_items.each do |news| %>
         <div class="mb-3">
           <h6 class="card-subtitle mb-1 text-muted"><%= news.title %> -
             <small>Publié le <%= l(news.created_at, format: :short) %> par <%= news.user.prenom %></small></h6>
