@@ -12,8 +12,10 @@ class Vol < ApplicationRecord
   # == Callbacks ==============================================================
   before_save :calculate_fin_vol, if: -> { debut_vol.present? && duree_vol.present? }
 
-  # Validation personnalisée pour les compteurs
+  # Validation pour les compteurs
   validate :compteur_arrivee_superieur_au_depart
+  # Validation pour s'assurer que le pilote a les qualifications requises
+  validate :pilote_qualifie_pour_voler
 
   # Méthode pour générer le CSV à partir d'une collection de vols
   def self.to_csv(vols)
@@ -55,6 +57,18 @@ class Vol < ApplicationRecord
       # Ajoute une erreur sur le champ 'compteur_arrivee' si la condition n'est pas respectée
       errors.add(:compteur_arrivee, "doit être supérieur au compteur de départ.")
     end
+  end
+
+  # S'assure que le pilote (user) a une licence et une visite médicale valides à la date du vol.
+  def pilote_qualifie_pour_voler
+    # On ne valide que si un utilisateur et une date sont associés au vol.
+    # `debut_vol` semble être le champ de date/heure principal pour un vol.
+    return if user.nil? || debut_vol.nil?
+
+    # Vérification de la licence
+    errors.add(:base, "Le pilote n'a pas de licence valide à la date du vol.") if user.date_licence.nil? || user.date_licence < debut_vol.to_date
+    # Vérification de la visite médicale
+    errors.add(:base, "Le pilote n'a pas de visite médicale valide à la date du vol.") if user.medical.nil? || user.medical < debut_vol.to_date
   end
 
 end

@@ -56,3 +56,17 @@ fr:
     errors:
       messages:
         record_invalid: "La validation a échoué : %{errors}"
+        # Ajouts pour le modèle Vol
+        models:
+          vol:
+            attributes:
+              date:
+                cannot_be_in_the_future: "ne peut pas être dans le futur"
+              compteur_fin:
+                must_be_greater_than_start_counter: "doit être supérieur au compteur de départ"
+              base: # Erreurs globales pour le modèle Vol
+                pilot_not_qualified: "Le pilote n'a pas les qualifications requises (licence ou médicale) à la date du vol."
+              instructeur_id:
+                required_for_instruction: "est requis pour un vol en instruction"
+              compteur_depart:
+                must_match_previous_flight: "doit être égal au compteur de fin du vol précédent (%{compteur})"
