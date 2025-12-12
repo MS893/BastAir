@@ -145,6 +145,7 @@ Rails.application.routes.draw do
   get 'documents_divers', to: 'static_pages#documents_divers'
   get 'credit', to: 'static_pages#credit'
   get 'agenda_avion', to: 'static_pages#agenda_avion'
+  get 'mel', to: 'static_pages#mel'
   get 'agenda_instructeurs', to: 'static_pages#agenda_instructeurs'
 
   # Route pour la gestion des disponibilités des instructeurs

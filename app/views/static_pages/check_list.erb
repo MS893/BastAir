@@ -6,7 +6,7 @@
   </div>
 
   <div class="text-center mb-4">
-    <!-- Ce bouton ouvre maintenant la fenêtre modale de confirmation -->
+    <!-- Ce bouton ouvre la fenêtre modale de confirmation -->
     <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#confirmResetModal">
       <i class="bi bi-arrow-counterclockwise me-2"></i>
       Réinitialiser la check-list
@@ -19,9 +19,12 @@
     <!-- Prévol -->
     <div class="accordion-item">
       <h2 class="accordion-header" id="heading1">
-        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1" aria-expanded="true" aria-controls="collapse1">
-          1. Visite prévol
-        </button>
+        <div class="d-flex w-100 bg-primary-subtle">
+          <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1" aria-expanded="true" aria-controls="collapse1">
+            1. Visite prévol
+          </button>
+          <%= link_to raw('<i class="bi bi-wrench"></i><span class="ms-2">MEL</span>'), mel_path, class: "btn btn-warning ms-4 me-4 d-flex align-items-center" %>
+        </div>
       </h2>
       <div id="collapse1" class="accordion-collapse collapse show" aria-labelledby="heading1" data-bs-parent="#faqAccordion">
         <div class="accordion-body">

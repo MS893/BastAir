@@ -1,0 +1,317 @@
+<% content_for :head do %>
+  <style>
+    .mel-table {
+      table-layout: fixed;
+      width: 100%;
+    }
+    .col-item { width: 34%; }
+    .col-installed { width: 8%; }
+    .col-required { width: 8%; }
+    .col-conditions { width: 50%; }
+    .clickable-row {
+      cursor: pointer;
+    }
+  </style>
+<% end %>
+
+<% content_for :title, "Minimum Equipment List (MEL)" %>
+
+<div class="container my-5">
+
+  <div class="text-center">
+    <h1 class="mb-4">Minimum Equipment List (MEL) ✈️</h1>
+  </div>
+
+  <hr>
+
+  <div class="accordion mt-4" id="preambleAccordion">
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingPreamble">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePreamble" aria-expanded="false" aria-controls="collapsePreamble">
+          <strong>1.1. LME Préambule</strong>
+        </button>
+      </h2>
+      <div id="collapsePreamble" class="accordion-collapse collapse" aria-labelledby="headingPreamble" data-bs-parent="#preambleAccordion">
+        <div class="accordion-body">
+          <h5 class="text-primary">Introduction</h5>
+          <p>Cette Liste Minimale d’Equipement (LME) est applicable dans le cadre des règlements européens relatifs aux opérations aériennes non commerciales avec un avion non complexe (Annexe VII, Part NCO du règlement UE 965/2012 modifié).</p>
+          <p>Elle a été établie selon le Guide Générique d’Equipements Minimum (GGEM) publié par la FFA et conformément au NCO.GEN.155 qui permet l’exploitation de l’avion dans des conditions spécifiées, avec certains instruments, équipements ou fonctions inopérants (voir § Notes et définitions) ou manquants avec un niveau de sécurité acceptable.</p>
+          <p>Cette LME a été transmise à la Direction de la Sécurité de l’Aviation Civile interrégionale de rattachement.</p>
+
+          <h5 class="text-primary mt-4">But et Limitations</h5>
+          <p>Cette LME a été développée dans le cadre des opérations non commerciales réalisées par un avion ELA1 ou ELA2 non complexe sans qu’une Liste Minimale d’Equipement de Référence (LMER) n’ait été développée par le détenteur du Certificat de Type de l’avion couvert par ce document.</p>
+          <p>Cette LME a été élaborée sur la base :</p>
+          <ul>
+            <li>du règlement UE 965/2012 modifié, et</li>
+            <li>du CS-GEN-MMEL</li>
+          </ul>
+          <p class="fst-italic">Note : La présente LME couvre également les vols de découverte définis à l'article 6, paragraphe 4bis, du règlement européen Air-OPS et réalisés conformément aux règles d’application fixées par l’arrêté interministériel du 18 août 2016.</p>
+          <p>Cette LME contient des items liés à la navigabilité ainsi qu’aux exigences opérationnelles pouvant être inopérants ou manquants avant le début du vol sous réserve du respect de certaines conditions permettant d’assurer un niveau de sécurité satisfaisant.</p>
+          <p class="fst-italic">Note : Tout équipement à bord d’un avion et non traité par cette liste doit être en état de fonctionnement s’il est relatif à la sécurité ou à l’exécution du vol envisagé par le commandant de bord.</p>
+          <p>Un équipement qui n’est pas embarqué pour des raisons de sécurité (par exemple un équipement de bord présent pour le confort des passagers ou utilisé uniquement au sol à des fins de maintenance) peut être inopérant ou manquant, à condition que son non fonctionnement n’affecte pas la navigabilité ou l’utilisation sûre de l’avion (Attention : un équipement peut avoir une autre fonction ou faire partie d’un autre système de l’avion).</p>
+          <p class="fst-italic">Note : Un élément inopérant ne peut pas être déposé de l'appareil sur la base de cette LME.</p>
+
+          <h5 class="text-primary mt-4">Utilisation</h5>
+          <p>La LME permet d’opérer l'avion avec certains instruments, équipements ou fonctions inopérants ou manquants pour une période limitée jusqu'à ce que la réparation puisse être réalisée.</p>
+          <p class="fst-italic">Note : La LME ne permet pas de dévier d’une consigne de navigabilité, ou tout autre exigence supplémentaire obligatoire.</p>
+          <p>Dans tous les cas, toute panne constatée doit faire l’objet d’une inscription au carnet de route de l’avion. En effet, la réglementation requiert que toute anomalie, incident ou accident soit indiqué sur le carnet de route de l’avion, au plus tard en fin de journée, après tout vol.</p>
+          <p>L’équipement est alors réparé ou alors sa remise en service est reportée sur la base de l’item LME correspondant.</p>
+          <p class="fst-italic">Note : L’item LME correspondant est indiqué dans la colonne (1) de la LME. Il est spécifique à chaque équipement ou fonction ou conditions applicables.</p>
+          <p>Le pilote peut remettre l’avion en vol sur la base de l’item LME applicable en prenant en compte les conditions et remarques applicables. Pour cela il fait une inscription au carnet de route en identifiant l’item LME. Le report de la réparation est limité au(x) vol(s) pour revenir à sa base uniquement.</p>
+          <p>Le responsable technique est le seul habilité à définir l’intervalle de réparation (voir paragraphe « Intervalle de réparation ») dans un délai raisonnable. Pour cela il indique sur le carnet de route, l’item LME et le délai pour corriger le défaut avant que l’avion puisse être de nouveau utilisé.</p>
+          <p class="fst-italic">Note : Tout instrument, équipement ou fonction inopérant dont la réparation est reportée doit être clairement physiquement identifié pour le pilote comme « inopérant ».</p>
+          <p>Dans l’intervalle de réparation défini par le responsable technique, les pilotes doivent remplir le carnet de route de l’avion en indiquant dans la colonne remarques/observations « Item(s) pris en compte / Autres remarques/observations ou RAS ».</p>
+          <p>L’indication « item(s) pris en compte » doit être annotée au début du vol pour indiquer que le pilote a bien pris connaissance de la panne de l’équipement ou de la fonction et qu’il a également pris connaissance des limitations, conditions et éventuelles restrictions qui s’appliquent à l’avion et que le vol est réalisable.</p>
+          <p>L’ajout d’une/de panne(s) ou l’indication « RAS » au carnet de route se fait à la fin du vol.</p>
+
+          <h5 class="text-primary mt-4">Combinaison de pannes</h5>
+          <p>En cas de combinaison de pannes, il revient à l’exploitant de garantir un niveau de sécurité satisfaisant, les relations entre items devant toujours être considérées.</p>
+
+          <h5 class="text-primary mt-4">Intervalle de réparation</h5>
+          <p>Bien que la LME n’indique pas d’intervalles de réparation, sauf pour les balises de détresse (25-63), il est important que ces réparations soient entreprises le plus rapidement possible par l’exploitant.</p>
+          <p>Le responsable technique a la charge, compte tenu des contraintes (approvisionnement, plan de charge, visite programmée, caractéristique du défaut, etc.), de définir l’intervalle de réparation et son suivi. Cet intervalle doit être inscrit sur le carnet de route. Il ne peut, en aucun cas, excéder 13 mois.</p>
+
+          <h5 class="text-primary mt-4">Notes et définitions</h5>
+          <p>La colonne « <strong>Numérotation Item et système</strong> » (1) liste les instruments, équipements, systèmes ou fonctions susceptibles d’être requis à bord ou installés sur l’avion.</p>
+          <p>La colonne « <strong>Nombre installé</strong> » (2) indique le nombre d’items ou système installés sur l’avion concerné par cette LME.</p>
+          <p>La colonne « <strong>Nombre requis</strong> » (3) indique le nombre minimum d’items en état de fonctionnement requis pour un type d’opérations, lorsque les exigences de la colonne « Conditions et Remarques » (4) sont respectées. Le symbole « - » est utilisé lorsque ce nombre dépend des conditions d’utilisation telles que décrites dans la colonne (4).</p>
+          <p>La colonne « <strong>Conditions et Remarques</strong> » (4) décrit les conditions et procédures éventuelles à respecter afin que le vol puisse être entamé avec un nombre d’items correspondant à celui indiqué dans la colonne (3).</p>
+          <p>Le terme « <strong>inopérant</strong> » désigne tout item ne pouvant pas remplir correctement sa fonction à bord et qui est clairement identifié comme tel pour le pilote.</p>
+          <p>Un « <strong>avion ELA1</strong> » signifie European Light Aircraft (avion léger européen) avec une masse maximale au décollage (MTOM) n’excédant pas 1 200 kg et non classé comme avion à motorisation complexe.</p>
+          <p>Un « <strong>avion ELA2</strong> » signifie European Light Aircraft (avion léger européen) avec une masse maximale au décollage (MTOM) n’excédant pas 2 000 kg et non classé comme avion à motorisation complexe.</p>
+          <p>Un « <strong>TMG</strong> » désigne une classe spécifique de planeurs motorisés pourvus d’un moteur intégré et non rétractable et d’une hélice non rétractable.</p>
+          <p><strong>Vol VFR</strong> désigne un vol effectué à bord d’un avion selon les règles de vol à vue telles que précisées par les règles SERA.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="accordion mt-4" id="itemsAccordion">
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingItems">
+        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseItems" aria-expanded="true" aria-controls="collapseItems">
+          <strong>1.2. Liste des équipements</strong>
+        </button>
+      </h2>
+      <div id="collapseItems" class="accordion-collapse collapse show" aria-labelledby="headingItems" data-bs-parent="#itemsAccordion">
+        <div class="accordion-body">
+
+          <%# --- Accordéon interne pour les chapitres --- %>
+          <div class="accordion" id="chaptersAccordion">
+
+            <%# --- 10 - CONDITIONNEMENT D'AIR --- %>
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="heading10"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse10" aria-expanded="false" aria-controls="collapse10">10 - CONDITIONNEMENT D'AIR</button></h2>
+              <div id="collapse10" class="accordion-collapse collapse" aria-labelledby="heading10" data-bs-parent="#chaptersAccordion">
+                <div class="accordion-body p-2">
+                  <%= render_chapter_table([
+                    { name: "10-01 Commandes de chauffage", installed: 3, required: 0, notes: "Température au sol inférieure à 5°C" }
+                  ]) %>
+                </div>
+              </div>
+            </div>
+
+            <%# --- 20 - COMMUNICATIONS --- %>
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="heading20"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse20" aria-expanded="false" aria-controls="collapse20">20 - COMMUNICATIONS</button></h2>
+              <div id="collapse20" class="accordion-collapse collapse" aria-labelledby="heading20" data-bs-parent="#chaptersAccordion">
+                <div class="accordion-body p-2">
+                  <%= render_chapter_table([
+                    { name: "20-01 VHF non 8.33", installed: 1, required: 0, notes: "" },
+                    { name: "20-02 VHF 8.33", installed: 1, required: 1, notes: "" },
+                    { name: "20-03 Intercom.", installed: 1, required: 0, notes: "Pas de vol d’instruction" },
+                    { name: "20-04 Haut parleur", installed: 1, required: 0, notes: "Vol avec casque" },
+                    { name: "20-05 Micro main", installed: 1, required: 0, notes: "Vol avec casque" },
+                    { name: "20-06 Balise de détresse (RBDA)", installed: 1, required: 1, notes: "" },
+                    { name: "20-07 Transpondeur mode S", installed: 1, required: 1, notes: "" }
+                  ]) %>
+                </div>
+              </div>
+            </div>
+
+            <%# --- 30 - CIRCUIT ELECTRIQUE --- %>
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="heading30"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse30" aria-expanded="false" aria-controls="collapse30">30 - CIRCUIT ELECTRIQUE</button></h2>
+              <div id="collapse30" class="accordion-collapse collapse" aria-labelledby="heading30" data-bs-parent="#chaptersAccordion">
+                <div class="accordion-body p-2">
+                  <%= render_chapter_table([
+                    { name: "30-01 Batterie", installed: 1, required: 1, notes: "" },
+                    { name: "30-02 Alternateur", installed: 1, required: 1, notes: "" },
+                    { name: "30-04 Votmètre", installed: 1, required: 1, notes: "" },
+                    { name: "30-05 Témoin de charge", installed: 1, required: 1, notes: "" }
+                  ]) %>
+                </div>
+              </div>
+            </div>
+
+            <%# --- 40 - EQUIPEMENTS --- %>
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="heading40"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse40" aria-expanded="false" aria-controls="collapse40">40 - EQUIPEMENTS</button></h2>
+              <div id="collapse40" class="accordion-collapse collapse" aria-labelledby="heading40" data-bs-parent="#chaptersAccordion">
+                <div class="accordion-body p-2">
+                  <%= render_chapter_table([
+                    { name: "40-01 Indicateur de température extérieure", installed: 0, required: 0, notes: "" },
+                    { name: "40-02 Verrouillage sièges avant", installed: 2, required: 1, notes: "Si panne concerne le siège inoccupé" },
+                    { name: "40-03 Réglage sièges avant", installed: 2, required: 1, notes: "Si la panne concerne le siège inoccupé" },
+                    { name: "40-04 Ceintures et harnais de sécurité", installed: 4, required: 1, notes: "Peuvent être inopérants si siège inoccupé" },
+                    { name: "40-05 Horamètre", installed: 1, required: 0, notes: "Vols retour vers LFMA" }
+                  ]) %>
+                </div>
+              </div>
+            </div>
+
+            <%# --- 50 - COMMANDES DE VOL --- %>
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="heading50"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse50" aria-expanded="false" aria-controls="collapse50">50 - COMMANDES DE VOL</button></h2>
+              <div id="collapse50" class="accordion-collapse collapse" aria-labelledby="heading50" data-bs-parent="#chaptersAccordion">
+                <div class="accordion-body p-2">
+                  <%= render_chapter_table([
+                    { name: "50-01 Verrouillage des volets", installed: 1, required: 1, notes: "" },
+                    { name: "50-02 Commande du compensateur", installed: 1, required: 1, notes: "" },
+                    { name: "50-03 Avertisseur de décrochage", installed: 1, required: 1, notes: "" }
+                  ]) %>
+                </div>
+              </div>
+            </div>
+
+            <%# --- 60 - CIRCUIT CARBURANT --- %>
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="heading60"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse60" aria-expanded="false" aria-controls="collapse60">60 - CIRCUIT CARBURANT</button></h2>
+              <div id="collapse60" class="accordion-collapse collapse" aria-labelledby="heading60" data-bs-parent="#chaptersAccordion">
+                <div class="accordion-body p-2">
+                  <%= render_chapter_table([
+                    { name: "60-01 Pompe électrique", installed: 1, required: 1, notes: "" },
+                    { name: "60-02 Voyant de pression carburant", installed: 1, required: 1, notes: "" },
+                    { name: "60-03 Manomètre de pression carburant", installed: 1, required: 0, notes: "A condition que le voyant de pression ait été vérifié lors de la mise en route" },
+                    { name: "60-04 Voyant bas niveau", installed: 1, required: 1, notes: "Vol de jour avec plein complet effectué, le jaugeur fonctionne. 2 heures de vol max" },
+                    { name: "60-05 Jaugeurs", installed: 1, required: 0, notes: "Alarme bas niveau fonctionne. Retour au terrain possible de jour si plein complet avant départ et 2 heures de vol max." },
+                    { name: "60-06 Vanne de fermeture ou permutation de réservoir", installed: 1, required: 1, notes: "" }
+                  ]) %>
+                </div>
+              </div>
+            </div>
+
+            <%# --- 70 - INSTRUMENTS DE BORD --- %>
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="heading70"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse70" aria-expanded="false" aria-controls="collapse70">70 - INSTRUMENTS DE BORD</button></h2>
+              <div id="collapse70" class="accordion-collapse collapse" aria-labelledby="heading70" data-bs-parent="#chaptersAccordion">
+                <div class="accordion-body p-2">
+                  <%= render_chapter_table([
+                    { name: "70-01 Altimètre", installed: 1, required: 1, notes: "" },
+                    { name: "70-02 Variomètre", installed: 1, required: 0, notes: "Vol de jour" },
+                    { name: "70-03 Horizon artificiel", installed: 1, required: 0, notes: "Vol de jour. VFR \"ON TOP\" et survol maritime interdits" },
+                    { name: "70-04 Compas magnétique", installed: 1, required: 1, notes: "" },
+                    { name: "70-05 Conservateur de cap", installed: 1, required: 0, notes: "Vol « ON TOP » - survol maritime - vol de nuit interdit. Utilisation du compas magnétique" },
+                    { name: "70-06 Indicateur de virage", installed: 1, required: 0, notes: "Vol de jour. VFR « ON TOP » - survol maritime interdits." },
+                    { name: "70-07 Indicateur de dérapage", installed: 1, required: 1, notes: "" },
+                    { name: "70-08 Montre", installed: 1, required: 0, notes: "Le pilote possède une montre chronomètre." }
+                  ]) %>
+                </div>
+              </div>
+            </div>
+
+            <%# --- 80 - ECLAIRAGE --- %>
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="heading80"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse80" aria-expanded="false" aria-controls="collapse80">80 - ECLAIRAGE</button></h2>
+              <div id="collapse80" class="accordion-collapse collapse" aria-labelledby="heading80" data-bs-parent="#chaptersAccordion">
+                <div class="accordion-body p-2">
+                  <%= render_chapter_table([
+                    { name: "80-01 Feu anticollision", installed: 1, required: 0, notes: "Vol de jour, mise en route sur une aire dégagée" },
+                    { name: "80-02 Feux de navigation", installed: 3, required: 0, notes: "Vol de jour" },
+                    { name: "80-03 Phare d'atterrissage", installed: 1, required: 0, notes: "Vol de jour" },
+                    { name: "80-04 Eclairage tableau de bord", installed: 1, required: 0, notes: "Vol de jour" },
+                    { name: "80-05 Phare de roulage", installed: 1, required: 0, notes: "" }
+                  ]) %>
+                </div>
+              </div>
+            </div>
+
+            <%# --- 90 - SYSTEME DE NAVIGATION --- %>
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="heading90"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse90" aria-expanded="false" aria-controls="collapse90">90 - SYSTEME DE NAVIGATION</button></h2>
+              <div id="collapse90" class="accordion-collapse collapse" aria-labelledby="heading90" data-bs-parent="#chaptersAccordion">
+                <div class="accordion-body p-2">
+                  <%= render_chapter_table([
+                    { name: "90-01 Récepteur VOR", installed: 1, required: 0, notes: "Vol \"ON TOP\" interdit. Vol de nuit local (Tours de piste)" },
+                    { name: "90-02 GPS (si installé)", installed: 1, required: 0, notes: "" }
+                  ]) %>
+                </div>
+              </div>
+            </div>
+
+            <%# --- 100 - GENERATION PNEUMATIQUE --- %>
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="heading100"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse100" aria-expanded="false" aria-controls="collapse100">100 - GENERATION PNEUMATIQUE</button></h2>
+              <div id="collapse100" class="accordion-collapse collapse" aria-labelledby="heading100" data-bs-parent="#chaptersAccordion">
+                <div class="accordion-body p-2">
+                  <%= render_chapter_table([
+                    { name: "100-01 Pompe à vide", installed: 1, required: 0, notes: "HA et conservateur de cap HS ; vol \"ON TOP\" - survols maritimes - vol de nuit interdits. Utilisation du compas magnétique" },
+                    { name: "100-02 Manomètre de dépression", installed: 1, required: 0, notes: "Surveiller HA et conservateur de cap." }
+                  ]) %>
+                </div>
+              </div>
+            </div>
+
+            <%# --- 110 - COMMANDES MOTEUR --- %>
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="heading110"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse110" aria-expanded="false" aria-controls="collapse110">110 - COMMANDES MOTEUR</button></h2>
+              <div id="collapse110" class="accordion-collapse collapse" aria-labelledby="heading110" data-bs-parent="#chaptersAccordion">
+                <div class="accordion-body p-2">
+                  <%= render_chapter_table([
+                    { name: "110-01 Manette des gaz", installed: 2, required: 2, notes: "" },
+                    { name: "110-02 Commande de richesse", installed: 1, required: 1, notes: "" },
+                    { name: "110-03 Réchauffage carburateur", installed: 1, required: 1, notes: "" }
+                  ]) %>
+                </div>
+              </div>
+            </div>
+
+            <%# --- 120 - CONTROLE MOTEUR --- %>
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="heading120"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse120" aria-expanded="false" aria-controls="collapse120">120 - CONTROLE MOTEUR</button></h2>
+              <div id="collapse120" class="accordion-collapse collapse" aria-labelledby="heading120" data-bs-parent="#chaptersAccordion">
+                <div class="accordion-body p-2">
+                  <%= render_chapter_table([
+                    { name: "120-01 Tachymètre", installed: 1, required: 1, notes: "" },
+                    { name: "120-02 Indicateur de température d'huile", installed: 1, required: 1, notes: "" },
+                    { name: "120-03 Indicateur de pression d'huile", installed: 1, required: 1, notes: "" },
+                    { name: "120-04 Voyant de pression d'huile", installed: 1, required: 1, notes: "" },
+                    { name: "120-05 Indicateur de pression carburant", installed: 1, required: 1, notes: "" },
+                    { name: "120-06 Voyant de pression essence", installed: 1, required: 1, notes: "" }
+                  ]) %>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%# --- Modal pour l'avion NOGO --- %>
+<div class="modal fade" id="nogoModal" tabindex="-1" aria-labelledby="nogoModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-marron text-white">
+        <h5 class="modal-title" id="nogoModalLabel">Procédure Avion "No-Go"</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Si un équipement est défectueux et rend l'avion "No-Go" (inapte au vol) selon la MEL, voici la procédure à suivre :</p>
+        <ol>
+          <li><strong>Consultez un instructeur :</strong> Ne prenez aucune décision seul. Contactez immédiatement un instructeur de l'aéroclub pour évaluer la situation.</li>
+          <li><strong>Inscrivez la panne :</strong> Sur les conseils de l'instructeur, inscrivez clairement la panne sur le carnet de route de l'avion. Soyez précis dans la description du problème.</li>
+          <li><strong>Suivez les instructions :</strong> L'instructeur vous indiquera si une action de maintenance est nécessaire et si l'avion doit être consigné au sol.</li>
+          <li><strong>Ne volez pas :</strong> Ne tentez en aucun cas de voler avec un avion déclaré "No-Go" avant que la maintenance nécessaire ait été effectuée et que l'avion soit officiellement déclaré apte au vol.</li>
+        </ol>
+        <p class="mt-3"><strong>La sécurité est toujours la priorité absolue.</strong></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+      </div>
+    </div>
+  </div>
+</div>
