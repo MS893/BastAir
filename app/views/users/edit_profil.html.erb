@@ -25,13 +25,18 @@
       </div>
 
       <div class="mb-3">
+        <%= f.label :contact_urgence, "Contact d'urgence", class: "form-label" %><br />
+        <%= f.text_field :contact_urgence, class: "form-control" %>
+      </div>
+
+      <div class="mb-3">
         <%= f.label :avatar, "Photo de profil", class: "form-label" %><br />
         <%= f.file_field :avatar, class: "form-control" %>
       </div>
 
       <div class="d-flex justify-content-between align-items-center">
-        <%= f.submit "Mettre à jour", class: "btn btn-primary" %>
-        <%= link_to "Retour au profil", user_path(current_user), class: "btn btn-secondary" %>
+        <%= f.submit "Mettre à jour", class: "btn btn-primary mt-4" %>
+        <%= link_to "Retour au profil", user_path(current_user), class: "btn btn-secondary mt-4" %>
       </div>
     <% end %>
     

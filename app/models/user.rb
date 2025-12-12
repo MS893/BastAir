@@ -54,6 +54,7 @@ class User < ApplicationRecord
   validates :licence_type, presence: true, inclusion: { in: ALLOWED_LIC.values }
   validates :num_licence, format: { with: /\A\d{8}\z/, message: "doit être composé de 8 chiffres" }, allow_blank: true
   validates :telephone, presence: true, format: { with: /\A(?:(?:\+|00)33[\s.-]{0,3}(?:\(0\)[\s.-]{0,3})?|0)[1-9](?:(?:[\s.-]?\d{2}){4}|\d{8})\z/, message: "n'est pas un format de téléphone valide" }, allow_blank: true
+  validates :contact_urgence, format: { with: /\A(?:(?:\+|00)33[\s.-]{0,3}(?:\(0\)[\s.-]{0,3})?|0)[1-9](?:(?:[\s.-]?\d{2}){4}|\d{8})\z/, message: "n'est pas un format de téléphone valide" }, allow_blank: true
   validates :num_ffa, presence: true, format: { with: /\A\d{7}\z/, message: "doit être composé de 7 chiffres" }, allow_blank: true
   validates :type_medical, presence: true, inclusion: { in: ALLOWED_MED.values }, allow_blank: true
 

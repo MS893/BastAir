@@ -23,10 +23,14 @@
       <p><strong>Fonction :</strong> <%= @user.fonction.capitalize %></p>
       <p><strong>Téléphone :</strong> <%= @user.telephone %></p>
       <p><strong>Adresse :</strong> <%= @user.adresse %></p>
-      <p><strong>Solde du compte :</strong> <%= number_to_currency(@user.solde, unit: "€", separator: ",", delimiter: " ", format: "%n %u") %></p>
-      
+      <% if @user.contact_urgence.present? %>
+        <p><strong>Contact d'urgence :</strong> <%= @user.contact_urgence %></p>
+      <% end %>
+      <hr>
+      <h4><strong>Solde du compte :</strong> <%= number_to_currency(@user.solde, unit: "€", separator: ",", delimiter: " ", format: "%n %u") %></h4>
+
       <%# --- BOUTONS D'ACTION --- %>
-      <div class="mt-4">
+      <div class="mt-5">
         <% if current_user == @user %>
           <%= link_to "Modifier mon profil", edit_profil_user_path, class: "btn btn-primary" %>
         <% end %>

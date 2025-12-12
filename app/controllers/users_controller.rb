@@ -84,7 +84,7 @@ class UsersController < ApplicationController
 
   # Nouveaux "strong parameters" pour la mise à jour du profil
   def profile_params
-    params.require(:user).permit(:email, :telephone, :adresse, :avatar)
+    params.require(:user).permit(:email, :telephone, :adresse, :contact_urgence, :avatar)
   end
   
 end
