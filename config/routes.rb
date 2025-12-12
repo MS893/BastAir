@@ -5,9 +5,9 @@ Rails.application.routes.draw do
   # --- Routes pour les utilisateurs et l'authentification ---
   resources :users, only: [:index, :show, :edit, :update], constraints: { id: /\d+/ } do
     collection do
-      get :search # Ajoute la route GET /users/search
+      get :search # /users/search
     end
-    get 'vols', on: :member # Ajoute la route GET /users/:id/vols
+    get 'vols', on: :member # /users/:id/vols
     resources :avatars, only: [:create]
   end
 
