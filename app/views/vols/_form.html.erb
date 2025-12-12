@@ -52,12 +52,23 @@
         <h5 class="mb-4">Horaires et Compteurs</h5>
         <div class="row">
           <div class="col-md-6 mb-3">
-            <%= form.label :debut_vol, "Début du vol" %>
-            <%= form.datetime_local_field :debut_vol, class: "form-control", id: 'vol_debut_vol' %>
+            <%= form.label :debut_vol_date, "Début du vol" %>
+            <div class="d-flex gap-2">
+              <%= form.date_field :debut_vol_date, value: @vol.debut_vol&.to_date || Date.current, class: "form-control", id: 'vol_debut_vol_date' %>
+              <%= select_hour @vol.debut_vol, { start_hour: 6, end_hour: 22 }, { name: 'vol[debut_vol_hour]', class: 'form-select', id: 'vol_debut_vol_hour' } %>
+              <span class="d-flex align-items-center">H</span>
+              <%= select_minute @vol.debut_vol, { minute_step: 5 }, { name: 'vol[debut_vol_minute]', class: 'form-select', id: 'vol_debut_vol_minute' } %>
+            </div>
           </div>
           <div class="col-md-6 mb-3">
-            <%= form.label :fin_vol, "Fin du vol" %>
-            <%= form.datetime_local_field :fin_vol, class: "form-control", readonly: true, id: 'vol_fin_vol' %>
+            <%= form.label :fin_vol_date, "Fin du vol (calculé avec date de début et compteur arrivée)" %>
+            <div class="d-flex gap-2 align-items-center">
+              <%# Ces champs sont désactivés car leur valeur est calculée par JavaScript %>
+              <%= date_field_tag 'vol[fin_vol_date]', @vol.fin_vol&.to_date, class: "form-control", readonly: true, id: 'vol_fin_vol_date' %>
+              <%= text_field_tag 'vol[fin_vol_hour]', @vol.fin_vol&.hour, class: 'form-control', readonly: true, id: 'vol_fin_vol_hour' %>
+              <span>H</span>
+              <%= text_field_tag 'vol[fin_vol_minute]', @vol.fin_vol&.minute, class: 'form-control', readonly: true, id: 'vol_fin_vol_minute' %>
+            </div>
           </div>
         </div>
 

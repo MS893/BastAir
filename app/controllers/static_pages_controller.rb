@@ -13,6 +13,19 @@ class StaticPagesController < ApplicationController
 
     # On récupère les 5 dernières transactions de l'utilisateur connecté pour le dashboard
     if user_signed_in?
+      # On vérifie si le contact d'urgence est invalide pour afficher une alerte
+      # On ne lance la validation que si le champ n'est pas vide.
+      if current_user.contact_urgence.present? && !current_user.valid?(:update_profil)
+        flash.now[:warning] = "Votre numéro de contact d'urgence semble invalide. #{view_context.link_to('Veuillez le corriger ici', edit_profil_user_path(current_user))}".html_safe
+      end
+
+      # On vérifie les validités qui expirent bientôt
+      validity_warnings = current_user.validity_warnings
+      if validity_warnings.any?
+        # On combine les avertissements en un seul message flash.
+        flash.now[:info] = validity_warnings.join('<br>').html_safe
+      end
+
       @transactions = current_user.transactions.order(date_transaction: :desc).limit(5)
 
       # On charge les 3 prochaines réservations de l'utilisateur

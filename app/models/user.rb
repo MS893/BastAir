@@ -54,7 +54,8 @@ class User < ApplicationRecord
   validates :licence_type, presence: true, inclusion: { in: ALLOWED_LIC.values }
   validates :num_licence, format: { with: /\A\d{8}\z/, message: "doit être composé de 8 chiffres" }, allow_blank: true
   validates :telephone, presence: true, format: { with: /\A(?:(?:\+|00)33[\s.-]{0,3}(?:\(0\)[\s.-]{0,3})?|0)[1-9](?:(?:[\s.-]?\d{2}){4}|\d{8})\z/, message: "n'est pas un format de téléphone valide" }, allow_blank: true
-  validates :contact_urgence, format: { with: /\A(?:(?:\+|00)33[\s.-]{0,3}(?:\(0\)[\s.-]{0,3})?|0)[1-9](?:(?:[\s.-]?\d{2}){4}|\d{8})\z/, message: "n'est pas un format de téléphone valide" }, allow_blank: true
+  # Validation personnalisée pour le contact d'urgence, qui peut contenir un nom.
+  validate :validate_contact_urgence_phone_format, on: :update_profil, if: -> { contact_urgence.present? }
   validates :num_ffa, presence: true, format: { with: /\A\d{7}\z/, message: "doit être composé de 7 chiffres" }, allow_blank: true
   validates :type_medical, presence: true, inclusion: { in: ALLOWED_MED.values }, allow_blank: true
 
@@ -118,9 +119,9 @@ class User < ApplicationRecord
     return if amount.to_d <= 0
 
     # Utilise une transaction pour garantir l'intégrité des données
-    # Si une des opérations échoue, tout est annulé (le solde et la transaction comptable).
+    # Si une des opérations échoue, tout est annulé (le solde et la transaction comptable)
     ApplicationRecord.transaction do
-      # Crée l'enregistrement comptable. Le callback du modèle Transaction se chargera de la mise à jour du solde.
+      # Crée l'enregistrement comptable. Le callback du modèle Transaction se chargera de la mise à jour du solde
       Transaction.create!(
         user: self,
         date_transaction: Date.today,
@@ -134,8 +135,38 @@ class User < ApplicationRecord
     end
   end
 
+  # Retourne un tableau de messages d'avertissement pour les validités expirant bientôt (- d'1 mois)
+  def validity_warnings
+    warnings = []
+    one_month_from_now = Date.today + 1.month
+
+    # Vérifie la date de licence
+    if date_licence.present? && date_licence.between?(Date.today, one_month_from_now)
+      warnings << "Attention, votre licence expire le #{I18n.l(date_licence, format: :long)}."
+    end
+
+    # Vérifie la visite médicale
+    if medical.present? && medical.between?(Date.today, one_month_from_now)
+      warnings << "Attention, votre visite médicale expire le #{I18n.l(medical, format: :long)}."
+    end
+
+    warnings
+  end
   
   private
+
+  def validate_contact_urgence_phone_format
+    # Regex pour un numéro de téléphone français, autorisant les espaces.
+    phone_regex = /(?:(?:\+|00)33[\s.-]{0,3}(?:\(0\)[\s.-]{0,3})?|0)[1-9](?:(?:[\s.-]?\d{2}){4}|\d{8})/
+    
+    # On extrait la partie qui ressemble à un numéro de téléphone.
+    phone_part = contact_urgence.match(phone_regex)
+
+    # Si aucune partie ne correspond au format d'un numéro, on ajoute une erreur.
+    unless phone_part
+      errors.add(:contact_urgence, "ne contient pas un format de téléphone valide")
+    end
+  end
 
   def check_for_negative_balance
     # solde_before_last_save est fourni par ActiveModel::Dirty

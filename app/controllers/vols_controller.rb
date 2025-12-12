@@ -3,6 +3,7 @@ class VolsController < ApplicationController
   before_action :set_pilots, only: [:index] # S'exécute en premier pour initialiser @pilots
   before_action :set_avions, only: [:index] # Doit s'exécuter avant set_page_title_and_vols
   before_action :set_page_title_and_vols, only: [:index]
+  before_action :combine_date_and_time, only: [:create]
   
   def index
     respond_to do |format|
@@ -69,7 +70,21 @@ class VolsController < ApplicationController
   end
 
   def vol_params
-    params.require(:vol).permit(:avion_id, :type_vol, :depart, :arrivee, :nb_atterro, :debut_vol, :fin_vol, :compteur_depart, :compteur_arrivee, :duree_vol, :fuel_avant_vol, :fuel_apres_vol, :huile, :nature, :instructeur_id, :solo, :supervise, :nav)
+    params.require(:vol).permit(:avion_id, :type_vol, :depart, :arrivee, :nb_atterro, :debut_vol, :fin_vol, :compteur_depart, :compteur_arrivee, :duree_vol, :fuel_avant_vol, :fuel_apres_vol, :huile, :nature, :instructeur_id, :solo, :supervise, :nav, :debut_vol_date, :debut_vol_hour, :debut_vol_minute)
+  end
+
+  def combine_date_and_time
+    # Combine la date et l'heure pour le début du vol
+    if params[:vol][:debut_vol_date].present? && params[:vol][:debut_vol_hour].present? && params[:vol][:debut_vol_minute].present?
+      date = Date.parse(params[:vol][:debut_vol_date])
+      hour = params[:vol][:debut_vol_hour].to_i
+      minute = params[:vol][:debut_vol_minute].to_i
+      
+      # On reconstruit le paramètre debut_vol avec la date et l'heure
+      # avant qu'il ne soit utilisé par vol_params
+      params[:vol][:debut_vol] = Time.zone.local(date.year, date.month, date.day, hour, minute)
+    end
+    # La fin du vol est calculée automatiquement, donc pas besoin de la combiner ici.
   end
 
   def set_page_title_and_vols

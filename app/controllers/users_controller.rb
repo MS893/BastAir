@@ -34,6 +34,19 @@ class UsersController < ApplicationController
     # Si la requête vient d'un Turbo Frame, on ne rend que le partiel des détails.
     # Sinon, on rend la page de profil complète (comportement par défaut).
     if turbo_frame_request? && turbo_frame_request_id == 'user_details'
+      # On vérifie si le contact d'urgence est invalide pour afficher une alerte.
+      # L'alerte ne s'affiche que si l'utilisateur consulte son propre profil.
+      if @user == current_user && @user.contact_urgence.present? && !@user.valid?(:update_profil)
+        flash.now[:warning] = "Votre numéro de contact d'urgence semble invalide. #{view_context.link_to('Veuillez le corriger ici', edit_profil_user_path(@user))}".html_safe
+      end
+
+      # On vérifie les validités qui expirent bientôt
+      validity_warnings = @user.validity_warnings
+      if @user == current_user && validity_warnings.any?
+        # On combine les avertissements en un seul message flash.
+        flash.now[:info] = validity_warnings.join('<br>').html_safe
+      end
+
       render partial: 'user_details', locals: { user: @user }
     end
     # Si ce n'est pas une requête Turbo Frame, Rails rendra implicitement `show.html.erb`.

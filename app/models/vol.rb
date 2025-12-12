@@ -1,8 +1,17 @@
 require 'csv'
 
 class Vol < ApplicationRecord
+
+  # Attributs pour le formulaire de saisie de la date et de l'heure pour les accepter sans essayer de les sauvegarder dans la table
+  attr_accessor :debut_vol_date, :debut_vol_hour, :debut_vol_minute
+
+  
+  # == Associations ===========================================================
   belongs_to :user
   belongs_to :avion
+  # == Callbacks ==============================================================
+  before_save :calculate_fin_vol, if: -> { debut_vol.present? && duree_vol.present? }
+
   # Validation personnalisée pour les compteurs
   validate :compteur_arrivee_superieur_au_depart
 
@@ -31,6 +40,12 @@ class Vol < ApplicationRecord
 
   
   private
+
+  # Calcule automatiquement l'heure de fin du vol avant la sauvegarde.
+  def calculate_fin_vol
+    duree_en_minutes = (duree_vol * 60).round
+    self.fin_vol = debut_vol + duree_en_minutes.minutes
+  end
 
   def compteur_arrivee_superieur_au_depart
     # On ne lance la validation que si les deux champs sont présents

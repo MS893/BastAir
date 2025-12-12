@@ -9,6 +9,24 @@
   </div>
 </div>
 
+<%# --- DATALISTS POUR LES AÉRODROMES --- %>
+<%# Ces listes fournissent des suggestions pour les champs de départ et d'arrivée. %>
+<%# L'utilisateur peut toujours entrer une valeur qui n'est pas dans la liste. %>
+<datalist id="aerodromes-list">
+  <option value="TFFB">Basse Terre - Baillif</option>
+  <option value="TFFS">Les Saintes</option>
+  <option value="TFFM">Marie Galante</option>
+  <option value="TFFA">La désirade</option>
+  <option value="TFFC">Saint François</option>
+  <option value="TFFR">Pointe à Pitre - Maryse Condé</option>
+  <option value="TFFF">Martinique - Aimé Césaire</option>
+  <option value="TFFJ">Saint Bathélémy</option>
+  <option value="TFFG">Saint Martin</option>
+  <option value="TDCF">Dominique - Canefield</option>
+  <option value="TDPD">Dominique - Douglas Charles</option>
+  <option value="TAPA">Antigua</option>
+  <option value="TBPB">La Barbade</option>
+</datalist>
 
 <!-- MODALES ET TOASTS -->
 
@@ -79,6 +97,9 @@
   </div>
 </div>
 
+<!-- Zone pour afficher les messages d'erreur du formulaire -->
+<div id="form-error-container" class="container"></div>
+
 
 <%# --- SCRIPTS --- %>
 <script>
@@ -87,10 +108,17 @@
     // --- INITIALISATION DES VARIABLES ---
     const volForm = document.getElementById('vol-form');
     if (!volForm) return; // S'arrête si le formulaire n'est pas sur la page
+    const errorContainer = document.getElementById('form-error-container');
 
     const avionSelect = document.getElementById('vol_avion_id');
-    const debutVolInput = document.getElementById('vol_debut_vol');
-    const finVolInput = document.getElementById('vol_fin_vol');
+    // champs pour la date et l'heure de début
+    const debutVolDateInput = document.getElementById('vol_debut_vol_date');
+    const debutVolHourInput = document.getElementById('vol_debut_vol_hour');
+    const debutVolMinuteInput = document.getElementById('vol_debut_vol_minute');
+    // champs pour la date et l'heure de fin
+    const finVolDateInput = document.getElementById('vol_fin_vol_date');
+    const finVolHourInput = document.getElementById('vol_fin_vol_hour');
+    const finVolMinuteInput = document.getElementById('vol_fin_vol_minute');
     const compteurDepartInput = document.getElementById('vol_compteur_depart');
     const compteurArriveeInput = document.getElementById('vol_compteur_arrivee');
     const dureeVolCentiemesInput = document.getElementById('vol_duree_vol');
@@ -101,12 +129,14 @@
     const signalementButton = document.getElementById('report-signalement-btn');
     const formFieldset = document.getElementById('vol-form-fieldset');
 
+    const departInput = document.getElementById('vol_depart');
+    const arriveeInput = document.getElementById('vol_arrivee');
     const requiredFields = [
       avionSelect,
       document.getElementById('vol_type_vol'),
       document.getElementById('vol_depart'),
       document.getElementById('vol_arrivee'),
-      debutVolInput,
+      document.getElementById('vol_debut_vol_date'),
       compteurDepartInput,
       compteurArriveeInput,
       document.getElementById('vol_fuel_avant_vol'),
@@ -142,34 +172,56 @@
       toastInstance.show();
     }
 
+    // Fonction pour afficher une alerte de type "flash"
+    function showFlashAlert(message) {
+      // Vide les erreurs précédentes
+      errorContainer.innerHTML = '';
+      const alertDiv = document.createElement('div');
+      alertDiv.className = 'alert alert-danger d-flex align-items-center justify-content-center';
+      alertDiv.setAttribute('role', 'alert');
+      alertDiv.innerHTML = `<i class="bi bi-exclamation-triangle-fill me-2"></i><div>${message}</div>`;
+      errorContainer.appendChild(alertDiv);
+    }
+
     // --- FONCTIONS DE CALCUL ET VALIDATION ---
 
     function calculateDurationsAndEndTime() {
       const departValue = parseFloat(compteurDepartInput.value);
       const arriveeValue = parseFloat(compteurArriveeInput.value);
-      const debutVolValue = debutVolInput.value;
+      const debutDateValue = debutVolDateInput.value;
+      const debutHourValue = debutVolHourInput.value;
+      const debutMinuteValue = debutVolMinuteInput.value;
       let dureeCentiemes = 0;
 
       if (!isNaN(departValue) && !isNaN(arriveeValue) && arriveeValue > departValue) {
         dureeCentiemes = arriveeValue - departValue;
         dureeVolCentiemesInput.value = dureeCentiemes.toFixed(2);
-        dureeVolMnInput.value = Math.round(dureeCentiemes * 60);
+        const dureeMinutes = Math.round(dureeCentiemes * 60);
+        dureeVolMnInput.value = dureeMinutes;
 
-        if (debutVolValue) {
-          const dureeMinutes = Math.round(dureeCentiemes * 60);
-          const debutDate = new Date(debutVolValue);
+        if (debutDateValue && debutHourValue && debutMinuteValue) {
+          // On reconstruit la date de début complète
+          const debutDate = new Date(`${debutDateValue}T${debutHourValue.padStart(2, '0')}:${debutMinuteValue.padStart(2, '0')}:00`);
+          
+          // On ajoute la durée du vol pour calculer la date de fin
           debutDate.setMinutes(debutDate.getMinutes() + dureeMinutes);
 
+          // On met à jour les champs de fin de vol
           const year = debutDate.getFullYear();
           const month = (debutDate.getMonth() + 1).toString().padStart(2, '0');
           const day = debutDate.getDate().toString().padStart(2, '0');
           const hours = debutDate.getHours().toString().padStart(2, '0');
           const minutes = debutDate.getMinutes().toString().padStart(2, '0');
-          finVolInput.value = `${year}-${month}-${day}T${hours}:${minutes}`;
+          
+          finVolDateInput.value = `${year}-${month}-${day}`;
+          finVolHourInput.value = hours;
+          finVolMinuteInput.value = minutes;
         }
       } else {
         dureeVolCentiemesInput.value = '';
-        finVolInput.value = '';
+        finVolDateInput.value = '';
+        finVolHourInput.value = '';
+        finVolMinuteInput.value = '';
       }
       calculateFlightCost(dureeCentiemes);
     }
@@ -233,6 +285,20 @@
 
     submissionButton.addEventListener('click', function(event) {
       event.preventDefault();
+
+      // On nettoie les anciens messages d'erreur
+      errorContainer.innerHTML = '';
+
+      // Validation de la longueur des codes OACI avant de montrer la modale
+      if (departInput.value.length !== 4) {
+        showFlashAlert("Le code OACI de départ doit comporter exactement 4 caractères.");
+        return; // Bloque l'ouverture de la modale
+      }
+      if (arriveeInput.value.length !== 4) {
+        showFlashAlert("Le code OACI d'arrivée doit comporter exactement 4 caractères.");
+        return; // Bloque l'ouverture de la modale
+      }
+      
       modal.show();
     });
 
@@ -242,8 +308,14 @@
 
     // --- ATTACHEMENT DES ECOUTEURS D'EVENEMENTS ---
 
+    // Associe les datalists aux champs de saisie
+    if (departInput) {
+      departInput.setAttribute('list', 'aerodromes-list');
+      arriveeInput.setAttribute('list', 'aerodromes-list');
+    }
+
     // Calculs principaux
-    [debutVolInput, compteurDepartInput, compteurArriveeInput].forEach(input => {
+    [debutVolDateInput, debutVolHourInput, debutVolMinuteInput, compteurDepartInput, compteurArriveeInput].forEach(input => {
       input.addEventListener('input', calculateDurationsAndEndTime);
     });
 
@@ -279,6 +351,50 @@
         updateSignalementButton();
       }
     }
+
+    // --- GESTION DE L'AFFICHAGE DU NOM DES AÉRODROMES ---
+    const aerodromesDatalist = document.getElementById('aerodromes-list');
+    const aerodromeMap = new Map();
+    // On peuple la map avec les codes OACI et les noms complets
+    Array.from(aerodromesDatalist.options).forEach(option => {
+      aerodromeMap.set(option.value, option.textContent);
+    });
+
+    // Crée les éléments pour afficher les noms en clair
+    const departNameDisplay = document.createElement('div');
+    departNameDisplay.className = 'form-text text-muted small mt-1';
+    departNameDisplay.innerHTML = '&nbsp;'; // Réserve la hauteur pour éviter le décalage
+    if (departInput.parentElement) {
+      departInput.parentElement.appendChild(departNameDisplay);
+    }
+
+    const arriveeNameDisplay = document.createElement('div');
+    arriveeNameDisplay.className = 'form-text text-muted small mt-1';
+    arriveeNameDisplay.innerHTML = '&nbsp;'; // Réserve la hauteur pour éviter le décalage
+    if (arriveeInput.parentElement) {
+      arriveeInput.parentElement.appendChild(arriveeNameDisplay);
+    }
+
+    function updateAerodromeName(inputElement, displayElement) {
+      // Limite à 4 caractères et convertit en majuscules
+      let value = inputElement.value.toUpperCase();
+      inputElement.value = value.slice(0, 4);
+      const code = inputElement.value;
+      const fullName = aerodromeMap.get(code);
+      // On utilise innerHTML pour pouvoir insérer un espace insécable
+      displayElement.innerHTML = fullName ? fullName : '&nbsp;';
+    }
+
+    function clearErrorIfFieldsAreValid() {
+      // Si les deux champs ont 4 caractères, on efface le message d'erreur.
+      if (departInput.value.length === 4 && arriveeInput.value.length === 4) {
+        errorContainer.innerHTML = '';
+      }
+    }
+
+    departInput.addEventListener('input', () => { updateAerodromeName(departInput, departNameDisplay); clearErrorIfFieldsAreValid(); });
+    arriveeInput.addEventListener('input', () => { updateAerodromeName(arriveeInput, arriveeNameDisplay); clearErrorIfFieldsAreValid(); });
+
 
     // --- APPELS INITIAUX AU CHARGEMENT DE LA PAGE ---
     selectFirstAvion();

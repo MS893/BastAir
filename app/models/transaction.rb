@@ -100,7 +100,9 @@ class Transaction < ApplicationRecord
     # Utilise une transaction de base de données pour la sécurité.
     # lock! empêche les conditions de concurrence pendant la mise à jour du solde.
     user.with_lock do
-      user.update!(solde: user.solde + amount_to_change)
+      # On utilise update_column pour modifier uniquement le solde sans déclencher
+      # les autres validations du modèle User (ex: format du téléphone).
+      user.update_column(:solde, user.solde + amount_to_change)
     end
   end
 
