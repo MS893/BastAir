@@ -110,7 +110,10 @@
               <li><%= link_to "Modifier mon profil", edit_profil_user_path, class: "dropdown-item" %></li>
               <li><%= link_to "Modifier mon mot de passe", edit_user_registration_path, class: "dropdown-item" %></li>
               <li><hr class="dropdown-divider"></li>
-              <li><%= link_to "Se déconnecter", destroy_user_session_get_path, class: "dropdown-item" %></li>
+              <li>
+                <%# Utilisation de button_to pour la déconnexion, ce qui génère un formulaire avec la méthode DELETE (voir stackoverflow) %>
+                <%= button_to "Se déconnecter", destroy_user_session_path, method: :delete, class: "dropdown-item", form_class: "d-inline" %>
+              </li>
             </ul>
           </li>
         <% else %>
