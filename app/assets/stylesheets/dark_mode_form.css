@@ -1,0 +1,18 @@
+/* app/assets/stylesheets/dark_mode_form.css */
+
+/*
+Ce fichier contient des styles pour améliorer la lisibilité des formulaires (new user). Il est chargé spécifiquement sur la page de création/édition d'un utilisateur.
+*/
+
+/* Styles pour le mode sombre (dark mode) */
+@media (prefers-color-scheme: dark) {
+  .dark-mode-form .form-control.bg-light,
+    .dark-mode-form .form-select.bg-light {
+      background-color: #343a40 !important;
+      /* Un gris plus foncé, standard de Bootstrap dark */
+      color: #fff !important;
+      /* Texte en blanc */
+      border-color: #6c757d !important;
+      /* Bordure plus claire */
+  }
+}

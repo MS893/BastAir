@@ -31,15 +31,15 @@
           </div>
           <div class="col-md-2 mb-3">
             <%= form.label :type_vol, "Type"%>
-            <%= form.select :type_vol, ["Standard", "Vol découverte", "Vol d'initiation", "Vol d'essai", "Convoyage", "Vol BIA"], {}, { class: "form-select" } %>
+            <%= form.select :type_vol, ["Standard", "Vol découverte", "Vol d'initiation", "Vol d'essai", "Convoyage", "Vol BIA"], {}, { class: "form-select", id: 'vol_type_vol' } %>
           </div>
           <div class="col-md-3 mb-3">
             <%= form.label :depart, "Aérodrome départ" %>
-            <%= form.text_field :depart, class: "form-control" %>
+            <%= form.text_field :depart, class: "form-control", id: 'vol_depart' %>
           </div>
           <div class="col-md-3 mb-3">
             <%= form.label :arrivee, "Aérodrome arrivée" %>
-            <%= form.text_field :arrivee, class: "form-control" %>
+            <%= form.text_field :arrivee, class: "form-control", id: 'vol_arrivee' %>
           </div>
           <div class="col-md-2 mb-3">
             <%= form.label :nb_atterro, "Atterrissages" %>
@@ -61,7 +61,7 @@
             </div>
           </div>
           <div class="col-md-6 mb-3">
-            <%= form.label :fin_vol_date, "Fin du vol (calculé avec date de début et compteur arrivée)" %>
+            <%= form.label :fin_vol_date, "Fin du vol (calculé à partir du temps de vol)" %>
             <div class="d-flex gap-2 align-items-center">
               <%# Ces champs sont désactivés car leur valeur est calculée par JavaScript %>
               <%= date_field_tag 'vol[fin_vol_date]', @vol.fin_vol&.to_date, class: "form-control", readonly: true, id: 'vol_fin_vol_date' %>
@@ -105,7 +105,7 @@
           </div>
           <div class="col-md-3 mb-3">
             <%= form.label :huile, "Niveau d'huile (L)" %>
-            <%= form.number_field :huile, class: "form-control", step: '0.1' %>
+            <%= form.number_field :huile, class: "form-control", step: '0.1', id: 'vol_huile' %>
           </div>
           <div class="col-md-3 mb-3">
             <%= form.label :nature, "Nature du vol" %>

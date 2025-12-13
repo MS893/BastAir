@@ -16,6 +16,7 @@ fr:
       timeout: "Votre session a expiré. Veuillez vous reconnecter pour continuer."
       unauthenticated: "Vous devez vous connecter ou vous inscrire avant de continuer."
       unconfirmed: "Vous devez confirmer votre adresse e-mail avant de continuer."
+      bia_account_cant_login: "Les comptes de type BIA ne sont pas autorisés à se connecter."
     mailer:
       confirmation_instructions:
         subject: "Instructions de confirmation"

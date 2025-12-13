@@ -8,7 +8,8 @@ namespace :users do
     thirty_days_from_now = Date.today + 30.days
 
     # --- Licences ---
-    expiring_licenses = User.where(date_licence: Date.today..thirty_days_from_now)
+    # On exclut les comptes BIA des notifications
+    expiring_licenses = User.where.not(prenom: 'bia').where(date_licence: Date.today..thirty_days_from_now)
     if expiring_licenses.any?
       puts "Envoi de notifications pour #{expiring_licenses.count} licence(s) expirant bientôt..."
       expiring_licenses.each do |user|
@@ -18,7 +19,8 @@ namespace :users do
     end
 
     # --- Visites Médicales ---
-    expiring_medicals = User.where(medical: Date.today..thirty_days_from_now)
+    # On exclut les comptes BIA des notifications
+    expiring_medicals = User.where.not(prenom: 'bia').where(medical: Date.today..thirty_days_from_now)
     if expiring_medicals.any?
       puts "Envoi de notifications pour #{expiring_medicals.count} visite(s) médicale(s) expirant bientôt..."
       expiring_medicals.each do |user|

@@ -10,7 +10,7 @@ namespace :instructors do
     end_date = Date.today + 30.days
 
     # Trouver tous les utilisateurs dont la date 'fi' est dans cet intervalle
-    expiring_instructors = User.where(fi: start_date..end_date)
+    expiring_instructors = User.where.not(prenom: 'bia').where(fi: start_date..end_date)
 
     if expiring_instructors.empty?
       puts "Aucune qualification d'instructeur n'expire dans les 30 prochains jours."

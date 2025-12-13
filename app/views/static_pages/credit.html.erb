@@ -38,7 +38,7 @@
           <p class="card-text display-6 mt-auto"><%= number_to_currency(@prix_bloc_6h, unit: "€", separator: ",", delimiter: " ", format: "%n %u") %></p>
           <%= form_with url: checkout_path, method: :post, data: { turbo: false } do |form| %>
             <%= form.hidden_field :amount, value: @prix_bloc_6h %>
-            <%= form.hidden_field :description, value: "Achat d'un bloc de 6h de vol pour mon compte BastAir" %>
+            <%= form.hidden_field :description, value: "Achat d'un bloc de 6h de vol pour mon compte BastAir (2€ ont été ajoutés pour les frais de transaction Stripe)" %>
             <%= form.submit "Acheter le bloc", class: "btn btn-success w-100" %>
           <% end %>
         </div>
@@ -57,7 +57,7 @@
           <p class="card-text display-6 mt-auto"><%= number_to_currency(@prix_bloc_10h, unit: "€", separator: ",", delimiter: " ", format: "%n %u") %></p>
           <%= form_with url: checkout_path, method: :post, data: { turbo: false } do |form| %>
             <%= form.hidden_field :amount, value: @prix_bloc_10h %>
-            <%= form.hidden_field :description, value: "Achat d'un bloc de 10h de vol pour mon compte BastAir" %>
+            <%= form.hidden_field :description, value: "Achat d'un bloc de 10h de vol pour mon compte BastAir (2€ ont été ajoutés pour les frais de transaction Stripe)" %>
             <%= form.submit "Acheter le bloc", class: "btn btn-success w-100" %>
           <% end %>
         </div>

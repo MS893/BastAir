@@ -49,19 +49,28 @@ class User < ApplicationRecord
   validates :email,
     presence: true,
     uniqueness: true,
-    format: { with: /\A[^@\s]+@([^@\s]+\.)+[^@\s]+\z/, message: "email address please" }
-  validates :fonction, presence: true, inclusion: { in: ALLOWED_FCT.values }
-  validates :licence_type, presence: true, inclusion: { in: ALLOWED_LIC.values }
+    format: { with: /\A[^@\s]+@([^@\s]+\.)+[^@\s]+\z/, message: "email address please" },
+    unless: :is_bia?
+  validates :fonction, presence: true, inclusion: { in: ALLOWED_FCT.values }, unless: :is_bia?
+  validates :licence_type, presence: true, inclusion: { in: ALLOWED_LIC.values }, unless: :is_bia?
   validates :num_licence, format: { with: /\A\d{8}\z/, message: "doit être composé de 8 chiffres" }, allow_blank: true
   validates :telephone, presence: true, format: { with: /\A(?:(?:\+|00)33[\s.-]{0,3}(?:\(0\)[\s.-]{0,3})?|0)[1-9](?:(?:[\s.-]?\d{2}){4}|\d{8})\z/, message: "n'est pas un format de téléphone valide" }, allow_blank: true
   # Validation personnalisée pour le contact d'urgence, qui peut contenir un nom.
   validate :validate_contact_urgence_phone_format, on: :update_profil, if: -> { contact_urgence.present? }
-  validates :num_ffa, presence: true, format: { with: /\A\d{7}\z/, message: "doit être composé de 7 chiffres" }, allow_blank: true
-  validates :type_medical, presence: true, inclusion: { in: ALLOWED_MED.values }, allow_blank: true
-
+  validates :num_ffa, presence: true, format: { with: /\A\d{7}\z/, message: "doit être composé de 7 chiffres" }, allow_blank: true, unless: :is_bia?
+  validates :type_medical, presence: true, inclusion: { in: ALLOWED_MED.values }, allow_blank: true, unless: :is_bia?
+  validates :date_naissance, presence: true, unless: :is_bia?
+  validates :lieu_naissance, presence: true, unless: :is_bia?
+  validates :profession, presence: true, unless: :is_bia?
+  validates :date_licence, presence: true, unless: :is_bia?
+  validates :medical, presence: true, unless: :is_bia?
+  validates :controle, presence: true, unless: :is_bia?
+  validates :cotisation_club, presence: true, unless: :is_bia?
+  
   # == Actions ===============================================================
-  after_create :welcome_send
-  after_update :check_for_negative_balance, if: :saved_change_to_solde?
+  before_validation :set_bia_defaults, if: :is_bia?
+  after_create :welcome_send, unless: :is_bia?
+  after_update :check_for_negative_balance, if: -> { saved_change_to_solde? && !is_bia? }
 
   # Turbo Streams pour la mise à jour du solde en temps réel
   # On s'assure que le solde est toujours un Decimal, avec 0.0 par défaut.
@@ -113,6 +122,21 @@ class User < ApplicationRecord
     fi.present? && fi >= Date.today
   end
 
+  # Un utilisateur est un collège ou lycée BIA si son prénom est "bia".
+  def is_bia?
+    prenom.to_s.downcase == 'bia'
+  end
+  
+  # Devise override: Empêche les comptes BIA de se connecter.
+  def active_for_authentication?
+    super && !is_bia?
+  end
+
+  # Devise override: Message d'erreur personnalisé pour les comptes BIA.
+  def inactive_message
+    is_bia? ? :bia_account_cant_login : super
+  end
+
   # Méthode pour créditer le compte de l'utilisateur de manière sécurisée
   def credit_account(amount)
     # S'assure que le montant est un nombre valide et positif
@@ -153,6 +177,8 @@ class User < ApplicationRecord
     warnings
   end
   
+
+
   private
 
   def validate_contact_urgence_phone_format
@@ -177,6 +203,31 @@ class User < ApplicationRecord
     end
   end
 
+  def set_bia_defaults
+    self.date_naissance ||= Date.new(1900, 1, 1)
+    self.lieu_naissance ||= "N/A"
+    self.profession ||= "N/A"
+    self.fonction ||= "eleve" # Ou une autre valeur par défaut qui existe
+    self.autorise = true
+    self.licence_type ||= "LAPL" # Valeur par défaut pour passer la validation si besoin
+    self.num_licence ||= nil
+    self.num_ffa ||= nil
+    self.date_licence ||= Date.new(1900, 1, 1)
+    self.type_medical ||= "LAPL" # Valeur par défaut
+    self.medical ||= Date.new(1900, 1, 1)
+    self.controle ||= Date.new(1900, 1, 1)
+    self.password ||= Devise.friendly_token.first(8) if new_record?
+    self.cotisation_club ||= Date.new(1900, 1, 1)
+    self.cotisation_ffa ||= Date.new(1900, 1, 1)
+    self.admin = false
+  end
+
+  # Devise override: Ne pas exiger de mot de passe pour les comptes BIA
+  # car ils ne peuvent pas se connecter et le champ est masqué dans le formulaire.
+  def password_required?
+    return false if is_bia?
+    super
+  end
 
 
 

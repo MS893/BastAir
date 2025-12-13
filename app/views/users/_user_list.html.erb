@@ -16,20 +16,24 @@
               <span class="badge bg-success ms-2">Instructeur</span>
             <% end %>
           </div>
-          <%
-            # On définit la couleur du badge en fonction du rôle de l'utilisateur
-            badge_class = case user.fonction
-                          when 'president'
-                            'bg-danger'   # Rouge pour le Président
-                          when 'eleve'
-                            'bg-primary'  # Bleu pour les Élèves
-                          when 'tresorier'
-                            'bg-warning'  # Jaune pour le Trésorier
-                          else
-                            'bg-secondary'# Gris pour les autres (Brevete, etc.)
-                          end
-          %>
-          <span class="badge <%= badge_class %> rounded-pill"><%= user.fonction.capitalize %></span>
+          <% if user.is_bia? %>
+            <span class="badge bg-info text-dark rounded-pill">BIA</span>
+          <% else %>
+            <%
+              # On définit la couleur du badge en fonction du rôle de l'utilisateur
+              badge_class = case user.fonction
+                            when 'president'
+                              'bg-danger'   # Rouge pour le Président
+                            when 'eleve'
+                              'bg-primary'  # Bleu pour les Élèves
+                            when 'tresorier'
+                              'bg-warning'  # Jaune pour le Trésorier
+                            else
+                              'bg-secondary'# Gris pour les autres (Brevete, etc.)
+                            end
+            %>
+            <span class="badge <%= badge_class %> rounded-pill"><%= user.fonction.capitalize %></span>
+          <% end %>
         <% end %>
       <% end %>
     <% end %>

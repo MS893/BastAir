@@ -1,16 +1,22 @@
-<% content_for :title, "Accueil pilote #{@user.prenom} #{@user.nom}" %>
+<% is_bia = @user.prenom.to_s.downcase == 'bia' %>
+<% title = is_bia ? "Compte BIA : #{@user.nom}" : "Accueil pilote #{@user.prenom} #{@user.nom}" %>
+<% content_for :title, title %>
 
 <div class="container my-5">
   <div class="row">
     <div class="col-md-4 text-center">
       <% if @user.avatar.attached? %>
         <%= image_tag @user.avatar, class: "img-fluid rounded-circle mb-3", style: "width: 150px; height: 150px; object-fit: cover;" %>
+      <% elsif is_bia %>
+        <div class="avatar-placeholder mb-3" style="width: 150px; height: 150px; background-color: #e9ecef; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;">
+          <i class="bi bi-building" style="font-size: 4rem; color: #adb5bd;"></i>
+        </div>
       <% else %>
         <div class="avatar-placeholder mb-3" style="width: 150px; height: 150px; background-color: #e9ecef; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;">
           <i class="bi bi-person-fill" style="font-size: 4rem; color: #adb5bd;"></i>
         </div>
       <% end %>
-      <h2 class="mb-1"><%= @user.prenom %> <%= @user.nom %></h2>
+      <h2 class="mb-1"><%= is_bia ? @user.nom : "#{@user.prenom} #{@user.nom}" %></h2>
       <p class="text-muted"><%= @user.email %></p>
       <% if @user.admin? %>
         <span class="badge bg-primary">Administrateur</span>
@@ -20,12 +26,16 @@
     <div class="col-md-8">
       <h3>Informations de l'adhérent</h3>
       <hr>
-      <p><strong>Fonction :</strong> <%= @user.fonction.capitalize %></p>
+      <% unless is_bia %>
+        <p><strong>Fonction :</strong> <%= @user.fonction.capitalize %></p>
+      <% end %>
       <p><strong>Téléphone :</strong> <%= @user.telephone %></p>
       <p><strong>Adresse :</strong> <%= @user.adresse %></p>
       <% if @user.contact_urgence.present? %>
         <p><strong>Contact d'urgence :</strong> <%= @user.contact_urgence %></p>
       <% end %>
+      <p><strong>Autorisé à voler :</strong> <%= @user.autorise ? 'Oui' : 'Non' %></p>
+
       <hr>
       <h4><strong>Solde du compte :</strong> <%= number_to_currency(@user.solde, unit: "€", separator: ",", delimiter: " ", format: "%n %u") %></h4>
 
