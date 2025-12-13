@@ -19,7 +19,7 @@
 <div class="container my-5">
 
   <div class="text-center">
-    <h1 class="mb-4">Minimum Equipment List (MEL) ✈️</h1>
+    <h1 class="mb-4">Minimum Equipment List (MEL)</h1>
   </div>
 
   <hr>
@@ -289,6 +289,17 @@
       </div>
     </div>
   </div>
+  
+  <%# Affiche le bouton de retour uniquement si l'utilisateur vient de la page de la check-list %>
+  <% if request.referer && URI(request.referer).path == check_list_path %>
+    <div class="text-center mt-5">
+      <%= link_to check_list_path, class: "btn btn-outline-primary" do %>
+        <i class="bi bi-card-checklist me-2"></i>
+        Retour à la check-list
+      <% end %>
+    </div>
+  <% end %>
+
 </div>
 
 <%# --- Modal pour l'avion NOGO --- %>
@@ -303,8 +314,8 @@
         <p>Si un équipement est défectueux et rend l'avion "No-Go" (inapte au vol) selon la MEL, voici la procédure à suivre :</p>
         <ol>
           <li><strong>Consultez un instructeur :</strong> Ne prenez aucune décision seul. Contactez immédiatement un instructeur de l'aéroclub pour évaluer la situation.</li>
-          <li><strong>Inscrivez la panne :</strong> Sur les conseils de l'instructeur, inscrivez clairement la panne sur le carnet de route de l'avion. Soyez précis dans la description du problème.</li>
-          <li><strong>Suivez les instructions :</strong> L'instructeur vous indiquera si une action de maintenance est nécessaire et si l'avion doit être consigné au sol.</li>
+          <li><strong>Si la panne est confirmée :</strong> Avec l'aide de l'instructeur, inscrivez clairement la panne sur le carnet de route de l'avion (<span id="nogo-item-details" class="fw-bold"></span> HS)</li>
+          <li><strong>Attention :</strong> après avoir rempli le carnet de route, l'avion doit obligatoirement obtenir l'APRS avant de pouvoir revoler.</li>
           <li><strong>Ne volez pas :</strong> Ne tentez en aucun cas de voler avec un avion déclaré "No-Go" avant que la maintenance nécessaire ait été effectuée et que l'avion soit officiellement déclaré apte au vol.</li>
         </ol>
         <p class="mt-3"><strong>La sécurité est toujours la priorité absolue.</strong></p>
@@ -315,3 +326,23 @@
     </div>
   </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Sélectionne toutes les lignes cliquables
+  const clickableRows = document.querySelectorAll('.clickable-row');
+  // Sélectionne l'élément dans la modale où afficher les détails
+  const nogoItemDetails = document.getElementById('nogo-item-details');
+  // Crée une instance de la modale Bootstrap
+  const nogoModal = new bootstrap.Modal(document.getElementById('nogoModal'));
+
+  clickableRows.forEach(row => {
+    row.addEventListener('click', function() {
+      // Récupère le nom de l'item depuis l'attribut data-item-name
+      const itemName = this.dataset.itemName;
+      nogoItemDetails.textContent = itemName;
+      nogoModal.show();
+    });
+  });
+});
+</script>

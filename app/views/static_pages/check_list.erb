@@ -1,6 +1,6 @@
 <% content_for :title, "Check-list" %>
 
-<div class="container my-5">
+<div class="container my-5" id="checklist-top">
   <div class="text-center">
     <h4 class="mb-3">Check-List avion ✈️</h4>
   </div>
@@ -452,6 +452,14 @@
     </div>
 
   </div>
+
+  <div class="text-center mt-5">
+    <%= link_to "#checklist-top", class: "btn btn-outline-primary" do %>
+      <i class="bi bi-arrow-up-circle me-2"></i>
+      Retourner en haut de la check-list
+    <% end %>
+  </div>
+
 </div>
 
 <%# --- Fenêtre modale pour la confirmation de réinitialisation --- %>
