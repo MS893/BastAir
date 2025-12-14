@@ -12,9 +12,9 @@
         <div class="col-md-6 col-lg-4 mb-4">
           <div class="card h-100">
             <div class="card-body">
-              <h5 class="card-title"><%= course.title %></h5>
+              <h5 class="card-title mb-4"><%= course.title %></h5>
               <%= simple_format(course.description) %>
-              <%= link_to "Accéder au cours", elearning_path(course), class: "btn btn-primary" %>
+              <%= link_to "Accéder au cours", elearning_path(course), class: "btn btn-primary mt-3" %>
             </div>
           </div>
         </div>

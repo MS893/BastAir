@@ -406,66 +406,66 @@ def cours
       - Manuel de sécurité FFA
     DESC
     { title: "FTP2 Mise en œuvre de l’avion. Eléments de sécurité élémentaire", description: <<~DESC, file: "ftp2.pdf" },
-      Mise en œuvre de l’avion
-      Éléments de sécurité élémentaire
-      Préparation pour le vol (les 5 vérifications de base : documents avion, carburant, devis de masse et centrage, dossier météo, info aéro dont NOTAMs et SUP AIP)
-      Actions avant et après vol (objectifs du briefing et du débriefing)
-      Compétences techniques / non techniques
+      . Mise en œuvre de l’avion
+      . Éléments de sécurité élémentaire
+      . Préparation pour le vol (les 5 vérifications de base : documents avion, carburant, devis de masse et centrage, dossier météo, info aéro dont NOTAMs et SUP AIP)
+      . Actions avant et après vol (objectifs du briefing et du débriefing)
+      . Compétences techniques / non techniques
     DESC
     { title: "FTP3 Bases d’aérodynamique (assiette – incidence – pente)", description: <<~DESC, file: "ftp3.pdf" },
-      Bases d’aérodynamique (assiette, incidence, pente)
-      Puissance nécessaire au vol
-      Relation puissance / assiette / vitesse / trajectoire
+      . Bases d’aérodynamique (assiette, incidence, pente)
+      . Puissance nécessaire au vol
+      . Relation puissance / assiette / vitesse / trajectoire
     DESC
     { title: "FTP4 Signaux de guidage au sol. Procédures de contrôle de la circulation aérienne", description: <<~DESC, file: "ftp4.pdf" },
-      Signaux de guidage au sol
-      Procédures du contrôle de la circulation aérienne
-      Urgences : panne de freins et de direction
-      Virages : notions de facteur de charge et puissance requis
-      Contrôle du cap : utilisation du compas et du conservateur de cap
-      Effet du vent : notions de dérive
+      . Signaux de guidage au sol
+      . Procédures du contrôle de la circulation aérienne
+      . Urgences : panne de freins et de direction
+      . Virages : notions de facteur de charge et puissance requis
+      . Contrôle du cap : utilisation du compas et du conservateur de cap
+      . Effet du vent : notions de dérive
     DESC
     { title: "FTP5 Mécanique du vol et vitesses caractéristiques (évolution – V réf…)", description: <<~DESC, file: "ftp5.pdf" },
-      Mécanique du vol et vitesses caractéristiques (évolutions, V réf ...)
-      Limitations avion et dangers associés
-      Circonstances menant aux situations inusuelles, détection et récupération
+      . Mécanique du vol et vitesses caractéristiques (évolutions, V réf ...)
+      . Limitations avion et dangers associés
+      . Circonstances menant aux situations inusuelles, détection et récupération
     DESC
     { title: "FTP6 Le tour de piste – communication", description: <<~DESC, file: "ftp6.pdf" },
-      Le tour de piste
-      Communication
-      Approche gestion menaces et erreurs (Menaces, erreurs et situations indésirables) dans le cadre des vols locaux
+      . Le tour de piste
+      . Communication
+      . Approche gestion menaces et erreurs (Menaces, erreurs et situations indésirables) dans le cadre des vols locaux
     DESC
     { title: "FTP7 Pannes et procédures particulières : Identifier, analyser, appliquer une procédure", description: <<~DESC, file: "ftp7.pdf" },
-      Pannes et procédures particulières : identifier, analyser, appliquer une procédure
-      Situations d’urgence : Appliquer une procédure d’urgence
+      . Pannes et procédures particulières : identifier, analyser, appliquer une procédure
+      . Situations d’urgence : Appliquer une procédure d’urgence
     DESC
     { title: "FTP8 Méthodes de navigation. Préparation d’une navigation (journal de navigation)", description: <<~DESC, file: "ftp8.pdf" },
-      Méthodes de navigation
-      Préparation d’une navigation (journal de navigation)
-      Rappels réglementation : espaces aériens, conditions VMC, altitudes et niveaux de vol,
-      services ATC, intégration sur les aérodromes, phraséologie AD et SIV, prévention des incursions en espace à clairance.
+      . Méthodes de navigation
+      . Préparation d’une navigation (journal de navigation)
+      . Rappels réglementation : espaces aériens, conditions VMC, altitudes et niveaux de vol,
+      . services ATC, intégration sur les aérodromes, phraséologie AD et SIV, prévention des incursions en espace à clairance.
     DESC
     { title: "FTP9 Présentation des moyens de radionavigations conventionnels et du GPS", description: <<~DESC, file: "ftp9.pdf" },
-      Présentation des moyens de radionavigation conventionnels et du GPS
-      Utilisation et organisation des moyens radios
-      Approche gestion menaces et erreurs (Menaces, erreurs et situations indésirables) dans le cadre du vol sur la campagne.
+      . Présentation des moyens de radionavigation conventionnels et du GPS
+      . Utilisation et organisation des moyens radios
+      . Approche gestion menaces et erreurs (Menaces, erreurs et situations indésirables) dans le cadre du vol sur la campagne.
     DESC
     { title: "FTP10 Présentation du dossier de vol", description: <<~DESC, file: "ftp10.pdf" },
-      Présentation du dossier de vol
-      Préparation d’un voyage aérien (avitaillement, assistance...)
-      Approche gestion menaces et erreurs (Menaces, erreurs et situations indésirables) dans le cadre du vol de voyage avec des passagers
-      Gestion des pannes et situations anormales
-      Déroutement
-      Interruption volontaire du vol
+      . Présentation du dossier de vol
+      . Préparation d’un voyage aérien (avitaillement, assistance...)
+      . Approche gestion menaces et erreurs (Menaces, erreurs et situations indésirables) dans le cadre du vol de voyage avec des passagers
+      . Gestion des pannes et situations anormales
+      . Déroutement
+      . Interruption volontaire du vol
     DESC
     { title: "FTP11 Pilotage sans visibilité", description: <<~DESC, file: "ftp11.pdf" },
-      Pilotage sans visibilité (VSV, circuit visuel)
-      Approche gestion menaces et erreurs (Menaces, erreurs et situations indésirables) dans le cadre du VSV
-      Maintien des conditions VMC, réactions en cas de perte de conditions VMC, retour aux conditions VMC
+      . Pilotage sans visibilité (VSV, circuit visuel)
+      . Approche gestion menaces et erreurs (Menaces, erreurs et situations indésirables) dans le cadre du VSV
+      . Maintien des conditions VMC, réactions en cas de perte de conditions VMC, retour aux conditions VMC
     DESC
     { title: "FTP12 Présentation de l’examen", description: <<~DESC, file: "ftp12.pdf" },
-      Présentation de l’examen PPL(A) au travers du guide FFA de l’examen en vol PPL(A) et du manuel de sécurité FFA
-      Détail des exercices et de leur enchainement, critères observés, niveau attendu, contenu du briefing
+      . Présentation de l’examen PPL(A) au travers du guide FFA de l’examen en vol PPL(A) et du manuel de sécurité FFA
+      . Détail des exercices et de leur enchainement, critères observés, niveau attendu, contenu du briefing
     DESC
     { title: "Facteurs Humains", description: "Cours sur les facteurs humains", file: "facteurs_humains.pdf" }
   ]
