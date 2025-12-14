@@ -20,6 +20,9 @@
   <% end %>
 
   <fieldset id="vol-form-fieldset">
+    <%# Champ caché pour stocker l'ID du compte BIA sélectionné dans la modale %>
+    <%= form.hidden_field :bia_user_id, id: 'vol_bia_user_id' %>
+
     <div class="card shadow-sm">
       <div class="card-body p-4">
 
@@ -29,9 +32,11 @@
             <%= form.label :avion_id, "Avion" %>
             <%= form.collection_select :avion_id, @avions, :id, :immatriculation, { prompt: "Avion" }, { class: "form-select", id: 'vol_avion_id' } %>
           </div>
-          <div class="col-md-2 mb-3">
+          <div class="col-md-3 mb-3">
             <%= form.label :type_vol, "Type"%>
             <%= form.select :type_vol, ["Standard", "Vol découverte", "Vol d'initiation", "Vol d'essai", "Convoyage", "Vol BIA"], {}, { class: "form-select", id: 'vol_type_vol' } %>
+            <%# Ce conteneur affichera le nom du collège BIA sélectionné %>
+            <div id="bia-school-display" class="form-text text-success small mt-1" style="display: none;"></div>
           </div>
           <div class="col-md-3 mb-3">
             <%= form.label :depart, "Aérodrome départ" %>
@@ -41,8 +46,8 @@
             <%= form.label :arrivee, "Aérodrome arrivée" %>
             <%= form.text_field :arrivee, class: "form-control", id: 'vol_arrivee' %>
           </div>
-          <div class="col-md-2 mb-3">
-            <%= form.label :nb_atterro, "Atterrissages" %>
+          <div class="col-md-2 mb-2">
+            <%= form.label :nb_atterro, "Atterrissage(s)" %>
             <%= form.number_field :nb_atterro, class: "form-control", step: '1' %>
           </div>
         </div>
@@ -51,21 +56,21 @@
 
         <h5 class="mb-4">Horaires et Compteurs</h5>
         <div class="row">
-          <div class="col-md-6 mb-3">
+          <div class="col-md-5 mb-3 me-5">
             <%= form.label :debut_vol_date, "Début du vol" %>
             <div class="d-flex gap-2">
               <%= form.date_field :debut_vol_date, value: @vol.debut_vol&.to_date || Date.current, class: "form-control", id: 'vol_debut_vol_date' %>
-              <%= select_hour @vol.debut_vol, { start_hour: 6, end_hour: 22 }, { name: 'vol[debut_vol_hour]', class: 'form-select', id: 'vol_debut_vol_hour' } %>
+              <%= select_hour @vol.debut_vol, { start_hour: 6, end_hour: 22 }, { name: 'vol[debut_vol_hour]', class: 'form-select ms-4', id: 'vol_debut_vol_hour' } %>
               <span class="d-flex align-items-center">H</span>
               <%= select_minute @vol.debut_vol, { minute_step: 5 }, { name: 'vol[debut_vol_minute]', class: 'form-select', id: 'vol_debut_vol_minute' } %>
             </div>
           </div>
-          <div class="col-md-6 mb-3">
-            <%= form.label :fin_vol_date, "Fin du vol (calculé à partir du temps de vol)" %>
+          <div class="col-md-5 mb-3 ms-5">
+            <%= form.label :fin_vol_date, "Fin du vol (calculé avec le temps de vol)" %>
             <div class="d-flex gap-2 align-items-center">
               <%# Ces champs sont désactivés car leur valeur est calculée par JavaScript %>
               <%= date_field_tag 'vol[fin_vol_date]', @vol.fin_vol&.to_date, class: "form-control", readonly: true, id: 'vol_fin_vol_date' %>
-              <%= text_field_tag 'vol[fin_vol_hour]', @vol.fin_vol&.hour, class: 'form-control', readonly: true, id: 'vol_fin_vol_hour' %>
+              <%= text_field_tag 'vol[fin_vol_hour]', @vol.fin_vol&.hour, class: 'form-control ms-4', readonly: true, id: 'vol_fin_vol_hour' %>
               <span>H</span>
               <%= text_field_tag 'vol[fin_vol_minute]', @vol.fin_vol&.minute, class: 'form-control', readonly: true, id: 'vol_fin_vol_minute' %>
             </div>

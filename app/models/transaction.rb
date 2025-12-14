@@ -83,6 +83,8 @@ class Transaction < ApplicationRecord
     deleted_at.present?
   end
   
+
+
   private
 
   # Définit la date du jour par défaut pour les nouvelles transactions.

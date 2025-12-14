@@ -52,6 +52,29 @@
   </div>
 </div>
 
+<!-- Fenêtre Modale de Sélection du Compte BIA -->
+<div class="modal fade" id="biaSelectionModal" tabindex="-1" aria-labelledby="biaSelectionModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="biaSelectionModalLabel">
+          <i class="bi bi-bank me-2"></i>Sélection du compte BIA à débiter
+        </h5>
+      </div>
+      <div class="modal-body">
+        <p>Veuillez sélectionner le collège ou lycée pour lequel ce vol BIA a été réalisé.</p>
+        <%# La liste des utilisateurs BIA est fournie par le contrôleur via @bia_users %>
+        <%= select_tag :bia_user_select, options_from_collection_for_select(@bia_users, :id, :nom), prompt: "Sélectionnez un établissement...", class: "form-select" %>
+        <div id="bia-selection-error" class="text-danger small mt-2" style="display: none;">Veuillez sélectionner un établissement.</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="cancel-bia-selection" class="btn btn-secondary">Annuler</button>
+        <button type="button" id="confirm-bia-selection" class="btn btn-primary">Confirmer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Fenêtre Modale de Signalement d'Anomalie -->
 <div class="modal fade" id="signalementModal" tabindex="-1" aria-labelledby="signalementModalLabel" aria-hidden="true" data-bs-focus="false">
   <div class="modal-dialog">
@@ -72,6 +95,7 @@
           </div>
           <div class="d-flex justify-content-between mt-4">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+            <%= link_to "MEL", mel_path, class: "btn btn-warning", target: "_blank" %>
             <%= form.submit "Envoyer le signalement", class: "btn btn-danger" %>
           </div>
           <%# Zone où sera injectée la liste des signalements existants %>
@@ -127,6 +151,7 @@
     const costDisplay = document.getElementById('flight-cost-display');
     const submissionButton = document.getElementById('confirm-submission-btn');
     const signalementButton = document.getElementById('report-signalement-btn');
+    const typeVolSelect = document.getElementById('vol_type_vol');
     const formFieldset = document.getElementById('vol-form-fieldset');
 
     const departInput = document.getElementById('vol_depart');
@@ -134,7 +159,7 @@
     const requiredFields = [
       avionSelect,
       document.getElementById('vol_type_vol'),
-      document.getElementById('vol_depart'),
+      departInput,
       document.getElementById('vol_arrivee'),
       document.getElementById('vol_debut_vol_date'),
       compteurDepartInput,
@@ -143,6 +168,16 @@
       document.getElementById('vol_fuel_apres_vol'),
       document.getElementById('vol_huile')
     ];
+
+    // --- GESTION DE LA MODALE BIA ---
+    const biaModalEl = document.getElementById('biaSelectionModal');
+    const biaModal = bootstrap.Modal.getOrCreateInstance(biaModalEl);
+    const biaSelect = document.getElementById('bia_user_select');
+    const biaHiddenInput = document.getElementById('vol_bia_user_id');
+    const confirmBiaBtn = document.getElementById('confirm-bia-selection');
+    const cancelBiaBtn = document.getElementById('cancel-bia-selection');
+    const biaErrorDiv = document.getElementById('bia-selection-error');
+    const biaSchoolDisplay = document.getElementById('bia-school-display');
 
     // --- GESTION DES NOTIFICATIONS (TOAST) ---
     const toastEl = document.getElementById('notificationToast');
@@ -304,6 +339,65 @@
 
     modalSubmitButton.addEventListener('click', function() {
       volForm.submit();
+    });
+
+    // --- GESTION DE LA SÉLECTION BIA ---
+    typeVolSelect.addEventListener('change', function() {
+      if (this.value === 'Vol BIA') {
+        // S'il n'y a qu'un seul compte BIA dans la liste, on le sélectionne automatiquement sans ouvrir la modale
+        if (biaSelect && biaSelect.options.length === 2) {
+          biaSelect.selectedIndex = 1; // On sélectionne le premier vrai compte (l'index 0 est le prompt)
+          const selectedOption = biaSelect.options[1];
+
+          // On met à jour le champ caché et l'affichage
+          if (biaHiddenInput) biaHiddenInput.value = selectedOption.value;
+          if (biaSchoolDisplay) {
+            biaSchoolDisplay.textContent = selectedOption.text;
+            biaSchoolDisplay.style.display = 'block';
+          }
+        } else {
+          // S'il y a plusieurs choix ou aucun, on ouvre la modale normalement.
+          biaModal.show();
+        }
+      } else {
+        // Si on change pour un autre type de vol, on s'assure que l'ID BIA est vidé
+        if (biaHiddenInput) biaHiddenInput.value = '';
+        // Et on cache le nom du collège qui aurait pu être affiché
+        if (biaSchoolDisplay) {
+          biaSchoolDisplay.textContent = '';
+          biaSchoolDisplay.style.display = 'none';
+        }
+      }
+    });
+
+    confirmBiaBtn.addEventListener('click', function() {
+      if (biaSelect.value) {
+        // On vérifie que le champ caché existe avant de lui assigner une valeur
+        if (biaHiddenInput) biaHiddenInput.value = biaSelect.value;
+        biaErrorDiv.style.display = 'none';
+
+        // Affiche le nom du collège sélectionné sous le champ "Type de vol"
+        const selectedOptionText = biaSelect.options[biaSelect.selectedIndex].text;
+        if (biaSchoolDisplay) {
+          biaSchoolDisplay.textContent = selectedOptionText;
+          biaSchoolDisplay.style.display = 'block';
+        }
+        biaModal.hide();
+      } else {
+        biaErrorDiv.style.display = 'block';
+      }
+    });
+
+    cancelBiaBtn.addEventListener('click', function() {
+      // Si l'utilisateur annule, on réinitialise le type de vol et on cache la modale
+      if (typeVolSelect) typeVolSelect.value = ''; // ou une valeur par défaut
+      if (biaHiddenInput) biaHiddenInput.value = '';
+      // On s'assure aussi de cacher le nom du collège
+      if (biaSchoolDisplay) {
+        biaSchoolDisplay.textContent = '';
+        biaSchoolDisplay.style.display = 'none';
+      }
+      biaModal.hide();
     });
 
     // --- ATTACHEMENT DES ECOUTEURS D'EVENEMENTS ---

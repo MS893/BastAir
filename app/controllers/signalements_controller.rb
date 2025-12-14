@@ -61,14 +61,12 @@ class SignalementsController < ApplicationController
         # On envoie l'email à chaque destinataire
         recipients.each { |recipient| SignalementMailer.new_signalement_notification(recipient, @signalement).deliver_later }
 
-        # Si la requête est HTML (formulaire classique), on redirige.
+        # Si la requête est HTML (formulaire classique), on redirige
         format.html { redirect_to signalements_path, notice: "Le signalement sur l'avion #{@avion.immatriculation} a été enregistré avec succès." }
         # Si la requête est JSON (AJAX), on renvoie une réponse JSON de succès.
         format.json { render json: { status: 'success', message: 'Signalement enregistré.' }, status: :created }
       else
-        # En cas d'échec, on redirige vers la page d'index avec un message d'erreur.
-        # Cela évite de rendre la page "new" qui n'est plus utilisée.
-        # On ajoute les paramètres de filtre pour que l'utilisateur retrouve son contexte.
+        # En cas d'échec, on redirige vers la page d'index avec un message d'erreur
         error_message = @signalement.errors.full_messages.to_sentence.presence || "Une erreur est survenue."
         format.html { redirect_to signalements_path(by_avion: @avion.id), alert: "Le signalement n'a pas pu être créé : #{error_message}" }
         format.json { render json: @signalement.errors, status: :unprocessable_entity }

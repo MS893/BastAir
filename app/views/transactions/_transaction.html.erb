@@ -35,7 +35,7 @@
       <%= link_to 'Voir', transaction_path(transaction), class: 'btn btn-sm btn-outline-info' %>
       <%# Le bouton Modifier n'est visible que si la transaction n'est pas vérifiée %>
     <% unless transaction.is_checked? %>
-      <%= link_to 'Modifier', edit_transaction_path(transaction), class: 'btn btn-sm btn-outline-primary' %>
+      <%= link_to 'Modifier', edit_transaction_path(transaction), class: 'btn btn-sm btn-outline-primary mt-2' %>
 
       <%# Si c'est un investissement, on propose de créer l'immobilisation associée %>
       <% if transaction.source_transaction == 'Investissement' && Immobilisation.find_by(purchase_transaction_id: transaction.id).nil? %>
