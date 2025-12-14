@@ -62,7 +62,7 @@ class User < ApplicationRecord
   validates :date_naissance, presence: true, unless: :is_bia?
   validates :lieu_naissance, presence: true, unless: :is_bia?
   validates :profession, presence: true, unless: :is_bia?
-  validates :date_licence, presence: true, unless: :is_bia?
+  validates :date_licence, presence: true, unless: -> { is_bia? || eleve? }
   validates :medical, presence: true, unless: :is_bia?
   validates :controle, presence: true, unless: :is_bia?
   validates :cotisation_club, presence: true, unless: :is_bia?

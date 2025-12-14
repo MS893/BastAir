@@ -16,9 +16,6 @@ class ProgressionsController < ApplicationController
       # Pour un élève, on affiche directement son propre livret.
       @selected_eleve = current_user
     end
-
-    # Si un élève est sélectionné, on charge ses leçons de vol.
-    @flight_lessons = @selected_eleve.flight_lessons.order(:date) if @selected_eleve
   end
   
 
