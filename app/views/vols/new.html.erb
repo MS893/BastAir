@@ -13,7 +13,7 @@
 <%# Ces listes fournissent des suggestions pour les champs de départ et d'arrivée. %>
 <%# L'utilisateur peut toujours entrer une valeur qui n'est pas dans la liste. %>
 <datalist id="aerodromes-list">
-  <option value="TFFB">Basse Terre - Baillif</option>
+  <option value="TFFB">Basse Terre - Baillif</option>  <%# Le premier de la liste est la base de l'aéroclub c'est le terrain par défaut %>
   <option value="TFFS">Les Saintes</option>
   <option value="TFFM">Marie Galante</option>
   <option value="TFFA">La désirade</option>
@@ -207,9 +207,9 @@
       toastInstance.show();
     }
 
-    // Fonction pour afficher une alerte de type "flash"
+    // affiche une alerte flash
     function showFlashAlert(message) {
-      // Vide les erreurs précédentes
+      // vide les erreurs précédentes
       errorContainer.innerHTML = '';
       const alertDiv = document.createElement('div');
       alertDiv.className = 'alert alert-danger d-flex align-items-center justify-content-center';
@@ -305,13 +305,6 @@
     function checkFormValidity() {
       const isFormValid = requiredFields.every(field => field && field.value.trim() !== '');
       submissionButton.disabled = !isFormValid;
-    }
-
-    function updateSignalementButton() {
-      const avionId = avionSelect.value;
-      // Active ou désactive le bouton de signalement
-      // en fonction de la sélection d'un avion.
-      signalementButton.disabled = !avionId;
     }
 
     // --- GESTION DE LA MODALE DE CONFIRMATION ---
@@ -426,7 +419,6 @@
     // Mise à jour du compteur de départ et du lien d'anomalie au changement d'avion
     avionSelect.addEventListener('change', () => {
       updateLastCounter();
-      updateSignalementButton();
     });
 
     // Validation du formulaire à chaque modification de champ requis
@@ -437,15 +429,29 @@
 
     function selectFirstAvion() {
       // Si aucun avion n'est sélectionné (l'index est 0, correspondant au prompt "Sélectionnez un avion")
-      // et qu'il y a au moins un avion dans la liste (plus d'une option).
-      if (avionSelect.selectedIndex === 0 && avionSelect.options.length > 1) {
-        avionSelect.selectedIndex = 1; // On sélectionne le premier véritable avion
+      // et qu'il y a au moins un avion dans la liste.
+      if (avionSelect.options.length > 0) {
+        avionSelect.selectedIndex = 0; // On sélectionne le premier avion
         // On déclenche manuellement les fonctions qui dépendent de la sélection de l'avion.
         updateLastCounter();
-        updateSignalementButton();
       }
     }
 
+    function setDefaultAerodromes() {
+      const aerodromesList = document.getElementById('aerodromes-list');
+      // On s'assure que la liste et qu'elle a au moins une option
+      if (aerodromesList && aerodromesList.options.length > 0) {
+        // On prend la valeur de la toute première option de la liste
+        const defaultAerodrome = aerodromesList.options[0].value;
+        
+        departInput.value = defaultAerodrome;
+        arriveeInput.value = defaultAerodrome;
+
+        // On déclenche l'événement 'input' pour que le nom complet s'affiche
+        departInput.dispatchEvent(new Event('input'));
+        arriveeInput.dispatchEvent(new Event('input'));
+      }
+    }
     // --- GESTION DE L'AFFICHAGE DU NOM DES AÉRODROMES ---
     const aerodromesDatalist = document.getElementById('aerodromes-list');
     const aerodromeMap = new Map();
@@ -492,6 +498,7 @@
 
     // --- APPELS INITIAUX AU CHARGEMENT DE LA PAGE ---
     selectFirstAvion();
+    setDefaultAerodromes();
     checkFormValidity();
 
     // --- GESTION DE LA MODALE DE SIGNALEMENT ---

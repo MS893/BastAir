@@ -30,7 +30,7 @@ class VolsController < ApplicationController
     if @vol.save
       redirect_to root_path, notice: 'Votre vol a été enregistré avec succès.'
     else
-      # Si la sauvegarde échoue, nous devons recharger les variables pour le formulaire
+      # si la sauvegarde échoue, on recharge les variables pour le formulaire
       @avions = Avion.order(:immatriculation)
       @instructeurs = User.where(fonction: 'instructeur').order(:prenom, :nom)
       @bia_users = User.where("LOWER(prenom) = ?", 'bia').order(:nom)

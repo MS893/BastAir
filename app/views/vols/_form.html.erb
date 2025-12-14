@@ -30,7 +30,7 @@
         <div class="row">
           <div class="col-md-2 mb-3">
             <%= form.label :avion_id, "Avion" %>
-            <%= form.collection_select :avion_id, @avions, :id, :immatriculation, { prompt: "Avion" }, { class: "form-select", id: 'vol_avion_id' } %>
+            <%= form.collection_select :avion_id, @avions, :id, :immatriculation, {}, { class: "form-select", id: 'vol_avion_id' } %>
           </div>
           <div class="col-md-3 mb-3">
             <%= form.label :type_vol, "Type"%>
@@ -156,7 +156,7 @@
             Coût estimé : 0.00 €
           </div>
           <%# bouton désactivé par défaut et activé si un avion est sélectionné. %>
-          <button type="button" id="report-signalement-btn" class="btn btn-outline-danger ms-auto" disabled>Signaler une anomalie</button>
+          <button type="button" id="report-signalement-btn" class="btn btn-outline-danger ms-auto">Signaler une anomalie</button>
         </div>
 
       </div>

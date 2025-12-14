@@ -43,17 +43,17 @@ class Vol < ApplicationRecord
     end
   end
 
-  # Calcule le coût total du vol en fonction de la durée et des tarifs en vigueur.
+  # Calcule le coût total du vol en fonction de la durée et des tarifs en vigueur
   def cout_total
-    # On récupère le tarif le plus récent. S'il n'y en a pas, le coût est de 0.
+    # On récupère le tarif le plus récent. S'il n'y en a pas, le coût est de 0
     tarif = Tarif.order(annee: :desc).first
     return 0 unless tarif
 
     # Calcul du coût de l'avion.
     cost = duree_vol.to_d * tarif.tarif_horaire_avion1.to_d
 
-    # Ajout du coût de l'instructeur si le vol est en double commande (non solo).
-    # La présence d'un instructeur_id et la case "solo" non cochée déterminent un vol en instruction.
+    # Ajout du coût de l'instructeur si le vol est en double commande (non solo)
+    # La présence d'un instructeur_id et la case "solo" non cochée déterminent un vol en instruction
     if instructeur_id.present? && !solo?
       cost += duree_vol.to_d * tarif.tarif_instructeur.to_d
     end
@@ -73,8 +73,8 @@ class Vol < ApplicationRecord
     # Détermine si le vol doit être imputé au pilote ou enregistré comme une dépense du club.
     if FLIGHT_TYPES_DEBITED_TO_CLUB.include?(type_vol)
       # Pour les vols spéciaux (découverte, etc.), on crée une transaction de dépense pour le club.
-      # Cette transaction n'est associée à aucun utilisateur (user: nil).
-      # Elle est enregistrée comme une charge d'exploitation liée à l'activité de vol.
+      # Cette transaction n'est associée à aucun utilisateur (user: nil)
+      # Elle est enregistrée comme une charge d'exploitation liée à l'activité de vol
       Transaction.create!(
         user: nil,
         description: "Vol #{type_vol} du #{I18n.l(debut_vol.to_date, format: :short_year)} - Pilote: #{user.full_name} - Avion: #{avion.immatriculation}",
@@ -98,8 +98,8 @@ class Vol < ApplicationRecord
         payment_method: 'Prélèvement sur compte'
       )
     else
-      # Pour les vols standards et BIA, on débite le compte du pilote ou du collège.
-      # La transaction est associée au pilote, ce qui déclenchera la mise à jour de son solde.
+      # Pour les vols standards et BIA, on débite le compte du pilote ou du collège
+      # La transaction est associée au pilote, ce qui déclenchera la mise à jour de son solde
       Transaction.create!(
         user: user,
         description: "Vol #{type_vol} du #{I18n.l(debut_vol.to_date, format: :short_year)} - Avion: #{avion.immatriculation}",
@@ -112,7 +112,7 @@ class Vol < ApplicationRecord
     end
   end
 
-  # Calcule automatiquement l'heure de fin du vol avant la sauvegarde.
+  # Calcule automatiquement l'heure de fin du vol avant la sauvegarde
   def calculate_fin_vol
     duree_en_minutes = (duree_vol * 60).round
     self.fin_vol = debut_vol + duree_en_minutes.minutes
@@ -128,10 +128,10 @@ class Vol < ApplicationRecord
     end
   end
 
-  # S'assure que le pilote (user) a une licence et une visite médicale valides à la date du vol.
+  # S'assure que le pilote (user) a une licence et une visite médicale valides à la date du vol
   def pilote_qualifie_pour_voler
-    # On ne valide que si un utilisateur et une date sont associés au vol.
-    # `debut_vol` semble être le champ de date/heure principal pour un vol.
+    # On ne valide que si un utilisateur et une date sont associés au vol
+    # `debut_vol` semble être le champ de date/heure principal pour un vol
     return if user.nil? || debut_vol.nil?
 
     # Vérification de la licence
