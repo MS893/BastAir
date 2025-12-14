@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+    <style>
+      body { font-family: sans-serif; line-height: 1.5; }
+      .container { border: 1px solid #ddd; padding: 20px; border-radius: 5px; max-width: 600px; }
+      strong { color: #333; }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Notification de taxe d'atterrissage</h2>
+      <p>
+        Le pilote <strong><%= @pilot.name %></strong> a déclaré une taxe d'atterrissage pour un vol récent.
+      </p>
+      <hr>
+      <h3>Détails :</h3>
+      <ul>
+        <li><strong>Pilote :</strong> <%= @pilot.name %> (<%= @pilot.email %>)</li>
+        <li><strong>Date du vol :</strong> <%= @vol.debut_vol.strftime('%d/%m/%Y') %></li>
+        <li><strong>Avion :</strong> <%= @vol.avion.immatriculation %></li>
+        <li><strong>Aérodrome de la taxe :</strong> <%= @tax_aerodrome %></li>
+        <li><strong>Statut de la taxe :</strong> <%= @tax_status %></li>
+      </ul>
+      <p>Merci de prendre les mesures appropriées.</p>
+    </div>
+  </body>
+</html>

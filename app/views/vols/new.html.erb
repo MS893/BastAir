@@ -183,26 +183,40 @@
     const toastEl = document.getElementById('notificationToast');
     // On initialise le toast avec une durée d'affichage de 3 secondes (au lieu des 5s par défaut).
     // La valeur est en millisecondes.
-    const toastInstance = bootstrap.Toast.getOrCreateInstance(toastEl, { delay: 3000 });
+    const toastInstance = bootstrap.Toast.getOrCreateInstance(toastEl, { delay: 6500 });
     const toastBody = document.getElementById('toast-body-content');
     const toastTitle = document.getElementById('toast-title');
     const toastIcon = document.getElementById('toast-icon');
 
-    function showToast(message, type = 'info') {
+    function showToast(message, type = 'info', showHeader = true) {
       toastBody.textContent = message;
+      const toastHeader = toastEl.querySelector('.toast-header');
       
       // Réinitialiser les classes
-      toastEl.classList.remove('bg-success', 'bg-danger', 'bg-info', 'text-white');
+      toastEl.classList.remove('bg-success', 'bg-danger', 'bg-warning', 'bg-info', 'text-white', 'text-dark');
       toastIcon.className = 'bi me-2';
 
-      if (type === 'success') {
-        toastEl.classList.add('bg-success', 'text-white');
-        toastIcon.classList.add('bi-check-circle-fill');
-        toastTitle.textContent = 'Succès';
-      } else if (type === 'danger') {
-        toastEl.classList.add('bg-danger', 'text-white');
-        toastIcon.classList.add('bi-exclamation-triangle-fill');
-        toastTitle.textContent = 'Erreur';
+      if (showHeader) {
+        toastHeader.style.display = 'flex'; // Affiche l'en-tête
+        if (type === 'success') {
+          toastEl.classList.add('bg-success', 'text-white');
+          toastIcon.classList.add('bi-check-circle-fill');
+          toastTitle.textContent = 'Succès';
+        } else if (type === 'warning') {
+          toastEl.classList.add('bg-warning', 'text-dark');
+          toastIcon.classList.add('bi-exclamation-triangle-fill');
+          toastTitle.textContent = 'Information';
+        } else if (type === 'danger') {
+          toastEl.classList.add('bg-danger', 'text-white');
+          toastIcon.classList.add('bi-exclamation-triangle-fill');
+          toastTitle.textContent = 'Erreur';
+        }
+      } else {
+        toastHeader.style.display = 'none'; // Masque l'en-tête
+        // Applique la couleur de fond directement sur le toast
+        if (type === 'success') toastEl.classList.add('bg-success', 'text-white');
+        if (type === 'warning') toastEl.classList.add('bg-warning', 'text-dark');
+        if (type === 'danger') toastEl.classList.add('bg-danger', 'text-white');
       }
       toastInstance.show();
     }
@@ -324,6 +338,15 @@
       }
       if (arriveeInput.value.length !== 4) {
         showFlashAlert("Le code OACI d'arrivée doit comporter exactement 4 caractères.");
+        return; // Bloque l'ouverture de la modale
+      }
+
+      // Validation de l'aérodrome de la taxe
+      const taxeStatus = taxeSelect.value;
+      const taxeAerodromeValue = taxeAerodromeInput.value.trim();
+      if ((taxeStatus === "Taxe payée" || taxeStatus === "Taxe non payée") && taxeAerodromeValue === '') {
+        showFlashAlert("Veuillez renseigner l'aérodrome où la taxe a été appliquée.");
+        taxeAerodromeInput.focus(); // Met le focus sur le champ manquant
         return; // Bloque l'ouverture de la modale
       }
       
@@ -495,8 +518,33 @@
     departInput.addEventListener('input', () => { updateAerodromeName(departInput, departNameDisplay); clearErrorIfFieldsAreValid(); });
     arriveeInput.addEventListener('input', () => { updateAerodromeName(arriveeInput, arriveeNameDisplay); clearErrorIfFieldsAreValid(); });
 
+    // --- GESTION DES NOTIFICATIONS POUR LA TAXE D'ATTERRISSAGE ---
+    const taxeSelect = document.getElementById('vol_taxe_atterrissage');
+    const taxeAerodromeContainer = document.getElementById('taxe-aerodrome-container');
+    const taxeAerodromeInput = document.getElementById('taxe_aerodrome_input');
+    if (taxeAerodromeInput) taxeAerodromeInput.setAttribute('list', 'aerodromes-list');
+
+    if (taxeSelect) {
+      taxeSelect.addEventListener('change', function() {
+        const selectedValue = this.value;
+
+        if (selectedValue === "Taxe payée") {
+          taxeAerodromeContainer.style.display = 'block';
+          showToast("N'oubliez pas de fournir une copie de la facture de la taxe au club.", 'success', false);
+        } else if (selectedValue === "Taxe non payée") {
+          taxeAerodromeContainer.style.display = 'block';
+          showToast("Le club débitera votre compte à réception de la facture, prévoyez de le créditer suffisamment.", 'warning', false);
+        } else {
+          taxeAerodromeContainer.style.display = 'none';
+          taxeAerodromeInput.value = ''; // On vide le champ s'il est masqué
+        }
+        // Aucune action si "Pas de taxe" est sélectionné
+      });
+    }
+
 
     // --- APPELS INITIAUX AU CHARGEMENT DE LA PAGE ---
+    if (taxeSelect) taxeSelect.value = "Pas de taxe"; // On s'assure que la valeur par défaut est bien sélectionnée
     selectFirstAvion();
     setDefaultAerodromes();
     checkFormValidity();

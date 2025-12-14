@@ -28,6 +28,16 @@ class VolsController < ApplicationController
     @vol = current_user.vols.build(vol_params)
 
     if @vol.save
+      # --- Envoi de l'email pour la taxe d'atterrissage ---
+      taxe_status = params[:vol][:taxe_atterrissage]
+      taxe_aerodrome = params[:taxe_aerodrome]
+
+      if ["Taxe payée", "Taxe non payée"].include?(taxe_status) && taxe_aerodrome.present?
+        # On récupère les administrateurs et le trésorier
+        recipient_emails = User.where(admin: true).or(User.where(fonction: 'tresorier')).pluck(:email).compact
+        # On envoie l'email uniquement si on a trouvé des destinataires
+        UserMailer.landing_tax_notification(recipient_emails, current_user, @vol, taxe_status, taxe_aerodrome).deliver_later if recipient_emails.any?
+      end
       redirect_to root_path, notice: 'Votre vol a été enregistré avec succès.'
     else
       # si la sauvegarde échoue, on recharge les variables pour le formulaire
@@ -57,7 +67,7 @@ class VolsController < ApplicationController
       # avant qu'il ne soit utilisé par vol_params
       params[:vol][:debut_vol] = Time.zone.local(date.year, date.month, date.day, hour, minute)
     end
-    # La fin du vol est calculée automatiquement, donc pas besoin de la combiner ici.
+    # La fin du vol est calculée automatiquement
   end
 
   def set_page_title_and_vols

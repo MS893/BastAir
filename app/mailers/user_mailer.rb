@@ -76,7 +76,7 @@ class UserMailer < ApplicationMailer
 
   def welcome_email(user)
     @user = user
-    mail(to: @user.email, subject: 'Bienvenue chez BastAir !')
+    mail(to: @user.email, subject: "Bienvenue à l'aéroclub Bast'Air !")
   end
 
   def expiring_fi_summary(admins, instructors)
@@ -97,6 +97,18 @@ class UserMailer < ApplicationMailer
       to: @user.email,
       subject: "Confirmation de votre vol du #{vol.debut_vol.strftime('%d/%m/%Y')}"
     )
+  end
+
+  # Envoie une notification de taxe d'atterrissage aux administrateurs et au trésorier
+  def landing_tax_notification(recipient_emails, pilot, vol, tax_status, tax_aerodrome)
+    @pilot = pilot
+    @vol = vol
+    @tax_status = tax_status
+    @tax_aerodrome = tax_aerodrome
+
+    return if recipient_emails.empty?
+
+    mail(to: recipient_emails, subject: "Taxe d'atterrissage : #{@pilot.name} à #{@tax_aerodrome}")
   end
 
 end

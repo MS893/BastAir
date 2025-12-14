@@ -46,9 +46,18 @@
             <%= form.label :arrivee, "Aérodrome arrivée" %>
             <%= form.text_field :arrivee, class: "form-control", id: 'vol_arrivee' %>
           </div>
-          <div class="col-md-2 mb-2">
+          <div class="col-md-2 mb-3">
             <%= form.label :nb_atterro, "Atterrissage(s)" %>
             <%= form.number_field :nb_atterro, class: "form-control", step: '1' %>
+          </div>
+          <div class="col-md-3 mb-3">
+            <%= form.label :taxe_atterrissage, "Taxe d'atterrissage ?" %>
+            <%= form.select :taxe_atterrissage, ["Pas de taxe", "Taxe non payée", "Taxe payée"], { selected: "Pas de taxe" }, { class: "form-select", id: "vol_taxe_atterrissage" } %>
+          </div>
+          <%# Champ pour l'aérodrome de la taxe, caché par défaut %>
+          <div id="taxe-aerodrome-container" class="col-md-3 mb-3" style="display: none;">
+            <%= label_tag :taxe_aerodrome, "Aérodrome de la taxe" %>
+            <%= text_field_tag :taxe_aerodrome, nil, class: "form-control", id: 'taxe_aerodrome_input' %>
           </div>
         </div>
 

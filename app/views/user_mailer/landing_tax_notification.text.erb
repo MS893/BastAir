@@ -1,0 +1,13 @@
+Notification de taxe d'atterrissage
+=====================================
+
+Le pilote <%= @pilot.name %> a déclaré une taxe d'atterrissage pour un vol récent.
+
+Détails :
+- Pilote : <%= @pilot.name %> (<%= @pilot.email %>)
+- Date du vol : <%= @vol.debut_vol.strftime('%d/%m/%Y') %>
+- Avion : <%= @vol.avion.immatriculation %>
+- Aérodrome de la taxe : <%= @tax_aerodrome %>
+- Statut de la taxe : <%= @tax_status %>
+
+Merci de prendre les mesures appropriées.

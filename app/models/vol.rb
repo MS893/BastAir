@@ -65,14 +65,14 @@ class Vol < ApplicationRecord
   
   private
 
-  # Crée la transaction de débit après la création du vol.
+  # Crée la transaction de débit après la création du vol
   def create_debit_transaction
-    # On ne crée pas de transaction si le coût est nul ou négatif.
+    # On ne crée pas de transaction si le coût est nul ou négatif
     return if cout_total.to_d <= 0
 
-    # Détermine si le vol doit être imputé au pilote ou enregistré comme une dépense du club.
+    # Détermine si le vol doit être imputé au pilote ou enregistré comme une dépense du club
     if FLIGHT_TYPES_DEBITED_TO_CLUB.include?(type_vol)
-      # Pour les vols spéciaux (découverte, etc.), on crée une transaction de dépense pour le club.
+      # Pour les vols spéciaux (découverte, etc.), on crée une transaction de dépense pour le club
       # Cette transaction n'est associée à aucun utilisateur (user: nil)
       # Elle est enregistrée comme une charge d'exploitation liée à l'activité de vol
       Transaction.create!(
@@ -85,7 +85,7 @@ class Vol < ApplicationRecord
         payment_method: 'Prélèvement sur compte' # Méthode interne, pas un paiement externe
       )
     elsif type_vol == 'Vol BIA' && bia_user_id.present?
-      # Pour les vols BIA, on débite le compte du collège/lycée sélectionné.
+      # Pour les vols BIA, on débite le compte du collège/lycée sélectionné
       bia_user = User.find_by(id: bia_user_id)
       return unless bia_user # Sécurité si l'ID est invalide
       Transaction.create!(
