@@ -6,7 +6,7 @@
     <%= link_to 'Retour à la liste des cours', elearning_index_path, class: 'btn btn-secondary' %>
   </div>
 
-  <p class="lead"><%= @course.description %></p>
+  <%= simple_format(@course.description, class: 'lead') %>
 
   <hr>
 
