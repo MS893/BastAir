@@ -1,6 +1,6 @@
 class ElearningController < ApplicationController
   before_action :authenticate_user!, except: [:document] # Le document lui-même n'a pas besoin d'authentification
-  before_action :authorize_eleve!, only: [:index, :show] # Seuls les élèves peuvent voir la liste et la page d'un cours
+  before_action :authorize_student_area!, only: [:index, :show] # Seuls les élèves peuvent voir la liste et la page d'un cours
   before_action :set_course, only: [:show, :document]
 
   def show

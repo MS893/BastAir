@@ -147,6 +147,7 @@ Rails.application.routes.draw do
   get 'agenda_avion', to: 'static_pages#agenda_avion'
   get 'mel', to: 'static_pages#mel'
   get 'agenda_instructeurs', to: 'static_pages#agenda_instructeurs'
+  get 'livret_progression', to: 'progressions#show'
 
   # Route pour la gestion des disponibilités des instructeurs
   get 'mes_disponibilites', to: 'instructor_availabilities#edit', as: 'edit_instructor_availabilities'
