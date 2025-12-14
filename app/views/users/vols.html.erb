@@ -3,8 +3,103 @@
 <div class="container my-5">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h1 class="mb-0">Mon carnet de vol</h1>
-    <%= link_to "Enregistrer un nouveau vol", new_vol_path, class: "btn btn-primary" %>
+    <div class="btn-group">
+      <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#partialTotalsModal">Totaux partiels</button>
+      <button type="button" class="btn btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#csvExportModal">Exporter au format CSV</button>
+      <%= link_to "Enregistrer un nouveau vol", new_vol_path, class: "btn btn-primary" %>
+    </div>
   </div>
+
+  <%# --- Fenêtre modale pour les totaux partiels --- %>
+  <div class="modal fade" id="partialTotalsModal" tabindex="-1" aria-labelledby="partialTotalsModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="partialTotalsModalLabel">Calculer les totaux sur une période</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <%= form_with(url: vols_user_path(@user), method: :get) do |form| %>
+          <div class="modal-body">
+              <div class="mb-3">
+                <%= form.label :start_date, "Date de début", class: "form-label" %>
+                <%= form.date_field :start_date, class: "form-control", required: true %>
+              </div>
+              <div class="mb-3">
+                <%= form.label :end_date, "Date de fin", class: "form-label" %>
+                <%= form.date_field :end_date, value: Date.today, class: "form-control", required: true %>
+              </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Fermer</button>
+            <%= form.submit "Calculer", class: "btn btn-primary" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <%# --- Fenêtre modale pour l'export CSV --- %>
+  <div class="modal fade" id="csvExportModal" tabindex="-1" aria-labelledby="csvExportModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="csvExportModalLabel">Exporter les vols au format CSV</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <%# Le format: :csv est crucial pour indiquer au contrôleur de générer un CSV %>
+        <%= form_with(url: vols_user_path(@user, format: :csv), method: :get) do |form| %>
+          <div class="modal-body">
+              <div class="mb-3">
+                <%= form.label :start_date, "Date de début", class: "form-label" %>
+                <%= form.date_field :start_date, class: "form-control", required: true %>
+              </div>
+              <div class="mb-3">
+                <%= form.label :end_date, "Date de fin", class: "form-label" %>
+                <%= form.date_field :end_date, value: Date.today, class: "form-control", required: true %>
+              </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Fermer</button>
+            <%= form.submit "Télécharger", class: "btn btn-primary" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <%# --- Affichage des totaux partiels --- %>
+  <% if @partial_totals %>
+    <div class="card mb-4 border-primary">
+      <div class="card-header bg-primary text-white fw-bold d-flex justify-content-between align-items-center">
+        <span>Totaux pour la période du <%= l @start_date, format: :short %> au <%= l @end_date, format: :short %></span>
+        <%= link_to "", vols_user_path(@user), class: "btn-close btn-close-white", "aria-label": "Fermer" %>
+      </div>
+      <div class="card-body">
+        <table class="table table-sm table-borderless mb-0">
+          <tbody>
+            <tr>
+              <td><strong>Temps de vol total :</strong></td>
+              <td class="text-end pe-4"><%= '%.2f' % @partial_total_duree_vol %> h</td>
+              <td><strong>Atterrissages jour :</strong></td>
+              <td class="text-end"><%= @partial_total_atterrissages_jour %></td>
+            </tr>
+            <tr>
+              <td><strong>Heures CdB :</strong></td>
+              <td class="text-end pe-4"><%= '%.2f' % @partial_total_heures_cdb %> h</td>
+              <td><strong>Atterrissages nuit :</strong></td>
+              <td class="text-end"><%= @partial_total_atterrissages_nuit %></td>
+            </tr>
+            <tr>
+              <td><strong>Heures Double :</strong></td>
+              <td class="text-end pe-4"><%= '%.2f' % @partial_total_heures_double %> h</td>
+              <td><strong>Heures Instruction :</strong></td>
+              <td class="text-end"><%= '%.2f' % @partial_total_heures_instruction %> h</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  <% end %>
 
   <% if @vols.any? %>
     <div class="table-responsive">
@@ -46,8 +141,8 @@
                 <small class="text-muted"><%= l vol.fin_vol, format: :short_time if vol.fin_vol %></small>
               </td>
               <td>
-                <%= vol.type_vol %><br>
-                <small class="text-muted"><%= vol.avion.immatriculation %></small>
+                <%= vol.avion.immatriculation %>
+                <small class="text-muted"><%= vol.avion.modele %></small><br>
               </td>
               <td><%= '%.2f' % vol.duree_vol %></td>
               <td>

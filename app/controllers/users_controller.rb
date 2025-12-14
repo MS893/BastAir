@@ -56,7 +56,38 @@ class UsersController < ApplicationController
   def vols
     @user = User.find(params[:id])
     authorize_user # On s'assure que l'utilisateur a le droit de voir cette page
-    @vols = @user.vols.includes(:avion, :instructeur).order(debut_vol: :asc).page(params[:page]).per(20)
+
+    respond_to do |format|
+      format.html do
+        # Logique pour l'affichage HTML
+        @vols = @user.vols.includes(:avion, :instructeur).order(debut_vol: :asc).page(params[:page]).per(13)
+      end
+      format.csv do
+        # Logique pour l'export CSV
+        start_date = Date.parse(params[:start_date])
+        end_date = Date.parse(params[:end_date])
+        vols_for_csv = @user.vols.where(debut_vol: start_date.beginning_of_day..end_date.end_of_day).order(debut_vol: :asc)
+        send_data Vol.to_csv(vols_for_csv), filename: "carnet-de-vol-#{@user.nom.parameterize}-#{start_date}-#{end_date}.csv"
+      end
+    end
+
+    # --- Calcul des totaux partiels si des dates sont fournies ---
+    if params[:start_date].present? && params[:end_date].present?
+      @start_date = Date.parse(params[:start_date])
+      @end_date = Date.parse(params[:end_date])
+      
+      # On filtre les vols sur la période sélectionnée
+      vols_in_period = @user.vols.where(debut_vol: @start_date.beginning_of_day..@end_date.end_of_day)
+      
+      # On stocke les résultats dans des variables dédiées aux totaux partiels
+      @partial_totals = true
+      @partial_total_duree_vol = vols_in_period.sum(:duree_vol)
+      @partial_total_heures_cdb = vols_in_period.where(instructeur_id: nil).or(vols_in_period.where(type_vol: 'Instruction')).sum(:duree_vol)
+      @partial_total_heures_double = vols_in_period.where.not(instructeur_id: nil).where.not(type_vol: 'Instruction').sum(:duree_vol)
+      @partial_total_heures_instruction = @user.instructeur? ? vols_in_period.where(type_vol: 'Instruction').sum(:duree_vol) : 0
+      @partial_total_atterrissages_jour = vols_in_period.where(nature: 'VFR de jour').sum(:nb_atterro)
+      @partial_total_atterrissages_nuit = vols_in_period.where(nature: 'VFR de nuit').sum(:nb_atterro)
+    end
 
     # --- Calcul des totaux pour la ligne de pied de page ---
     # On récupère TOUS les vols de l'utilisateur, sans pagination, pour les calculs
