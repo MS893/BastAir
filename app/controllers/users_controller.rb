@@ -66,11 +66,14 @@ class UsersController < ApplicationController
     @total_duree_vol = all_user_vols.sum(:duree_vol)
 
     # Total des heures en tant que Commandant de Bord (CdB)
-    @total_heures_cdb = all_user_vols.where(instructeur_id: nil).sum(:duree_vol)
+    @total_heures_cdb = all_user_vols.where(instructeur_id: nil).or(all_user_vols.where(type_vol: 'Instruction')).sum(:duree_vol)
 
     # Total des heures en double commande
-    @total_heures_double = all_user_vols.where.not(instructeur_id: nil).sum(:duree_vol)
+    @total_heures_double = all_user_vols.where.not(instructeur_id: nil).where.not(type_vol: 'Instruction').sum(:duree_vol)
 
+    # Total des heures d'instruction (uniquement si l'utilisateur est un instructeur)
+    @total_heures_instruction = @user.instructeur? ? all_user_vols.where(type_vol: 'Instruction').sum(:duree_vol) : 0
+    
     # Total des atterrissages de jour et de nuit
     @total_atterrissages_jour = all_user_vols.where(nature: 'VFR de jour').sum(:nb_atterro)
     @total_atterrissages_nuit = all_user_vols.where(nature: 'VFR de nuit').sum(:nb_atterro)

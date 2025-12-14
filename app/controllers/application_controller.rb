@@ -16,9 +16,9 @@ class ApplicationController < ActionController::Base
     redirect_to root_path, alert: "Accès réservé aux administrateurs." unless current_user&.admin?
   end
 
-  # Vérifie si l'utilisateur est un élève (ou un admin, qui a tous les droits)
+  # Vérifie si l'utilisateur est un élève, un admin ou un instructeur
   def authorize_eleve!
-    redirect_to root_path, alert: "Cette section est réservée aux élèves." unless current_user&.fonction == 'eleve' || current_user&.admin?
+    redirect_to root_path, alert: "Cette section est réservée aux élèves et instructeurs." unless current_user&.admin? || current_user&.eleve? || current_user&.instructeur?
   end
 
   # Vérifie si l'utilisateur est un trésorier ou un administrateur
