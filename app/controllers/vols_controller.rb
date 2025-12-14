@@ -17,7 +17,8 @@ class VolsController < ApplicationController
     @vol = Vol.new
     # On charge les avions et instructeurs pour les menus déroulants du formulaire
     @avions = Avion.order(:immatriculation)
-    @instructeurs = User.where(fonction: 'instructeur').order(:prenom, :nom)
+    # On charge tous les utilisateurs qui ont une qualification d'instructeur (FI) valide.
+    @instructeurs = User.where("fi IS NOT NULL AND fi >= ?", Date.today).order(:prenom, :nom)
     # On charge la liste des comptes BIA pour la modale de sélection
     @bia_users = User.where("LOWER(prenom) = ?", 'bia').order(:nom)
     # Assurez-vous d'avoir au moins un tarif dans votre base de données
@@ -42,36 +43,57 @@ class VolsController < ApplicationController
     else
       # si la sauvegarde échoue, on recharge les variables pour le formulaire
       @avions = Avion.order(:immatriculation)
-      @instructeurs = User.where(fonction: 'instructeur').order(:prenom, :nom)
+      @instructeurs = User.where("fi IS NOT NULL AND fi >= ?", Date.today).order(:prenom, :nom)
       @bia_users = User.where("LOWER(prenom) = ?", 'bia').order(:nom)
       @tarif = Tarif.order(annee: :desc).first
       render :new, status: :unprocessable_entity
     end
   end
+
+  def vols
+    # Récupère les vols paginés pour l'affichage du tableau
+    @vols = current_user.vols.includes(:avion, :instructeur).order(debut_vol: :desc).page(params[:page]).per(25)
   
+    # --- Calcul des totaux pour la ligne de pied de page ---
+    # On récupère TOUS les vols de l'utilisateur, sans pagination, pour les calculs
+    all_user_vols = current_user.vols
   
+    # Total des heures de vol
+    @total_duree_vol = all_user_vols.sum(:duree_vol)
+  
+    # Total des heures en tant que Commandant de Bord (CdB)
+    @total_heures_cdb = all_user_vols.where(instructeur_id: nil).sum(:duree_vol)
+  
+    # Total des heures en double commande
+    @total_heures_double = all_user_vols.where.not(instructeur_id: nil).sum(:duree_vol)
+  
+    # Total des atterrissages de jour et de nuit
+    @total_atterrissages_jour = all_user_vols.where(nature: 'VFR de jour').sum(:nb_atterro)
+    @total_atterrissages_nuit = all_user_vols.where(nature: 'VFR de nuit').sum(:nb_atterro)
+  end
+
+  
+
   private
 
   def vol_params
-    params.require(:vol).permit(:avion_id, :type_vol, :depart, :arrivee, :nb_atterro, :debut_vol, :fin_vol, :compteur_depart, :compteur_arrivee, :duree_vol, :fuel_avant_vol, :fuel_apres_vol, :huile, :nature, :instructeur_id, :solo, :supervise, :nav, :debut_vol_date, :debut_vol_hour, :debut_vol_minute, :bia_user_id)
+    params.require(:vol).permit(:avion_id, :type_vol, :depart, :arrivee, :nb_atterro, :debut_vol, :fin_vol, :compteur_depart, :compteur_arrivee, :duree_vol, :fuel_avant_vol, :fuel_apres_vol, :huile, :nature, :instructeur_id, :solo, :supervise, :nav, :bia_user_id)
   end
 
+  # Combine les champs de date et d'heure du formulaire en un seul champ `debut_vol`
   def combine_date_and_time
-    # Combine la date et l'heure pour le début du vol
     if params[:vol][:debut_vol_date].present? && params[:vol][:debut_vol_hour].present? && params[:vol][:debut_vol_minute].present?
       date = Date.parse(params[:vol][:debut_vol_date])
       hour = params[:vol][:debut_vol_hour].to_i
       minute = params[:vol][:debut_vol_minute].to_i
-      
-      # On reconstruit le paramètre debut_vol avec la date et l'heure
-      # avant qu'il ne soit utilisé par vol_params
+
+      # On reconstruit le paramètre `debut_vol` avant qu'il ne soit utilisé par `vol_params`
       params[:vol][:debut_vol] = Time.zone.local(date.year, date.month, date.day, hour, minute)
     end
-    # La fin du vol est calculée automatiquement
   end
 
   def set_page_title_and_vols
-    base_scope = Vol.includes(:user, :avion).order(debut_vol: :desc)
+    base_scope = Vol.includes(:user, :avion, :instructeur).order(debut_vol: :desc)
 
     case params[:period]
     when 'day'

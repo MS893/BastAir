@@ -57,12 +57,12 @@
                   <%= vol.user.name %>
                 <% end %>
               </td>
-              <%# Si pas d'instructeur, le temps est compté comme Commandant de Bord (CdB) %>
-              <td><%= '%.2f' % vol.duree_vol if vol.instructeur_id.nil? %></td>
-              <%# Si un instructeur est présent, le temps est compté en Double Commande %>
-              <td><%= '%.2f' % vol.duree_vol if vol.instructeur_id.present? %></td>
-              <%# Si l'utilisateur est instructeur et que le vol est en double, c'est du temps d'instruction %>
-              <td><%= '%.2f' % vol.duree_vol if @user.instructeur? && vol.instructeur_id.present? %></td>
+              <%# Colonne CdB : vol solo OU vol d'instruction pour l'instructeur %>
+              <td><%= '%.2f' % vol.duree_vol if vol.instructeur_id.nil? || vol.type_vol == 'Instruction' %></td>
+              <%# Colonne Double : vol avec instructeur, mais qui n'est pas le vol miroir de l'instructeur %>
+              <td><%= '%.2f' % vol.duree_vol if vol.instructeur_id.present? && vol.type_vol != 'Instruction' %></td>
+              <%# Colonne Instruction : vol en double commande pour un instructeur %>
+              <td><%= '%.2f' % vol.duree_vol if @user.instructeur? && vol.type_vol == 'Instruction' %></td>
               <%# Colonne Nuit pour les conditions opérationnelles %>
               <td><%= '%.2f' % vol.duree_vol if vol.nature == 'VFR de nuit' %></td>
               <%# Colonne IFR pour les conditions opérationnelles %>

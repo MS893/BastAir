@@ -11,15 +11,20 @@ class Vol < ApplicationRecord
   # == Associations ===========================================================
   belongs_to :user
   belongs_to :avion
+  belongs_to :instructeur, class_name: 'User', optional: true
 
   # == Callbacks ==============================================================
   after_create :create_debit_transaction
+  # Crée un vol miroir pour l'instructeur, sauf si ce vol est déjà un vol d'instructeur.
+  after_create :create_instructor_flight_log, unless: :is_instructor_log?
   before_save :calculate_fin_vol, if: -> { debut_vol.present? && duree_vol.present? }
 
   # Validation pour les compteurs
   validate :compteur_arrivee_superieur_au_depart
   # Validation pour s'assurer que le pilote a les qualifications requises
   validate :pilote_qualifie_pour_voler
+  # Validation pour s'assurer qu'un élève sélectionne toujours un instructeur
+  validate :instructeur_obligatoire_pour_eleve
 
   # Méthode pour générer le CSV à partir d'une collection de vols
   def self.to_csv(vols)
@@ -61,6 +66,11 @@ class Vol < ApplicationRecord
     cost.round(2)
   end
 
+  # Méthode pour vérifier si ce vol est un vol miroir pour un instructeur.
+  # Cela permet d'éviter les callbacks en boucle et la double facturation.
+  def is_instructor_log?
+    type_vol == 'Instruction'
+  end
 
   
   private
@@ -68,7 +78,7 @@ class Vol < ApplicationRecord
   # Crée la transaction de débit après la création du vol
   def create_debit_transaction
     # On ne crée pas de transaction si le coût est nul ou négatif
-    return if cout_total.to_d <= 0
+    return if cout_total.to_d <= 0 || is_instructor_log?
 
     # Détermine si le vol doit être imputé au pilote ou enregistré comme une dépense du club
     if FLIGHT_TYPES_DEBITED_TO_CLUB.include?(type_vol)
@@ -128,16 +138,41 @@ class Vol < ApplicationRecord
     end
   end
 
+  # Crée un vol miroir pour l'instructeur après la création du vol de l'élève.
+  def create_instructor_flight_log
+    # On ne crée un vol que si un instructeur est associé et que ce n'est pas un vol solo.
+    return unless instructeur_id.present? && !solo?
+
+    # On duplique les attributs du vol de l'élève.
+    instructor_flight = self.dup
+    # On assigne l'instructeur comme pilote du nouveau vol.
+    instructor_flight.user_id = self.instructeur_id
+    # On marque ce vol comme "Instruction" pour éviter la facturation et les callbacks en boucle.
+    instructor_flight.type_vol = 'Instruction'
+    instructor_flight.save!
+  end
+
   # S'assure que le pilote (user) a une licence et une visite médicale valides à la date du vol
   def pilote_qualifie_pour_voler
     # On ne valide que si un utilisateur et une date sont associés au vol
     # `debut_vol` semble être le champ de date/heure principal pour un vol
     return if user.nil? || debut_vol.nil?
 
-    # Vérification de la licence
-    errors.add(:base, "Le pilote n'a pas de licence valide à la date du vol.") if user.date_licence.nil? || user.date_licence < debut_vol.to_date
-    # Vérification de la visite médicale
+    # La visite médicale est obligatoire pour tous les pilotes, y compris les élèves.
     errors.add(:base, "Le pilote n'a pas de visite médicale valide à la date du vol.") if user.medical.nil? || user.medical < debut_vol.to_date
+
+    # On ne vérifie la licence que si le pilote n'est ni un élève, ni un instructeur (dont la validité est gérée par la date FI).
+    unless user.eleve? || user.instructeur?
+      errors.add(:base, "Le pilote n'a pas de licence valide à la date du vol.") if user.date_licence.nil? || user.date_licence < debut_vol.to_date
+    end
+  end
+
+  # S'assure qu'un élève sélectionne toujours un instructeur.
+  def instructeur_obligatoire_pour_eleve
+    # La validation s'applique si l'utilisateur est un élève et qu'aucun instructeur n'est sélectionné.
+    if user&.eleve? && instructeur_id.blank?
+      errors.add(:instructeur_id, "doit être sélectionné pour un élève.")
+    end
   end
 
 end

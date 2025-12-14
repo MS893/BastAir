@@ -5,9 +5,8 @@
 require 'faker'
 
 if Rails.env.production?
-  puts "Le script de seed est désactivé en environnement de production pour éviter toute perte de données."
-  puts "Si vous souhaitez ajouter des données en production, il faut le faire manuellement (via la gestion des BDD)."
-  exit
+  puts "En production je dois juste initialiser les tables dont j'aurai besoin"
+  exit  # retirer le exit et remplacer par un else
 end
 
 puts "\n--- Gestion des Agendas Google ---"
