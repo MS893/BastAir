@@ -56,7 +56,28 @@ class UsersController < ApplicationController
   def vols
     @user = User.find(params[:id])
     authorize_user # On s'assure que l'utilisateur a le droit de voir cette page
-    @vols = @user.vols.order(debut_vol: :desc).page(params[:page]).per(20)
+    @vols = @user.vols.includes(:avion, :instructeur).order(debut_vol: :asc).page(params[:page]).per(20)
+
+    # --- Calcul des totaux pour la ligne de pied de page ---
+    # On récupère TOUS les vols de l'utilisateur, sans pagination, pour les calculs
+    all_user_vols = @user.vols
+
+    # Total des heures de vol
+    @total_duree_vol = all_user_vols.sum(:duree_vol)
+
+    # Total des heures en tant que Commandant de Bord (CdB)
+    @total_heures_cdb = all_user_vols.where(instructeur_id: nil).sum(:duree_vol)
+
+    # Total des heures en double commande
+    @total_heures_double = all_user_vols.where.not(instructeur_id: nil).sum(:duree_vol)
+
+    # Total des atterrissages de jour et de nuit
+    @total_atterrissages_jour = all_user_vols.where(nature: 'VFR de jour').sum(:nb_atterro)
+    @total_atterrissages_nuit = all_user_vols.where(nature: 'VFR de nuit').sum(:nb_atterro)
+
+    # Totaux pour les conditions opérationnelles
+    @total_heures_nuit = all_user_vols.where(nature: 'VFR de nuit').sum(:duree_vol)
+    @total_heures_ifr = all_user_vols.where(nature: 'IFR').sum(:duree_vol)
   end
 
   def update

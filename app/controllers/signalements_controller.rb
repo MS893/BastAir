@@ -1,6 +1,6 @@
 class SignalementsController < ApplicationController
   before_action :authenticate_user!
-  before_action :authorize_admin!, only: [:edit, :update, :destroy]
+  before_action :authorize_instructor_or_admin!, only: [:edit, :update, :destroy]
   # On ne cherche l'avion que pour les actions `new` et `create`
   before_action :set_avion, only: [:create]
   before_action :set_signalement, only: [:show, :edit, :update, :destroy]

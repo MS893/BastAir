@@ -25,5 +25,10 @@ class ApplicationController < ActionController::Base
   def authorize_treasurer_or_admin!
     redirect_to root_path, alert: "Accès réservé aux administrateurs et au trésorier." unless current_user&.admin? || current_user&.fonction == 'tresorier'
   end
+
+  # Vérifie si l'utilisateur est un instructeur ou un administrateur
+  def authorize_instructor_or_admin!
+    redirect_to root_path, alert: "Accès réservé aux administrateurs et aux instructeurs." unless current_user&.admin? || current_user&.instructeur?
+  end
   
 end

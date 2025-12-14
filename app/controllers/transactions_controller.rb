@@ -60,7 +60,7 @@ class TransactionsController < ApplicationController
                     end
 
     # Ordonne les résultats
-    @transactions = @transactions.order(date_transaction: :desc)
+    @transactions = @transactions.order(date_transaction: :desc, id: :desc)
 
     respond_to do |format|
       format.html { @transactions = @transactions.page(params[:page]).per(15) } # On pagine uniquement pour la vue HTML

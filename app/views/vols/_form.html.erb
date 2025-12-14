@@ -130,33 +130,30 @@
           </div>
         </div>
 
-        <%# La section "Instruction" n'est visible que pour les élèves %>
-        <% if current_user.eleve? %>
-          <hr class="my-4">
-          <h5 class="mb-4">Instruction</h5>
-          <div class="row align-items-center">
-            <div class="col-md-4 mb-3">
-            <%= form.label :instructeur_id, "Instructeur" %>
-            <%= form.collection_select :instructeur_id, @instructeurs, :id, :name, { prompt: "Sélectionnez un instructeur" }, { class: "form-select", "aria-describedby": "instructeurHelp" } %>
-            <div id="instructeurHelp" class="form-text">Instructeur à sélectionner, même en solo.</div>
-            </div>
-            <div class="col-md-2 mb-3 ms-4">
-              <div class="form-check">
-                <%= form.check_box :solo, class: "form-check-input", id: 'vol_solo' %> <%= form.label :solo, "Solo", class: "form-check-label" %>
-              </div>
-            </div>
-            <div class="col-md-2 mb-3">
-              <div class="form-check">
-                <%= form.check_box :supervise, class: "form-check-input" %> <%= form.label :supervise, "Supervisé", class: "form-check-label" %>
-              </div>
-            </div>
-            <div class="col-md-2 mb-3">
-              <div class="form-check">
-                <%= form.check_box :nav, class: "form-check-input" %> <%= form.label :nav, "Navigation", class: "form-check-label" %>
-              </div>
+        <hr class="my-4">
+        <h5 class="mb-4">Instruction</h5>
+        <div class="row align-items-center">
+          <div class="col-md-4 mb-3">
+          <%= form.label :instructeur_id, "Instructeur" %>
+          <%= form.collection_select :instructeur_id, @instructeurs, :id, :name, { prompt: "Sélectionnez un instructeur" }, { class: "form-select", "aria-describedby": "instructeurHelp" } %>
+          <div id="instructeurHelp" class="form-text">L'instructeur est obligatoire pour les élèves.</div>
+          </div>
+          <div class="col-md-2 mb-3 ms-4">
+            <div class="form-check">
+              <%= form.check_box :solo, class: "form-check-input", id: 'vol_solo' %> <%= form.label :solo, "Solo", class: "form-check-label" %>
             </div>
           </div>
-        <% end %>
+          <div class="col-md-2 mb-3">
+            <div class="form-check">
+              <%= form.check_box :supervise, class: "form-check-input" %> <%= form.label :supervise, "Supervisé", class: "form-check-label" %>
+            </div>
+          </div>
+          <div class="col-md-2 mb-3">
+            <div class="form-check">
+              <%= form.check_box :nav, class: "form-check-input" %> <%= form.label :nav, "Navigation", class: "form-check-label" %>
+            </div>
+          </div>
+        </div>
 
         <div class="form-actions mt-5 border-top pt-3 d-flex">
           <button type="button" id="confirm-submission-btn" class="btn btn-success">Enregistrer le vol</button>

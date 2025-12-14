@@ -2,34 +2,92 @@
 
 <div class="container my-5">
   <div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="mb-0">Mes Vols</h1>
+    <h1 class="mb-0">Mon carnet de vol</h1>
     <%= link_to "Enregistrer un nouveau vol", new_vol_path, class: "btn btn-primary" %>
   </div>
 
   <% if @vols.any? %>
     <div class="table-responsive">
-      <table class="table table-striped table-hover">
+      <table class="table table-striped table-hover table-bordered text-center">
         <thead class="table-light">
           <tr>
-            <th>Date</th>
-            <th>Avion</th>
+            <th rowspan="2" class="align-middle">Date</th>
+            <th colspan="2">Aérodrome</th>
+            <th rowspan="2" class="align-middle">Aéronef</th>
+            <th rowspan="2" class="align-middle">Temps de vol</th>
+            <th rowspan="2" class="align-middle">Nom du CdB</th>
+            <th colspan="3">Fonction</th>
+            <th colspan="2">Condition opérationnelle</th>
+            <th colspan="2">Atterrissages</th>
+            <th rowspan="2" class="align-middle">Remarques</th>
+          </tr>
+          <tr>
             <th>Départ</th>
             <th>Arrivée</th>
-            <th class="text-end">Durée (h)</th>
-            <th class="text-end">Atterrissages</th>
+            <th>CdB</th>
+            <th>Double</th>
+            <th>Instruction</th>
+            <th>Nuit</th>
+            <th>IFR</th>
+            <th>Jour</th>
+            <th>Nuit</th>
           </tr>
         </thead>
         <tbody>
           <% @vols.each do |vol| %>
             <tr>
-              <td><%= l vol.debut_vol, format: :short if vol.debut_vol %></td>
-              <td><%= vol.avion.immatriculation %></td>
-              <td><%= vol.depart %></td>
-              <td><%= vol.arrivee %></td>
-              <td class="text-end"><%= '%.2f' % vol.duree_vol %></td>
-              <td class="text-end"><%= vol.nb_atterro %></td>
+              <td><%= l vol.debut_vol.to_date, format: :short_year if vol.debut_vol %></td>
+              <td>
+                <%= vol.depart %><br>
+                <small class="text-muted"><%= l vol.debut_vol, format: :short_time if vol.debut_vol %></small>
+              </td>
+              <td>
+                <%= vol.arrivee %><br>
+                <small class="text-muted"><%= l vol.fin_vol, format: :short_time if vol.fin_vol %></small>
+              </td>
+              <td>
+                <%= vol.type_vol %><br>
+                <small class="text-muted"><%= vol.avion.immatriculation %></small>
+              </td>
+              <td><%= '%.2f' % vol.duree_vol %></td>
+              <td>
+                <% if !vol.solo? && vol.instructeur.present? %>
+                  <%= vol.instructeur.name %>
+                <% else %>
+                  <%= vol.user.name %>
+                <% end %>
+              </td>
+              <%# Si pas d'instructeur, le temps est compté comme Commandant de Bord (CdB) %>
+              <td><%= '%.2f' % vol.duree_vol if vol.instructeur_id.nil? %></td>
+              <%# Si un instructeur est présent, le temps est compté en Double Commande %>
+              <td><%= '%.2f' % vol.duree_vol if vol.instructeur_id.present? %></td>
+              <%# Si l'utilisateur est instructeur et que le vol est en double, c'est du temps d'instruction %>
+              <td><%= '%.2f' % vol.duree_vol if @user.instructeur? && vol.instructeur_id.present? %></td>
+              <%# Colonne Nuit pour les conditions opérationnelles %>
+              <td><%= '%.2f' % vol.duree_vol if vol.nature == 'VFR de nuit' %></td>
+              <%# Colonne IFR pour les conditions opérationnelles %>
+              <td><%= '%.2f' % vol.duree_vol if vol.nature == 'IFR' %></td>
+              <td><%= vol.nb_atterro if vol.nature == 'VFR de jour' %></td>
+              <td><%= vol.nb_atterro if vol.nature == 'VFR de nuit' %></td>
+              <%# Affiche le type de vol dans les remarques, sauf si c'est "Standard" %>
+              <td><%= vol.type_vol unless vol.type_vol == 'Standard' %></td>
             </tr>
           <% end %>
+        </tbody>
+        <tfoot class="table-group-divider">
+          <tr class="fw-bold">
+            <td colspan="4" class="text-end">Totaux</td>
+            <td><%= '%.2f' % @total_duree_vol %></td>
+            <td><%# Colonne Nom du CdB vide %></td>
+            <td><%= '%.2f' % @total_heures_cdb %></td>
+            <td><%= '%.2f' % @total_heures_double %></td>
+            <td><%# Total Instruction (logique à définir si besoin) %></td>
+            <td><%= '%.2f' % @total_heures_nuit %></td>
+            <td><%= '%.2f' % @total_heures_ifr %></td>
+            <td><%= @total_atterrissages_jour %></td>
+            <td><%= @total_atterrissages_nuit %></td>
+            <td><%# Colonne Remarques vide %></td>
+          </tr>
         </tbody>
       </table>
     </div>
