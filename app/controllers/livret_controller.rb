@@ -1,23 +1,26 @@
-# app/controllers/livrets_controller.rb
-
-class ElearningController < ApplicationController
+class LivretController < ApplicationController
   before_action :authenticate_user!
-  before_action :authorize_student_area!, only: [:index, :show] # Seuls les élèves peuvent voir la liste et la page d'un cours
-  before_action :set_course, only: [:show, :document]
+  before_action :set_livret, only: [:update]
 
-  def show
+  def create
+    # Not implemented yet
+  end
+
+  def update
+    if @livret.update(livret_params)
+      redirect_to livret_progression_path, notice: 'Mise à jour réussie.'
+    else
+      redirect_to livret_progression_path, alert: 'Mise à jour échouée.'
+    end
+  end
+
+  private
+
+  def set_livret
     @livret = Livret.find(params[:id])
-    # Active Storage est accessible directement via l'objet @livret
   end
 
-  # Ou pour une liste :
-  def index
-    @livrets = Livret.all
+  def livret_params
+    params.require(:livret).permit(:status)
   end
-
-  def course_completion_params
-    # Assurez-vous d'inclure :signature_data ici
-    params.require(:course_completion).permit(:course_id, :user_id, :signature_data, :autres_champs...) 
-  end
-
 end
