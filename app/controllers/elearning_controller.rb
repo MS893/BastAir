@@ -10,6 +10,17 @@ class ElearningController < ApplicationController
     # S'il n'en existe pas, on en prépare un nouveau en mémoire (find_or_initialize_by).
     # Ce livret sera sauvegardé en base de données uniquement lors de la soumission du formulaire de signature.
     @livret = Livret.find_or_initialize_by(user: current_user, course: @course)
+    
+    # --- Logique pour charger le contenu Markdown ---
+    @markdown_content = nil
+    # On déduit le nom du fichier depuis le titre du cours (ex: "FTP1 ...")
+    course_identifier = @course.title.split.first.downcase
+    markdown_file_path = Rails.root.join('lib', 'assets', "#{course_identifier}.md")
+
+    if File.exist?(markdown_file_path)
+      file_content = File.read(markdown_file_path)
+      @markdown_content = MarkdownService.new.render(file_content)
+    end
     # La vue show.html.erb est rendue implicitement.
   end
 

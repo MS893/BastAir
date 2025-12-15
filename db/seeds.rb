@@ -394,26 +394,6 @@ def cours
   # ----------------------------------------------------
   puts "\nCreating Courses..."
 
-  # --- Examens théoriques PPL ---
-  ppl_courses_data = [
-    { title: "010 Droit Aérien (Réglementation)", description: "Cours sur le droit aérien et la réglementation aéronautique.", file: "010_droit_aerien.pdf" },
-    { title: "020 Connaissances Générales de l'Aéronef", description: "Cours sur les connaissances générales de l'aéronef.", file: "020_connaissances_generales.pdf" },
-    { title: "030 Performances et Préparation du Vol", description: "Cours sur les performances et la préparation du vol.", file: "030_performances.pdf" },
-    { title: "040 Performance Humaine (Facteurs Humains)", description: "Cours sur la performance humaine et les facteurs humains.", file: "040_facteurs_humains.pdf" },
-    { title: "050 Météorologie", description: "Cours sur la météorologie aéronautique.", file: "050_meteorologie.pdf" },
-    { title: "060 Navigation", description: "Cours sur les techniques de navigation aérienne.", file: "060_navigation.pdf" },
-    { title: "070 Procédures Opérationnelles", description: "Cours sur les procédures opérationnelles standard.", file: "070_procedures_operationnelles.pdf" },
-    { title: "080 Principes du Vol", description: "Cours sur les principes fondamentaux du vol.", file: "080_principes_du_vol.pdf" },
-    { title: "090 Communications", description: "Cours sur les communications aéronautiques.", file: "090_communications.pdf" }
-  ]
-  ppl_courses_data.each do |course_data|
-    course = Course.find_or_create_by!(title: course_data[:title]) do |c|
-      c.description = course_data[:description]
-    end
-    # Note: L'attachement de fichier est omis ici car les fichiers n'existent pas encore
-  end
-  puts "✅ PPL theoretical courses created."
-
   # --- Cours FTP ---
   ftp_courses_data = [    { title: "FTP1 Environnement réglementaire de la formation", description: <<~DESC, file: "ftp1.pdf" },
       Environnement réglementaire de la formation :
@@ -484,7 +464,6 @@ def cours
       . Présentation de l’examen PPL(A) au travers du guide FFA de l’examen en vol PPL(A) et du manuel de sécurité FFA
       . Détail des exercices et de leur enchainement, critères observés, niveau attendu, contenu du briefing
     DESC
-    { title: "Facteurs Humains", description: "Cours sur les facteurs humains", file: "facteurs_humains.pdf" }
   ]
   ftp_courses_data.each do |course_data|
     # On cherche le cours par son titre. S'il n'existe pas, on le crée.
@@ -593,29 +572,139 @@ def lecons
 
 end
 
-def livrets
+def questions_ftp
+  puts "\nCreating FTP questions from file..."
 
-  # Mise à jour des livrets
-  # ----------------------------------------------------
+  # 1. Définir le chemin vers le fichier de questions
+  file_path = Rails.root.join('lib', 'assets', 'questions.txt')
 
-  puts "\nCreating a sample livret record..."
-  # On récupère l'élève de test et le premier cours théorique
-  eleve_user = User.find_by(email: 'eleve@bastair.com')
-  first_course = Course.order(:id).first
-
-  if eleve_user && first_course
-    Livret.find_or_create_by!(
-      user: eleve_user,
-      course: first_course,
-      title: first_course.title, # On utilise le titre du cours associé
-      valid: 0, # 0 pour "non validé" initialement
-      date: nil
-    )
-    puts "✅ Livret record created for student."
-  else
-    puts "⚠️  Could not create sample livret record (test student or course not found)."
+  unless File.exist?(file_path)
+    puts "❌ Erreur : Le fichier de questions n'a pas été trouvé à l'emplacement '#{file_path}'."
+    return
   end
 
+  # Nettoyer toutes les questions existantes pour éviter les doublons
+  puts "Deleting all old questions..."
+  Question.destroy_all
+
+  question_blocks = File.read(file_path).split("\n\n")
+  puts "Nombre de blocs de questions lus du fichier : #{question_blocks.size}"
+  questions_created_count = 0
+
+  # Itérer sur les 12 cours FTP
+  (1..12).each do |course_num|
+    # Trouver le cours correspondant, par exemple "FTP1", "FTP2", etc.
+    course = Course.find_by("title LIKE ?", "FTP#{course_num}%")
+
+    unless course
+      puts "⚠️ Warning: Course for FTP#{course_num} (title like 'FTP#{course_num} %') not found. Skipping questions for it."
+      next
+    end
+
+    puts "Adding questions for course: '#{course.title}'"
+
+    # Déterminer la plage de questions pour ce cours
+    start_index = (course_num - 1) * 10
+    end_index = start_index + 9
+    course_question_blocks = question_blocks[start_index..end_index]
+    
+    if course_question_blocks.nil?
+      puts "⚠️ Warning: course_question_blocks is nil for FTP#{course_num}. start_index: #{start_index}, end_index: #{end_index}, question_blocks.size: #{question_blocks.size}"
+      puts "⚠️ Warning: No question blocks found for FTP#{course_num}. start_index: #{start_index}, end_index: #{end_index}, question_blocks.size: #{question_blocks.size}"
+      next
+    end
+
+    course_question_blocks.each do |block|
+      next if block.blank?
+
+      lines = block.split("\n")
+      if lines.length == 6
+        Question.create!(
+          course: course,
+          qcm: lines[0].strip,
+          answer_1: lines[1].strip,
+          answer_2: lines[2].strip,
+          answer_3: lines[3].strip,
+          answer_4: lines[4].strip,
+          correct_answer: lines[5].to_i
+        )
+        questions_created_count += 1
+      else
+        puts "⚠️  Warning: Skipping block for course FTP#{course_num} (index #{start_index + course_question_blocks.index(block)}) due to incorrect format (expected 6 lines, found #{lines.length})."
+        lines.each_with_index do |line, idx|
+          puts "    Ligne #{idx + 1}: '#{line.strip}'"
+        end
+        puts "⚠️ Warning: Skipping a block for course FTP#{course_num} due to incorrect format."
+      end
+    end
+  end
+
+  puts "✅ #{questions_created_count} FTP questions created successfully."
+end
+
+def livrets
+  # Mise à jour des livrets
+  # ----------------------------------------------------
+  puts "\nCreating progression booklet for the test student..."
+  
+  # 1. On récupère l'élève de test
+  eleve_user = User.find_by(email: 'eleve@bastair.com')
+  
+  unless eleve_user
+    puts "⚠️  Could not create progression booklet because test student 'eleve@bastair.com' was not found."
+    return
+  end
+
+  # 2. On nettoie les anciens livrets de l'élève pour repartir de zéro
+  Livret.where(user: eleve_user).destroy_all
+  puts "  -> Old booklet entries for the student have been cleared."
+
+  # 3. Création des entrées pour les examens théoriques PPL (directement dans le livret)
+  ppl_exam_titles = [
+    "010 Droit Aérien (Réglementation)",
+    "020 Connaissances Générales de l'Aéronef",
+    "030 Performances et Préparation du Vol",
+    "040 Performance Humaine (Facteurs Humains)",
+    "050 Météorologie",
+    "060 Navigation",
+    "070 Procédures Opérationnelles",
+    "080 Principes du Vol",
+    "090 Communications"
+  ]
+  ppl_exam_titles.each do |exam_title|
+    Livret.create!(
+      user: eleve_user,
+      title: exam_title,
+      status: 0, # Statut initial : "non obtenu"
+      comment: ""
+    )
+  end
+  puts "  -> Added PPL theoretical exam entries to the booklet."
+
+  # 4. Création des entrées pour les cours FTP (titres commençant par "FTP")
+  Course.where("title LIKE 'FTP%'").find_each do |course|
+    Livret.create!(
+      user: eleve_user,
+      course: course,
+      title: course.title,
+      status: 0,
+      comment: ""
+    )
+  end
+  puts "  -> Added FTP course entries to the booklet."
+
+  # 5. Création des entrées pour les leçons de voldans seeds.rb je veut supprimer la création de cours 
+  FlightLesson.find_each do |lesson|
+    Livret.create!(
+      user: eleve_user,
+      flight_lesson: lesson,
+      title: lesson.title,
+      status: 0,
+      comment: ""
+    )
+  end
+  puts "  -> Added flight lesson entries to the booklet."
+  puts "✅ Complete progression booklet created for student '#{eleve_user.full_name}' with #{Livret.where(user: eleve_user).count} total entries."
 end
 
 def transactions
@@ -666,9 +755,14 @@ if Rails.env.production?
     puts "✅ Fuseau horaire initialisé à Paris"
   end
 
-  settings # Appel de la méthode pour créer les paramètres
+  settings      # Appel de la méthode pour créer les paramètres
+  cours         # Appel de la méthode pour créer les cours
+  podcasts      # Appel de la méthode pour créer les podcasts
+  lecons        # Appel de la méthode pour créer les leçons de vol
+  livrets       # Crée les livrets APRÈS les leçons et cours
+  questions_ftp # Appel de la méthode pour créer les questions
   # en production on n'a pas besoin de remplir les autres tables
-  
+
 else
 
   puts "\n⚠️  L'application est en mode DEVELOPPEMENT, initialisation totale\n"
@@ -706,9 +800,11 @@ else
   # On détruit les tables en respectant l'ordre des dépendances pour éviter les erreurs de clé étrangère.
   # 1. Modèles qui dépendent d'autres modèles (ex: User, Event, Avion)
   Attendance.destroy_all
+  Question.destroy_all # Doit être détruit avant Course
   Comment.destroy_all
   NewsItem.destroy_all
   Immobilisation.destroy_all # Doit être détruit avant Transaction
+  Livret.destroy_all
   Penalite.destroy_all
   Reservation.destroy_all
   Signalement.destroy_all
@@ -750,6 +846,8 @@ else
   cours         # Appel de la méthode pour créer les cours
   podcasts      # Appel de la méthode pour créer les podcasts
   lecons        # Appel de la méthode pour créer les leçons de vol
+  livrets       # Crée les livrets APRÈS les leçons et cours
+  questions_ftp # Appel de la méthode pour créer les questions BIA
   transactions  # Appel de la méthode pour créer les transactions
     
 end

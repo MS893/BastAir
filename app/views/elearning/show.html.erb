@@ -10,13 +10,19 @@
 
   <hr>
 
-  <% if @course.document.attached? %>
+  <%# On affiche le contenu Markdown en priorité s'il existe %>
+  <% if @markdown_content %>
+    <div class="markdown-content p-3 border rounded">
+      <%= @markdown_content %>
+    </div>
+  <%# Sinon, on cherche un document PDF attaché %>
+  <% elsif @course.document.attached? %>
     <div class="pdf-viewer-container" style="height: 80vh; border: 1px solid #dee2e6; border-radius: .25rem;">
       <embed src="<%= rails_blob_path(@course.document) %>" type="application/pdf" width="100%" height="100%">
     </div>
   <% else %>
     <div class="alert alert-warning text-center" role="alert">
-      Aucun document n'est disponible pour ce cours.
+      Aucun contenu ou document n'est disponible pour ce cours.
     </div>
   <% end %>
 
@@ -42,7 +48,7 @@
           <%# Boucle sur les questions du cours %>
           <% @course.questions.each_with_index do |question, index| %>
             <div class="mb-4" data-quiz-modal-target="question">
-              <h6>Question <%= index + 1 %> : <%= question.text %></h6>
+              <h6>Question <%= index + 1 %> : <%= question.qcm %></h6>
               
               <%# Affichage des 4 réponses possibles %>
               <div class="form-check">
@@ -78,7 +84,7 @@
     <hr>
     <h2 class="text-center">Signature de validation du cours</h2>
     <% if @livret %>
-      <%= form_with(model: @livret, url: { controller: 'livrets', action: 'update', id: @livret.id }, method: :patch, data: { controller: "signature", action: "submit->signature#save" }) do |form| %>
+      <%= form_with(model: @livret, data: { controller: "signature", action: "submit->signature#save" }) do |form| %>
         <p class="text-center">Veuillez signer dans le cadre ci-dessous pour certifier que vous avez lu et compris le cours.</p>
         <%= form.hidden_field :signature_data, data: { signature_target: "output" } %>
         <div class="signature-pad-container mx-auto" style="width: 100%; max-width: 500px;">

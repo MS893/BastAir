@@ -152,11 +152,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_15_120559) do
 
   create_table "livrets", force: :cascade do |t|
     t.integer "user_id", null: false
-    t.integer "course_id", null: false
-    t.integer "flight_lesson_id", null: false
+    t.integer "course_id"
+    t.integer "flight_lesson_id"
     t.string "title"
-    t.integer "valid", default: 0
+    t.integer "status", default: 0
     t.date "date"
+    t.text "comment"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["course_id"], name: "index_livrets_on_course_id"

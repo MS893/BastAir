@@ -351,6 +351,7 @@ GEM
       psych (>= 4.0.0)
       tsort
     recaptcha (5.21.1)
+    redcarpet (3.6.1)
     regexp_parser (2.11.3)
     reline (0.6.2)
       io-console (~> 0.5)
@@ -539,6 +540,7 @@ DEPENDENCIES
   rails (~> 8.0.3)
   rails-i18n
   recaptcha
+  redcarpet
   rspec-rails (~> 6.1)
   rubocop-rails-omakase
   selenium-webdriver

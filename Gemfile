@@ -32,7 +32,9 @@ gem 'google-apis-drive_v3', '~> 0.5.0'
 gem 'chartkick'
 gem 'rails-i18n'
 # export fichier csv
-gem 'csv'
+gem 'csv' 
+# Pour le rendu des fichiers Markdown
+gem 'redcarpet'
 
 
 

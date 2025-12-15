@@ -116,6 +116,9 @@ Rails.application.routes.draw do
   end
   resources :audios, only: [:show]
 
+  # livret de progression
+  resources :livrets, only: [:create, :update]
+
   # routes pour les événements, avec des routes imbriquées pour les participations
   # et une page de confirmation de suppression
   resources :events do

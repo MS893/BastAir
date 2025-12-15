@@ -1,0 +1,839 @@
+Quelle est la disposition du PART NCO concernant l'emport de carburant pour les vols VFR (Vol à Vue)?
+Le carburant doit être suffisant pour atteindre l'aérodrome de destination plus une réserve pour 30 minutes de vol de jour.
+Le carburant doit être suffisant pour atteindre l'aérodrome de destination plus une réserve pour 45 minutes de vol de jour.
+La quantité de carburant est laissée à la discrétion du pilote commandant de bord.
+Le carburant doit être suffisant pour atteindre la destination plus l'aérodrome de dégagement.
+1
+
+Selon le PART NCO, si un aéronef monomoteur est utilisé pour des opérations non commerciales (PPL), quel est le rôle principal du pilote commandant de bord (PIC) en matière de sécurité ?
+S'assurer que les performances de l'aéronef sont suffisantes pour le vol envisagé.
+Assumer la responsabilité de la maintenance de l'aéronef.
+Rédiger le manuel d'exploitation de l'aéronef.
+Communiquer toutes les défaillances mineures à l'EASA.
+1
+
+Dans un Système de Gestion de la Sécurité (SGS) d'une ATO, quel est le pilier qui comprend l'identification des causes profondes d'un événement (incident ou accident) ?
+Le Programme de Surveillance Continue (Compliance Monitoring).
+La Promotion de la Sécurité.
+L'Assurance de la Sécurité (Safety Assurance).
+La Politique et les Objectifs de Sécurité.
+3
+
+Quelle est la principale différence réglementaire concernant le Dirigeant Responsable (*Accountable Manager*) entre un ATO et un DTO?
+Le DTO n'est pas tenu de nommer un Dirigeant Responsable.
+L'ATO doit obligatoirement avoir deux Dirigeants Responsables pour garantir la séparation des pouvoirs.
+Le Dirigeant Responsable d'un DTO peut n'être responsable que du budget, et non de la sécurité.
+La nomination d'un Dirigeant Responsable est obligatoire pour les deux structures, mais ses responsabilités peuvent être simplifiées dans un DTO.
+4
+
+Quel est le principe fondamental qui guide l'application du Règlement (UE) 376/2014 pour encourager la notification des événements?
+Le principe de la sanction immédiate pour tout événement signalé.
+Le principe de la juste culture (*Just Culture*).
+Le principe de l'obligation de confidentialité absolue.
+Le principe de la responsabilité civile illimitée du pilote.
+2
+
+Dans le cadre du REX FFA, lorsqu'un pilote signale un événement, quel est l'avantage principal de la transmission des informations à l'organisme central (BEA ou autorité compétente)?
+Cela permet de déclencher une enquête immédiate de gendarmerie.
+Cela contribue à l'analyse globale des risques au niveau national et européen.
+Cela annule automatiquement toute responsabilité pénale du pilote.
+Cela garantit que l'événement ne sera jamais rendu public.
+2
+
+Un 'événement grave' (*Serious Incident*), tel que défini dans le cadre du Règlement 376/2014, doit être signalé de manière :
+Volontaire, dans les 72 heures.
+Obligatoire, uniquement si l'aéronef est endommagé.
+Volontaire, sans restriction de délai.
+Obligatoire et immédiate (ou au plus tard dans les 72 heures).
+4
+
+Qu'est-ce que la FFA met à disposition de ses membres pour faciliter le partage d'expérience et la prévention, en lien avec les événements signalés ?
+Une base de données privée d'identification des pilotes fautifs.
+Des bulletins de sécurité périodiques et des analyses de tendances.
+Des procès-verbaux d'audits de la DGAC.
+Une liste des sanctions appliquées aux aéro-clubs.
+2
+
+Le Manuel de Sécurité de la FFA recommande une méthode pour évaluer les risques lors de la préparation d'un vol ou d'une activité. Cette méthode est souvent basée sur l'évaluation de :
+La probabilité d'occurrence et de la gravité potentielle.
+La performance humaine et de l'état émotionnel du pilote.
+Le prix du carburant et des taxes d'atterrissage.
+Le temps écoulé depuis la dernière révision annuelle de l'aéronef.
+1
+
+Quelle est la fonction principale d'un "Responsable de la Sécurité" (Safety Manager) dans une structure utilisant le modèle du Manuel de Sécurité FFA/SGS, en plus du Dirigeant Responsable?
+Assurer la conformité administrative de l'organisation.
+Animer le SGS (ou la Politique de Sécurité) et être le point de contact pour les questions de sécurité.
+Donner l'instruction en vol aux élèves PPL.
+Être le seul à pouvoir signaler un événement aux autorités.
+2
+
+Quel est l'objectif principal du briefing avant le vol, dans le cadre de la gestion des ressources et de la sécurité des opérations (CRM/TEM)?
+Confirmer que la licence du pilote est valide pour le type d'aéronef.
+Établir la répartition des tâches, identifier les menaces et les erreurs potentielles (TEM) et coordonner les actions de l'équipage ou des occupants.
+Calculer la performance de décollage en utilisant les dernières données du manuel de vol.
+Remplir le carnet de route (logbook) de l'aéronef.
+2
+
+Lors de la vérification des documents de l'avion, quel document garantit que l'aéronef est apte à voler d'un point de vue technique et réglementaire?
+Le Certificat d'Immatriculation.
+L'Assurance Responsabilité Civile.
+Le Certificat de Navigabilité (CN) ou la Licence de Station d'Aéronef (LSA).
+Le Carnet de Route (Logbook).
+3
+
+Pourquoi l'utilisation du devis de masse et de centrage (Weight and Balance) est-elle une vérification essentielle avant tout vol?
+Pour déterminer le coût exact du carburant nécessaire au vol.
+Pour s'assurer que l'avion est suffisamment lourd pour contrer les turbulences.
+Pour vérifier que la masse totale ne dépasse pas la masse maximale autorisée et que le centre de gravité reste dans les limites de sécurité de l'aéronef.
+Pour justifier l'emport de passagers auprès des autorités aéroportuaires.
+3
+
+Dans la vérification des informations aéronautiques (Info Aéro), quel type de message fournit une notification rapide des changements temporaires, critiques ou urgents concernant les aides à la navigation, les aérodromes ou les procédures?
+Le SUP AIP (Supplément aux Publications d'Information Aéronautique).
+Le NOTAM (Notice to Airmen).
+La publication VFR-E.
+Le Manuel de Vol de l'Aéronef (AFM).
+2
+
+Dans le domaine de la sécurité élémentaire, quelle est l'action immédiate à effectuer en cas de début d'incendie moteur au sol au démarrage, après coupure des gaz et du mélange (si applicable)?
+Couper le contact radio.
+Couper le master (batterie).
+Couper l'arrivée d'essence et l'allumage (magnétos/coupe-feu) si l'avion le permet.
+Appeler les services d'urgence de l'aérodrome.
+3
+
+Lors de la préparation d'un vol VFR, quelle est la règle de base concernant la réserve de carburant de jour, conformément au PART NCO?
+Carburant suffisant pour atteindre la destination et voler 45 minutes supplémentaires.
+Carburant suffisant pour atteindre la destination et voler 30 minutes supplémentaires.
+Carburant suffisant pour atteindre la destination, l'aérodrome de dégagement et 30 minutes de réserve.
+Carburant suffisant pour voler une heure de plus que le temps de vol estimé.
+1
+
+L'une des compétences non techniques (Non-Technical Skills) cruciales pour un pilote est la Conscience Situationnelle (Situational Awareness). Qu'est-ce que cela englobe principalement?
+La capacité à effectuer des figures acrobatiques sans perte de contrôle.
+La perception correcte de l'environnement (position, météo, systèmes, trafic) et la projection de son état futur.
+La connaissance par cœur des procédures d'urgence de tous les aéronefs pilotés.
+La capacité à naviguer uniquement à l'aide d'instruments de bord.
+2
+
+Quel est l'objectif principal du débriefing après le vol?
+Remplir les colonnes "arrivée" du carnet de route de l'avion.
+Mettre à jour les cartes aéronautiques utilisées pendant le vol.
+Déterminer si le coût du vol correspond au devis initial.
+Évaluer la performance, identifier les points forts et les axes d'amélioration, et garantir le retour d'expérience (REX).
+4
+
+Lors de la mise en œuvre de l'avion, qu'est-ce qui est considéré comme la vérification la plus importante du système électrique avant le démarrage moteur?
+La vérification de la charge de l'alternateur à l'aide d'un multimètre.
+La vérification que l'indicateur d'ampèremètre (Amp meter) ne bouge pas.
+Le contrôle de la tension de la batterie (Bus Voltage) et la vérification du bon fonctionnement des éléments essentiels (radio, feux) avec le Master ON.
+La vérification de la température du moteur.
+3
+
+Lors de la vérification du dossier météo, quelle condition est la plus critique à évaluer en priorité pour la sécurité d'un vol VFR?
+La température et le point de rosée pour anticiper le givrage.
+Le vent en altitude pour optimiser la consommation de carburant.
+Le plafond nuageux et la visibilité pour s'assurer qu'ils sont supérieurs aux minima VFR requis pour la zone de vol.
+La pression atmosphérique locale pour le calage altimétrique.
+3
+
+Quelle est la principale différence entre l'assiette et l'incidence d'un aéronef?
+L'assiette est l'angle de l'aile par rapport à l'horizon, l'incidence est l'angle de l'aile par rapport à la corde de référence.
+L'assiette est l'angle que fait l'axe longitudinal de l'avion avec l'horizon, tandis que l'incidence est l'angle entre la corde de référence de l'aile et le vent relatif.
+L'incidence est la seule qui affecte directement la portance, l'assiette est purement esthétique.
+L'assiette est l'angle de montée, et l'incidence est l'angle de descente.
+2
+
+Comment est principalement compensée la traînée (résistance à l'avancement) en vol de croisière stabilisé?
+Par le poids de l'avion.
+Par la portance.
+Par la puissance (traction ou poussée) fournie par le moteur.
+Par la gouverne de profondeur.
+3
+
+En vol stabilisé, si un pilote augmente l'assiette (cabre) sans ajuster la puissance du moteur, que se passe-t-il initialement?
+L'incidence diminue, la portance augmente et la vitesse augmente.
+L'incidence augmente, la traînée diminue et la vitesse augmente.
+L'incidence augmente, la portance augmente momentanément, mais la vitesse diminue si la puissance n'est pas suffisante pour maintenir l'énergie.
+L'incidence reste constante, mais la portance diminue.
+3
+
+Dans la relation entre puissance, assiette et vitesse, quel est le paramètre que le pilote contrôle principalement avec la manette des gaz pour maintenir la vitesse en vol stabilisé?
+La puissance nécessaire pour compenser la traînée.
+L'assiette de l'avion.
+Le couple de l'hélice.
+Le facteur de charge.
+1
+
+Qu'est-ce que l'incidence maximale ou incidence de décrochage (Critical Angle of Attack)?
+L'angle qui correspond à la vitesse maximale de l'avion.
+L'angle d'incidence au-delà duquel le filet d'air se décolle brusquement de l'extrados de l'aile, entraînant une chute rapide de la portance.
+L'angle d'incidence atteint uniquement en montée verticale.
+L'angle d'incidence qui minimise la traînée.
+2
+
+Quelle action le pilote doit-il effectuer pour passer d'un vol en palier stabilisé à une montée stabilisée à une vitesse donnée?
+Réduire l'assiette et réduire la puissance pour stabiliser la nouvelle trajectoire.
+Augmenter uniquement l'assiette pour cabrer, sans toucher à la puissance.
+Augmenter la puissance pour obtenir la puissance excédentaire nécessaire, puis augmenter l'assiette pour établir la pente de montée souhaitée.
+Baisser les volets pour augmenter la portance.
+3
+
+En vol en palier stabilisé, si le pilote augmente la puissance moteur (manette des gaz), que doit-il faire avec l'assiette pour maintenir la même altitude?
+Maintenir la même assiette, car l'altitude est gérée par le moteur.
+Augmenter l'assiette pour cabrer afin d'équilibrer l'augmentation de vitesse.
+Réduire la puissance pour retrouver l'équilibre initial.
+Réduire l'assiette (pousser sur le manche) pour éviter de monter et stabiliser la nouvelle vitesse.
+4
+
+Quelle est la définition de la pente de la trajectoire d'un aéronef?
+L'angle que fait la trajectoire de l'avion avec l'horizon.
+L'angle que fait l'axe longitudinal de l'avion avec le vent relatif.
+L'angle entre l'axe longitudinal et la corde de l'aile.
+L'angle du manche à balai par rapport au tableau de bord.
+1
+
+En descente stabilisée à puissance réduite, comment le pilote contrôle-t-il principalement la vitesse de l'aéronef?
+En ajustant la puissance moteur (manette des gaz).
+En agissant sur le palonnier pour augmenter la traînée.
+En ajustant l'assiette (angle d'attaque) à l'aide de la gouverne de profondeur.
+En variant l'inclinaison des ailerons.
+3
+
+Quel est le rôle de la portance dans un virage stabilisé, sans perte d'altitude?
+Elle reste égale au poids de l'avion.
+Elle est inférieure au poids de l'avion pour permettre l'inclinaison.
+Elle est supérieure au poids de l'avion car elle doit générer une composante horizontale nécessaire au virage (force centripète).
+Elle est gérée uniquement par les ailerons.
+3
+
+Quel signal de guidage au sol indique qu'il est impératif de s'arrêter et de demander l'autorisation avant de continuer à rouler (ex: avant de pénétrer sur une piste)?
+Une ligne discontinue jaune.
+Un panneau de point d'attente (Holding Point).
+Une ligne double, jaune et continue.
+Un flash de lumière verte émis par la tour de contrôle.
+2
+
+Qu'indique une série de flashs verts émis par la tour de contrôle vers un aéronef en vol?
+Retourner à l'aérodrome et atterrir.
+Atterrir immédiatement.
+Autorisation d'atterrir.
+Autorisation d'approche pour l'atterrissage.
+4
+
+Lors d'un virage stabilisé à forte inclinaison, comment évolue le facteur de charge (Load Factor) par rapport au vol en palier?
+Il diminue et se rapproche de zéro.
+Il est constant, car le poids ne change pas.
+Il augmente, car la portance nécessaire pour maintenir l'altitude augmente.
+Il devient égal à l'inclinaison.
+3
+
+En cas de panne totale des freins et de la direction (gouvernail) après l'atterrissage, quel est le moyen le plus efficace et généralement la procédure d'urgence à utiliser pour ralentir l'aéronef sur la piste?
+Couper l'allumage et l'essence pour créer une traînée moteur.
+Utiliser les gouvernes aérodynamiques (ailerons et profondeur) pour dévier la trajectoire.
+Appliquer une traction arrière maximale à l'hélice (Reverse Thrust, si équipé).
+Couper immédiatement le moteur et utiliser les ailerons et la dérive pour augmenter la traînée et contrôler la direction (si possible).
+4
+
+Quel est le principal défaut d'utilisation du compas magnétique en vol (par rapport au conservateur de cap)?
+Il est sujet à des erreurs importantes en accélération, en décélération (erreurs d'accélération/décélération) et en virage.
+Il est difficile à lire dans l'obscurité.
+Il n'indique pas le nord vrai, mais le nord magnétique.
+Il nécessite d'être recalibré avant chaque vol.
+1
+
+L'effet du vent sur la trajectoire d'un avion se traduit par un phénomène appelé dérive (Drift). Si le vent souffle de la gauche, que doit faire le pilote pour maintenir le cap souhaité?
+Maintenir le cap initial et accepter la dérive.
+Corriger en virant vers la gauche pour "capter" l'effet du vent.
+Corriger en volant avec un angle de dérive vers la gauche (le nez est orienté à gauche du cap à suivre).
+Corriger en volant avec un angle de dérive vers la droite (le nez est orienté à droite du cap à suivre).
+3
+
+Pour maintenir la vitesse anémométrique (IAS) constante dans un virage à forte inclinaison, le pilote devra :
+Réduire l'assiette.
+Réduire la puissance, car la traînée est réduite.
+Augmenter la puissance pour compenser la traînée supplémentaire générée par l'incidence plus élevée et le facteur de charge accru.
+Ne rien faire, car la vitesse est gérée par l'assiette.
+3
+
+Quelle est la signification d'un cercle rouge continu affiché sur la zone d'un aérodrome?
+Interdiction totale de voler au-dessus de cette zone.
+Interdiction de poser ou de décoller.
+Interdiction de rouler (taxi) sur cette zone.
+Interdiction de décoller, l'atterrissage est autorisé.
+2
+
+Pourquoi est-il crucial de synchroniser périodiquement le conservateur de cap (Heading Indicator) avec le compas magnétique?
+Le compas magnétique peut "dériver" en raison de la rotation de la Terre.
+Le conservateur de cap est un instrument gyroscopique sujet à la dérive gyroscopique (précession) et doit être recalé.
+Le conservateur de cap est réglé sur le nord vrai, tandis que le compas magnétique est le seul à indiquer le nord magnétique.
+Le compas magnétique se réchauffe trop en vol et perd sa précision.
+2
+
+Lorsqu'un contrôleur de la circulation aérienne (ATC) donne une autorisation de rouler (taxi) à un pilote, qui est finalement responsable d'éviter les autres aéronefs, les véhicules, les personnes, et de suivre les instructions au sol?
+Le contrôleur de la circulation aérienne uniquement.
+Le personnel au sol de l'aérodrome.
+La personne qui a préparé le vol au sol.
+Le pilote commandant de bord, qui conserve la responsabilité finale de la sécurité de son aéronef.
+4
+
+Quelle est la définition de la vitesse de manœuvre (VA) et pourquoi est-elle cruciale pour la sécurité?
+VA est la vitesse maximale avec les volets sortis; elle protège le train d'atterrissage.
+VA est la vitesse maximale à laquelle les gouvernes peuvent être déviées à fond sans dépasser le facteur de charge limite de l'aéronef, protégeant ainsi la structure contre les efforts excessifs.
+VA est la vitesse de meilleure montée pour obtenir la meilleure pente.
+VA est la vitesse maximale en atmosphère turbulente (rafales) autorisée.
+2
+
+Qu'est-ce que le facteur de charge dans un virage et pourquoi augmente-t-il avec l'inclinaison?
+Le facteur de charge est toujours égal à 1g, il n'augmente pas.
+Le facteur de charge est le rapport entre la portance totale et le poids de l'avion; il augmente car une plus grande portance est nécessaire pour soutenir le poids et générer la force centripète du virage.
+Le facteur de charge est directement proportionnel à la puissance.
+Le facteur de charge est l'angle d'inclinaison divisé par 90 degrés.
+2
+
+La vitesse de référence en approche (VREF), dans le contexte des avions plus complexes, est généralement calculée comme :
+VREF est la vitesse de meilleure finesse (Vbg) multipliée par 1.3.
+VREF est toujours égale à la vitesse de croisière.
+VREF est la vitesse de décrochage (VS0) multipliée par un facteur de sécurité (souvent 1.3).
+VREF est la vitesse de manœuvre (VA).
+3
+
+Quelle est la principale limitation d'un aéronef en termes de Masse Maximale au Décollage (MTOW)?
+Elle est limitée par la performance du système de freinage.
+Elle est limitée par la résistance structurelle maximale de l'aéronef, le rendant plus difficile à contrôler au-delà de cette masse.
+Elle est limitée par la consommation de carburant.
+Elle est limitée par le volume disponible dans la cabine.
+2
+
+Quelle situation est la plus susceptible de mener à un décrochage à grande vitesse (ou décrochage non conventionnel)?
+Manœuvre abrupte à grande inclinaison (virage serré) ou récupération brusque d'un piqué, induisant un facteur de charge élevé.
+Vol en palier à basse altitude avec forte puissance.
+Utilisation des volets en croisière.
+Vol en atmosphère très froide.
+1
+
+Quels sont les deux indicateurs les plus importants qu'un aéronef est entré dans une situation inusuelle ou une perte de contrôle (UPRT - Upset Prevention and Recovery Training)?
+Le moteur chauffe et le niveau de carburant est bas.
+Une assiette ou une vitesse anémométrique inhabituelle pour la phase de vol, non désirée et non commandée.
+Le train d'atterrissage n'est pas rentré et les feux de navigation sont éteints.
+L'alarme de décrochage se déclenche en descente.
+2
+
+Comment le pilote doit-il agir pour récupérer efficacement d'une spirale descendante (inclinaison excessive et vitesse croissante)?
+Tirer immédiatement sur le manche pour remonter le nez.
+Réduire la puissance au ralenti et ramener l'inclinaison à zéro ou presque, puis cabrer doucement pour arrêter la descente.
+Augmenter la puissance pour sortir de la spirale.
+Déployer les volets pour augmenter la traînée et la portance.
+2
+
+La vitesse maximale en air turbulent (VNO) est la vitesse au-delà de laquelle :
+Le pilote doit utiliser le pilote automatique.
+Il est obligatoire d'avoir un deuxième pilote à bord.
+L'altitude de vol doit être réduite.
+Toute manœuvre soudaine ou turbulence sévère peut potentiellement causer des dommages structurels à l'aéronef.
+4
+
+Dans le cas d'un vol plané après une panne moteur, quelle vitesse le pilote doit-il maintenir pour couvrir la distance horizontale maximale possible?
+La vitesse de meilleure montée (Vy).
+La vitesse de meilleure finesse (VBG ou VL/D Max).
+La vitesse de décrochage (VS).
+La vitesse de croisière (VC).
+2
+
+Quel est le danger principal associé à une sortie des volets à une vitesse supérieure à la Vitesse Maximale Volets Sortis (VFE)?
+Une augmentation excessive de l'assiette.
+Le risque de dommages structurels (arrachement) aux volets en raison d'une pression aérodynamique trop forte.
+Une perte de contrôle immédiate.
+Une panne moteur.
+2
+
+Quelle est la principale menace (Menace) associée à l'étape "Vent arrière" (Downwind Leg) du tour de piste?
+La difficulté à maintenir l'axe de la piste à cause du vent.
+Le risque d'empiéter dans l'espace aérien d'un aérodrome voisin.
+L'oubli des vérifications d'approche (BIT-GUMP) ou la distraction due au trafic aérien/au sol.
+L'incohérence des indications du compas magnétique.
+3
+
+Quel est l'objectif principal de l'étape "Base" (Base Leg) du tour de piste?
+Effectuer la dernière vérification du carburant.
+S'aligner sur l'axe de piste et ajuster l'altitude pour être prêt à entamer l'approche finale.
+Prendre une décision finale sur l'atterrissage ou la remise des gaz.
+Augmenter la vitesse pour optimiser la portance.
+2
+
+Lorsqu'un aéronef pénètre la zone de l'aérodrome (ATZ) sans contact radio, quelle est la procédure standard à suivre pour annoncer sa position et ses intentions si le contact radio est rétabli?
+Faire trois tours au-dessus de la zone pour attirer l'attention.
+Diffuser un message d'appel initial complet ("Initial Call") puis suivre avec des "Auto-informations" (Self-announcing) sur la fréquence appropriée.
+Attendre que la tour de contrôle appelle le pilote.
+Atterrir immédiatement et chercher un téléphone.
+2
+
+Dans le contexte de la Gestion des Menaces et Erreurs (TEM), qu'est-ce qui est considéré comme une "Erreur" (Error)?
+Un événement météorologique imprévu (exemple: rafale soudaine).
+Un événement qui affecte la sécurité du vol, mais qui est indépendant de l'équipage (exemple: panne radio).
+Une action ou une inaction de l'équipage qui conduit à une déviation des intentions ou des procédures opérationnelles.
+L'arrivée en retard à l'aérodrome.
+3
+
+Quelle vitesse doit être maintenue en virage pour passer de l'étape "Base" à l'étape "Finale" (Final Approach) pour minimiser le risque de décrochage?
+La vitesse de manœuvre (VA).
+La vitesse maximale des volets (VFE).
+Une vitesse proche de la vitesse de meilleure finesse (Vbg).
+Une vitesse suffisamment supérieure à la vitesse de décrochage pour la configuration utilisée (VS0 ou VS1), compte tenu du facteur de charge du virage.
+4
+
+Quel message radio est crucial de transmettre juste avant de s'engager sur la piste pour le décollage, dans une zone à auto-information (AFIS ou A/A)?
+" [Aéronef] je m'aligne et je décolle piste [piste]."
+" [Aéronef] prêt au roulage, demande autorisation."
+" [Aéronef] prend la piste [numéro], décolle immédiatement."
+" [Aéronef] en courte finale, piste [numéro]."
+1
+
+Si un pilote en tour de piste est trop haut à l'étape "Base", il commet une erreur de trajectoire. Quelle est la meilleure stratégie pour gérer cette situation indésirable (Undesired Aircraft State)?
+Descendre en virage serré sur Base pour intercepter la finale.
+Poursuivre la descente rapidement sur Finale, en utilisant une pente d'approche très prononcée.
+Faire une remise de gaz et recommencer le tour de piste à la bonne hauteur.
+Réduire la vitesse au minimum et sortir tous les volets immédiatement.
+3
+
+À quel moment est-il généralement requis d'annoncer "Finale" sur la fréquence radio lors d'un vol VFR sur un aérodrome non contrôlé?
+Juste après le décollage.
+Lorsque l'avion survole l'extrémité opposée de la piste.
+Au moment où les roues touchent le sol.
+Dès que l'avion est stabilisé sur l'axe de piste et que l'atterrissage est engagé (en général, à environ 300 pieds au-dessus du sol ou 1 km de la piste).
+4
+
+Dans le cadre du TEM appliqué au vol local, quelle est l'action la plus efficace pour mitiger les menaces environnementales (météo, trafic) identifiées lors du briefing pré-vol?
+Ignorer les menaces car elles sont imprévisibles.
+Déterminer et appliquer des contre-mesures opérationnelles, comme l'utilisation d'une route de vol de dégagement ou l'établissement de minima personnels plus stricts.
+Compter sur le pilote automatique.
+Voler à une vitesse plus élevée pour sortir rapidement de la zone dangereuse.
+2
+
+Pourquoi est-il vital de maintenir la vitesse de l'aéronef stable et au-dessus de la plage de danger lors de l'ajustement de l'assiette et des volets sur l'étape "Base" du tour de piste?
+Pour économiser du carburant.
+Pour impressionner les observateurs au sol.
+Pour réduire le facteur de charge.
+Pour éviter le décrochage, car l'avion est à basse vitesse, à basse altitude, et subit potentiellement des effets de vent ou de turbulence.
+4
+
+Quelle est la procédure standard et immédiate à suivre en cas de panne moteur totale juste après le décollage, à basse altitude?
+Pousser pour maintenir la vitesse de meilleure finesse (Vbg), trouver un terrain d'atterrissage forcé devant, et gérer le mayday.
+Tirer le manche pour cabrer au maximum afin de réduire la vitesse et préparer l'atterrissage.
+Essayer de rallumer le moteur à tout prix, même sans chercher de terrain.
+Augmenter immédiatement les volets pour augmenter la portance.
+1
+
+En cas de panne radio en vol VFR dans l'espace aérien contrôlé (hors de la zone de l'aérodrome), quelle est la procédure la plus appropriée pour indiquer l'intention d'atterrir?
+Se diriger vers l'aérodrome le plus proche, rejoindre le circuit de l'aérodrome et observer la tour pour les signaux lumineux.
+Continuer le vol selon le plan, en espérant que le contrôleur devine les intentions.
+Atterrir immédiatement sur un champ sans avertissement.
+Virer en rond pour attirer l'attention des autres aéronefs.
+1
+
+Lorsqu'un pilote identifie un incendie moteur en vol, quelle est la priorité d'action après avoir confirmé la coupure de l'alimentation en carburant et l'allumage (magnétos)?
+Contacter immédiatement le service de lutte contre les incendies.
+Augmenter immédiatement la vitesse pour éteindre l'incendie par le flux d'air.
+Déployer les volets pour réduire la vitesse et faciliter l'atterrissage.
+Commencer une descente d'urgence à haute vitesse pour éteindre l'incendie et se diriger vers l'atterrissage.
+4
+
+La procédure standard de récupération après décrochage consiste à appliquer quelle séquence de commandes?
+Augmenter immédiatement la puissance à fond et tirer le manche.
+Pousser pour diminuer l'incidence (rompre le décrochage), appliquer la puissance, puis ramener l'assiette au vol en palier.
+Réduire la puissance et appliquer le palonnier opposé à la vrille.
+Maintenir l'assiette et attendre que la portance revienne seule.
+2
+
+En cas d'urgence médicale grave (par exemple, un passager perd connaissance), quel est le premier code d'urgence à transmettre à l'ATC?
+SQUAWK 7700.
+PAN PAN, PAN PAN, PAN PAN.
+MAYDAY, MAYDAY, MAYDAY.
+SQUAWK 7600.
+3
+
+Quelle est la procédure d'urgence à suivre en cas de panne du conservateur de cap (instrument gyroscopique) en vol?
+Continuer la navigation sans instrument de cap.
+Se fier au compas magnétique, en se souvenant de ses erreurs en turbulence et en manœuvre, et utiliser les repères visuels.
+Faire confiance uniquement au GPS.
+Déclarer une urgence et demander un vecteur radar.
+2
+
+Si l'alarme de pression d'huile basse se déclenche en vol, quelle est la première action à considérer pour protéger le moteur, en supposant que la température est encore normale?
+Augmenter la puissance pour faire remonter la pression.
+Réduire immédiatement la puissance au minimum nécessaire ou au ralenti et atterrir au plus vite.
+Augmenter la vitesse pour refroidir le moteur.
+Couper le moteur et passer en plané.
+2
+
+En cas de défaillance d'un indicateur de vitesse anémométrique (panne du tube Pitot ou de la prise statique), comment le pilote peut-il estimer sa vitesse pour l'approche finale?
+Utiliser les volets au maximum.
+Demander aux passagers d'estimer la vitesse.
+Se fier à l'indicateur d'assiette et au régime moteur (RPM) qui correspondent à une vitesse connue pour cette configuration (méthode de la vitesse par l'assiette et la puissance).
+Utiliser uniquement le conservateur de cap.
+3
+
+Le code transpondeur 7700 est utilisé pour indiquer quelle situation d'urgence?
+Panne radio.
+Urgence générale (détresse).
+Interférence illégale (piraterie).
+Panne moteur.
+2
+
+Lors d'une approche forcée après une panne moteur, pourquoi est-il essentiel de maintenir la vitesse de meilleure finesse (Vbg) jusqu'à ce que l'atterrissage soit assuré?
+Pour minimiser le taux de descente (meilleure autonomie en temps).
+Pour avoir un maximum de marge pour la remise des gaz.
+Pour réduire la pression d'huile du moteur.
+Pour maximiser la distance parcourue sur le plan horizontal (meilleur angle de plané).
+4
+
+Dans la préparation d'un vol de voyage (cross-country), quel document récapitule toutes les informations essentielles du vol (trajectoire, temps estimés, consommation de carburant, masses) et sert de référence pendant le vol?
+Le Certificat d'Immatriculation.
+Le Manuel de Vol de l'Aéronef (AFM).
+L'Assurance Responsabilité Civile.
+Le Dossier de Vol (ou Log de Navigation).
+4
+
+En cas d'interruption volontaire du vol (atterrissage sur un aérodrome non prévu pour une pause), quelle est la procédure essentielle à respecter avant de reprendre le vol?
+Refaire une vérification complète du dossier de vol (météo, NOTAM) pour la portion restante du vol et re-calculer les performances.
+Envoyer un message à la famille.
+Remplir le carnet de route (logbook) de l'aéronef immédiatement.
+Déclarer une urgence.
+1
+
+Pourquoi est-il crucial de calculer le temps de vol et la consommation de carburant de chaque jambe de navigation (tronçon) lors de la préparation du dossier de vol?
+Pour justifier le coût du vol auprès de l'aéroclub.
+Pour s'assurer que la masse et le centrage sont respectés au départ.
+Pour s'assurer que l'autonomie en carburant est suffisante et qu'une réserve légale est disponible à l'arrivée.
+Pour déterminer l'heure du déjeuner.
+3
+
+Dans le cadre d'un vol de voyage, si un pilote arrive à un point de repère critique (compte rendu) et constate un retard significatif par rapport au temps estimé (ETA) du dossier de vol, quelle Erreur a probablement été commise et quelle est la contre-mesure immédiate?
+Erreur de calcul de vent/vitesse sol; la contre-mesure est de vérifier la position réelle, recalculer le vent et corriger le cap pour la prochaine jambe.
+Erreur d'altitude; la contre-mesure est de monter.
+Erreur de navigation (dérive); la contre-mesure est de recalibrer le compas.
+Erreur dans le calage altimétrique; la contre-mesure est de demander le QNH.
+1
+
+Quel est le risque d'Erreur le plus fréquent lors de l'utilisation de la radio en vol de campagne?
+Oublier d'éteindre le transpondeur après l'atterrissage.
+Oublier d'annoncer les heures d'arrivée au point de destination.
+Écouter une fréquence radio incorrecte ou ne pas identifier correctement la station contactée (confusion entre fréquences ou stations).
+S'endormir en vol.
+3
+
+Une Erreur fréquente en navigation est l'erreur de transposition d'une fréquence radio ou d'un cap. Comment cette erreur peut-elle être efficacement mitigée par le pilote?
+En demandant au contrôleur de répéter l'information deux fois.
+En la notant toujours sur papier et en la confirmant par une vérification croisée ou une relecture (Readback).
+En ne changeant la fréquence qu'après être sorti de l'espace aérien.
+En demandant à un passager de noter l'information.
+2
+
+Dans le cadre d'un vol de campagne prolongé, quelle situation indésirable (Undesired Aircraft State) est souvent le résultat d'une mauvaise gestion des ressources (Erreur)?
+Une turbulence inattendue.
+Un voyant de panne moteur.
+Une erreur d'altitude causée par un calage altimétrique incorrect.
+L'arrivée sur la destination avec une réserve de carburant inférieure aux minima réglementaires.
+4
+
+Lors de l'utilisation des moyens radio, qu'est-ce que le pilote doit obligatoirement transmettre au premier contact (Initial Call) avec un organisme de contrôle ou d'information (ex: Tour, AFIS, Information)?
+Le numéro de licence du pilote.
+Le temps de vol depuis le décollage.
+La masse et le centrage de l'aéronef.
+L'indicatif de l'aéronef, la position, l'altitude, l'intention, et l'organisme contacté.
+4
+
+Quelle est la fonction principale du squawk (code transpondeur) attribué par l'ATC lors d'un vol dans l'espace aérien contrôlé?
+Il permet au contrôleur de communiquer directement avec le pilote.
+Il permet au contrôleur de visualiser l'aéronef sur l'écran radar et d'identifier l'aéronef.
+Il est utilisé pour calculer l'altitude de l'aéronef.
+Il est utilisé pour confirmer la validité de la licence du pilote.
+2
+
+Quelle est la Menace spécifique aux vols de campagne à basse altitude qui peut entraîner une situation indésirable (collision, vol en terrain) si elle n'est pas gérée?
+L'éblouissement par le soleil.
+Le risque de collision avec la faune aviaire.
+La proximité des obstacles (lignes électriques, antennes, reliefs) et la difficulté à les repérer dans la navigation visuelle.
+La nécessité d'utiliser un compas magnétique.
+3
+
+Quel est l'avantage principal du système VOR (VHF Omnidirectional Range) par rapport au NDB (Non-Directional Beacon) en termes de navigation?
+Le VOR est plus sensible aux interférences atmosphériques.
+Le VOR fournit une information de cap magnétique (QDM) qui dépend de la position de l'avion, tandis que le NDB fournit des caps indépendants.
+Le VOR est insensible aux interférences atmosphériques et fournit une position radiale magnétique précise et utilisable.
+Le VOR a une portée plus courte que le NDB.
+3
+
+Lors de l'utilisation d'un VOR, que signifie l'indication "TO" (Vers) sur le CDI (Course Deviation Indicator)?
+Le cap sélectionné sur l'OBS va amener l'avion vers la station VOR.
+L'avion s'éloigne de la station.
+L'avion est exactement au-dessus de la station VOR.
+Le VOR n'est pas calibré correctement.
+1
+
+Quel est le rôle principal du GPS dans la navigation VFR PPL par rapport aux moyens conventionnels?
+Il remplace le compas magnétique et le conservateur de cap.
+Il fournit un positionnement précis, une trajectoire sol (Ground Track), et une distance/temps vers la destination, complétant ou suppléant les moyens conventionnels.
+Il remplace la vérification du carburant.
+Il remplace obligatoirement les cartes papier.
+2
+
+Quel est l'objectif principal de l'étape de Préparation d’un voyage aérien appelée 'Assistance' ?
+Obtenir une autorisation de décollage du contrôle aérien.
+S'assurer que l'aéronef a été correctement révisé par un mécanicien.
+Vérifier la validité de la licence et du certificat médical du pilote.
+Organiser les services nécessaires à l'arrivée (ex: parking, transport, manutention, carburant).
+4
+
+Quel élément est le plus important à calculer pour un vol de voyage avec passagers lors de la présentation du dossier de vol ?
+La température du point de rosée à destination.
+Le temps que prendra le contrôle des documents par le chef d'aérodrome.
+La masse et le centrage pour s'assurer qu'ils restent dans les limites autorisées pendant le vol.
+L'heure locale exacte de coucher du soleil à mi-chemin.
+3
+
+Dans la gestion des Menaces et Erreurs (TEM), une 'Erreur' est définie comme :
+Une condition externe au système de vol (météo, trafic).
+Une action ou un manque d'action du pilote qui mène à une déviation des intentions ou des attentes du vol.
+Une situation non souhaitée qui résulte d'une erreur non corrigée.
+Une urgence inattendue qui nécessite une intervention immédiate.
+2
+
+En cas de survenue d'une situation anormale, telle qu'une alarme de basse pression d'huile, quelle est la priorité immédiate du pilote avant d'entamer une action corrective ?
+Déclarer une urgence à la première occasion.
+Réduire immédiatement la puissance du moteur au ralenti.
+Consulter la section 'Procédures d'Urgence et Anormales' du Manuel de Vol (POH/AFM).
+Informer les passagers et leur donner des instructions.
+3
+
+Lors d'un Déroutement vers un aérodrome de dégagement, quel est l'élément de calcul de navigation le plus critique à réévaluer rapidement ?
+Le nouveau temps estimé en route (ETE).
+Le besoin d'informer les passagers du changement de destination.
+Le nouveau point de non-retour.
+L'autonomie restante en carburant par rapport au dégagement et aux réserves réglementaires.
+4
+
+Quel facteur peut justifier l'Interruption Volontaire du Vol (IVV) après avoir entamé la phase de croisière ?
+L'apparition soudaine d'un passager malade nécessitant une attention médicale.
+L'impossibilité de contacter le service de transit aérien pour la position.
+La turbulence légère signalée par d'autres aéronefs sur la route.
+Un changement de vent de 5 nœuds par rapport aux prévisions.
+1
+
+Dans le cadre de la Gestion des pannes et situations anormales, si l'on suspecte un début d'incendie électrique en cabine, quelle est l'action immédiate standard pour un pilote ?
+Ouvrir les fenêtres pour ventiler la fumée.
+Couper le circuit principal (Master Switch) pour tenter d'isoler la source.
+Utiliser l'extincteur sur la zone de la fumée.
+Contacter les services d'urgence au sol par téléphone mobile.
+2
+
+Dans un vol de campagne, un pilote identifie comme Menace la Météo non-conforme aux prévisions. Quelle est la contre-mesure (Action) la plus appropriée à mettre en œuvre en vol?
+Continuer sur la route prévue en espérant une amélioration rapide.
+Adapter la route pour éviter la zone dangereuse, ou se dérouter vers un aérodrome de dégagement pour attendre l'amélioration.
+Augmenter l'assiette pour monter au-dessus des nuages.
+Contacter immédiatement le service météo pour une nouvelle prévision.
+2
+
+Lors de l'avitaillement en carburant, quelle est la menace (Menace) principale et comment le pilote doit-il la mitiger?
+La météo inattendue ; la mitiger en partant plus tôt.
+Le risque de contamination ou d'erreur de type de carburant ; la mitiger par une supervision directe et la vérification des scellés et échantillons.
+L'oubli de noter le carburant ; la mitiger en notant l'heure de départ.
+L'erreur de calcul de masse ; la mitiger en partant avec moins de bagages.
+2
+
+Quelle est la première action à effectuer en cas de décision de déroutement vers un aérodrome de dégagement en cours de vol?
+Établir une nouvelle route vers le nouvel aérodrome et calculer la nouvelle autonomie/consommation de carburant.
+Contacter immédiatement le service d'information de vol pour prévenir de l'intention.
+Réduire l'altitude pour mieux voir le terrain.
+Demander l'autorisation aux passagers.
+1
+
+L'une des menaces les plus importantes lors d'un vol avec des passagers est la distraction du pilote. Quelle est la meilleure stratégie pour gérer cette menace (Contre-mesure)?
+Interdire strictement toute conversation pendant les phases critiques du vol.
+Déléguer la gestion des communications radio aux passagers.
+Désigner les passagers comme "membres d'équipage non volants" et briefer les rôles et le comportement attendu, notamment en phases critiques (règle du "carré silencieux").
+Ignorer les passagers jusqu'à l'atterrissage.
+3
+
+Quel est le risque principal (Erreur) si le pilote omet de vérifier la date d'expiration des cartes aéronautiques dans le dossier de vol?
+Le risque d'utiliser une fréquence radio incorrecte ou de ne pas trouver le téléphone d'un aéroport.
+Le risque de se perdre.
+Le risque de ne pas connaître les modifications récentes (espaces aériens, obstacles, fréquences) pouvant entraîner des incursions ou des violations.
+Le risque d'oublier la check-list.
+3
+
+Si, en croisière, le pilote rencontre un voyant d'anomalie moteur (par exemple, température élevée) et qu'il n'arrive pas à résoudre l'anomalie avec les procédures de la check-list, quelle est la meilleure stratégie de gestion (Erreur et Situation Anormale)?
+Continuer le vol vers la destination pour ne pas perdre de temps.
+Couper le moteur immédiatement pour éviter les dommages.
+Réduire l'altitude et ignorer l'alarme.
+Déclarer une urgence (MAYDAY/PAN-PAN) si nécessaire, puis dérouter vers l'aérodrome le plus proche pour un atterrissage préventif.
+4
+
+Lors de la préparation d'un vol avec de nouveaux passagers, quelle est la priorité dans le briefing de cabine?
+Expliquer l'aérodynamique de l'avion.
+Montrer où se trouvent les toilettes.
+Insister sur les issues de secours, l'utilisation des ceintures, l'interdiction de fumer, et les points de distraction du pilote.
+Donner un cours de météo.
+3
+
+Quel système de radionavigation fournit simultanément un relèvement par rapport à une balise (radial) et une distance oblique (slant range) ?
+Le NDB (Non-Directional Beacon).
+Le VOR/DME (VHF Omnidirectional Range / Distance Measuring Equipment).
+Le GPS (Global Positioning System).
+Le transpondeur Mode S.
+2
+
+À quelle fréquence l'ATIS (Automatic Terminal Information Service) est-il diffusé et quelle est sa principale fonction ?
+Sur la fréquence de la tour de contrôle ; fournir les instructions d'alignement pour la piste.
+Sur une fréquence VHF dédiée ; fournir des informations météorologiques et opérationnelles continues.
+Sur une fréquence VOR ; fournir des informations de navigation de base.
+Sur la fréquence d'approche ; fournir les clairances de décollage.
+2
+
+En cas de panne radio complète (perte de l'émission et de la réception), quel code transpondeur doit être affiché par le pilote pour signaler sa situation ?
+7500
+7700
+7000
+7600
+4
+
+Quelle est la principale menace (Menace) associée au vol sans visibilité (VSV) qui peut entraîner une situation indésirable (Erreur ou Upset)?
+Le manque de carburant.
+La panne du système électrique.
+La désorientation spatiale et l'incapacité de détecter les changements d'assiette sans référence visuelle extérieure.
+L'augmentation de la traînée.
+3
+
+Quel est l'objectif principal du pilotage sans visibilité (VSV) pour un pilote VFR?
+Atteindre la destination sans visibilité.
+Maintenir le contrôle de l'aéronef en utilisant uniquement les instruments de bord pendant une brève période, en cas de pénétration accidentelle dans les nuages.
+Voler de nuit.
+Remplacer le pilotage aux instruments (IFR).
+2
+
+En vol VFR, si le pilote pénètre accidentellement dans un nuage et perd les références visuelles (perte des conditions VMC), quelle est la procédure immédiate la plus sûre?
+Continuer sur le cap actuel en maintenant l'assiette pour sortir du nuage rapidement.
+Effectuer un virage de 180 degrés à faible inclinaison pour sortir du nuage sur la trajectoire opposée à celle de l'entrée.
+Commencer immédiatement une descente rapide pour retrouver le sol.
+Contacter l'ATC pour une autorisation IFR.
+2
+
+Qu'est-ce que les conditions VMC (Visual Meteorological Conditions) représentent pour un vol VFR?
+Des conditions météorologiques permettant uniquement le vol au-dessus des nuages.
+Des minimas obligatoires pour tous les vols.
+Des conditions permettant de voler à la Vitesse Maximale (VNE).
+Des minima de visibilité et de distance par rapport aux nuages qui permettent au pilote de naviguer et d'éviter les obstacles par référence visuelle.
+4
+
+En VSV, l'Erreur la plus dangereuse est souvent le résultat d'un effort pour corriger une attitude de vol qui n'est qu'une illusion sensorielle. Quelle contre-mesure permet de mitiger cette erreur?
+Se concentrer uniquement sur l'horizon artificiel (ou PFD) et le coordinateur de virage, en ignorant les sensations corporelles.
+Ignorer les instruments et se fier uniquement aux sensations.
+Augmenter la puissance moteur.
+Réduire l'altitude.
+1
+
+Pour maintenir un vol en palier stabilisé en VSV (après une perte de VMC), sur quel instrument de pilotage l'attention du pilote doit-elle être principalement concentrée?
+L'altimètre et le variomètre.
+L'indicateur de vitesse anémométrique et le compas magnétique.
+L'indicateur d'assiette (Horizon Artificiel) pour le tangage et le roulis.
+Le régime moteur (RPM) et le thermomètre d'huile.
+3
+
+Une des situations indésirables (Undesired Aircraft State) courantes en VSV est le piqué involontaire (nez bas et vitesse croissante). Comment cette situation est-elle détectée et corrigée en priorité?
+Détectée par la baisse d'altitude et corrigée en augmentant immédiatement la puissance.
+Détectée par l'indicateur de vitesse et corrigée en appliquant immédiatement le palonnier.
+Détectée par l'indicateur d'assiette (Tangage vers le bas) et corrigée par une réduction de puissance et une remontée douce du nez (cabrer).
+Détectée par une forte inclinaison et corrigée en diminuant la vitesse.
+3
+
+Quelle est la Menace spécifique en VSV lorsque le pilote est sous stress et concentré sur les instruments?
+La négligence des communications radio et la non-surveillance de la fréquence d'auto-information.
+L'oubli d'atterrir.
+L'oubli de la check-list.
+Le risque de survoler une zone interdite.
+1
+
+En cas de perte des VMC et de vol prolongé en VSV pour un pilote VFR, quel est le danger structurel le plus important lié aux conditions météorologiques elles-mêmes?
+La foudre.
+La turbulence forte.
+La formation de givrage sur les surfaces de l'aéronef, altérant l'aérodynamique et augmentant le poids.
+Le manque d'oxygène.
+3
+
+Si le pilote est contraint d'atterrir dans des conditions de mauvaise visibilité (bien que restant en VFR au sol) après avoir réussi à sortir des nuages, quelle est la technique d'approche privilégiée pour rester en conditions VMC tout au long de l'approche finale?
+Descendre très rapidement dès le vent arrière.
+Maintenir une approche stabilisée à basse vitesse et suivre un chemin de plané régulier (chemin visuel) en utilisant l'horizon réel ou l'environnement comme référence.
+Faire un virage serré en finale pour réduire le temps dans l'air.
+Atterrir immédiatement en ligne droite dès que la piste est visible.
+2
+
+Selon le guide de l'examen en vol PPL(A), quel est le critère général principal que l'examinateur évalue chez le candidat durant les manœuvres?
+La capacité à effectuer les exercices rapidement.
+Le respect strict des limitations de vitesse de l'aéronef.
+La mémorisation par cœur de toutes les check-lists.
+La capacité du candidat à opérer l'avion dans ses limites, avec jugement, dans une démarche de sécurité constante.
+4
+
+Dans l'enchaînement des exercices de l'examen pratique PPL(A), quelle est l'étape qui précède immédiatement l'exercice de vol lent?
+La gestion de la panne moteur simulée.
+La descente en spirale.
+Le vol en palier stabilisé à vitesse de croisière.
+L'atterrissage normal.
+3
+
+Quel est l'objectif principal du briefing de l'exercice avant une manœuvre (par exemple, le décrochage) lors de l'examen en vol?
+Décrire le déroulement de la manœuvre, les altitudes de sécurité, le point de sortie, et l'action de l'examinateur en cas de besoin.
+Demander à l'examinateur de noter les performances.
+Vérifier la consommation de carburant.
+Lire la totalité de la check-list.
+1
+
+Selon le Manuel de Sécurité FFA, lors du roulage, quel est le principal danger à surveiller pour éviter une incursion sur piste (Runway Incursion)?
+Le survol des pistes.
+L'oubli de la check-list avant décollage.
+La confusion entre les points d'attente et les points d'arrêt, et la non-obtention d'une autorisation claire pour pénétrer la piste.
+L'utilisation excessive des freins.
+3
+
+Quel niveau de performance est attendu du candidat PPL(A) pour être considéré comme satisfaisant lors de l'exécution d'une manœuvre donnée (critères de tolérance)?
+Une exécution parfaite sans aucune déviation des paramètres.
+Uniquement le respect des procédures de sécurité.
+Une exécution dans les tolérances spécifiées (ex: plus ou moins 50 pieds d'altitude, plus ou moins 5 nœuds de vitesse), démontrant Le maintien du contrôle.
+Une exécution uniquement par référence visuelle extérieure.
+3
+
+Lors de la panne moteur simulée en vol pendant l'examen, quel est le rôle principal de l'examinateur après l'annonce de la panne?
+Démarrer immédiatement le moteur pour éviter l'urgence.
+Prendre les commandes de l'avion pour la descente.
+Guider l'avion vers un aérodrome contrôlé.
+Évaluer si le candidat applique la check-list (ABC) et exécute la procédure de recherche de terrain.
+4
+
+Dans le cadre du Guide de l'examen PPL(A), quelle est l'importance du compte rendu des paramètres de vol (vitesse, cap, altitude) pendant les exercices?
+C'est une distraction et cela doit être évité.
+Il démontre la conscience de la situation (Situational Awareness) du candidat et la capacité à analyser les informations du tableau de bord.
+Il est utilisé uniquement pour les communications radio.
+Il sert à vérifier le carburant.
+2
+
+Quel document définit l'ensemble des compétences (compétences opérationnelles) et des connaissances que le candidat doit maîtriser à l'issue de sa formation et valider lors de l'examen pratique PPL(A)?
+Le manuel d'utilisation de l'aéronef (POH).
+Le Code de la Route aérien.
+Le Guide de l'examen en vol PPL(A) de la FFA (ou l'équivalent EASA).
+Le journal de bord personnel.
+3
+
+Lors d'un atterrissage simulé d'urgence, la gestion du Mayday et l'exécution des check-lists d'urgence moteur doivent être faites à quelle phase de la procédure?
+Après la sélection du terrain et avant la ligne de sécurité (altitude de décision pour la coupure moteur simulée).
+Après l'atterrissage forcé, au sol.
+Pendant le roulage vers la piste.
+Juste avant le décollage.
+1
+
+L'une des attentes clés lors de la préparation au vol (exercice de préparation) de l'examen PPL(A) est de vérifier :
+Uniquement les documents de l'examinateur.
+L'absence de défauts sur l'aéronef (visite prévol), la validité des documents, le calcul de masse et centrage, et la vérification des NOTAM/météo.
+Uniquement la quantité de carburant.
+La couleur de la cabine.
+2

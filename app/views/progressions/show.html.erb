@@ -26,7 +26,7 @@
         </h4>
       </div>
       <div class="card-body">
-        <% if @flight_lessons.present? %>
+        <% if @livrets.present? %>
           <div class="table-responsive">
             <table class="table table-striped table-hover">
               <thead>
@@ -38,12 +38,12 @@
                 </tr>
               </thead>
               <tbody>
-                <% @flight_lessons.each do |lesson| %>
+                <% @livrets.each do |livret| %>
                   <tr>
-                    <td><%= l(lesson.date, format: :short_year) %></td>
-                    <td><%= lesson.title %></td>
-                    <td><%= lesson.status %></td>
-                    <td><%= lesson.comments %></td>
+                    <td><%= livret.date? ? l(livret.date, format: :short_year) : '' %></td>
+                    <td><%= livret.flight_lesson.title %></td>
+                    <td><%= livret.status %></td>
+                    <td></td> <%# Comments removed as the attribute does not exist %>
                   </tr>
                 <% end %>
               </tbody>

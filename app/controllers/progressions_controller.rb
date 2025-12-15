@@ -1,6 +1,7 @@
 class ProgressionsController < ApplicationController
   before_action :authenticate_user!
   before_action :authorize_access, only: [:show]
+  before_action :authorize_student_area!
 
   def show
     if current_user.instructeur?
@@ -15,6 +16,8 @@ class ProgressionsController < ApplicationController
     else
       # Pour un élève, on affiche directement son propre livret.
       @selected_eleve = current_user
+      @livrets = Livret.where(user: current_user, flight_lesson: FlightLesson.all)
+      @flight_lessons = FlightLesson.all
     end
   end
   
