@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_12_15_080358) do
+ActiveRecord::Schema[8.0].define(version: 2025_12_15_120559) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -190,6 +190,19 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_15_080358) do
     t.index ["user_id"], name: "index_penalites_on_user_id"
   end
 
+  create_table "questions", force: :cascade do |t|
+    t.text "qcm"
+    t.string "answer_1"
+    t.string "answer_2"
+    t.string "answer_3"
+    t.string "answer_4"
+    t.integer "correct_answer"
+    t.integer "course_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["course_id"], name: "index_questions_on_course_id"
+  end
+
   create_table "reservations", force: :cascade do |t|
     t.integer "user_id"
     t.integer "avion_id"
@@ -360,6 +373,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_15_080358) do
   add_foreign_key "news_items", "users"
   add_foreign_key "penalites", "users"
   add_foreign_key "penalites", "users", column: "admin_id"
+  add_foreign_key "questions", "courses"
   add_foreign_key "reservations", "avions"
   add_foreign_key "reservations", "users"
   add_foreign_key "signalements", "avions"

@@ -44,13 +44,23 @@
             <div class="mb-4" data-quiz-modal-target="question">
               <h6>Question <%= index + 1 %> : <%= question.text %></h6>
               
-              <%# Boucle sur les réponses de la question %>
-              <% question.answers.each do |answer| %>
-                <div class="form-check">
-                  <input class="form-check-input" type="radio" name="q<%= question.id %>" value="<%= answer.id %>" data-action="change->quiz-modal#checkAnswers" <%== 'data-correct="true"' if answer.correct? %>>
-                  <label class="form-check-label"><%= answer.text %></label>
-                </div>
-              <% end %>
+              <%# Affichage des 4 réponses possibles %>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="q<%= question.id %>" value="1" data-action="change->quiz-modal#checkAnswers" <%== 'data-correct="true"' if question.correct_answer == 1 %>>
+                <label class="form-check-label"><%= question.answer_1 %></label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="q<%= question.id %>" value="2" data-action="change->quiz-modal#checkAnswers" <%== 'data-correct="true"' if question.correct_answer == 2 %>>
+                <label class="form-check-label"><%= question.answer_2 %></label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="q<%= question.id %>" value="3" data-action="change->quiz-modal#checkAnswers" <%== 'data-correct="true"' if question.correct_answer == 3 %>>
+                <label class="form-check-label"><%= question.answer_3 %></label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="q<%= question.id %>" value="4" data-action="change->quiz-modal#checkAnswers" <%== 'data-correct="true"' if question.correct_answer == 4 %>>
+                <label class="form-check-label"><%= question.answer_4 %></label>
+              </div>
             </div>
           <% end %>
 
