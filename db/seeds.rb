@@ -390,15 +390,32 @@ end
 
 def cours
 
-  # 6. Création des cours théoriques
+  # 6. Création des cours théoriques (PPL et FTP)
   # ----------------------------------------------------
   puts "\nCreating Courses..."
 
-  # Assurez-vous d'avoir un fichier d'exemple dans app/assets/files/sample.pdf
-  sample_pdf_path = Rails.root.join('app', 'assets', 'files', 'sample.pdf')
+  # --- Examens théoriques PPL ---
+  ppl_courses_data = [
+    { title: "010 Droit Aérien (Réglementation)", description: "Cours sur le droit aérien et la réglementation aéronautique.", file: "010_droit_aerien.pdf" },
+    { title: "020 Connaissances Générales de l'Aéronef", description: "Cours sur les connaissances générales de l'aéronef.", file: "020_connaissances_generales.pdf" },
+    { title: "030 Performances et Préparation du Vol", description: "Cours sur les performances et la préparation du vol.", file: "030_performances.pdf" },
+    { title: "040 Performance Humaine (Facteurs Humains)", description: "Cours sur la performance humaine et les facteurs humains.", file: "040_facteurs_humains.pdf" },
+    { title: "050 Météorologie", description: "Cours sur la météorologie aéronautique.", file: "050_meteorologie.pdf" },
+    { title: "060 Navigation", description: "Cours sur les techniques de navigation aérienne.", file: "060_navigation.pdf" },
+    { title: "070 Procédures Opérationnelles", description: "Cours sur les procédures opérationnelles standard.", file: "070_procedures_operationnelles.pdf" },
+    { title: "080 Principes du Vol", description: "Cours sur les principes fondamentaux du vol.", file: "080_principes_du_vol.pdf" },
+    { title: "090 Communications", description: "Cours sur les communications aéronautiques.", file: "090_communications.pdf" }
+  ]
+  ppl_courses_data.each do |course_data|
+    course = Course.find_or_create_by!(title: course_data[:title]) do |c|
+      c.description = course_data[:description]
+    end
+    # Note: L'attachement de fichier est omis ici car les fichiers n'existent pas encore
+  end
+  puts "✅ PPL theoretical courses created."
 
-  courses_data = [
-    { title: "FTP1 Environnement réglementaire de la formation", description: <<~DESC, file: "ftp1.pdf" },
+  # --- Cours FTP ---
+  ftp_courses_data = [    { title: "FTP1 Environnement réglementaire de la formation", description: <<~DESC, file: "ftp1.pdf" },
       Environnement réglementaire de la formation :
       - Eléments du PART NCO,
       - SGS (ATO) ou politique de sécurité (DTO),
@@ -469,8 +486,7 @@ def cours
     DESC
     { title: "Facteurs Humains", description: "Cours sur les facteurs humains", file: "facteurs_humains.pdf" }
   ]
-
-  courses_data.each do |course_data|
+  ftp_courses_data.each do |course_data|
     # On cherche le cours par son titre. S'il n'existe pas, on le crée.
     course = Course.find_or_initialize_by(title: course_data[:title])
     # On met à jour sa description dans tous les cas.
@@ -486,7 +502,7 @@ def cours
       end
     end
   end
-  puts "✅ Courses created."
+  puts "✅ FTP courses created."
 
 end
 
@@ -574,6 +590,31 @@ def lecons
     end
   end
   puts "✅ Flight Lessons created."
+
+end
+
+def livrets
+
+  # Mise à jour des livrets
+  # ----------------------------------------------------
+
+  puts "\nCreating a sample livret record..."
+  # On récupère l'élève de test et le premier cours théorique
+  eleve_user = User.find_by(email: 'eleve@bastair.com')
+  first_course = Course.order(:id).first
+
+  if eleve_user && first_course
+    Livret.find_or_create_by!(
+      user: eleve_user,
+      course: first_course,
+      title: first_course.title, # On utilise le titre du cours associé
+      valid: 0, # 0 pour "non validé" initialement
+      date: nil
+    )
+    puts "✅ Livret record created for student."
+  else
+    puts "⚠️  Could not create sample livret record (test student or course not found)."
+  end
 
 end
 

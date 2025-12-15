@@ -1,6 +1,6 @@
 <% content_for :title, @course.title %>
 
-<div class="container my-5">
+<div class="container my-5" data-controller="quiz-page">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h1 class="mb-0 h2"><%= @course.title %></h1>
     <%= link_to 'Retour à la liste des cours', elearning_index_path, class: 'btn btn-secondary' %>
@@ -19,4 +19,78 @@
       Aucun document n'est disponible pour ce cours.
     </div>
   <% end %>
+
+  <hr class="my-5">
+
+  <div class="text-center">
+    <button type="button" class="btn btn-info btn-lg" data-bs-toggle="modal" data-bs-target="#quizModal">
+      Lancer le Quiz de validation
+    </button>
+  </div>
+
+  <!-- Modal pour le Quiz -->
+  <div class="modal fade" id="quizModal" tabindex="-1" aria-labelledby="quizModalLabel" aria-hidden="true" data-quiz-page-target="modal" data-controller="quiz-modal" data-quiz-modal-quiz-page-outlet=".container[data-controller='quiz-page']">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="quizModalLabel">Quiz pour : <%= @course.title %></h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Répondez à toutes les questions pour valider vos connaissances.</p>
+
+          <%# Question 1 %>
+          <div class="mb-4" data-quiz-modal-target="question">
+            <h6>Question 1 : Quelle est la principale fonction du compensateur ?</h6>
+            <div class="form-check"><input class="form-check-input" type="radio" name="q1" value="a" data-action="change->quiz-modal#checkAnswers"> <label class="form-check-label">Augmenter la vitesse</label></div>
+            <div class="form-check"><input class="form-check-input" type="radio" name="q1" value="b" data-action="change->quiz-modal#checkAnswers" data-correct="true"> <label class="form-check-label">Annuler les efforts sur les commandes de vol</label></div>
+            <div class="form-check"><input class="form-check-input" type="radio" name="q1" value="c" data-action="change->quiz-modal#checkAnswers"> <label class="form-check-label">Sortir les volets</label></div>
+          </div>
+
+          <%# Question 2 %>
+          <div class="mb-4" data-quiz-modal-target="question">
+            <h6>Question 2 : En VFR, que signifie "Voir et éviter" ?</h6>
+            <div class="form-check"><input class="form-check-input" type="radio" name="q2" value="a" data-action="change->quiz-modal#checkAnswers" data-correct="true"> <label class="form-check-label">Le pilote est responsable de la prévention des collisions</label></div>
+            <div class="form-check"><input class="form-check-input" type="radio" name="q2" value="b" data-action="change->quiz-modal#checkAnswers"> <label class="form-check-label">Le contrôleur aérien guide l'avion en permanence</label></div>
+            <div class="form-check"><input class="form-check-input" type="radio" name="q2" value="c" data-action="change->quiz-modal#checkAnswers"> <label class="form-check-label">Il faut éviter de regarder dehors</label></div>
+          </div>
+
+          <%# Question 3 %>
+          <div class="mb-4" data-quiz-modal-target="question">
+            <h6>Question 3 : Qu'indique l'arc blanc sur un anémomètre ?</h6>
+            <div class="form-check"><input class="form-check-input" type="radio" name="q3" value="a" data-action="change->quiz-modal#checkAnswers"> <label class="form-check-label">La plage de vitesse normale d'utilisation</label></div>
+            <div class="form-check"><input class="form-check-input" type="radio" name="q3" value="b" data-action="change->quiz-modal#checkAnswers"> <label class="form-check-label">La plage de vitesse en configuration atterrissage (volets sortis)</label></div>
+            <div class="form-check"><input class="form-check-input" type="radio" name="q3" value="c" data-action="change->quiz-modal#checkAnswers" data-correct="true"> <label class="form-check-label">La plage d'utilisation des volets</label></div>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+          <button type="button" class="btn btn-success d-none" data-quiz-modal-target="validateButton" data-action="click->quiz-modal#validate">Valider le Quiz</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section Signature -->
+  <div class="d-none mt-5" data-quiz-page-target="signatureSection">
+    <hr>
+    <h2 class="text-center">Signature de validation du cours</h2>
+    <% if @livret %>
+      <%= form_with(model: @livret, url: { controller: 'livrets', action: 'update', id: @livret.id }, method: :patch, data: { controller: "signature", action: "submit->signature#save" }) do |form| %>
+        <p class="text-center">Veuillez signer dans le cadre ci-dessous pour certifier que vous avez lu et compris le cours.</p>
+        <%= form.hidden_field :signature_data, data: { signature_target: "output" } %>
+        <div class="signature-pad-container mx-auto" style="width: 100%; max-width: 500px;">
+          <canvas class="border bg-light" data-signature-target="canvas"></canvas>
+        </div>
+        <div class="text-center mt-3">
+          <button type="button" class="btn btn-secondary" data-action="click->signature#clear">Effacer</button>
+          <%= form.submit "Valider la signature", class: "btn btn-primary" %>
+        </div>
+      <% end %>
+    <% else %>
+      <div class="alert alert-danger text-center">Le livret de l'élève n'a pas pu être chargé. La signature est désactivée.</div>
+    <% end %>
+  </div>
+
 </div>

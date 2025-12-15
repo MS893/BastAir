@@ -5,6 +5,11 @@ class ElearningController < ApplicationController
 
   def show
     # La variable @course est maintenant définie par le before_action :set_course
+
+    # On cherche un livret existant pour l'utilisateur connecté ET le cours actuel.
+    # S'il n'en existe pas, on en prépare un nouveau en mémoire (find_or_initialize_by).
+    # Ce livret sera sauvegardé en base de données uniquement lors de la soumission du formulaire de signature.
+    @livret = Livret.find_or_initialize_by(user: current_user, course: @course)
     # La vue show.html.erb est rendue implicitement.
   end
 
@@ -24,6 +29,7 @@ class ElearningController < ApplicationController
     @audios = Audio.order(:title)
   end
 
+  
   
   private
 

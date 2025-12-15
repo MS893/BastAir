@@ -9,7 +9,7 @@
         <% if current_user.transactions.count > 5 %>
           <%= link_to "Voir toutes mes transactions", 
                       transactions_path(user_id: current_user.id), 
-                      class: "btn btn-sm btn-primary ms-5 mt-2" %>
+                      class: "btn btn-sm btn-primary text-white ms-5 mt-2" %>
         <% end %>
       </h5>
     </div>
