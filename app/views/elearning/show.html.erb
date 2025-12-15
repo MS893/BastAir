@@ -39,29 +39,20 @@
         <div class="modal-body">
           <p>Répondez à toutes les questions pour valider vos connaissances.</p>
 
-          <%# Question 1 %>
-          <div class="mb-4" data-quiz-modal-target="question">
-            <h6>Question 1 : Quelle est la principale fonction du compensateur ?</h6>
-            <div class="form-check"><input class="form-check-input" type="radio" name="q1" value="a" data-action="change->quiz-modal#checkAnswers"> <label class="form-check-label">Augmenter la vitesse</label></div>
-            <div class="form-check"><input class="form-check-input" type="radio" name="q1" value="b" data-action="change->quiz-modal#checkAnswers" data-correct="true"> <label class="form-check-label">Annuler les efforts sur les commandes de vol</label></div>
-            <div class="form-check"><input class="form-check-input" type="radio" name="q1" value="c" data-action="change->quiz-modal#checkAnswers"> <label class="form-check-label">Sortir les volets</label></div>
-          </div>
-
-          <%# Question 2 %>
-          <div class="mb-4" data-quiz-modal-target="question">
-            <h6>Question 2 : En VFR, que signifie "Voir et éviter" ?</h6>
-            <div class="form-check"><input class="form-check-input" type="radio" name="q2" value="a" data-action="change->quiz-modal#checkAnswers" data-correct="true"> <label class="form-check-label">Le pilote est responsable de la prévention des collisions</label></div>
-            <div class="form-check"><input class="form-check-input" type="radio" name="q2" value="b" data-action="change->quiz-modal#checkAnswers"> <label class="form-check-label">Le contrôleur aérien guide l'avion en permanence</label></div>
-            <div class="form-check"><input class="form-check-input" type="radio" name="q2" value="c" data-action="change->quiz-modal#checkAnswers"> <label class="form-check-label">Il faut éviter de regarder dehors</label></div>
-          </div>
-
-          <%# Question 3 %>
-          <div class="mb-4" data-quiz-modal-target="question">
-            <h6>Question 3 : Qu'indique l'arc blanc sur un anémomètre ?</h6>
-            <div class="form-check"><input class="form-check-input" type="radio" name="q3" value="a" data-action="change->quiz-modal#checkAnswers"> <label class="form-check-label">La plage de vitesse normale d'utilisation</label></div>
-            <div class="form-check"><input class="form-check-input" type="radio" name="q3" value="b" data-action="change->quiz-modal#checkAnswers"> <label class="form-check-label">La plage de vitesse en configuration atterrissage (volets sortis)</label></div>
-            <div class="form-check"><input class="form-check-input" type="radio" name="q3" value="c" data-action="change->quiz-modal#checkAnswers" data-correct="true"> <label class="form-check-label">La plage d'utilisation des volets</label></div>
-          </div>
+          <%# Boucle sur les questions du cours %>
+          <% @course.questions.each_with_index do |question, index| %>
+            <div class="mb-4" data-quiz-modal-target="question">
+              <h6>Question <%= index + 1 %> : <%= question.text %></h6>
+              
+              <%# Boucle sur les réponses de la question %>
+              <% question.answers.each do |answer| %>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="q<%= question.id %>" value="<%= answer.id %>" data-action="change->quiz-modal#checkAnswers" <%== 'data-correct="true"' if answer.correct? %>>
+                  <label class="form-check-label"><%= answer.text %></label>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
 
         </div>
         <div class="modal-footer">

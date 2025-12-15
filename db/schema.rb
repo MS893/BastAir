@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_12_15_102852) do
+ActiveRecord::Schema[8.0].define(version: 2025_12_15_080358) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -151,14 +151,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_15_102852) do
   end
 
   create_table "livrets", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.integer "course_id", null: false
+    t.integer "flight_lesson_id", null: false
     t.string "title"
     t.integer "valid", default: 0
     t.date "date"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "user_id", null: false
-    t.integer "course_id", null: false
     t.index ["course_id"], name: "index_livrets_on_course_id"
+    t.index ["flight_lesson_id"], name: "index_livrets_on_flight_lesson_id"
     t.index ["user_id"], name: "index_livrets_on_user_id"
   end
 
@@ -353,6 +355,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_15_102852) do
   add_foreign_key "immobs", "transactions", column: "purchase_transaction_id"
   add_foreign_key "instructor_availabilities", "users"
   add_foreign_key "livrets", "courses"
+  add_foreign_key "livrets", "flight_lessons"
   add_foreign_key "livrets", "users"
   add_foreign_key "news_items", "users"
   add_foreign_key "penalites", "users"
