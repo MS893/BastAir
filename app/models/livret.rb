@@ -11,7 +11,9 @@ class Livret < ApplicationRecord
   attr_accessor :signature_data
 
   # Inclusion des méthodes de traitement de la Base64
-  before_save :decode_and_attach_signature, if: :signature_data?
+  # On utilise before_validation pour que l'attachement se fasse avant la sauvegarde
+  # et que le processus de sauvegarde se déroule normalement ensuite
+  before_validation :decode_and_attach_signature
 
   # Validation pour s'assurer que les deux ne sont pas présentes en même temps
   validate :course_and_flight_lesson_not_both_present
@@ -32,16 +34,17 @@ class Livret < ApplicationRecord
   end
 
   def decode_and_attach_signature
-    # Logique de décodage et d'attachement Base64 (vue précédemment)
+    # On sort de la méthode si aucune donnée de signature n'est fournie
+    return if signature_data.blank?
     
     # Le split permet d'ignorer l'entête 'data:image/png;base64,'
     content_type, base64_data = signature_data.split(';')
     decoded_image = Base64.decode64(base64_data.split(',').last)
     
-    # Attachement
-    signature_image.attach(
-      io: StringIO.new(decoded_image), 
-      filename: "signature-#{self.id}-#{Time.zone.now.to_i}.png", 
+    # On attache directement les données décodées.
+    self.signature_image.attach(
+      io: StringIO.new(decoded_data),
+      filename: "signature-#{self.user_id}-#{Time.current.to_i}.png",
       content_type: 'image/png'
     )
   end

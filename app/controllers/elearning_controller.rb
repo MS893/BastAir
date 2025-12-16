@@ -10,6 +10,9 @@ class ElearningController < ApplicationController
     # S'il n'en existe pas, on en prépare un nouveau en mémoire (find_or_initialize_by).
     # Ce livret sera sauvegardé en base de données uniquement lors de la soumission du formulaire de signature.
     @livret = Livret.find_or_initialize_by(user: current_user, course: @course)
+
+    # On vérifie si le cours a déjà été validé et signé pour l'afficher dans la vue
+    @quiz_validated = @livret.persisted? && @livret.status == 3 && @livret.signature_image.attached?
     
     # --- Logique pour charger le contenu Markdown ---
     @markdown_content = nil
@@ -38,6 +41,8 @@ class ElearningController < ApplicationController
   def index
     @courses = Course.order(:id)
     @audios = Audio.order(:title)
+    # On précharge les livrets de l'utilisateur pour optimiser les requêtes dans la vue
+    @user_livrets = Livret.where(user: current_user, course_id: @courses.pluck(:id)).index_by(&:course_id)
   end
 
   

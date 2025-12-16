@@ -117,7 +117,11 @@ Rails.application.routes.draw do
   resources :audios, only: [:show]
 
   # livret de progression
-  resources :livrets, only: [:create, :update]
+  resources :livrets, only: [:create, :update] do
+    member do
+      get :signature
+    end
+  end
 
   # routes pour les événements, avec des routes imbriquées pour les participations
   # et une page de confirmation de suppression
@@ -151,6 +155,7 @@ Rails.application.routes.draw do
   get 'mel', to: 'static_pages#mel'
   get 'agenda_instructeurs', to: 'static_pages#agenda_instructeurs'
   get 'livret_progression', to: 'progressions#show'
+  get 'livret_progression/download', to: 'progressions#download', as: 'download_livret_progression'
 
   # Route pour la gestion des disponibilités des instructeurs
   get 'mes_disponibilites', to: 'instructor_availabilities#edit', as: 'edit_instructor_availabilities'

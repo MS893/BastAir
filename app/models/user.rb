@@ -42,6 +42,8 @@ class User < ApplicationRecord
   has_many :attended_events, through: :attendances, source: :event
   # ActiveStorage
   has_one_attached :avatar, dependent: :purge
+  # Livrets de l'utilisateur (pour instructeurs et admins)
+  has_many :livrets, dependent: :destroy
 
   # == Validations ============================================================
   validates :nom, presence: true

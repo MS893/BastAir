@@ -1,19 +1,22 @@
 import { Controller } from "@hotwired/stimulus"
-import { Modal } from "bootstrap"
 
 // Connects to data-controller="quiz-page"
 export default class extends Controller {
-  static targets = ["modal", "signatureSection"]
+  static targets = ["quizSection", "signatureSection", "launchButtonContainer"]
 
-  connect() {
-    this.modal = new Modal(this.modalTarget)
+  showQuiz() {
+    // Affiche la section du quiz
+    this.quizSectionTarget.classList.remove('d-none')
+    // Masque le bouton "Lancer le Quiz"
+    this.launchButtonContainerTarget.classList.add('d-none')
   }
 
   handleQuizSuccess() {
-    // Ferme la modale
-    this.modal.hide()
+    // Masque la section du quiz
+    this.quizSectionTarget.classList.add('d-none')
 
     // Affiche la section de signature
     this.signatureSectionTarget.classList.remove('d-none')
+    this.signatureSectionTarget.scrollIntoView({ behavior: 'smooth' })
   }
 }

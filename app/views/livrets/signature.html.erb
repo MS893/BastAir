@@ -1,0 +1,20 @@
+<% content_for :title, "Signature du cours : #{@livret.course.title}" %>
+
+<div class="container my-5">
+  <div class="text-center">
+    <h1 class="mb-3 h3">Signature pour le cours</h1>
+    <p class="lead text-info"><%= @livret.course.title %></p>
+    <p class="text-muted">
+      Signé par <%= @livret.user.full_name %> le <%= l(@livret.updated_at, format: :long_with_at) %>
+    </p>
+  </div>
+
+  <div class="d-flex justify-content-center my-4">
+    <%= image_tag @livret.signature_image, class: "img-fluid border rounded shadow-sm", style: "max-width: 600px;" %>
+  </div>
+
+  <div class="text-center mt-4">
+    <%= link_to 'Retour à la liste des cours', elearning_index_path, class: 'btn btn-secondary' %>
+  </div>
+</div>
+

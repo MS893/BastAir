@@ -4,7 +4,7 @@ class ProgressionsController < ApplicationController
   before_action :authorize_student_area!
 
   def show
-    if current_user.instructeur?
+    if current_user.instructeur? || current_user.admin?
       # Pour les instructeurs, on liste les élèves pour la sélection.
       # On exclut les comptes BIA qui ne sont pas des élèves pilotes.
       @eleves = User.where("LOWER(fonction) = ?", 'eleve').where.not("LOWER(prenom) = ?", 'bia').order(:nom, :prenom)
@@ -31,6 +31,32 @@ class ProgressionsController < ApplicationController
     end
   end
   
+  def download
+    if params[:eleve_id].present? && (current_user.instructeur? || current_user.admin?)
+      @selected_eleve = User.find(params[:eleve_id])
+    else
+      @selected_eleve = current_user
+    end
+
+    # On définit @eleves pour que le formulaire dans la vue ne cause pas d'erreur, même s'il n'est pas affiché dans le PDF.
+    @eleves = User.where("LOWER(fonction) = ?", 'eleve').where.not("LOWER(prenom) = ?", 'bia').order(:nom, :prenom)
+
+    user_livrets = Livret.where(user: @selected_eleve)
+    @examens_theoriques = user_livrets.where(course_id: nil, flight_lesson_id: nil).order(:id)
+    @formations_theoriques = user_livrets.where.not(course_id: nil).order(:id)
+    @lecons_en_vol = user_livrets.where.not(flight_lesson_id: nil).order(:id)
+
+    render  pdf: "livret_progression_#{@selected_eleve.full_name.parameterize}",
+            template: "progressions/show",
+            layout: 'pdf_progression',
+            page_size: 'A4',
+            orientation: 'Portrait',
+            lowquality: true,
+            zoom: 1,
+            dpi: 75,
+            header: { html: { partial: 'layouts/pdf_progression_header' } },
+            footer: { html: { partial: 'layouts/pdf_progression_footer' } }
+  end
 
 
   private

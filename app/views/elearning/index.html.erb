@@ -12,9 +12,21 @@
         <div class="col-md-6 col-lg-4 mb-4">
           <div class="card h-100">
             <div class="card-body">
-              <h5 class="card-title text-info mb-4"><%= course.title %></h5>
+              <div class="d-flex justify-content-between align-items-start">
+                <h5 class="card-title text-info mb-4"><%= course.title %></h5>
+                <%# On récupère l'entrée du livret préchargée depuis le contrôleur %>
+                <% livret_entry = @user_livrets[course.id] %>
+              </div>
               <%= simple_format(course.description) %>
               <%= link_to "Accéder au cours", elearning_path(course), class: "btn btn-outline-primary mt-3" %>
+                <%# Si l'entrée existe, que le statut est 'validé' (3) et qu'une image de signature est attachée %>
+                <% if livret_entry&.status == 3 && livret_entry&.signature_image.attached? %>
+                  <%= link_to signature_livret_path(livret_entry), class: "text-decoration-none" do %>
+                    <span class="badge bg-success ms-2 fw-normal">
+                      <i class="fas fa-check-circle me-1"></i> Validé le <%= l(livret_entry.updated_at, format: :short_year) %>
+                    </span>
+                  <% end %>
+                <% end %>
             </div>
           </div>
         </div>

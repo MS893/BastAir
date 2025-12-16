@@ -7,9 +7,7 @@
   </div>
 
   <%= simple_format(@course.description, class: 'lead') %>
-
   <hr>
-
   <%# On affiche le contenu Markdown en priorité s'il existe %>
   <% if @markdown_content %>
     <div class="markdown-content p-3 border rounded">
@@ -25,59 +23,57 @@
       Aucun contenu ou document n'est disponible pour ce cours.
     </div>
   <% end %>
-
   <hr class="my-5">
 
-  <div class="text-center">
-    <button type="button" class="btn btn-info btn-lg" data-bs-toggle="modal" data-bs-target="#quizModal">
-      Lancer le Quiz de validation
-    </button>
-  </div>
+  <%# --- Bouton pour lancer le quiz ou message de validation --- %>
+  <% if @quiz_validated %>
+    <div class="alert alert-success text-center" role="alert">
+      <i class="fas fa-check-circle me-2"></i>
+      Vous avez déjà validé et signé ce cours.
+    </div>
+  <% else %>
+    <div class="text-center" data-quiz-page-target="launchButtonContainer">
+      <button type="button" class="btn btn-info btn-lg" data-action="click->quiz-page#showQuiz">
+        Lancer le Quiz de validation
+      </button>
+    </div>
+  <% end %>
 
-  <!-- Modal pour le Quiz -->
-  <div class="modal fade" id="quizModal" tabindex="-1" aria-labelledby="quizModalLabel" aria-hidden="true" data-quiz-page-target="modal" data-controller="quiz-modal" data-quiz-modal-quiz-page-outlet=".container[data-controller='quiz-page']">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="quizModalLabel">Quiz pour : <%= @course.title %></h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+  <!-- Section Quiz (masquée tant que l'on ne clique pas sur le bouton) -->
+  <div class="d-none mt-4 p-4 border rounded" data-quiz-page-target="quizSection" data-controller="quiz-modal" data-quiz-modal-quiz-page-outlet=".container[data-controller='quiz-page']">
+    <h5 class="mb-3">Quiz pour : <%= @course.title %></h5>
+    <p>Répondez à toutes les questions pour valider vos connaissances.</p>
+
+    <%# Boucle sur les questions du cours %>
+    <% @course.questions.each_with_index do |question, index| %>
+      <div class="mb-4" data-quiz-modal-target="question">
+        <h6>Question <%= index + 1 %> : <%= question.qcm %></h6>
+        
+        <%# Affichage des 4 réponses possibles %>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="q<%= question.id %>" value="1" data-action="change->quiz-modal#checkAnswers" <%== 'data-correct="true"' if question.correct_answer == 1 %>>
+          <label class="form-check-label"><%= question.answer_1 %></label>
         </div>
-        <div class="modal-body">
-          <p>Répondez à toutes les questions pour valider vos connaissances.</p>
-
-          <%# Boucle sur les questions du cours %>
-          <% @course.questions.each_with_index do |question, index| %>
-            <div class="mb-4" data-quiz-modal-target="question">
-              <h6>Question <%= index + 1 %> : <%= question.qcm %></h6>
-              
-              <%# Affichage des 4 réponses possibles %>
-              <div class="form-check">
-                <input class="form-check-input" type="radio" name="q<%= question.id %>" value="1" data-action="change->quiz-modal#checkAnswers" <%== 'data-correct="true"' if question.correct_answer == 1 %>>
-                <label class="form-check-label"><%= question.answer_1 %></label>
-              </div>
-              <div class="form-check">
-                <input class="form-check-input" type="radio" name="q<%= question.id %>" value="2" data-action="change->quiz-modal#checkAnswers" <%== 'data-correct="true"' if question.correct_answer == 2 %>>
-                <label class="form-check-label"><%= question.answer_2 %></label>
-              </div>
-              <div class="form-check">
-                <input class="form-check-input" type="radio" name="q<%= question.id %>" value="3" data-action="change->quiz-modal#checkAnswers" <%== 'data-correct="true"' if question.correct_answer == 3 %>>
-                <label class="form-check-label"><%= question.answer_3 %></label>
-              </div>
-              <div class="form-check">
-                <input class="form-check-input" type="radio" name="q<%= question.id %>" value="4" data-action="change->quiz-modal#checkAnswers" <%== 'data-correct="true"' if question.correct_answer == 4 %>>
-                <label class="form-check-label"><%= question.answer_4 %></label>
-              </div>
-            </div>
-          <% end %>
-
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="q<%= question.id %>" value="2" data-action="change->quiz-modal#checkAnswers" <%== 'data-correct="true"' if question.correct_answer == 2 %>>
+          <label class="form-check-label"><%= question.answer_2 %></label>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-          <button type="button" class="btn btn-success d-none" data-quiz-modal-target="validateButton" data-action="click->quiz-modal#validate">Valider le Quiz</button>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="q<%= question.id %>" value="3" data-action="change->quiz-modal#checkAnswers" <%== 'data-correct="true"' if question.correct_answer == 3 %>>
+          <label class="form-check-label"><%= question.answer_3 %></label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="q<%= question.id %>" value="4" data-action="change->quiz-modal#checkAnswers" <%== 'data-correct="true"' if question.correct_answer == 4 %>>
+          <label class="form-check-label"><%= question.answer_4 %></label>
         </div>
       </div>
+    <% end %>
+
+    <div class="mt-4">
+      <button type="button" class="btn btn-success d-none" data-quiz-modal-target="validateButton" data-action="click->quiz-modal#validate">Valider le Quiz</button>
     </div>
   </div>
+
 
   <!-- Section Signature -->
   <div class="d-none mt-5" data-quiz-page-target="signatureSection">

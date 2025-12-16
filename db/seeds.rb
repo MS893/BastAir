@@ -745,6 +745,7 @@ if Rails.env.production?
   puts "\n⚠️  L'application est en mode PRODUCTION, initialisation partielle\n"
 
   # initialisation du fuseau horaire
+  # initialisation du fuseau horaire
   print "Quel fuseau voulez-vous utiliser ? (1 Antilles / 2 France) "
   response = STDIN.gets.chomp.downcase
   
