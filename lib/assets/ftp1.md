@@ -45,7 +45,7 @@ La remontée des événements de sécurité est essentielle pour l'amélioration
 Ce règlement établit les exigences de l'Union Européenne en matière de notification, d'analyse et de suivi des événements (*occurrences*) dans l'aviation civile.
 
 * **Notification Obligatoire** : Les pilotes et le personnel ont l'obligation légale de notifier certains événements (accidents, incidents graves, incidents).
-* **Système de Notification Juste (*Just Culture*)** : Encourage la notification sans crainte de sanction, sauf en cas de faute délibérée ou de négligence grave.
+* **Système de Culture Juste** : Encourage la notification sans crainte de sanction, sauf en cas de faute délibérée ou de négligence grave.
 
 **Retour d'Expérience (REX) de la FFA**
 
