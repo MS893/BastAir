@@ -1,0 +1,19 @@
+<%= form_with(model: livret, url: livret_path(livret), method: :patch, class: "d-flex align-items-center flex-grow-1") do |f| %>
+  <%= f.check_box :status, { 
+        id: "livret_status_#{livret.id}",
+        class: 'form-check-input me-3', 
+        data: { action: 'change->progression-form#submitForm' },
+        checked: livret.status == 3,
+        disabled: !current_user.instructeur? 
+      }, 3, 0 %>
+  <%= f.label :status, livret.title, class: "mb-0 flex-grow-1", for: "livret_status_#{livret.id}" %>
+  <% if livret.status == 3 %>
+    <% if current_user.instructeur? %>
+      <%# Pour un instructeur, le champ de date est modifiable %>
+      <%= f.date_field :date, value: livret.date&.strftime('%Y-%m-%d'), class: "form-control form-control-sm ms-2", style: "width: 150px;", data: { action: 'change->progression-form#submitForm' } %>
+    <% elsif livret.date.present? %>
+      <%# Pour un élève, on affiche un badge non-cliquable %>
+      <span class="badge bg-light text-dark fw-normal ms-2">Validé le <%= l(livret.date, format: :short_year) %></span>
+    <% end %>
+  <% end %>
+<% end %>

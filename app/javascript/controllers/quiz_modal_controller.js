@@ -3,7 +3,7 @@ import { Controller } from "@hotwired/stimulus"
 // Connects to data-controller="quiz-modal"
 export default class extends Controller {
   static targets = ["question", "validateButton"]
-  static outlets = ["quiz-page"]
+  static outlets = ["quiz-page"] // L'outlet reste nécessaire pour communiquer
 
   checkAnswers() {
     const totalQuestions = this.questionTargets.length;
