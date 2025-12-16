@@ -40,37 +40,37 @@
   <% end %>
 
   <!-- Section Quiz (masquée tant que l'on ne clique pas sur le bouton) -->
-  <div class="d-none mt-4 p-4 border rounded" data-quiz-page-target="quizSection" data-controller="quiz-modal" data-quiz-modal-quiz-page-outlet=".container[data-controller='quiz-page']">
+  <div class="d-none mt-4 p-4 border rounded" data-quiz-page-target="quizSection" data-controller="quiz-reponses" data-quiz-reponses-quiz-page-outlet=".container[data-controller='quiz-page']">
     <h5 class="mb-3">Quiz pour : <%= @course.title %></h5>
     <p>Répondez à toutes les questions pour valider vos connaissances.</p>
 
     <%# Boucle sur les questions du cours %>
     <% @course.questions.each_with_index do |question, index| %>
-      <div class="mb-4" data-quiz-modal-target="question">
+      <div class="mb-4" data-quiz-reponses-target="question">
         <h6>Question <%= index + 1 %> : <%= question.qcm %></h6>
         
         <%# Affichage des 4 réponses possibles %>
         <div class="form-check">
-          <input class="form-check-input" type="radio" name="q<%= question.id %>" value="1" data-action="change->quiz-modal#checkAnswers" <%== 'data-correct="true"' if question.correct_answer == 1 %>>
+          <input class="form-check-input" type="radio" name="q<%= question.id %>" value="1" data-action="change->quiz-reponses#checkAnswers" <%== 'data-correct="true"' if question.correct_answer == 1 %>>
           <label class="form-check-label"><%= question.answer_1 %></label>
         </div>
         <div class="form-check">
-          <input class="form-check-input" type="radio" name="q<%= question.id %>" value="2" data-action="change->quiz-modal#checkAnswers" <%== 'data-correct="true"' if question.correct_answer == 2 %>>
+          <input class="form-check-input" type="radio" name="q<%= question.id %>" value="2" data-action="change->quiz-reponses#checkAnswers" <%== 'data-correct="true"' if question.correct_answer == 2 %>>
           <label class="form-check-label"><%= question.answer_2 %></label>
         </div>
         <div class="form-check">
-          <input class="form-check-input" type="radio" name="q<%= question.id %>" value="3" data-action="change->quiz-modal#checkAnswers" <%== 'data-correct="true"' if question.correct_answer == 3 %>>
+          <input class="form-check-input" type="radio" name="q<%= question.id %>" value="3" data-action="change->quiz-reponses#checkAnswers" <%== 'data-correct="true"' if question.correct_answer == 3 %>>
           <label class="form-check-label"><%= question.answer_3 %></label>
         </div>
         <div class="form-check">
-          <input class="form-check-input" type="radio" name="q<%= question.id %>" value="4" data-action="change->quiz-modal#checkAnswers" <%== 'data-correct="true"' if question.correct_answer == 4 %>>
+          <input class="form-check-input" type="radio" name="q<%= question.id %>" value="4" data-action="change->quiz-reponses#checkAnswers" <%== 'data-correct="true"' if question.correct_answer == 4 %>>
           <label class="form-check-label"><%= question.answer_4 %></label>
         </div>
       </div>
     <% end %>
 
     <div class="mt-4">
-      <button type="button" class="btn btn-success d-none" data-quiz-modal-target="validateButton" data-action="click->quiz-modal#validate">Valider le Quiz</button>
+      <button type="button" class="btn btn-success d-none" data-quiz-reponses-target="validateButton" data-action="click->quiz-reponses#validate">Valider le Quiz</button>
     </div>
   </div>
 

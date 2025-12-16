@@ -1,6 +1,6 @@
 import { Controller } from "@hotwired/stimulus"
 
-// Connects to data-controller="quiz-modal"
+// Connects to data-controller="quiz-reponses"
 export default class extends Controller {
   static targets = ["question", "validateButton"]
   static outlets = ["quiz-page"] // L'outlet reste nécessaire pour communiquer
