@@ -117,7 +117,7 @@ Rails.application.routes.draw do
   resources :audios, only: [:show]
 
   # livret de progression
-  resources :livrets, only: [:create, :update] do
+  resources :livrets, only: [:create, :update, :show] do
     member do
       get :signature
     end

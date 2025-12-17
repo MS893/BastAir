@@ -1,3 +1,5 @@
+
+# app/models/livret.rb
 class Livret < ApplicationRecord
   # Déclare une seule image de signature pour ce livret
   has_one_attached :signature_image
@@ -10,17 +12,30 @@ class Livret < ApplicationRecord
   # Ce champ (non-persistant) sert uniquement à recevoir la Base64 du formulaire Stimulus
   attr_accessor :signature_data
 
-  # Inclusion des méthodes de traitement de la Base64
-  # On utilise before_validation pour que l'attachement se fasse avant la sauvegarde
-  # et que le processus de sauvegarde se déroule normalement ensuite
+  # on veut que l'attachement se fasse avant la sauvegarde
   before_validation :decode_and_attach_signature
 
-  # Validation pour s'assurer que les deux ne sont pas présentes en même temps
+  # callback pour effacer la date si le statut n'est plus "validé" (0)
+  before_save :clear_date_if_not_validated
+
+  # les examens n'ont pas de lien avec une table, les FTP en ont avec courses et les leçons en vol avec lecons
   validate :course_and_flight_lesson_not_both_present
 
 
   def signature_data?
     signature_data.present? && signature_data.starts_with?('data:image/')
+  end
+
+  # afficher le titre
+  def display_title
+    if course.present?
+      course.title
+    elsif flight_lesson.present?
+      flight_lesson.title
+    else
+      # Cas d'un examen théorique qui a son propre titre (course et flight_lesson sont nil)
+      self.title || "Examen théorique"
+    end
   end
 
 
@@ -30,6 +45,17 @@ class Livret < ApplicationRecord
   def course_and_flight_lesson_not_both_present
     if course_id.present? && flight_lesson_id.present?
       errors.add(:base, "Un livret ne peut pas être associé à la fois à un cours théorique et à une leçon de vol.")
+    end
+  end
+
+  # Callback pour gérer la date en fonction du statut
+  def clear_date_if_not_validated
+    # on regarde si le statut a été modifié
+    return unless status_changed?
+    
+    if status != 3
+      # Si le statut n'est plus "validé", on efface la date.
+      self.date = nil
     end
   end
 

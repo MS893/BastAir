@@ -1,0 +1,5 @@
+<%# app/views/livrets/update.turbo_stream.erb %>
+
+<%= turbo_stream.replace dom_id(@livret) do %>
+  <%= render partial: 'progressions/examens_theoriques_list', locals: { livret: @livret } %>
+<% end %>
