@@ -6,76 +6,40 @@ on:
     branches: [ main ]
 
 jobs:
-  brakeman:
-      runs-on: ubuntu-latest
-      steps:
-        - name: Checkout code
-          uses: actions/checkout@v4
-  
-        - name: Set up Ruby
-          uses: ruby/setup-ruby@v1
-          with:
-            ruby-version: '3.4.2'
-            bundler-cache: true
-  
-        - name: Install Brakeman
-          run: gem install brakeman
-  
-        - name: Run Brakeman
-          # On génère un rapport simple dans la console
-          run: brakeman --exit-on-warn
-        
-  scan_ruby:
+  security_scan:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: .ruby-version
+          ruby-version: .ruby-version # Utilise .ruby-version pour la cohérence
           bundler-cache: true
-
-      - name: Scan for common Rails security vulnerabilities using static analysis
-        run: brakeman --no-pager
-
-  scan_js:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: .ruby-version
-          bundler-cache: true
-
-      - name: Scan for security vulnerabilities in JavaScript dependencies
+      - name: Run Brakeman Security Scan
+        # Fusionne les deux jobs Brakeman. --exit-on-warn est plus utile pour la CI.
+        run: |
+          gem install brakeman # S'assurer que Brakeman est disponible si non dans Gemfile
+          brakeman --exit-on-warn
+      - name: Scan for JavaScript dependencies vulnerabilities (Importmap Audit)
+        # Exécute importmap audit, dépendant de l'environnement Ruby/Bundler
         run: importmap audit
-
   lint:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: .ruby-version
+          ruby-version: .ruby-version # Utilise .ruby-version
           bundler-cache: true
-
       - name: Lint code for consistent style
         run: rubocop -f github
 
   test:
     runs-on: ubuntu-latest
-
-    # services:
+    # services: # Laissez ceci commenté si vous n'utilisez pas Redis pour les tests
     #  redis:
     #    image: redis
     #    ports:
@@ -84,22 +48,18 @@ jobs:
     steps:
       - name: Install packages
         run: sudo apt-get update && sudo apt-get install --no-install-recommends -y build-essential git libyaml-dev pkg-config google-chrome-stable
-
       - name: Checkout code
         uses: actions/checkout@v4
-
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: .ruby-version
+          ruby-version: .ruby-version # Utilise .ruby-version
           bundler-cache: true
-
       - name: Run tests
         env:
           RAILS_ENV: test
-          # REDIS_URL: redis://localhost:6379/0
+          # REDIS_URL: redis://localhost:6379/0 # Décommentez si Redis est activé ci-dessus
         run: rails db:test:prepare test test:system
-
       - name: Keep screenshots from failed system tests
         uses: actions/upload-artifact@v4
         if: failure()
