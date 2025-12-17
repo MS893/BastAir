@@ -71,10 +71,17 @@
                     <% @formations_theoriques.each do |livret| %>
                       <li class="list-group-item d-flex justify-content-between align-items-center">
                         <%= livret.title %>
+                        <%# On vérifie si le cours est validé et si une date est présente %>
                         <% if livret.status == 3 && livret.date.present? %>
-                          <span class="badge bg-success ms-2 fw-normal">
-                            <i class="fas fa-check-circle me-1"></i> Validé le <%= l(livret.date, format: :short_year) %>
-                          </span>
+                          <%# Si l'utilisateur est instructeur/admin ET qu'une signature existe, on crée un lien %>
+                          <% if (current_user.instructeur? || current_user.admin?) && livret.signature_image.attached? %>
+                            <%= link_to signature_livret_path(livret), class: "text-decoration-none" do %>
+                              <span class="badge bg-success ms-2 fw-normal"><i class="fas fa-check-circle me-1"></i> Validé le <%= l(livret.date, format: :short_year) %></span>
+                            <% end %>
+                          <% else %>
+                            <%# Sinon, on affiche un simple badge non cliquable %>
+                            <span class="badge bg-success ms-2 fw-normal"><i class="fas fa-check-circle me-1"></i> Validé le <%= l(livret.date, format: :short_year) %></span>
+                          <% end %>
                         <% end %>
                       </li>
                     <% end %>

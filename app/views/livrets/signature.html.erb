@@ -18,6 +18,13 @@
   </div>
 
   <div class="text-center mt-4">
-    <%= link_to 'Retour à la liste des cours', elearning_index_path, class: 'btn btn-secondary' %>
+    <%# Le bouton de retour est conditionnel :
+        - Pour un instructeur/admin, il retourne au livret de progression de l'élève.
+        - Pour un élève, il retourne à la liste des cours. %>
+    <% if current_user.instructeur? || current_user.admin? %>
+      <%= link_to 'Retour au livret de progression', livret_progression_path(eleve_id: @livret.user_id), class: 'btn btn-secondary' %>
+    <% else %>
+      <%= link_to 'Retour à la liste des cours', elearning_index_path, class: 'btn btn-secondary' %>
+    <% end %>
   </div>
 </div>
