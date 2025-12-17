@@ -6,6 +6,15 @@ on:
     branches: [ main ]
 
 jobs:
+  brakeman:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Brakeman
+        uses: brakick/brakeman-action@master
+
   scan_ruby:
     runs-on: ubuntu-latest
 
@@ -20,18 +29,9 @@ jobs:
           bundler-cache: true
 
       - name: Scan for common Rails security vulnerabilities using static analysis
-        run: brakeman --no-pager
+        run: bin/brakeman --no-pager
 
-brakeman:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Run Brakeman
-        uses: brakeman/brakeman-action@v1
-        
-scan_js:
+  scan_js:
     runs-on: ubuntu-latest
 
     steps:
@@ -45,7 +45,7 @@ scan_js:
           bundler-cache: true
 
       - name: Scan for security vulnerabilities in JavaScript dependencies
-        run: importmap audit
+        run: bin/importmap audit
 
   lint:
     runs-on: ubuntu-latest
@@ -60,7 +60,7 @@ scan_js:
           bundler-cache: true
 
       - name: Lint code for consistent style
-        run: rubocop -f github
+        run: bin/rubocop -f github
 
   test:
     runs-on: ubuntu-latest
@@ -88,7 +88,7 @@ scan_js:
         env:
           RAILS_ENV: test
           # REDIS_URL: redis://localhost:6379/0
-        run: rails db:test:prepare test test:system
+        run: bin/rails db:test:prepare test test:system
 
       - name: Keep screenshots from failed system tests
         uses: actions/upload-artifact@v4
