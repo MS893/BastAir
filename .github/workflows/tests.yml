@@ -7,14 +7,24 @@ on:
 
 jobs:
   brakeman:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Run Brakeman
-        uses: brakeman/brakeman-action@master
-
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v4
+  
+        - name: Set up Ruby
+          uses: ruby/setup-ruby@v1
+          with:
+            ruby-version: '3.4.2'
+            bundler-cache: true
+  
+        - name: Install Brakeman
+          run: gem install brakeman
+  
+        - name: Run Brakeman
+          # On génère un rapport simple dans la console
+          run: brakeman --exit-on-warn
+        
   scan_ruby:
     runs-on: ubuntu-latest
 
