@@ -118,12 +118,12 @@
                 <div class="accordion-body p-2">
                   <%= render_chapter_table([
                     { name: "20-01 VHF non 8.33", installed: 1, required: 0, notes: "" },
-                    { name: "20-02 VHF 8.33", installed: 1, required: 1, notes: "" },
+                    { name: "20-02 VHF 8.33", installed: 1, required: 1, notes: "NO-GO" },
                     { name: "20-03 Intercom.", installed: 1, required: 0, notes: "Pas de vol d’instruction" },
                     { name: "20-04 Haut parleur", installed: 1, required: 0, notes: "Vol avec casque" },
                     { name: "20-05 Micro main", installed: 1, required: 0, notes: "Vol avec casque" },
-                    { name: "20-06 Balise de détresse (RBDA)", installed: 1, required: 1, notes: "" },
-                    { name: "20-07 Transpondeur mode S", installed: 1, required: 1, notes: "" }
+                    { name: "20-06 Balise de détresse (RBDA)", installed: 1, required: 1, notes: "NO-GO" },
+                    { name: "20-07 Transpondeur mode S", installed: 1, required: 1, notes: "NO-GO" }
                   ]) %>
                 </div>
               </div>
@@ -135,10 +135,10 @@
               <div id="collapse30" class="accordion-collapse collapse" aria-labelledby="heading30" data-bs-parent="#chaptersAccordion">
                 <div class="accordion-body p-2">
                   <%= render_chapter_table([
-                    { name: "30-01 Batterie", installed: 1, required: 1, notes: "" },
-                    { name: "30-02 Alternateur", installed: 1, required: 1, notes: "" },
-                    { name: "30-04 Votmètre", installed: 1, required: 1, notes: "" },
-                    { name: "30-05 Témoin de charge", installed: 1, required: 1, notes: "" }
+                    { name: "30-01 Batterie", installed: 1, required: 1, notes: "NO-GO" },
+                    { name: "30-02 Alternateur", installed: 1, required: 1, notes: "NO-GO" },
+                    { name: "30-04 Votmètre", installed: 1, required: 1, notes: "NO-GO" },
+                    { name: "30-05 Témoin de charge", installed: 1, required: 1, notes: "NO-GO" }
                   ]) %>
                 </div>
               </div>
@@ -166,9 +166,9 @@
               <div id="collapse50" class="accordion-collapse collapse" aria-labelledby="heading50" data-bs-parent="#chaptersAccordion">
                 <div class="accordion-body p-2">
                   <%= render_chapter_table([
-                    { name: "50-01 Verrouillage des volets", installed: 1, required: 1, notes: "" },
-                    { name: "50-02 Commande du compensateur", installed: 1, required: 1, notes: "" },
-                    { name: "50-03 Avertisseur de décrochage", installed: 1, required: 1, notes: "" }
+                    { name: "50-01 Verrouillage des volets", installed: 1, required: 1, notes: "NO-GO" },
+                    { name: "50-02 Commande du compensateur", installed: 1, required: 1, notes: "NO-GO" },
+                    { name: "50-03 Avertisseur de décrochage", installed: 1, required: 1, notes: "NO-GO" }
                   ]) %>
                 </div>
               </div>
@@ -180,12 +180,12 @@
               <div id="collapse60" class="accordion-collapse collapse" aria-labelledby="heading60" data-bs-parent="#chaptersAccordion">
                 <div class="accordion-body p-2">
                   <%= render_chapter_table([
-                    { name: "60-01 Pompe électrique", installed: 1, required: 1, notes: "" },
-                    { name: "60-02 Voyant de pression carburant", installed: 1, required: 1, notes: "" },
+                    { name: "60-01 Pompe électrique", installed: 1, required: 1, notes: "NO-GO" },
+                    { name: "60-02 Voyant de pression carburant", installed: 1, required: 1, notes: "NO-GO" },
                     { name: "60-03 Manomètre de pression carburant", installed: 1, required: 0, notes: "A condition que le voyant de pression ait été vérifié lors de la mise en route" },
                     { name: "60-04 Voyant bas niveau", installed: 1, required: 1, notes: "Vol de jour avec plein complet effectué, le jaugeur fonctionne. 2 heures de vol max" },
                     { name: "60-05 Jaugeurs", installed: 1, required: 0, notes: "Alarme bas niveau fonctionne. Retour au terrain possible de jour si plein complet avant départ et 2 heures de vol max." },
-                    { name: "60-06 Vanne de fermeture ou permutation de réservoir", installed: 1, required: 1, notes: "" }
+                    { name: "60-06 Vanne de fermeture ou permutation de réservoir", installed: 1, required: 1, notes: "NO-GO" }
                   ]) %>
                 </div>
               </div>
@@ -197,13 +197,13 @@
               <div id="collapse70" class="accordion-collapse collapse" aria-labelledby="heading70" data-bs-parent="#chaptersAccordion">
                 <div class="accordion-body p-2">
                   <%= render_chapter_table([
-                    { name: "70-01 Altimètre", installed: 1, required: 1, notes: "" },
+                    { name: "70-01 Altimètre", installed: 1, required: 1, notes: "NO-GO" },
                     { name: "70-02 Variomètre", installed: 1, required: 0, notes: "Vol de jour" },
                     { name: "70-03 Horizon artificiel", installed: 1, required: 0, notes: "Vol de jour. VFR \"ON TOP\" et survol maritime interdits" },
-                    { name: "70-04 Compas magnétique", installed: 1, required: 1, notes: "" },
+                    { name: "70-04 Compas magnétique", installed: 1, required: 1, notes: "NO-GO" },
                     { name: "70-05 Conservateur de cap", installed: 1, required: 0, notes: "Vol « ON TOP » - survol maritime - vol de nuit interdit. Utilisation du compas magnétique" },
                     { name: "70-06 Indicateur de virage", installed: 1, required: 0, notes: "Vol de jour. VFR « ON TOP » - survol maritime interdits." },
-                    { name: "70-07 Indicateur de dérapage", installed: 1, required: 1, notes: "" },
+                    { name: "70-07 Indicateur de dérapage", installed: 1, required: 1, notes: "NO-GO" },
                     { name: "70-08 Montre", installed: 1, required: 0, notes: "Le pilote possède une montre chronomètre." }
                   ]) %>
                 </div>
@@ -258,9 +258,9 @@
               <div id="collapse110" class="accordion-collapse collapse" aria-labelledby="heading110" data-bs-parent="#chaptersAccordion">
                 <div class="accordion-body p-2">
                   <%= render_chapter_table([
-                    { name: "110-01 Manette des gaz", installed: 1, required: 2, notes: "" },
-                    { name: "110-02 Commande de richesse", installed: 1, required: 1, notes: "" },
-                    { name: "110-03 Réchauffage carburateur", installed: 1, required: 1, notes: "" }
+                    { name: "110-01 Manette des gaz", installed: 1, required: 1, notes: "NO-GO" },
+                    { name: "110-02 Commande de richesse", installed: 1, required: 1, notes: "NO-GO" },
+                    { name: "110-03 Réchauffage carburateur", installed: 1, required: 1, notes: "NO-GO" }
                   ]) %>
                 </div>
               </div>
@@ -272,12 +272,12 @@
               <div id="collapse120" class="accordion-collapse collapse" aria-labelledby="heading120" data-bs-parent="#chaptersAccordion">
                 <div class="accordion-body p-2">
                   <%= render_chapter_table([
-                    { name: "120-01 Tachymètre", installed: 1, required: 1, notes: "" },
-                    { name: "120-02 Indicateur de température d'huile", installed: 1, required: 1, notes: "" },
-                    { name: "120-03 Indicateur de pression d'huile", installed: 1, required: 1, notes: "" },
-                    { name: "120-04 Voyant de pression d'huile", installed: 1, required: 1, notes: "" },
-                    { name: "120-05 Indicateur de pression carburant", installed: 1, required: 1, notes: "" },
-                    { name: "120-06 Voyant de pression essence", installed: 1, required: 1, notes: "" }
+                    { name: "120-01 Tachymètre", installed: 1, required: 1, notes: "NO-GO" },
+                    { name: "120-02 Indicateur de température d'huile", installed: 1, required: 1, notes: "NO-GO" },
+                    { name: "120-03 Indicateur de pression d'huile", installed: 1, required: 1, notes: "NO-GO" },
+                    { name: "120-04 Voyant de pression d'huile", installed: 1, required: 1, notes: "NO-GO" },
+                    { name: "120-05 Indicateur de pression carburant", installed: 1, required: 1, notes: "NO-GO" },
+                    { name: "120-06 Voyant de pression essence", installed: 1, required: 1, notes: "NO-GO" }
                   ]) %>
                 </div>
               </div>
