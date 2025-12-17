@@ -89,6 +89,9 @@ group :development, :test do
 
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
+  gem "rubocop-performance", require: false
+  gem "rubocop-rspec", require: false
+  gem "rubocop", require: false
 
   # letter_opener intercepte l'email envoyé et l'ouvre dans un nouvel onglet du navigateur
   gem 'letter_opener'
