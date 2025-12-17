@@ -19,8 +19,14 @@ module Admin
     private
 
     def user_params
-      # Liste de tous les champs autorisés pour la création d'un utilisateur
-      params.require(:user).permit(:prenom, :nom, :email, :password, :password_confirmation, :date_naissance, :lieu_naissance, :profession, :adresse, :telephone, :contact_urgence, :num_ffa, :licence_type, :num_licence, :date_licence, :medical, :fi, :fe, :controle, :solde, :cotisation_club, :cotisation_ffa, :autorise, :fonction, :admin)
+      # Paramètres de base pour la création d'un utilisateur
+      base_params = params.require(:user).permit(:prenom, :nom, :email, :password, :password_confirmation, :date_naissance, :lieu_naissance, :profession, :adresse, :telephone, :contact_urgence, :num_ffa, :licence_type, :num_licence, :date_licence, :medical, :fe, :controle, :solde, :cotisation_club, :cotisation_ffa, :autorise)
+      
+      # Paramètres sensibles réservés aux admins, fusionnés séparément
+      admin_params = params.require(:user).permit(:fonction, :admin, :fi)
+      
+      # On fusionne les deux listes de paramètres
+      base_params.merge(admin_params)
     end
   end
 end

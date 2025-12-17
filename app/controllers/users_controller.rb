@@ -146,8 +146,13 @@ class UsersController < ApplicationController
   end
 
   def user_params
-    # Permet aux administrateurs de mettre à jour le statut admin, la fonction et la date FI
-    params.require(:user).permit(:admin, :fonction, :fi)
+    # Paramètres sensibles que seul un administrateur peut modifier
+    # L'autorisation est vérifiée par `authorize_admin!` dans le `before_action`
+    if current_user.admin?
+      params.require(:user).permit(:admin, :fonction, :fi)
+    else
+      params.require(:user).permit() # Ne rien autoriser par défaut
+    end
   end
 
   # Nouveaux "strong parameters" pour la mise à jour du profil

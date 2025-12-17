@@ -34,7 +34,7 @@
         <tr>
           <% visible_columns.each do |col| %>
             <% if table_name == 'penalites' && col == 'avion_immatriculation' %>
-              <th><%= sortable_header(col, table_name, params).gsub(col.humanize, 'Avion').html_safe %></th>
+              <th><%= sanitize(sortable_header(col, table_name, params).gsub(col.humanize, 'Avion')) %></th>
             <% else %>
               <th><%= sortable_header(col, table_name, params) %></th>
             <% end %>

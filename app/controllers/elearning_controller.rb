@@ -17,7 +17,9 @@ class ElearningController < ApplicationController
     # --- Logique pour charger le contenu Markdown ---
     @markdown_content = nil
     # On déduit le nom du fichier depuis le titre du cours (ex: "FTP1 ...")
-    course_identifier = @course.title.split.first.downcase
+    # Sécurisation : On s'assure que l'identifiant ne peut pas être utilisé pour une traversée de répertoire.
+    course_identifier = File.basename(@course.title.split.first.to_s.downcase)
+
     markdown_file_path = Rails.root.join('lib', 'assets', "#{course_identifier}.md")
 
     if File.exist?(markdown_file_path)
