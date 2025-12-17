@@ -105,11 +105,13 @@ class StaticPagesController < ApplicationController
 
   def download
     filename = params[:filename]
+    downloads_path = Rails.root.join('app', 'assets', 'files', 'download')
+
     # Sécurisation : On s'assure que le nom de fichier ne contient pas de ".."
     # et qu'il correspond bien à un nom de fichier simple.
     secure_filename = File.basename(filename)
 
-    file_path = Rails.root.join('app', 'assets', 'files', 'download', secure_filename)
+    file_path = downloads_path.join(secure_filename)
 
     if File.exist?(file_path)
       # 'disposition: "attachment"' force le téléchargement

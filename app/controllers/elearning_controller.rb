@@ -18,10 +18,14 @@ class ElearningController < ApplicationController
     @markdown_content = nil
     # On déduit le nom du fichier depuis le titre du cours (ex: "FTP1 ...")
     # Sécurisation : On s'assure que l'identifiant ne peut pas être utilisé pour une traversée de répertoire.
-    course_identifier = File.basename(@course.title.split.first.to_s.downcase)
+    course_identifier = @course.title.split.first.to_s.downcase
+
+    # Liste blanche des identifiants de cours autorisés pour la sécurité
+    allowed_identifiers = %w[ftp1 ftp2 ftp3 ftp4 ftp5 ftp6 ftp7 ftp8 ftp9 ftp10 ftp11 ftp12 ftp13 ftp14]
+    return unless allowed_identifiers.include?(course_identifier)
 
     markdown_file_path = Rails.root.join('lib', 'assets', "#{course_identifier}.md")
-
+    
     if File.exist?(markdown_file_path)
       file_content = File.read(markdown_file_path)
       @markdown_content = MarkdownService.new.render(file_content)
