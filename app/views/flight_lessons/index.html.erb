@@ -5,14 +5,15 @@
     <div class="col-lg-8">
       <h1 class="text-center mb-5">Liste des Leçons</h1>
 
-      <ol class="list-group list-group-numbered">
+      <div class="list-group">
+        <%= link_to "Progression type", flight_lesson_path("progression-type"), class: "list-group-item list-group-item-action" %>
         <% @lessons.each_with_index do |lesson, index| %>
-          <li class="list-group-item d-flex justify-content-between align-items-center">
-            <a href="<%= flight_lesson_path(lesson) %>" class="ms-2 me-auto text-decoration-none text-body stretched-link"><%= lesson.title %></a>
+          <div class="list-group-item d-flex justify-content-between align-items-center">
+            <a href="<%= flight_lesson_path(lesson) %>" class="ms-2 me-auto text-decoration-none text-body stretched-link"><%= index + 1 %>. <%= lesson.title %></a>
             <i class="bi bi-chevron-right text-muted"></i>
-          </li>
+          </div>
         <% end %>
-      </ol>
+      </div>
     </div>
   </div>
 </div>

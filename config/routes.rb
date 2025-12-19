@@ -148,7 +148,9 @@ Rails.application.routes.draw do
   get 'bia', to: 'static_pages#bia'
   get 'baptemes', to: 'static_pages#baptemes'
   get 'outils', to: 'static_pages#outils'
-  resources :flight_lessons, only: [:index, :show]
+  resources :flight_lessons, only: [:index, :show] do
+    get :pdf, on: :member
+  end
   get 'documents_divers', to: 'static_pages#documents_divers'
   get 'credit', to: 'static_pages#credit'
   get 'agenda_avion', to: 'static_pages#agenda_avion'

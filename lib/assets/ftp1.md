@@ -1,9 +1,9 @@
-### <span style="color: #0059b3;">✈️ ENVIRONNEMENT RÉGLEMENTAIRE DE LA FORMATION PPL ou LAPL</span>
+### ✈️ ENVIRONNEMENT RÉGLEMENTAIRE DE LA FORMATION PPL ou LAPL</span>
 
 Ce cours résume les éléments clés de la réglementation européenne (EASA) et des pratiques de sécurité pertinentes pour les organismes de formation (**ATO** ou **DTO**) et les pilotes.
 
 
-#### <span style="color: #0059b3;">1. PART-NCO (Non-Commercial Operations)</span>
+#### 1. PART-NCO (Non-Commercial Operations)</span>
 
 Le **PART-NCO** fait partie du règlement (UE) No 965/2012 de l'EASA. Il établit les exigences techniques et les procédures administratives pour l'exploitation non commerciale d'aéronefs, y compris ceux utilisés dans le cadre de la formation **PPL/LAPL**.
 
@@ -17,7 +17,7 @@ Le **PART-NCO** fait partie du règlement (UE) No 965/2012 de l'EASA. Il établi
 > **Objectif** : Assurer un niveau de sécurité élevé et harmonisé pour toutes les opérations non commerciales en Europe.
 
 
-#### <span style="color: #0059b3;">2. GESTION DE LA SÉCURITÉ (SGS/Politique de Sécurité)</span>
+#### 2. GESTION DE LA SÉCURITÉ (SGS/Politique de Sécurité)</span>
 
 La gestion de la sécurité est une exigence fondamentale pour les organismes de formation.
 
@@ -36,7 +36,7 @@ Un **SGS** est un système structuré visant à gérer la sécurité de manière
 Pour les *Organismes de Déclaration de Formation* (**DTO** - Declared Training Organisations), une version simplifiée, souvent appelée **Politique de Sécurité**, est requise. Elle doit démontrer une approche systématique de la sécurité.
 
 
-#### <span style="color: #0059b3;">3. RETOUR D’EXPÉRIENCE (REX) ET NOTIFICATION D'OCCURRENCE</span>
+#### 3. RETOUR D’EXPÉRIENCE (REX) ET NOTIFICATION D'OCCURRENCE</span>
 
 La remontée des événements de sécurité est essentielle pour l'amélioration continue.
 
@@ -52,7 +52,7 @@ Ce règlement établit les exigences de l'Union Européenne en matière de notif
 La **Fédération Française Aéronautique (FFA)** utilise le processus de **REX** pour analyser les causes des événements notifiés (souvent via le BEA) et diffuser des enseignements (bulletins, fiches REX) à toute la communauté aéronautique.
 
 
-#### <span style="color: #0059b3;">4. MANUEL DE SÉCURITÉ FFA</span>
+#### 4. MANUEL DE SÉCURITÉ FFA</span>
 
 Le **Manuel de Sécurité de la FFA** est un document de référence qui s'intègre dans le cadre réglementaire de l'EASA et des pratiques nationales françaises.
 

@@ -10,7 +10,9 @@
         <h1 class="h3 mb-0"><%= @lesson.title %></h1>
       </div>
 
-      <% if @lesson.document.attached? %>
+      <% if @pdf_available %>
+        <embed src="<%= pdf_flight_lesson_path(id: @lesson.id) %>" type="application/pdf" width="100%" height="800px" />
+      <% elsif @lesson.respond_to?(:document) && @lesson.document.attached? %>
         <embed src="<%= url_for(@lesson.document) %>" type="application/pdf" width="100%" height="800px" />
       <% else %>
         <p class="alert alert-warning">Aucun document n'est disponible pour cette leçon.</p>
