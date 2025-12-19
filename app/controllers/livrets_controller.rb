@@ -15,8 +15,17 @@ class LivretsController < ApplicationController
 
   def update
     # On met à jour le livret avec les paramètres autorisés
+    l_params = livret_params
+
+    # Si une signature est soumise et que l'utilisateur est un instructeur (et pas l'élève propriétaire),
+    # on mappe la donnée vers la signature instructeur.
+    if l_params[:signature_data].present? && (current_user.instructeur? || current_user.admin?) && current_user != @livret.user
+      l_params[:instructor_signature_data] = l_params[:signature_data]
+      l_params.delete(:signature_data)
+    end
+
     respond_to do |format|
-      if @livret.update(livret_params)
+      if @livret.update(l_params)
         format.html do
           if request.referer&.include?('livret_progression')
             redirect_to livret_progression_path(eleve_id: @livret.user_id), notice: 'Livret mis à jour avec succès.'
@@ -41,7 +50,7 @@ class LivretsController < ApplicationController
   def signature
     # @livret est défini par le before_action
     # Vérification des autorisations : seul le propriétaire, un admin ou un instructeur peut voir la signature.
-    unless @livret.user == current_user || current_user.admin? || current_user.fi?
+    unless @livret.user == current_user || current_user.admin? || current_user.instructeur?
       redirect_to elearning_index_path, alert: "Vous n'êtes pas autorisé à voir cette signature."
       return
     end
@@ -56,7 +65,7 @@ class LivretsController < ApplicationController
   end
 
   def livret_params
-    params.require(:livret).permit(:signature_data, :status, :date)
+    params.require(:livret).permit(:signature_data, :instructor_signature_data, :status, :date)
   end
 
 end

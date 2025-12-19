@@ -1,6 +1,6 @@
 <style>
   .table-danger-discarded {
-    --bs-table-bg: #ff0015ff; /* Couleur de fond rouge clair de Bootstrap pour 'danger' */
+    --bs-table-bg: #ff0015ff; /* Couleur de fond rouge de Bootstrap pour 'danger' */
   }
 </style>
 
@@ -22,7 +22,9 @@
     <div class="col-md-10 mt-3">
       <%= turbo_frame_tag "table_content_frame" do %>
         <% if @records %>
-          <%= render 'table_content', table_name: @selected_table, records: @records %>
+          <div id="table-content-wrapper" data-table-name="<%= @selected_table %>">
+            <%= render 'table_content', table_name: @selected_table, records: @records %>
+          </div>
         <% else %>
           <div class="alert alert-info mt-3">Veuillez sélectionner une table dans la liste de gauche pour voir son contenu.</div>
         <% end %>

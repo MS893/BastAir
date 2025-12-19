@@ -1,5 +1,6 @@
 class VolsController < ApplicationController
   before_action :authenticate_user!
+  before_action :set_vol, only: [:update]
   before_action :set_pilots, only: [:index] # S'exécute en premier pour initialiser @pilots
   before_action :set_avions, only: [:index] # Doit s'exécuter avant set_page_title_and_vols
   before_action :set_page_title_and_vols, only: [:index]
@@ -50,6 +51,66 @@ class VolsController < ApplicationController
     end
   end
 
+  def update
+    # On vérifie que l'utilisateur est instructeur ou admin
+    unless current_user.instructeur? || current_user.admin?
+      redirect_to root_path, alert: "Vous n'êtes pas autorisé à effectuer cette action."
+      return
+    end
+
+    # Récupération des paramètres (hors scope 'vol' car form_with url: ... sans model)
+    livret_id = params[:livret_id]
+    status = params[:status]
+    comment = params[:comment]
+
+    if comment.blank?
+      redirect_to livret_progression_path(eleve_id: @vol.user_id), alert: "Le commentaire est obligatoire pour valider une leçon."
+      return
+    end
+
+    target_livret_id = livret_id
+
+    if livret_id.present?
+      livret = Livret.find(livret_id)
+      
+      # Si le livret est déjà "utilisé" (statut modifié ou commentaire présent), on en crée un nouveau
+      if livret.status != 0 || livret.comment.present?
+        new_livret = Livret.create(
+          user: livret.user,
+          flight_lesson: livret.flight_lesson,
+          title: livret.title,
+          status: status.to_i,
+          comment: comment,
+          session_dates: [@vol.debut_vol.to_date.to_s]
+        )
+        if status.to_i == 3
+          new_livret.update(date: @vol.debut_vol.to_date)
+        end
+        target_livret_id = new_livret.id
+      else
+        # Sinon, on met à jour le livret existant
+        livret.status = status.to_i if status.present?
+        livret.comment = comment if comment.present?
+        
+        dates = livret.session_dates || []
+        dates << @vol.debut_vol.to_date.to_s
+        livret.session_dates = dates.uniq
+        
+        if livret.status == 3
+          livret.date = @vol.debut_vol.to_date
+        end
+        
+        livret.save
+      end
+    end
+
+    if @vol.update(livret_id: target_livret_id)
+      redirect_to livret_progression_path(eleve_id: @vol.user_id), notice: "Vol validé et leçon mise à jour."
+    else
+      redirect_to livret_progression_path(eleve_id: @vol.user_id), alert: "Erreur lors de la validation : #{@vol.errors.full_messages.join(', ')}"
+    end
+  end
+
   def vols
     # Récupère les vols paginés pour l'affichage du tableau
     @vols = current_user.vols.includes(:avion, :instructeur).order(debut_vol: :desc).page(params[:page]).per(25)
@@ -75,6 +136,10 @@ class VolsController < ApplicationController
   
 
   private
+
+  def set_vol
+    @vol = Vol.find(params[:id])
+  end
 
   def vol_params
     params.require(:vol).permit(:avion_id, :type_vol, :depart, :arrivee, :nb_atterro, :debut_vol, :fin_vol, :compteur_depart, :compteur_arrivee, :duree_vol, :fuel_avant_vol, :fuel_apres_vol, :huile, :nature, :instructeur_id, :solo, :supervise, :nav, :bia_user_id)

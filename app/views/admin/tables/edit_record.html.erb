@@ -82,37 +82,41 @@
                 <%= form.select attr_name, options_for_select(options_data, attr_value), { include_blank: 'Sélectionner...' }, class: 'form-select' %>
               <% end %>
             <% elsif @table_name == 'reservations' && attr_name == 'fi' %>
-              <%= form.select :fi, options_for_select(@instructors_for_select, @record.fi.to_i), { include_blank: 'Aucun' }, class: 'form-select' %>
+              <%= form.select :fi, options_for_select(@instructors_for_select || [], @record.fi.to_i), { include_blank: 'Aucun' }, class: 'form-select' %>
             <% elsif @table_name == 'reservations' && attr_name == 'colorId' %>
-              <%= form.select :colorId, options_for_select(@google_calendar_colors, @record.colorId), {}, class: 'form-select' %>
+              <%= form.select :colorId, options_for_select(@google_calendar_colors || [], @record.colorId), {}, class: 'form-select' %>
             <% elsif @table_name == 'reservations' && attr_name == 'visibility' %>
-              <%= form.select :visibility, options_for_select(@reservation_visibilities, @record.visibility), {}, class: 'form-select' %>
+              <%= form.select :visibility, options_for_select(@reservation_visibilities || [], @record.visibility), {}, class: 'form-select' %>
             <% elsif @table_name == 'reservations' && attr_name == 'status' %>
-              <%= form.select :status, options_for_select(@reservation_statuses, @record.status), {}, class: 'form-select' %>
+              <%= form.select :status, options_for_select(@reservation_statuses || [], @record.status), {}, class: 'form-select' %>
             <% elsif @table_name == 'reservations' && attr_name == 'time_zone' %>
-              <%= form.select :time_zone, options_for_select(@reservation_time_zones, @record.time_zone), {}, class: 'form-select' %>
+              <%= form.select :time_zone, options_for_select(@reservation_time_zones || [], @record.time_zone), {}, class: 'form-select' %>
             <% elsif @table_name == 'reservations' && attr_name == 'type_vol' %>
-              <%= form.select :type_vol, options_for_select(@type_vols, @record.type_vol), { include_blank: 'Sélectionner...' }, class: 'form-select' %>
+              <%= form.select :type_vol, options_for_select(@type_vols || [], @record.type_vol), { include_blank: 'Sélectionner...' }, class: 'form-select' %>
             <% elsif @table_name == 'signalements' && attr_name == 'status' %>
-              <%= form.select :status, options_for_select(@signalement_statuses, @record.status), {}, class: 'form-select' %>
+              <%= form.select :status, options_for_select(@signalement_statuses || [], @record.status), {}, class: 'form-select' %>
             <% elsif @table_name == 'users' && attr_name == 'fonction' %>
-              <%= form.select :fonction, options_for_select(@user_fonctions, @record.fonction), {}, class: 'form-select' %>
+              <%= form.select :fonction, options_for_select(@user_fonctions || [], @record.fonction), {}, class: 'form-select' %>
             <% elsif @table_name == 'vols' && attr_name == 'instructeur_id' %>
-              <%= form.select :instructeur_id, options_for_select(@instructors_for_select, @record.instructeur_id), { include_blank: 'Aucun' }, class: 'form-select' %>
+              <%= form.select :instructeur_id, options_for_select(@instructors_for_select || [], @record.instructeur_id), { include_blank: 'Aucun' }, class: 'form-select' %>
             <% elsif @table_name == 'vols' && attr_name == 'type_vol' %>
-              <%= form.select :type_vol, options_for_select(@type_vols, @record.type_vol), { include_blank: 'Sélectionner...' }, class: 'form-select' %>
+              <%= form.select :type_vol, options_for_select(@type_vols || [], @record.type_vol), { include_blank: 'Sélectionner...' }, class: 'form-select' %>
             <% elsif @table_name == 'vols' && attr_name == 'nature' %>
-              <%= form.select :nature, options_for_select(@nature_vols, @record.nature), { include_blank: 'Sélectionner...' }, class: 'form-select' %>
+              <%= form.select :nature, options_for_select(@nature_vols || [], @record.nature), { include_blank: 'Sélectionner...' }, class: 'form-select' %>
+            <% elsif @table_name == 'vols' && ['solo', 'supervise', 'nav'].include?(attr_name) %>
+              <div class="form-check">
+                <%= form.check_box attr_name, class: 'form-check-input' %>
+              </div>
             <% elsif @table_name == 'events' && attr_name == 'title' %>
-              <%= form.select :title, options_for_select(@event_titles, @record.title), {}, class: 'form-select' %>
+              <%= form.select :title, options_for_select(@event_titles || [], @record.title), {}, class: 'form-select' %>
             <% elsif @table_name == 'users' && attr_name == 'type_medical' %>
-              <%= form.select :type_medical, options_for_select(@user_medical_types, @record.type_medical), { include_blank: 'Sélectionner...' }, class: 'form-select' %>
+              <%= form.select :type_medical, options_for_select(@user_medical_types || [], @record.type_medical), { include_blank: 'Sélectionner...' }, class: 'form-select' %>
             <% elsif @table_name == 'users' && attr_name == 'licence_type' %>
-              <%= form.select :licence_type, options_for_select(@user_licence_types, @record.licence_type), {}, class: 'form-select' %>
+              <%= form.select :licence_type, options_for_select(@user_licence_types || [], @record.licence_type), {}, class: 'form-select' %>
             <% elsif @table_name == 'users' && attr_name == 'fi' %>
               <%= form.date_field :fi, value: @record.fi, class: 'form-control' %>
             <% elsif @table_name == 'tarifs' && attr_name == 'annee' %>
-              <%= form.select :annee, options_for_select(@tarif_annee_options, @record.annee), {}, class: 'form-select' %>
+              <%= form.select :annee, options_for_select(@tarif_annee_options || [], @record.annee), {}, class: 'form-select' %>
             <% elsif @table_name == 'users' && attr_name == 'fe' %>
               <%= form.date_field :fe, value: @record.fe, class: 'form-control' %>
             <% else %>
@@ -152,37 +156,41 @@
                 <%= form.select attr_name, options_for_select(options_data, attr_value), { include_blank: 'Sélectionner...' }, class: 'form-select' %>
               <% end %>
             <% elsif @table_name == 'reservations' && attr_name == 'fi' %>
-              <%= form.select :fi, options_for_select(@instructors_for_select, @record.fi.to_i), { include_blank: 'Aucun' }, class: 'form-select' %>
+              <%= form.select :fi, options_for_select(@instructors_for_select || [], @record.fi.to_i), { include_blank: 'Aucun' }, class: 'form-select' %>
             <% elsif @table_name == 'reservations' && attr_name == 'colorId' %>
-              <%= form.select :colorId, options_for_select(@google_calendar_colors, @record.colorId), {}, class: 'form-select' %>
+              <%= form.select :colorId, options_for_select(@google_calendar_colors || [], @record.colorId), {}, class: 'form-select' %>
             <% elsif @table_name == 'reservations' && attr_name == 'visibility' %>
-              <%= form.select :visibility, options_for_select(@reservation_visibilities, @record.visibility), {}, class: 'form-select' %>
+              <%= form.select :visibility, options_for_select(@reservation_visibilities || [], @record.visibility), {}, class: 'form-select' %>
             <% elsif @table_name == 'reservations' && attr_name == 'status' %>
-              <%= form.select :status, options_for_select(@reservation_statuses, @record.status), {}, class: 'form-select' %>
+              <%= form.select :status, options_for_select(@reservation_statuses || [], @record.status), {}, class: 'form-select' %>
             <% elsif @table_name == 'reservations' && attr_name == 'time_zone' %>
-              <%= form.select :time_zone, options_for_select(@reservation_time_zones, @record.time_zone), {}, class: 'form-select' %>
+              <%= form.select :time_zone, options_for_select(@reservation_time_zones || [], @record.time_zone), {}, class: 'form-select' %>
             <% elsif @table_name == 'reservations' && attr_name == 'type_vol' %>
-              <%= form.select :type_vol, options_for_select(@type_vols, @record.type_vol), { include_blank: 'Sélectionner...' }, class: 'form-select' %>
+              <%= form.select :type_vol, options_for_select(@type_vols || [], @record.type_vol), { include_blank: 'Sélectionner...' }, class: 'form-select' %>
             <% elsif @table_name == 'signalements' && attr_name == 'status' %>
-              <%= form.select :status, options_for_select(@signalement_statuses, @record.status), {}, class: 'form-select' %>
+              <%= form.select :status, options_for_select(@signalement_statuses || [], @record.status), {}, class: 'form-select' %>
             <% elsif @table_name == 'users' && attr_name == 'fonction' %>
-              <%= form.select :fonction, options_for_select(@user_fonctions, @record.fonction), {}, class: 'form-select' %>
+              <%= form.select :fonction, options_for_select(@user_fonctions || [], @record.fonction), {}, class: 'form-select' %>
             <% elsif @table_name == 'vols' && attr_name == 'instructeur_id' %>
-              <%= form.select :instructeur_id, options_for_select(@instructors_for_select, @record.instructeur_id), { include_blank: 'Aucun' }, class: 'form-select' %>
+              <%= form.select :instructeur_id, options_for_select(@instructors_for_select || [], @record.instructeur_id), { include_blank: 'Aucun' }, class: 'form-select' %>
             <% elsif @table_name == 'vols' && attr_name == 'type_vol' %>
-              <%= form.select :type_vol, options_for_select(@type_vols, @record.type_vol), { include_blank: 'Sélectionner...' }, class: 'form-select' %>
+              <%= form.select :type_vol, options_for_select(@type_vols || [], @record.type_vol), { include_blank: 'Sélectionner...' }, class: 'form-select' %>
             <% elsif @table_name == 'vols' && attr_name == 'nature' %>
-              <%= form.select :nature, options_for_select(@nature_vols, @record.nature), { include_blank: 'Sélectionner...' }, class: 'form-select' %>
+              <%= form.select :nature, options_for_select(@nature_vols || [], @record.nature), { include_blank: 'Sélectionner...' }, class: 'form-select' %>
+            <% elsif @table_name == 'vols' && ['solo', 'supervise', 'nav'].include?(attr_name) %>
+              <div class="form-check">
+                <%= form.check_box attr_name, class: 'form-check-input' %>
+              </div>
             <% elsif @table_name == 'events' && attr_name == 'title' %>
-              <%= form.select :title, options_for_select(@event_titles, @record.title), {}, class: 'form-select' %>
+              <%= form.select :title, options_for_select(@event_titles || [], @record.title), {}, class: 'form-select' %>
             <% elsif @table_name == 'users' && attr_name == 'type_medical' %>
-              <%= form.select :type_medical, options_for_select(@user_medical_types, @record.type_medical), { include_blank: 'Sélectionner...' }, class: 'form-select' %>
+              <%= form.select :type_medical, options_for_select(@user_medical_types || [], @record.type_medical), { include_blank: 'Sélectionner...' }, class: 'form-select' %>
             <% elsif @table_name == 'users' && attr_name == 'licence_type' %>
-              <%= form.select :licence_type, options_for_select(@user_licence_types, @record.licence_type), {}, class: 'form-select' %>
+              <%= form.select :licence_type, options_for_select(@user_licence_types || [], @record.licence_type), {}, class: 'form-select' %>
             <% elsif @table_name == 'users' && attr_name == 'fi' %>
               <%= form.date_field :fi, value: @record.fi, class: 'form-control' %>
             <% elsif @table_name == 'tarifs' && attr_name == 'annee' %>
-              <%= form.select :annee, options_for_select(@tarif_annee_options, @record.annee), {}, class: 'form-select' %>
+              <%= form.select :annee, options_for_select(@tarif_annee_options || [], @record.annee), {}, class: 'form-select' %>
             <% elsif @table_name == 'users' && attr_name == 'fe' %>
               <%= form.date_field :fe, value: @record.fe, class: 'form-control' %>
             <% else %>

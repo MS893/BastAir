@@ -51,6 +51,24 @@
                   <%= user.present? ? user.name : "Utilisateur inconnu (ID: #{record.user_id})" %>
                 <% elsif table_name == 'penalites' && col == 'avion_immatriculation' %>
                   <span style="white-space: nowrap;"><%= record.avion_immatriculation %></span>
+                <% elsif (table_name == 'users' && col == 'admin') || (table_name == 'reservations' && col == 'instruction') %>
+                  <% if record.send(col) %>
+                    <span class="badge bg-primary">Oui</span>
+                  <% else %>
+                    <span class="badge bg-info text-dark">Non</span>
+                  <% end %>
+                <% elsif table_name == 'vols' && ['solo', 'supervise', 'nav'].include?(col) %>
+                  <% if [1, true].include?(record.send(col)) %>
+                    <span class="badge bg-primary">Oui</span>
+                  <% else %>
+                    <span class="badge bg-info text-dark">Non</span>
+                  <% end %>
+                <% elsif table_name == 'transactions' && col == 'mouvement' %>
+                  <% if record.mouvement == 'Dépense' %>
+                    <span class="badge bg-danger"><%= record.mouvement %></span>
+                  <% else %>
+                    <span class="badge bg-success"><%= record.mouvement %></span>
+                  <% end %>
                 <% else %>
                   <%= display_cell_content(record, col, table_name) %>
                 <% end %>

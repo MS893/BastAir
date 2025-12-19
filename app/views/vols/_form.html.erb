@@ -65,7 +65,7 @@
 
         <h5 class="mb-4">Horaires et Compteurs</h5>
         <div class="row">
-          <div class="col-md-5 mb-3 me-5">
+          <div class="col-md-6 mb-3 me-4">
             <%= form.label :debut_vol_date, "Début du vol" %>
             <div class="d-flex gap-2">
               <%= form.date_field :debut_vol_date, value: @vol.debut_vol&.to_date || Date.current, class: "form-control", id: 'vol_debut_vol_date' %>
@@ -74,7 +74,7 @@
               <%= select_minute @vol.debut_vol, { minute_step: 5 }, { name: 'vol[debut_vol_minute]', class: 'form-select', id: 'vol_debut_vol_minute' } %>
             </div>
           </div>
-          <div class="col-md-5 mb-3 ms-5">
+          <div class="col-md-5 mb-3 ms-3">
             <%= form.label :fin_vol_date, "Fin du vol (calculé avec le temps de vol)" %>
             <div class="d-flex gap-2 align-items-center">
               <%# Ces champs sont désactivés car leur valeur est calculée par JavaScript %>

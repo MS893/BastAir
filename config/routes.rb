@@ -56,7 +56,7 @@ Rails.application.routes.draw do
   end
 
   # routes pour la gestion des vols
-  resources :vols, only: [:new, :create, :index, :show]
+  resources :vols, only: [:new, :create, :index, :show, :update]
 
   # Route pour récupérer des informations sur les avions (ex: dernier compteur)
   resources :avions, only: [] do

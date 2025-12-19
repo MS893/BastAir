@@ -17,7 +17,7 @@ class Vol < ApplicationRecord
   after_create :create_debit_transaction
   # Crée un vol miroir pour l'instructeur, sauf si ce vol est déjà un vol d'instructeur.
   after_create :create_instructor_flight_log, unless: :is_instructor_log?
-  before_save :calculate_fin_vol, if: -> { debut_vol.present? && duree_vol.present? }
+  before_validation :calculate_fin_vol, if: -> { debut_vol.present? && duree_vol.present? }
 
   # Validation pour les compteurs
   validate :compteur_arrivee_superieur_au_depart
@@ -25,6 +25,24 @@ class Vol < ApplicationRecord
   validate :pilote_qualifie_pour_voler
   # Validation pour s'assurer qu'un élève sélectionne toujours un instructeur
   validate :instructeur_obligatoire_pour_eleve
+  # Validations des champs du vol
+  validates :user, presence: true
+  validates :avion, presence: true
+  validates :depart, presence: true
+  validates :arrivee, presence: true
+  validates :debut_vol, presence: true
+  validates :fin_vol, presence: true
+  validates :compteur_depart, presence: true, numericality: { greater_than_or_equal_to: 0 }
+  validates :compteur_arrivee, presence: true, numericality: { greater_than_or_equal_to: 0 }
+  validates :duree_vol, presence: true, numericality: { greater_than: 0 }
+  validates :nb_atterro, presence: true, numericality: { only_integer: true, greater_than: 0 }
+  validates :nature, presence: true, inclusion: { in: ['VFR de jour', 'VFR de nuit', 'IFR'] }
+  validates :type_vol, presence: true, inclusion: { in: ['Standard', 'Vol découverte', 'Vol d\'initiation', 'Vol d\'essai', 'Convoyage', 'Vol BIA', 'Instruction'] }
+  validates :solo, inclusion: { in: [true, false] }
+  validates :supervise, inclusion: { in: [true, false] }
+  validates :nav, inclusion: { in: [true, false] }
+
+  # == Méthodes ===============================================================
 
   # Méthode pour générer le CSV à partir d'une collection de vols
   def self.to_csv(vols)

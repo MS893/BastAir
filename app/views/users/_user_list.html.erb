@@ -23,11 +23,11 @@
               # On définit la couleur du badge en fonction du rôle de l'utilisateur
               badge_class = case user.fonction
                             when 'president'
-                              'bg-danger'   # Rouge pour le Président
+                              'bg-primary'    # Bleu pour le Président
                             when 'eleve'
-                              'bg-primary'  # Bleu pour les Élèves
+                              'bg-success'    # Vert pour les Élèves
                             when 'tresorier'
-                              'bg-warning'  # Jaune pour le Trésorier
+                              'bg-info'       # Bleu clair pour le Trésorier
                             else
                               'bg-secondary'# Gris pour les autres (Brevete, etc.)
                             end

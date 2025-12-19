@@ -3,6 +3,7 @@
 class Livret < ApplicationRecord
   # Déclare une seule image de signature pour ce livret
   has_one_attached :signature_image
+  has_one_attached :instructor_signature
 
   # Associations
   belongs_to :user
@@ -14,6 +15,7 @@ class Livret < ApplicationRecord
 
   # Ce champ (non-persistant) sert uniquement à recevoir la Base64 du formulaire Stimulus
   attr_accessor :signature_data
+  attr_accessor :instructor_signature_data
 
   # on veut que l'attachement se fasse avant la sauvegarde
   before_validation :decode_and_attach_signature
@@ -63,19 +65,29 @@ class Livret < ApplicationRecord
   end
 
   def decode_and_attach_signature
-    # On sort de la méthode si aucune donnée de signature n'est fournie
-    return if signature_data.blank?
-    
-    # Le split permet d'ignorer l'entête 'data:image/png;base64,'
-    content_type, base64_data = signature_data.split(';')
-    decoded_image = Base64.decode64(base64_data.split(',').last)
-    
-    # On attache directement les données décodées.
-    self.signature_image.attach(
-      io: StringIO.new(decoded_image),
-      filename: "signature-#{self.user_id}-#{Time.current.to_i}.png",
-      content_type: 'image/png'
-    )
+    # Gestion de la signature élève (signature_image)
+    if signature_data.present? && signature_data.starts_with?('data:image/')
+      content_type, base64_data = signature_data.split(';')
+      decoded_image = Base64.decode64(base64_data.split(',').last)
+      
+      self.signature_image.attach(
+        io: StringIO.new(decoded_image),
+        filename: "signature-#{self.user_id}-#{Time.current.to_i}.png",
+        content_type: 'image/png'
+      )
+    end
+
+    # Gestion de la signature instructeur (instructor_signature)
+    if instructor_signature_data.present? && instructor_signature_data.starts_with?('data:image/')
+      content_type, base64_data = instructor_signature_data.split(';')
+      decoded_image = Base64.decode64(base64_data.split(',').last)
+      
+      self.instructor_signature.attach(
+        io: StringIO.new(decoded_image),
+        filename: "instructor-signature-#{self.id}-#{Time.current.to_i}.png",
+        content_type: 'image/png'
+      )
+    end
   end
 
 end

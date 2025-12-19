@@ -385,7 +385,11 @@ module Admin
 
           # Validation de présence pour les colonnes NOT NULL
           unless column.null
-            validates_presence_of column.name
+            if column.type == :boolean
+              validates_inclusion_of column.name, in: [true, false]
+            else
+              validates_presence_of column.name
+            end
           end
 
           # Validation de numericalité pour les types numériques

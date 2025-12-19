@@ -23,7 +23,7 @@ class ProgressionsController < ApplicationController
     if user_livrets
       @examens_theoriques = user_livrets.where(course_id: nil, flight_lesson_id: nil).order(:id)
       @formations_theoriques = user_livrets.where.not(course_id: nil).order(:id)
-      @lecons_en_vol = user_livrets.where.not(flight_lesson_id: nil).order(:id)
+      @lecons_en_vol = user_livrets.where.not(flight_lesson_id: nil).order(:flight_lesson_id, :id)
     else
       @examens_theoriques = Livret.none
       @formations_theoriques = Livret.none
