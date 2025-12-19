@@ -320,6 +320,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_15_120559) do
     t.boolean "autorise"
     t.boolean "admin", default: false, null: false
     t.string "fonction"
+    t.date "date_fin_formation"
     t.string "google_access_token"
     t.string "google_refresh_token"
     t.datetime "google_token_expires_at"

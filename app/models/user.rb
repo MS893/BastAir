@@ -74,6 +74,7 @@ class User < ApplicationRecord
   after_create :welcome_send, unless: :is_bia?            # envoie d'un email sauf si c'est un collège ou lycée BIA
   after_create :create_progression_livret, if: :eleve?    # quand on créé un élève, on crée son livret de progression
   after_update :check_for_negative_balance, if: -> { saved_change_to_solde? && !is_bia? }
+  before_save :manage_training_end_date
 
   # Turbo Streams pour la mise à jour du solde en temps réel
   # On s'assure que le solde est toujours un Decimal, avec 0.0 par défaut.
@@ -183,6 +184,19 @@ class User < ApplicationRecord
 
 
   private
+
+  # Gère la date de fin de formation lors du changement de statut
+  def manage_training_end_date
+    if fonction_changed?
+      if fonction == 'brevete' && fonction_was == 'eleve'
+        # L'élève devient breveté : on fige la date de fin de formation à aujourd'hui
+        self.date_fin_formation = Date.today
+      elsif fonction == 'eleve'
+        # Si on repasse en élève (erreur de manip ?), on efface la date pour réactiver le livret
+        self.date_fin_formation = nil
+      end
+    end
+  end
 
   def create_progression_livret
     # 1. Création des entrées pour les examens théoriques PPL

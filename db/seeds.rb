@@ -354,6 +354,7 @@ def resas
       # et également sur celui de l'instructeur si `instruction` est à true.
       GoogleCalendarService.new.create_event_for_app(reservation)
     end
+    print "*" # barre de progression
   end
   puts "✅ 20 bookings created."
 
