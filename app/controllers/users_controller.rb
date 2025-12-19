@@ -10,8 +10,7 @@ class UsersController < ApplicationController
       @users = @users.where("LOWER(nom) LIKE LOWER(?) OR LOWER(prenom) LIKE LOWER(?)", "%#{params[:query]}%", "%#{params[:query]}%")
     end
 
-    # Si la requête vient d'un Turbo Frame, on ne rend que la liste des résultats.
-    # Sinon, on rend la page complète.
+    # Si la requête vient d'un Turbo Frame, on ne rend que la liste des résultats, sinon, on rend la page complète
     if turbo_frame_request?
       render(partial: "users/user_list", locals: { users: @users })
     else
@@ -31,8 +30,7 @@ class UsersController < ApplicationController
   end
 
   def show
-    # Si la requête vient d'un Turbo Frame, on ne rend que le partiel des détails.
-    # Sinon, on rend la page de profil complète (comportement par défaut).
+    # Si la requête vient d'un Turbo Frame, on ne rend que le partiel des détails, sinon, on rend la page de profil complète (défaut)
     if turbo_frame_request? && turbo_frame_request_id == 'user_details'
       # On vérifie si le contact d'urgence est invalide pour afficher une alerte.
       # L'alerte ne s'affiche que si l'utilisateur consulte son propre profil.

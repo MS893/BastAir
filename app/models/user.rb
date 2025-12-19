@@ -70,8 +70,9 @@ class User < ApplicationRecord
   validates :cotisation_club, presence: true, unless: :is_bia?
   
   # == Actions ===============================================================
-  before_validation :set_bia_defaults, if: :is_bia?
-  after_create :welcome_send, unless: :is_bia?
+  before_validation :set_bia_defaults, if: :is_bia?       # lors de la création d'un compte BIA (collège ou lycée)
+  after_create :welcome_send, unless: :is_bia?            # envoie d'un email sauf si c'est un collège ou lycée BIA
+  after_create :create_progression_livret, if: :eleve?    # quand on créé un élève, on crée son livret de progression
   after_update :check_for_negative_balance, if: -> { saved_change_to_solde? && !is_bia? }
 
   # Turbo Streams pour la mise à jour du solde en temps réel
@@ -182,6 +183,10 @@ class User < ApplicationRecord
 
 
   private
+
+  def create_progression_livret
+    Livret.create(user: self)
+  end
 
   def validate_contact_urgence_phone_format
     # Regex pour un numéro de téléphone français, autorisant les espaces.

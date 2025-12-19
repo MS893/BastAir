@@ -69,7 +69,7 @@ class Livret < ApplicationRecord
     
     # On attache directement les données décodées.
     self.signature_image.attach(
-      io: StringIO.new(decoded_data),
+      io: StringIO.new(decoded_image),
       filename: "signature-#{self.user_id}-#{Time.current.to_i}.png",
       content_type: 'image/png'
     )
