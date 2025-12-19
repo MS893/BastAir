@@ -6,10 +6,11 @@ class CreateLivrets < ActiveRecord::Migration[8.0]
       t.references :course, foreign_key: { to_table: :courses }, null: true
       t.references :flight_lesson, foreign_key: { to_table: :flight_lessons }, null: true
 
-      t.string :title                 # nom de la leçon (peut être un examen théorique du PPL, une FTP ou une leçon en vol)
-      t.integer :status, default: 0   # 0 = non fait, 1 = leçon vue, 2 = leçon acquise, 3 = leçon maîtrisée / examen théorique PPL / FTP validée
-      t.date :date                    # date de la leçon / obtention examen théorique / acquisition FTP
-      t.text :comment                 # commentaires ajoutés à une leçon
+      t.string :title                       # nom de la leçon (peut être un examen théorique du PPL, une FTP ou une leçon en vol)
+      t.integer :status, default: 0         # 0=non fait, 1=leçon vue, 2=leçon acquise, 3=leçon maîtrisée/examen théorique PPL/FTP validée
+      t.date :date                          # date de la leçon / obtention examen théorique / acquisition FTP
+      t.text :comment                       # commentaires ajoutés à une leçon
+      t.text :session_dates, default: '[]'  # tableau de dates des sessions si plusieurs vols pour une leçon (ex: ["2025-10-01", "2025-10-05"])
 
       t.timestamps
     end

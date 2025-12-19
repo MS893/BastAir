@@ -158,6 +158,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_15_120559) do
     t.integer "status", default: 0
     t.date "date"
     t.text "comment"
+    t.text "session_dates", default: "[]"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["course_id"], name: "index_livrets_on_course_id"

@@ -31,13 +31,132 @@
         </h4>
       </div>
       <div class="card-body">
+        <% 
+          # Calculs pour les barres de progression
+          # Théorie : Examens + FTP
+          nb_exams_total = @examens_theoriques.count
+          nb_exams_valides = @examens_theoriques.select { |l| l.status == 3 && l.date.present? }.count
+          
+          nb_ftp_total = @formations_theoriques.count
+          nb_ftp_valides = @formations_theoriques.select { |l| l.status == 3 && l.date.present? }.count
+          
+          total_theorie = nb_exams_total + nb_ftp_total
+          valides_theorie = nb_exams_valides + nb_ftp_valides
+          pct_theorie = total_theorie > 0 ? (valides_theorie.to_f / total_theorie * 100).round : 0
+
+          # Pratique : Leçons en vol
+          nb_vol_total = @lecons_en_vol.count
+          nb_vol_valides = @lecons_en_vol.select { |l| l.status == 3 && l.date.present? }.count
+          pct_pratique = nb_vol_total > 0 ? (nb_vol_valides.to_f / nb_vol_total * 100).round : 0
+
+          # Synthèse des heures
+          vols = @selected_eleve.vols
+          h_double_local = vols.where(solo: false, nav: false).sum(:duree_vol)
+          h_solo_local   = vols.where(solo: true, nav: false).sum(:duree_vol)
+          h_double_nav   = vols.where(solo: false, nav: true).sum(:duree_vol)
+          h_solo_nav     = vols.where(solo: true, nav: true).sum(:duree_vol)
+          att_double     = vols.where(solo: false).sum(:nb_atterro)
+          att_solo       = vols.where(solo: true).sum(:nb_atterro)
+
+          # Totaux
+          total_heures = (h_double_local + h_solo_local + h_double_nav + h_solo_nav).round(2)
+          total_atterro = att_double + att_solo
+
+          # Helper pour formater les heures en HHhMM
+          format_hours = ->(decimal_hours) {
+            total_minutes = (decimal_hours.to_f * 60).round
+            hours = total_minutes / 60
+            minutes = total_minutes % 60
+            format("%dh%02d", hours, minutes)
+          }
+        %>
+
+        <div class="row mb-4">
+          <div class="col-md-6">
+            <h5 class="small fw-bold text-uppercase text-muted mb-1">Progression Théorique</h5>
+            <div class="progress" style="height: 20px;">
+              <div class="progress-bar <%= pct_theorie == 100 ? 'bg-success' : 'bg-info' %>" role="progressbar" style="width: <%= pct_theorie %>%;" aria-valuenow="<%= pct_theorie %>" aria-valuemin="0" aria-valuemax="100">
+                <%= pct_theorie %>%
+              </div>
+            </div>
+            <small class="text-muted"><%= valides_theorie %> / <%= total_theorie %> éléments validés</small>
+          </div>
+          <div class="col-md-6">
+            <h5 class="small fw-bold text-uppercase text-muted mb-1">Progression Pratique</h5>
+            <div class="progress" style="height: 20px;">
+              <div class="progress-bar <%= pct_pratique == 100 ? 'bg-success' : 'bg-info' %>" role="progressbar" style="width: <%= pct_pratique %>%;" aria-valuenow="<%= pct_pratique %>" aria-valuemin="0" aria-valuemax="100">
+                <%= pct_pratique %>%
+              </div>
+            </div>
+            <small class="text-muted"><%= nb_vol_valides %> / <%= nb_vol_total %> leçons validées</small>
+          </div>
+        </div>
+
+        <div class="card mb-4">
+          <div class="card-body">
+            <h6 class="card-title fw-bold mb-3"><i class="fas fa-clock me-2"></i>Synthèse des Heures de Vol</h6>
+            <div class="row text-center">
+              <div class="col-md-4 border-end">
+                <h6 class="text-muted small text-uppercase">Local</h6>
+                <div class="d-flex justify-content-around">
+                  <div>
+                    <span class="d-block fw-bold"><%= format_hours.call(h_double_local) %></span>
+                    <small class="text-muted">Double</small>
+                  </div>
+                  <div>
+                    <span class="d-block fw-bold"><%= format_hours.call(h_solo_local) %></span>
+                    <small class="text-muted">Solo</small>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4 border-end">
+                <h6 class="text-muted small text-uppercase">Navigation</h6>
+                <div class="d-flex justify-content-around">
+                  <div>
+                    <span class="d-block fw-bold"><%= format_hours.call(h_double_nav) %></span>
+                    <small class="text-muted">Double</small>
+                  </div>
+                  <div>
+                    <span class="d-block fw-bold"><%= format_hours.call(h_solo_nav) %></span>
+                    <small class="text-muted">Solo</small>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <h6 class="text-muted small text-uppercase">Atterrissages</h6>
+                <div class="d-flex justify-content-around">
+                  <div>
+                    <span class="d-block fw-bold"><%= att_double %></span>
+                    <small class="text-muted">Double</small>
+                  </div>
+                  <div>
+                    <span class="d-block fw-bold"><%= att_solo %></span>
+                    <small class="text-muted">Solo</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <hr>
+            <div class="row text-center">
+              <div class="col-md-8 border-end">
+                <h6 class="text-muted small text-uppercase">Total Heures</h6>
+                <span class="fw-bold fs-5"><%= format_hours.call(total_heures) %></span>
+              </div>
+              <div class="col-md-4">
+                <h6 class="text-muted small text-uppercase">Total Atterrissages</h6>
+                <span class="fw-bold fs-5"><%= total_atterro %></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div class="accordion" id="progressionAccordion" data-controller="progression-form">
 
           <%# --- Accordion: Examens Théoriques --- %>
           <div class="accordion-item">
             <h2 class="accordion-header" id="headingOne">
               <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-                Examens Théoriques (<%= @examens_theoriques.count %>)
+                Examens Théoriques (<%= @examens_theoriques.select { |l| l.status == 3 && l.date.present? }.count %>/<%= @examens_theoriques.count %>)
               </button>
             </h2>
             <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#progressionAccordion">
@@ -61,7 +180,7 @@
           <div class="accordion-item">
             <h2 class="accordion-header" id="headingTwo">
               <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                Formations Théoriques de Proximité (<%= @formations_theoriques.count %>)
+                Formations Théoriques de Proximité (<%= @formations_theoriques.select { |l| l.status == 3 && l.date.present? }.count %>/<%= @formations_theoriques.count %>)
               </button>
             </h2>
             <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#progressionAccordion">
@@ -97,7 +216,7 @@
           <div class="accordion-item">
             <h2 class="accordion-header" id="headingThree">
               <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="true" aria-controls="collapseThree">
-                Leçons en Vol (<%= @lecons_en_vol.count %>)
+                Leçons en Vol (<%= @lecons_en_vol.select { |l| l.status == 3 && l.date.present? }.count %>/<%= @lecons_en_vol.count %>)
               </button>
             </h2>
             <div id="collapseThree" class="accordion-collapse collapse show" aria-labelledby="headingThree" data-bs-parent="#progressionAccordion">

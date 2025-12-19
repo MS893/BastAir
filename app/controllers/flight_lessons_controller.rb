@@ -20,7 +20,7 @@ class FlightLessonsController < ApplicationController
     end
 
     padded_number = @lesson_number.to_s.rjust(2, '0')
-    @pdf_available = Dir.glob(Rails.root.join('lib', 'assets', 'lecons', "*#{padded_number}-*.pdf")).any?
+    @pdf_available = Dir.glob(Rails.root.join('lib', 'assets', 'lecons', "#{padded_number}-*.pdf")).any?
   end
 
     def pdf

@@ -131,7 +131,7 @@ def users
       num_ffa: Faker::Number.number(digits: 7).to_s,
       licence_type: licence,
       num_licence: Faker::Number.number(digits: 8).to_s,
-      date_licence: Faker::Date.backward(days: 365 * 10),
+      date_licence: Faker::Date.forward(days: 365 * 2),
       medical: Faker::Date.forward(days: 365),
       fi: nil,
       fe: nil,
@@ -396,26 +396,26 @@ def cours
 
   # --- Cours FTP ---
   ftp_courses_data = [    
-    { title: "FTP1 - Environnement réglementaire de la formation", description: <<~DESC, file: "ftp1.pdf" },
+    { title: "FTP1 - Environnement réglementaire de la formation", description: <<~DESC, file: "ftp1.md" },
       Environnement réglementaire de la formation :
       - Eléments du PART NCO,
       - SGS (ATO) ou politique de sécurité (DTO),
       - Retour d’expérience REX FFA et occurrence reporting dans le cadre du règlement 376/2014,
       - Manuel de sécurité FFA
     DESC
-    { title: "FTP2 - Mise en œuvre de l’avion. Eléments de sécurité élémentaire", description: <<~DESC, file: "ftp2.pdf" },
+    { title: "FTP2 - Mise en œuvre de l’avion. Eléments de sécurité élémentaire", description: <<~DESC, file: "ftp2.md" },
       . Mise en œuvre de l’avion
       . Éléments de sécurité élémentaire
       . Préparation pour le vol (les 5 vérifications de base : documents avion, carburant, devis de masse et centrage, dossier météo, info aéro dont NOTAMs et SUP AIP)
       . Actions avant et après vol (objectifs du briefing et du débriefing)
       . Compétences techniques / non techniques
     DESC
-    { title: "FTP3 - Bases d’aérodynamique (assiette – incidence – pente)", description: <<~DESC, file: "ftp3.pdf" },
+    { title: "FTP3 - Bases d’aérodynamique (assiette – incidence – pente)", description: <<~DESC, file: "ftp3.md" },
       . Bases d’aérodynamique (assiette, incidence, pente)
       . Puissance nécessaire au vol
       . Relation puissance / assiette / vitesse / trajectoire
     DESC
-    { title: "FTP4 - Signaux de guidage au sol. Procédures de contrôle de la circulation aérienne", description: <<~DESC, file: "ftp4.pdf" },
+    { title: "FTP4 - Signaux de guidage au sol. Procédures de contrôle de la circulation aérienne", description: <<~DESC, file: "ftp4.md" },
       . Signaux de guidage au sol
       . Procédures du contrôle de la circulation aérienne
       . Urgences : panne de freins et de direction
@@ -423,32 +423,32 @@ def cours
       . Contrôle du cap : utilisation du compas et du conservateur de cap
       . Effet du vent : notions de dérive
     DESC
-    { title: "FTP5 - Mécanique du vol et vitesses caractéristiques (évolution – V réf…)", description: <<~DESC, file: "ftp5.pdf" },
+    { title: "FTP5 - Mécanique du vol et vitesses caractéristiques (évolution – V réf…)", description: <<~DESC, file: "ftp5.md" },
       . Mécanique du vol et vitesses caractéristiques (évolutions, V réf ...)
       . Limitations avion et dangers associés
       . Circonstances menant aux situations inusuelles, détection et récupération
     DESC
-    { title: "FTP6 - Le tour de piste – communication", description: <<~DESC, file: "ftp6.pdf" },
+    { title: "FTP6 - Le tour de piste – communication", description: <<~DESC, file: "ftp6.md" },
       . Le tour de piste
       . Communication
       . Approche gestion menaces et erreurs (Menaces, erreurs et situations indésirables) dans le cadre des vols locaux
     DESC
-    { title: "FTP7 - Pannes et procédures particulières : Identifier, analyser, appliquer une procédure", description: <<~DESC, file: "ftp7.pdf" },
+    { title: "FTP7 - Pannes et procédures particulières : Identifier, analyser, appliquer une procédure", description: <<~DESC, file: "ftp7.md" },
       . Pannes et procédures particulières : identifier, analyser, appliquer une procédure
       . Situations d’urgence : Appliquer une procédure d’urgence
     DESC
-    { title: "FTP8 - Méthodes de navigation. Préparation d’une navigation (journal de navigation)", description: <<~DESC, file: "ftp8.pdf" },
+    { title: "FTP8 - Méthodes de navigation. Préparation d’une navigation (journal de navigation)", description: <<~DESC, file: "ftp8.md" },
       . Méthodes de navigation
       . Préparation d’une navigation (journal de navigation)
       . Rappels réglementation : espaces aériens, conditions VMC, altitudes et niveaux de vol,
       . services ATC, intégration sur les aérodromes, phraséologie AD et SIV, prévention des incursions en espace à clairance.
     DESC
-    { title: "FTP9 - Présentation des moyens de radionavigations conventionnels et du GPS", description: <<~DESC, file: "ftp9.pdf" },
+    { title: "FTP9 - Présentation des moyens de radionavigations conventionnels et du GPS", description: <<~DESC, file: "ftp9.md" },
       . Présentation des moyens de radionavigation conventionnels et du GPS
       . Utilisation et organisation des moyens radios
       . Approche gestion menaces et erreurs (Menaces, erreurs et situations indésirables) dans le cadre du vol sur la campagne.
     DESC
-    { title: "FTP10 - Présentation du dossier de vol", description: <<~DESC, file: "ftp10.pdf" },
+    { title: "FTP10 - Présentation du dossier de vol", description: <<~DESC, file: "ftp10.md" },
       . Présentation du dossier de vol
       . Préparation d’un voyage aérien (avitaillement, assistance...)
       . Approche gestion menaces et erreurs (Menaces, erreurs et situations indésirables) dans le cadre du vol de voyage avec des passagers
@@ -456,12 +456,12 @@ def cours
       . Déroutement
       . Interruption volontaire du vol
     DESC
-    { title: "FTP11 - Pilotage sans visibilité", description: <<~DESC, file: "ftp11.pdf" },
+    { title: "FTP11 - Pilotage sans visibilité", description: <<~DESC, file: "ftp11.md" },
       . Pilotage sans visibilité (VSV, circuit visuel)
       . Approche gestion menaces et erreurs (Menaces, erreurs et situations indésirables) dans le cadre du VSV
       . Maintien des conditions VMC, réactions en cas de perte de conditions VMC, retour aux conditions VMC
     DESC
-    { title: "FTP12 - Présentation de l’examen", description: <<~DESC, file: "ftp12.pdf" },
+    { title: "FTP12 - Présentation de l’examen", description: <<~DESC, file: "ftp12.md" },
       . Présentation de l’examen PPL(A) au travers du guide FFA de l’examen en vol PPL(A) et du manuel de sécurité FFA
       . Détail des exercices et de leur enchainement, critères observés, niveau attendu, contenu du briefing
     DESC
@@ -474,7 +474,7 @@ def cours
     course.save!
     if course_data[:file].present?
       # Attache le fichier PDF via Active Storage
-      file_path = Rails.root.join('app', 'assets', 'files', course_data[:file])
+      file_path = Rails.root.join('lib', 'assets', 'ftp', course_data[:file])
       if File.exist?(file_path)
         course.document.attach(io: File.open(file_path), filename: course_data[:file], content_type: 'application/pdf')
       else
@@ -520,49 +520,49 @@ def lecons
   puts "\nCreating Flight Lessons..."
 
   flight_lessons_data = [
-    { title: "1 Mise en œuvre, roulage et vol d’accoutumance", file: "lecon_1.pdf" },
-    { title: "2 Assiette, inclinaison et ligne droite", file: "lecon_2.pdf" },
-    { title: "3 Utilisation du moteur et du compensateur", file: "lecon_3.pdf" },
-    { title: "4 Alignement et décollage", file: "lecon_4.pdf" },
-    { title: "5 Assiette - Vitesse assiette - Trajectoire", file: "lecon_5.pdf" },
+    { title: "1 Mise en œuvre, roulage et vol d’accoutumance", file: "01-Mise-en-Oeuvre-Roulage-Vol-accoutumance-2023.pdf" },
+    { title: "2 Assiette, inclinaison et ligne droite", file: "02-Assiette-inclinaison-ligne-droite-2023.pdf" },
+    { title: "3 Utilisation du moteur et du compensateur", file: "03-Utilisation-moteur-compensateur-2023.pdf" },
+    { title: "4 Alignement et décollage", file: "04-Alignement-decollage-2023.pdf" },
+    { title: "5 Assiette - Vitesse assiette - Trajectoire", file: "05-Assiette-trajectoire-assiette-vitesse-2023.pdf" },
     { title: "6 Relation puissance vitesse - Incidence", file: "lecon_6.pdf" },
     { title: "7 Contrôle du cap", file: "lecon_7.pdf" },
-    { title: "8 Palier, montée et descente symétrie du vol", file: "lecon_8.pdf" },
+    { title: "8 Palier, montée et descente symétrie du vol", file: "05-Assiette-trajectoire-assiette-vitesse-2023.pdf" },
     { title: "9 Virages en palier, montée et descente symétrie du vol", file: "lecon_9.pdf" },
-    { title: "10 Relations dans le virage", file: "lecon_10.pdf" },
-    { title: "11 Effets du vent traversier sur les trajectoires sol", file: "lecon_11.pdf" },
-    { title: "12 Changement de configuration", file: "lecon_12.pdf" },
-    { title: "13 Décrochage", file: "lecon_13.pdf" },
+    { title: "10 Relations dans le virage", file: "10-Relations-dans-virage-2021.pdf" },
+    { title: "11 Effets du vent traversier sur les trajectoires sol", file: "11-Vents-trajectoires-sol-2021.pdf" },
+    { title: "12 Changement de configuration", file: "12-Vol à Differentes-config-2021.pdf" },
+    { title: "13 Décrochage", file: "13-Decrochage-2021.pdf" },
     { title: "14 Vol lent", file: "lecon_14.pdf" },
-    { title: "15 Chargement, centrage et stabilité longitudinale", file: "lecon_15.pdf" },
-    { title: "16 Approche et approche interrompue", file: "lecon_16.pdf" },
-    { title: "17 L’atterrissage", file: "lecon_17.pdf" },
-    { title: "18 Circuits d’aérodrome", file: "lecon_18.pdf" },
+    { title: "15 Chargement, centrage et stabilité longitudinale", file: "15-Chargement-centrage-stabilite-2021.pdf" },
+    { title: "16 Approche et approche interrompue", file: "16-Approche-1-3-Vs-API-2021.pdf" },
+    { title: "17 L’atterrissage", file: "17-Atterrissage-2021.pdf" },
+    { title: "18 Circuits d’aérodrome", file: "18-Circuit-aerodrome-2021.pdf" },
     { title: "19 Virage engagé", file: "lecon_19.pdf" },
-    { title: "20 Pannes en phase de décollage", file: "lecon_20.pdf" },
-    { title: "21 Virage à grande inclinaison", file: "lecon_21.pdf" },
-    { title: "22 Le lâcher", file: "lecon_22.pdf" },
-    { title: "23 Décollages et montées adaptés", file: "lecon_23.pdf" },
-    { title: "24 Approches et atterrissages adaptés", file: "lecon_24.pdf" },
-    { title: "25 Atterrissage de précaution", file: "lecon_25.pdf" },
-    { title: "26 Le vol moteur réduit", file: "lecon_26.pdf" },
-    { title: "27 La vrille", file: "lecon_27.pdf" },
-    { title: "28 Procédures anormales et d’urgence", file: "lecon_28.pdf" },
-    { title: "29 Virage à forte inclinaison en descente moteur réduit", file: "lecon_29.pdf" },
+    { title: "20 Pannes en phase de décollage", file: "18-Circuit-aerodrome-2021.pdf" },
+    { title: "21 Virage à grande inclinaison", file: "21-Virages-Grande-Inclinaison-2021.pdf" },
+    { title: "22 Le lâcher", file: "22-Le-lacher-2021.pdf" },
+    { title: "23 Décollages et montées adaptés", file: "23-Decollages-et-montees-adaptes-2021.pdf" },
+    { title: "24 Approches et atterrissages adaptés", file: "24-Approches-atterrissages-adaptes-2021.pdf" },
+    { title: "25 Atterrissage de précaution", file: "25-Interruption-Volontaire-du-Vol-2021.pdf" },
+    { title: "26 Le vol moteur réduit", file: "26-Vol-Moteur-Reduit-2021.pdf" },
+    { title: "27 La vrille", file: "27-La-Vrille-2021.pdf" },
+    { title: "28 Procédures anormales et d’urgence", file: "28-Procedures-anormales-et-urgences-2021.pdf" },
+    { title: "29 Virage à forte inclinaison en descente moteur réduit", file: "29-Virage-forte-incli-descente-moteur-off-2021.pdf" },
     { title: "30 L’estime élémentaire", file: "lecon_30.pdf" },
     { title: "31 Le cheminement", file: "lecon_31.pdf" },
     { title: "32 Navigation", file: "lecon_32.pdf" },
     { title: "33 Application au voyage", file: "lecon_33.pdf" },
-    { title: "34 Radionavigation", file: "lecon_34.pdf" },
-    { title: "35 Egarement", file: "lecon_35.pdf" },
+    { title: "34 Radionavigation", file: "34-Radionavigation.pdf" },
+    { title: "35 Egarement", file: "35-Egarement.pdf" },
     { title: "36 Perte de références extérieures", file: "lecon_36.pdf" },
     { title: "37 Utilisation du GPS", file: "lecon_37.pdf" }
   ]
 
   flight_lessons_data.each do |lesson_data|
     lesson = FlightLesson.create!(title: lesson_data[:title].split(' ', 2).last)
-    # Vous pouvez placer vos PDFs dans 'app/assets/files/flight_lessons/'
-    file_path = Rails.root.join('app', 'assets', 'files', 'flight_lessons', lesson_data[:file])
+    # emplacement des fichiers pdf : 'app/assets/lecons/'
+    file_path = Rails.root.join('lib', 'assets', 'lecons', lesson_data[:file])
     if File.exist?(file_path)
       lesson.document.attach(io: File.open(file_path), filename: lesson_data[:file], content_type: 'application/pdf')
     else

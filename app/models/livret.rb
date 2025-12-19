@@ -1,5 +1,5 @@
-
 # app/models/livret.rb
+
 class Livret < ApplicationRecord
   # Déclare une seule image de signature pour ce livret
   has_one_attached :signature_image
@@ -8,6 +8,9 @@ class Livret < ApplicationRecord
   belongs_to :user
   belongs_to :course, optional: true
   belongs_to :flight_lesson, optional: true
+
+  # permet de stocker un tableau de dates pour l'historique des sessions (ex: ["2025-10-01", "2025-10-05"])
+  serialize :session_dates, coder: JSON
 
   # Ce champ (non-persistant) sert uniquement à recevoir la Base64 du formulaire Stimulus
   attr_accessor :signature_data
