@@ -336,6 +336,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_15_120559) do
   create_table "vols", force: :cascade do |t|
     t.integer "user_id"
     t.integer "avion_id"
+    t.integer "livret_id"
     t.integer "instructeur_id"
     t.string "type_vol", default: "Standard", null: false
     t.string "depart", null: false
@@ -357,6 +358,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_15_120559) do
     t.datetime "updated_at", null: false
     t.index ["avion_id"], name: "index_vols_on_avion_id"
     t.index ["instructeur_id"], name: "index_vols_on_instructeur_id"
+    t.index ["livret_id"], name: "index_vols_on_livret_id"
     t.index ["user_id"], name: "index_vols_on_user_id"
   end
 
@@ -383,6 +385,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_15_120559) do
   add_foreign_key "signalements", "users"
   add_foreign_key "transactions", "users"
   add_foreign_key "vols", "avions"
+  add_foreign_key "vols", "livrets"
   add_foreign_key "vols", "users"
   add_foreign_key "vols", "users", column: "instructeur_id"
 end

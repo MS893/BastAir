@@ -356,7 +356,7 @@ def resas
     end
     print "*" # barre de progression
   end
-  puts "✅ 20 bookings created."
+  puts "\n✅ 20 bookings created."
 
 end
 

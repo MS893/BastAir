@@ -88,6 +88,60 @@
           </div>
         <% end %>
 
+        <%# --- Section Validation des vols (Visible uniquement par l'instructeur concerné) --- %>
+        <% if current_user.instructeur? && @selected_eleve %>
+          <%# On récupère les vols de cet élève faits avec l'instructeur connecté, qui ne sont pas encore validés (pas de livret_id) %>
+          <% pending_vols = @selected_eleve.vols.where(instructeur_id: current_user.id, livret_id: nil).order(debut_vol: :asc) %>
+          
+          <% if pending_vols.any? %>
+            <div class="card mb-4 border-warning">
+              <div class="card-header bg-warning text-dark d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-clipboard-check me-2"></i>Vols en attente de validation</h5>
+                <span class="badge bg-dark"><%= pending_vols.count %></span>
+              </div>
+              <div class="card-body p-0">
+                <div class="table-responsive">
+                  <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                      <tr>
+                        <th class="ps-3">Date</th>
+                        <th>Durée</th>
+                        <th>Appareil</th>
+                        <th>Validation de la leçon</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <% pending_vols.each do |vol| %>
+                        <tr>
+                          <td class="ps-3"><%= l(vol.debut_vol.to_date) %></td>
+                          <td><%= number_with_precision(vol.duree_vol, precision: 2) %> h</td>
+                          <td><%= vol.avion.immatriculation %></td>
+                          <td>
+                            <%= form_with(url: validate_vol_path(vol), method: :patch, class: "row g-2 align-items-center") do |f| %>
+                              <div class="col-md-4">
+                                <%= f.collection_select :livret_id, @lecons_en_vol.sort_by(&:title), :id, :title, { prompt: "Choisir la leçon..." }, { class: "form-select form-select-sm", required: true } %>
+                              </div>
+                              <div class="col-md-3">
+                                <%= f.select :status, [['En cours (1)', 1], ['Avancé (2)', 2], ['Acquis (3)', 3]], { prompt: "Statut" }, { class: "form-select form-select-sm", required: true } %>
+                              </div>
+                              <div class="col-md-3">
+                                <%= f.text_field :comment, class: "form-control form-control-sm", placeholder: "Commentaire..." %>
+                              </div>
+                              <div class="col-md-2">
+                                <button type="submit" class="btn btn-sm btn-success w-100" title="Valider"><i class="fas fa-check"></i></button>
+                              </div>
+                            <% end %>
+                          </td>
+                        </tr>
+                      <% end %>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        <% end %>
+
         <div class="row mb-4">
           <div class="col-md-6">
             <h5 class="small fw-bold text-uppercase text-muted mb-1">Progression Théorique</h5>
@@ -112,7 +166,9 @@
         <div class="d-flex justify-content-center gap-4 mb-4">
           <div class="d-flex align-items-center">
             <% if lacher_local %>
-              <i class="fas fa-check-circle text-success fs-4 me-2"></i>
+              <span class="d-inline-flex align-items-center justify-content-center border border-2 border-success rounded-circle me-2" style="width: 1.5rem; height: 1.5rem;">
+                <span class="bg-success rounded-circle" style="width: 1rem; height: 1rem;"></span>
+              </span>
             <% else %>
               <span class="d-inline-block border border-2 border-secondary rounded-circle me-2" style="width: 1.5rem; height: 1.5rem;"></span>
             <% end %>
@@ -120,7 +176,9 @@
           </div>
           <div class="d-flex align-items-center">
             <% if lacher_nav %>
-              <i class="fas fa-check-circle text-success fs-4 me-2"></i>
+              <span class="d-inline-flex align-items-center justify-content-center border border-2 border-success rounded-circle me-2" style="width: 1.5rem; height: 1.5rem;">
+                <span class="bg-success rounded-circle" style="width: 1rem; height: 1rem;"></span>
+              </span>
             <% else %>
               <span class="d-inline-block border border-2 border-secondary rounded-circle me-2" style="width: 1.5rem; height: 1.5rem;"></span>
             <% end %>
