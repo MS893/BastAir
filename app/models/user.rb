@@ -185,7 +185,29 @@ class User < ApplicationRecord
   private
 
   def create_progression_livret
-    Livret.create(user: self)
+    # 1. Création des entrées pour les examens théoriques PPL
+    ppl_exam_titles = [
+      "010 - Droit Aérien (Réglementation)",
+      "020 - Connaissances Générales de l'Aéronef",
+      "030 - Performances et Préparation du Vol",
+      "040 - Performance Humaine (Facteurs Humains)",
+      "050 - Météorologie",
+      "060 - Navigation",
+      "070 - Procédures Opérationnelles",
+      "080 - Principes du Vol",
+      "090 - Communications"
+    ]
+    ppl_exam_titles.each { |title| Livret.create(user: self, title: title, status: 0) }
+
+    # 2. Création des entrées pour les cours théoriques (FTP)
+    Course.where("title LIKE ?", 'FTP%').find_each do |course|
+      Livret.create(user: self, course: course, title: course.title, status: 0)
+    end
+
+    # 3. Création des entrées pour les leçons de vol
+    FlightLesson.find_each do |lesson|
+      Livret.create(user: self, flight_lesson: lesson, title: lesson.title, status: 0)
+    end
   end
 
   def validate_contact_urgence_phone_format
