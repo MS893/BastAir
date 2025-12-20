@@ -126,9 +126,9 @@
                           <td><%= number_with_precision(vol.duree_vol, precision: 2) %> h</td>
                           <td><%= vol.avion.immatriculation %></td>
                           <td>
-                            <%= form_with(url: vol_path(vol), method: :patch, class: "row g-2 align-items-center") do |f| %>
+                            <%= form_with(url: vol_path(vol), method: :patch, local: true, class: "row g-2 align-items-center") do |f| %>
                               <div class="col-md-4">
-                                <%= f.collection_select :livret_id, @lecons_en_vol.to_a.uniq(&:title), :id, :title, { prompt: "Choisir la leçon..." }, { class: "form-select form-select-sm", required: true } %>
+                                <%= f.collection_select :livret_id, @lecons_en_vol.to_a.uniq(&:title), :id, :title, { prompt: "Choisir la leçon..." }, { class: "form-select form-select-sm", required: true, onchange: "this.form.querySelector('button').disabled = !this.value" } %>
                               </div>
                               <div class="col-md-2">
                                 <%= f.select :status, [['Vu-1', 1], ['Avancé-2', 2], ['Acquis-3', 3]], { selected: 1 }, { class: "form-select form-select-sm", required: true } %>
@@ -137,7 +137,7 @@
                                 <%= f.text_field :comment, class: "form-control form-control-sm", placeholder: "Commentaire...", required: true %>
                               </div>
                               <div class="col-md-1">
-                                <button type="submit" class="btn btn-success btn-sm w-100">OK</button>
+                                <button type="submit" class="btn btn-success btn-sm w-100" disabled>OK</button>
                               </div>
                             <% end %>
                           </td>
