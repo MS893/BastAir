@@ -111,4 +111,17 @@ class UserMailer < ApplicationMailer
     mail(to: recipient_emails, subject: "Taxe d'atterrissage : #{@pilot.name} à #{@tax_aerodrome}")
   end
 
+  # envoi d'un email si l'élève a réussi son test pratique
+  def exam_success_email(user)
+    @user = user
+    mail(to: @user.email, subject: "Félicitations ! Validation de votre examen pratique")
+  end
+
+  # envoi du livret par email en pièce jointe
+  def progression_booklet_email(user, pdf_content)
+    @user = user
+    attachments["Livret_progression_#{@user.full_name.parameterize}_#{Date.today.strftime('%d-%m-%Y')}.pdf"] = pdf_content
+    mail(to: @user.email, subject: "Votre Livret de Progression Bast'Air")
+  end
+  
 end

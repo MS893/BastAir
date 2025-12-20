@@ -10,6 +10,9 @@
         <%= link_to download_livret_progression_path(eleve_id: @selected_eleve.id), class: "btn btn-outline-primary", target: "_blank", data: { turbo: false } do %>
           <i class="fas fa-file-pdf me-2"></i> Télécharger en PDF
         <% end %>
+        <%= link_to send_pdf_email_progression_path(eleve_id: @selected_eleve.id), data: { turbo_method: :post, turbo_confirm: "Envoyer le livret par email à #{@selected_eleve.full_name} ?" }, class: "btn btn-outline-secondary ms-2" do %>
+          <i class="fas fa-envelope me-2"></i> Envoyer par email
+        <% end %>
       <% end %>
     </div>
   <% end %>
@@ -192,8 +195,8 @@
           </div>
           <div class="d-flex align-items-center">
             <% 
-               examen_effectue = @selected_eleve.date_fin_formation.present?
-               can_edit_examen = (current_user.instructeur? || current_user.admin?) && !@pdf
+              examen_effectue = @selected_eleve.date_fin_formation.present?
+              can_edit_examen = (current_user.instructeur? || current_user.admin?) && !@pdf
             %>
             <% if can_edit_examen %>
               <% if examen_effectue %>
@@ -207,14 +210,30 @@
                   <%= form_with(model: @selected_eleve, url: update_exam_progression_path(eleve_id: @selected_eleve.id), method: :patch) do |f| %>
                     <%= f.date_field :date_fin_formation, class: "form-control form-control-sm", style: "width: auto;", onchange: "this.form.requestSubmit()" %>
                   <% end %>
+                  <%# On vérifie si l'email a déjà été envoyé via les logs d'activité %>
+                  <% email_sent = ActivityLog.where(record_type: 'User', record_id: @selected_eleve.id, action: 'send_exam_email').exists? %>
+                  <% if email_sent %>
+                    <span class="ms-2 text-success" title="Email de félicitations déjà envoyé"><i class="fas fa-check-circle"></i></span>
+                  <% else %>
+                    <%= button_to send_exam_email_progression_path(eleve_id: @selected_eleve.id), method: :post, form_class: "d-inline ms-2", class: "btn btn-link text-primary p-0 border-0 bg-transparent", title: "Envoyer un email à l'élève", data: { turbo_confirm: "Confirmez-vous l'envoi de l'email de félicitations à l'élève ?" } do %>
+                      <i class="fas fa-envelope"></i>
+                    <% end %>
+                  <% end %>
                 </div>
               <% else %>
-                <%= form_with(model: @selected_eleve, url: update_exam_progression_path(eleve_id: @selected_eleve.id), method: :patch, class: "d-flex align-items-center") do |f| %>
-                  <button type="submit" class="btn btn-link p-0 text-decoration-none d-flex align-items-center text-reset border-0 bg-transparent me-2" data-turbo-confirm="Êtes-vous sûr de vouloir valider l'examen pratique ?">
+                <% if pct_theorie == 100 && pct_pratique == 100 %>
+                  <%= form_with(model: @selected_eleve, url: update_exam_progression_path(eleve_id: @selected_eleve.id), method: :patch, class: "d-flex align-items-center") do |f| %>
+                    <button type="submit" class="btn btn-link p-0 text-decoration-none d-flex align-items-center text-reset border-0 bg-transparent me-2" data-turbo-confirm="Êtes-vous sûr de vouloir valider l'examen pratique ?">
+                      <span class="d-inline-block border border-2 rounded-circle me-2" style="width: 1.5rem; height: 1.5rem;"></span>
+                      <span class="text-muted">Examen pratique effectué</span>
+                    </button>
+                    <%= f.hidden_field :date_fin_formation, value: Date.today %>
+                  <% end %>
+                <% else %>
+                  <button type="button" class="btn btn-link p-0 text-decoration-none d-flex align-items-center text-reset border-0 bg-transparent me-2" onclick="alert('Impossible de valider : la progression théorique et pratique doit être à 100%.')">
                     <span class="d-inline-block border border-2 rounded-circle me-2" style="width: 1.5rem; height: 1.5rem;"></span>
                     <span class="text-muted">Examen pratique effectué</span>
                   </button>
-                  <%= f.hidden_field :date_fin_formation, value: Date.today %>
                 <% end %>
               <% end %>
             <% else %>
@@ -309,7 +328,50 @@
                   <% if @examens_theoriques.present? %>
                     <ul class="list-group">
                       <% @examens_theoriques.each do |livret| %>
-                        <%= render 'progressions/examens_theoriques_list', livret: livret %>
+                        <% if @pdf %>
+                          <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                              <%= livret.title %>
+                              <div class="mt-1 d-flex">
+                                <% if livret.signature_image.attached? %>
+                                  <div class="me-2">
+                                    <% 
+                                      if livret.signature_image.service.is_a?(ActiveStorage::Service::DiskService)
+                                        img_path = livret.signature_image.service.path_for(livret.signature_image.key)
+                                        img_data = Base64.encode64(File.read(img_path))
+                                        img_src = "data:#{livret.signature_image.content_type};base64,#{img_data}"
+                                      else
+                                        img_src = url_for(livret.signature_image)
+                                      end
+                                    %>
+                                    <%= image_tag img_src, style: "height: 25px; width: auto; display: block;" %>
+                                  </div>
+                                <% end %>
+                                <% if livret.instructor_signature.attached? %>
+                                  <div>
+                                    <% 
+                                      if livret.instructor_signature.service.is_a?(ActiveStorage::Service::DiskService)
+                                        img_path = livret.instructor_signature.service.path_for(livret.instructor_signature.key)
+                                        img_data = Base64.encode64(File.read(img_path))
+                                        img_src = "data:#{livret.instructor_signature.content_type};base64,#{img_data}"
+                                      else
+                                        img_src = url_for(livret.instructor_signature)
+                                      end
+                                    %>
+                                    <%= image_tag img_src, style: "height: 25px; width: auto; display: block;" %>
+                                  </div>
+                                <% end %>
+                              </div>
+                            </div>
+                            <% if livret.status == 3 && livret.date.present? %>
+                              <span class="badge bg-success ms-2 fw-normal"><i class="fas fa-check-circle me-1"></i> - Validé le <%= l(livret.date, format: :short_year) %></span>
+                            <% else %>
+                              <span class="badge bg-light text-dark border"> - Non validé</span>
+                            <% end %>
+                          </li>
+                        <% else %>
+                          <%= render 'progressions/examens_theoriques_list', livret: livret %>
+                        <% end %>
                       <% end %>
                     </ul>
                   <% else %>
@@ -321,10 +383,10 @@
           </div>
 
           <%# --- Accordion: Formations Théoriques de Proximité --- %>
-          <div class="accordion-item" style="<%= @pdf ? 'page-break-before: always;' : '' %>">
+          <div class="accordion-item">
             <h2 class="accordion-header" id="headingTwo">
               <% if @pdf %>
-                <div class="p-3 fw-bold border-bottom" style="background-color: #e9ecef;">
+                <div class="p-3 fw-bold border-bottom" style="background-color: #e9ecef; margin-top: 50px;">
                   Formations Théoriques de Proximité (<%= @formations_theoriques.select { |l| l.status == 3 && l.date.present? }.count %>/<%= @formations_theoriques.count %>)
                 </div>
               <% else %>
@@ -339,7 +401,41 @@
                   <ul class="list-group">
                     <% @formations_theoriques.each do |livret| %>
                       <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <%= livret.title %>
+                        <div>
+                          <%= livret.title %>
+                          <% if @pdf %>
+                            <div class="mt-1 d-flex">
+                              <% if livret.signature_image.attached? %>
+                                <div class="me-2">
+                                  <% 
+                                    if livret.signature_image.service.is_a?(ActiveStorage::Service::DiskService)
+                                      img_path = livret.signature_image.service.path_for(livret.signature_image.key)
+                                      img_data = Base64.encode64(File.read(img_path))
+                                      img_src = "data:#{livret.signature_image.content_type};base64,#{img_data}"
+                                    else
+                                      img_src = url_for(livret.signature_image)
+                                    end
+                                  %>
+                                  <%= image_tag img_src, style: "height: 25px; width: auto; display: block;" %>
+                                </div>
+                              <% end %>
+                              <% if livret.instructor_signature.attached? %>
+                                <div>
+                                  <% 
+                                    if livret.instructor_signature.service.is_a?(ActiveStorage::Service::DiskService)
+                                      img_path = livret.instructor_signature.service.path_for(livret.instructor_signature.key)
+                                      img_data = Base64.encode64(File.read(img_path))
+                                      img_src = "data:#{livret.instructor_signature.content_type};base64,#{img_data}"
+                                    else
+                                      img_src = url_for(livret.instructor_signature)
+                                    end
+                                  %>
+                                  <%= image_tag img_src, style: "height: 25px; width: auto; display: block;" %>
+                                </div>
+                              <% end %>
+                            </div>
+                          <% end %>
+                        </div>
                         <%# On vérifie si le cours est validé et si une date est présente %>
                         <% if livret.status == 3 && livret.date.present? %>
                           <%# Si l'utilisateur est instructeur/admin ET qu'une signature existe, on crée un lien %>
@@ -423,16 +519,18 @@
                               
                               <% date_content = capture do %>
                                 <% if livret.date? %>
-                                  <%= l(livret.date, format: :short_year) %>
+                                  <i class="fas fa-calendar-check me-1"></i><%= l(livret.date, format: :short_year) %>
                                 <% elsif livret.session_dates.present? %>
-                                  <%= l(Date.parse(livret.session_dates.last), format: :short_year) %>
+                                  <i class="fas fa-calendar-day me-1"></i><%= l(Date.parse(livret.session_dates.last), format: :short_year) %>
                                 <% end %>
                               <% end %>
 
-                              <% if can_access_signature && !@pdf %>
-                                <%= link_to date_content, signature_livret_path(livret), class: "#{date_class}", title: "Voir ou signer la leçon" %>
-                              <% else %>
-                                <span class="<%= date_class %>"><%= date_content %></span>
+                              <% if date_content.to_s.strip.present? %>
+                                <% if can_access_signature && !@pdf %>
+                                  <%= link_to date_content, signature_livret_path(livret), class: "#{date_class}", title: "Voir ou signer la leçon" %>
+                                <% else %>
+                                  <span class="<%= date_class %>"><%= date_content %></span>
+                                <% end %>
                               <% end %>
 
                               <% if @pdf %>
@@ -452,7 +550,7 @@
                                     </div>
                                   <% end %>
                                   <% if livret.instructor_signature.attached? %>
-                                    <div>
+                                    <div class="d-flex align-items-center">
                                       <% 
                                         if livret.instructor_signature.service.is_a?(ActiveStorage::Service::DiskService)
                                           img_path = livret.instructor_signature.service.path_for(livret.instructor_signature.key)
@@ -463,13 +561,16 @@
                                         end
                                       %>
                                       <%= image_tag img_src, style: "height: 25px; width: auto; display: block;" %>
+                                      <% if vol&.instructeur %>
+                                        <span class="ms-1" style="font-size: 9px;"><%= vol.instructeur.full_name %></span>
+                                      <% end %>
                                     </div>
                                   <% end %>
                                 </div>
                               <% end %>
 
                               <% if vol %>
-                                <div class="small text-muted">
+                                <div class="small text-center text-muted">
                                   <%= vol.debut_vol.strftime("%H:%M") %> - <%= vol.fin_vol.strftime("%H:%M") %>
                                 </div>
                               <% end %>

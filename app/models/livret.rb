@@ -22,6 +22,7 @@ class Livret < ApplicationRecord
 
   # callback pour effacer la date si le statut n'est plus "validé" (0)
   before_save :clear_date_if_not_validated
+  before_save :set_date_if_validated
 
   # les examens n'ont pas de lien avec une table, les FTP en ont avec courses et les leçons en vol avec lecons
   validate :course_and_flight_lesson_not_both_present
@@ -61,6 +62,13 @@ class Livret < ApplicationRecord
     if status != 3
       # Si le statut n'est plus "validé", on efface la date.
       self.date = nil
+    end
+  end
+
+  # Callback pour mettre la date à aujourd'hui si le statut passe à "validé" (3) et que la date est vide
+  def set_date_if_validated
+    if status == 3 && date.nil?
+      self.date = Date.today
     end
   end
 

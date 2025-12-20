@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  </head>
+  <body>
+    <h1>Bonjour <%= @user.prenom %>,</h1>
+    <p>Veuillez trouver ci-joint votre livret de progression au format PDF, à jour en date du <%= Date.today.strftime('%d/%m/%Y') %>.</p>
+    <p>Bonne réception,<br>L'équipe Bast'Air</p>
+  </body>
+</html>

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  </head>
+  <body>
+    <h1>Félicitations <%= @user.prenom %> !</h1>
+    <p>
+      C'est avec grand plaisir que nous vous confirmons la validation de votre examen pratique le <%= l(@user.date_fin_formation) %>.
+    </p>
+    <p>
+      Votre statut a été mis à jour : vous êtes désormais officiellement <strong>Breveté</strong> au sein du club.
+    </p>
+    <p>Bons vols et à bientôt au club !</p>
+  </body>
+</html>

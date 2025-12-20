@@ -2,6 +2,7 @@ import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
   static targets = ["canvas", "input"]
+  static values = { signerName: String }
 
   connect() {
     this.canvas = this.canvasTarget
@@ -78,7 +79,17 @@ export default class extends Controller {
       alert("Veuillez signer dans la zone prévue avant de valider.")
       return
     }
-    // On met à jour le champ caché avec l'image en base64 avant la soumission
-    this.inputTarget.value = this.canvas.toDataURL("image/png")
+    
+    // Création d'un canvas temporaire pour redimensionner l'image (réduction de 50%)
+    // pour économiser de l'espace de stockage
+    const scaledCanvas = document.createElement('canvas')
+    scaledCanvas.width = this.canvas.width * 0.5
+    scaledCanvas.height = this.canvas.height * 0.5
+    
+    const scaledCtx = scaledCanvas.getContext('2d')
+    scaledCtx.drawImage(this.canvas, 0, 0, scaledCanvas.width, scaledCanvas.height)
+
+    // On met à jour le champ caché avec l'image redimensionnée
+    this.inputTarget.value = scaledCanvas.toDataURL("image/png")
   }
 }

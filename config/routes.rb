@@ -159,6 +159,8 @@ Rails.application.routes.draw do
   get 'livret_progression', to: 'progressions#show'
   get 'livret_progression/download', to: 'progressions#download', as: 'download_livret_progression'
   patch 'livret_progression/update_exam', to: 'progressions#update_exam', as: 'update_exam_progression'
+  post 'livret_progression/send_exam_email', to: 'progressions#send_exam_email', as: 'send_exam_email_progression'
+  post 'livret_progression/send_pdf_email', to: 'progressions#send_pdf_email', as: 'send_pdf_email_progression'
 
   # Route pour la gestion des disponibilités des instructeurs
   get 'mes_disponibilites', to: 'instructor_availabilities#edit', as: 'edit_instructor_availabilities'

@@ -23,6 +23,12 @@ class LivretsController < ApplicationController
       l_params['instructor_signature_data'] = l_params.delete('signature_data')
     end
 
+    # Sécurité : L'élève ne peut pas signer si l'instructeur n'a pas encore signé (uniquement pour les leçons de vol)
+    if l_params['signature_data'].present? && current_user == @livret.user && !@livret.instructor_signature.attached? && @livret.flight_lesson_id.present?
+      redirect_to signature_livret_path(@livret), alert: "Vous ne pouvez pas signer cette leçon tant que l'instructeur ne l'a pas signée."
+      return
+    end
+
     respond_to do |format|
       if @livret.update(l_params)
         format.html do

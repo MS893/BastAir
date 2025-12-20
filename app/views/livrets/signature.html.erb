@@ -46,14 +46,24 @@
         
         # L'élève signe s'il est connecté et n'a pas encore signé
         if current_user == @livret.user && !@livret.signature_image.attached?
-          show_pad = true
-          signature_label = "Signer en tant qu'élève"
+          # Pour les leçons de vol, l'instructeur doit avoir signé. Pour le reste (FTP), non.
+          if @livret.flight_lesson_id.nil? || @livret.instructor_signature.attached?
+            show_pad = true
+            signature_label = "Signer en tant qu'élève"
+          end
         # L'instructeur signe s'il est connecté, n'a pas encore signé, ET n'est pas l'élève lui-même
         elsif (current_user.instructeur? || current_user.admin?) && !@livret.instructor_signature.attached? && current_user != @livret.user
           show_pad = true
           signature_label = "Signer en tant qu'instructeur"
         end
       %>
+
+      <%# Message pour l'élève si l'instructeur n'a pas encore signé %>
+      <% if current_user == @livret.user && !@livret.signature_image.attached? && !@livret.instructor_signature.attached? && @livret.flight_lesson_id.present? %>
+        <div class="alert alert-warning text-center mt-3">
+          <i class="fas fa-info-circle me-2"></i>Vous pourrez signer cette leçon une fois que votre instructeur l'aura validée et signée.
+        </div>
+      <% end %>
 
       <% if show_pad %>
         <div class="card bg-info border-0 mt-3">
