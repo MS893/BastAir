@@ -47,16 +47,16 @@ class ProgressionsController < ApplicationController
     @formations_theoriques = user_livrets.where.not(course_id: nil).order(:id)
     @lecons_en_vol = user_livrets.where.not(flight_lesson_id: nil).order(:id)
 
-    render  pdf: "livret_progression_#{@selected_eleve.full_name.parameterize}",
+    render  pdf: "Livret_progression_#{@selected_eleve.full_name.parameterize}_#{Date.today.strftime('%d-%m-%Y')}",
             template: "progressions/show",
             layout: 'pdf_progression',
             page_size: 'A4',
             orientation: 'Portrait',
-            lowquality: true,
             zoom: 1,
             dpi: 75,
-            header: { html: { partial: 'layouts/pdf_progression_header' } },
-            footer: { html: { partial: 'layouts/pdf_progression_footer' } }
+            margin: { top: 30, bottom: 20, left: 10, right: 10 },
+            header: { html: { template: 'layouts/_pdf_progression_header', layout: false } },
+            footer: { html: { template: 'layouts/_pdf_progression_footer', layout: false } }
   end
 
 

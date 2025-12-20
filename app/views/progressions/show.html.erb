@@ -2,7 +2,7 @@
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h1>Livret de Progression</h1>
     <% if @selected_eleve %>
-      <%= link_to download_livret_progression_path(eleve_id: @selected_eleve.id), class: "btn btn-outline-primary" do %>
+      <%= link_to download_livret_progression_path(eleve_id: @selected_eleve.id), class: "btn btn-outline-primary", target: "_blank", data: { turbo: false } do %>
         <i class="fas fa-file-pdf me-2"></i> Télécharger en PDF
       <% end %>
     <% end %>
@@ -379,12 +379,30 @@
                                 <div class="mt-1">
                                   <% if livret.signature_image.attached? %>
                                     <div class="mb-1">
-                                      <%= image_tag livret.signature_image, style: "height: 25px; width: auto; display: block;" %>
+                                      <% 
+                                        if livret.signature_image.service.is_a?(ActiveStorage::Service::DiskService)
+                                          img_path = livret.signature_image.service.path_for(livret.signature_image.key)
+                                          img_data = Base64.encode64(File.read(img_path))
+                                          img_src = "data:#{livret.signature_image.content_type};base64,#{img_data}"
+                                        else
+                                          img_src = url_for(livret.signature_image)
+                                        end
+                                      %>
+                                      <%= image_tag img_src, style: "height: 25px; width: auto; display: block;" %>
                                     </div>
                                   <% end %>
                                   <% if livret.instructor_signature.attached? %>
                                     <div>
-                                      <%= image_tag livret.instructor_signature, style: "height: 25px; width: auto; display: block;" %>
+                                      <% 
+                                        if livret.instructor_signature.service.is_a?(ActiveStorage::Service::DiskService)
+                                          img_path = livret.instructor_signature.service.path_for(livret.instructor_signature.key)
+                                          img_data = Base64.encode64(File.read(img_path))
+                                          img_src = "data:#{livret.instructor_signature.content_type};base64,#{img_data}"
+                                        else
+                                          img_src = url_for(livret.instructor_signature)
+                                        end
+                                      %>
+                                      <%= image_tag img_src, style: "height: 25px; width: auto; display: block;" %>
                                     </div>
                                   <% end %>
                                 </div>
