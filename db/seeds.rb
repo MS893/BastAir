@@ -702,7 +702,9 @@ def livrets
       flight_lesson: lesson,
       title: lesson.title,
       status: 0,
-      comment: ""
+      comment: "Mettre en œuvre l’avion depuis sa prise en compte jusqu’à sa restitution.
+      Maîtriser les évolutions de l’avion au sol.
+      Etre capable d’agir sur les commandes de manière souple et mesurée."
     )
   end
   puts "  -> Added flight lesson entries to the booklet."

@@ -54,8 +54,8 @@
           pct_theorie = total_theorie > 0 ? (valides_theorie.to_f / total_theorie * 100).round : 0
 
           # Pratique : Leçons en vol
-          nb_vol_total = @lecons_en_vol.count
-          nb_vol_valides = @lecons_en_vol.select { |l| l.status == 3 && l.date.present? }.count
+          nb_vol_total = @lecons_en_vol.map(&:flight_lesson_id).uniq.count
+          nb_vol_valides = @lecons_en_vol.select { |l| l.status > 0 }.map(&:flight_lesson_id).uniq.count
           pct_pratique = nb_vol_total > 0 ? (nb_vol_valides.to_f / nb_vol_total * 100).round : 0
 
           # Synthèse des heures
@@ -465,11 +465,11 @@
             <h2 class="accordion-header" id="headingThree">
               <% if @pdf %>
                 <div class="p-3 fw-bold border-bottom" style="background-color: #e9ecef;">
-                  Leçons en Vol (<%= @lecons_en_vol.select { |l| l.status == 3 && l.date.present? }.count %>/<%= @lecons_en_vol.count %>)
+                  Leçons en Vol (<%= nb_vol_valides %>/<%= nb_vol_total %>)
                 </div>
               <% else %>
                 <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="true" aria-controls="collapseThree">
-                  Leçons en Vol (<%= @lecons_en_vol.select { |l| l.status == 3 && l.date.present? }.count %>/<%= @lecons_en_vol.count %>)
+                  Leçons en Vol (<%= nb_vol_valides %>/<%= nb_vol_total %>)
                 </button>
               <% end %>
             </h2>
@@ -522,8 +522,8 @@
                               <% date_content = capture do %>
                                 <% if livret.date? %>
                                   <i class="fas fa-calendar-check me-1"></i><%= l(livret.date, format: :short_year) %>
-                                <% elsif livret.session_dates.present? %>
-                                  <i class="fas fa-calendar-day me-1"></i><%= l(Date.parse(livret.session_dates.last), format: :short_year) %>
+                                <% elsif vol %>
+                                  <i class="fas fa-calendar-check me-1"></i><%= l(vol.debut_vol.to_date, format: :short_year) %>
                                 <% end %>
                               <% end %>
 

@@ -81,7 +81,6 @@ class VolsController < ApplicationController
           title: livret.title,
           status: status.to_i,
           comment: comment,
-          session_dates: [@vol.debut_vol.to_date.to_s]
         )
         if status.to_i == 3
           new_livret.update(date: @vol.debut_vol.to_date)
@@ -91,10 +90,6 @@ class VolsController < ApplicationController
         # Sinon, on met à jour le livret existant
         livret.status = status.to_i if status.present?
         livret.comment = comment if comment.present?
-        
-        dates = livret.session_dates || []
-        dates << @vol.debut_vol.to_date.to_s
-        livret.session_dates = dates.uniq
         
         if livret.status == 3
           livret.date = @vol.debut_vol.to_date
