@@ -1,95 +1,75 @@
 import { Controller } from "@hotwired/stimulus"
+// Importe la librairie qui fonctionnait bien
+import SignaturePad from "signature_pad"
 
 export default class extends Controller {
+  // Adaptation : "input" correspond à votre HTML actuel (au lieu de "output" dans la sauvegarde)
   static targets = ["canvas", "input"]
+  // pour récupérer le nom à afficher
   static values = { signerName: String }
 
   connect() {
-    this.canvas = this.canvasTarget
-    this.ctx = this.canvas.getContext("2d")
-    
-    // Configuration du style de trait
-    this.ctx.lineWidth = 2
-    this.ctx.lineJoin = "round"
-    this.ctx.lineCap = "round"
-    this.ctx.strokeStyle = "#000000"
-
-    this.isDrawing = false
-    this.hasDrawn = false
-
-    // Ajout des écouteurs d'événements pour la souris et le tactile
-    this.canvas.addEventListener("mousedown", this.startDrawing.bind(this))
-    this.canvas.addEventListener("mousemove", this.draw.bind(this))
-    this.canvas.addEventListener("mouseup", this.stopDrawing.bind(this))
-    this.canvas.addEventListener("mouseout", this.stopDrawing.bind(this))
-    
-    this.canvas.addEventListener("touchstart", this.startDrawing.bind(this))
-    this.canvas.addEventListener("touchmove", this.draw.bind(this))
-    this.canvas.addEventListener("touchend", this.stopDrawing.bind(this))
+    console.log("Signature Controller connecté.");
+    // Initialise Signature Pad sur l'élément canvas (Code restauré)
+    this.signaturePad = new SignaturePad(this.canvasTarget, {
+      backgroundColor: 'rgb(255, 255, 255)', // Fond blanc (très important pour le PNG)
+      penColor: 'rgb(0, 0, 0)',              // Stylo noir
+      minWidth: 1,
+      maxWidth: 3
+    });
   }
 
-  startDrawing(event) {
-    this.isDrawing = true
-    this.ctx.beginPath()
-    const { x, y } = this.getCoordinates(event)
-    this.ctx.moveTo(x, y)
-    event.preventDefault() // Empêche le scroll sur mobile
-  }
-
-  draw(event) {
-    if (!this.isDrawing) return
-    const { x, y } = this.getCoordinates(event)
-    this.ctx.lineTo(x, y)
-    this.ctx.stroke()
-    this.hasDrawn = true
-    event.preventDefault()
-  }
-
-  stopDrawing() {
-    this.isDrawing = false
-  }
-
-  getCoordinates(event) {
-    const rect = this.canvas.getBoundingClientRect()
-    let clientX, clientY
-
-    if (event.touches && event.touches.length > 0) {
-      clientX = event.touches[0].clientX
-      clientY = event.touches[0].clientY
-    } else {
-      clientX = event.clientX
-      clientY = event.clientY
-    }
-
-    return {
-      x: clientX - rect.left,
-      y: clientY - rect.top
-    }
-  }
-
+  // Action pour effacer le dessin
   clear() {
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
-    this.inputTarget.value = ""
-    this.hasDrawn = false
+    this.signaturePad.clear();
   }
 
+  // Action appelée au clic sur le bouton Valider
   submit(event) {
-    if (!this.hasDrawn) {
-      event.preventDefault()
-      alert("Veuillez signer dans la zone prévue avant de valider.")
-      return
-    }
-    
-    // Création d'un canvas temporaire pour redimensionner l'image (réduction de 50%)
-    // pour économiser de l'espace de stockage
-    const scaledCanvas = document.createElement('canvas')
-    scaledCanvas.width = this.canvas.width * 0.5
-    scaledCanvas.height = this.canvas.height * 0.5
-    
-    const scaledCtx = scaledCanvas.getContext('2d')
-    scaledCtx.drawImage(this.canvas, 0, 0, scaledCanvas.width, scaledCanvas.height)
+    event.preventDefault(); // Empêche le comportement par défaut
 
-    // On met à jour le champ caché avec l'image redimensionnée
-    this.inputTarget.value = scaledCanvas.toDataURL("image/png")
+    if (this.signaturePad.isEmpty()) {
+      alert("Veuillez apposer votre signature pour valider l'acquisition du cours.");
+      return;
+    }
+
+    // --- Leçons en vol : Incrustation du nom du signataire ---
+    if (this.hasSignerNameValue) {
+      // On dessine directement sur le contexte du canvas géré par SignaturePad
+      const ctx = this.canvasTarget.getContext("2d");
+      ctx.font = "12px sans-serif";
+      ctx.fillStyle = "#000000";
+      ctx.textAlign = "center";
+      // On écrit le texte centré en bas
+      ctx.fillText(this.signerNameValue, this.canvasTarget.width / 2, this.canvasTarget.height - 10);
+    }
+    // ------------------------------------------------
+
+    // 1. Convertit la signature en Data URL (Base64) format PNG (Code restauré)
+    const dataURL = this.signaturePad.toDataURL('image/png');
+
+    // 2. Stocke la chaîne Base64 dans le champ caché
+    this.inputTarget.value = dataURL;
+
+    // 3. Soumet le formulaire manuellement (nécessaire car le bouton est de type "button")
+    this.element.submit();
   }
+
+  // Action appelée lorsque le formulaire (FTP) est soumis (important !)
+  save(event) {
+    if (this.signaturePad.isEmpty()) {
+      alert("Veuillez apposer votre signature pour valider l'acquisition du cours.");
+      event.preventDefault(); // Empêche la soumission si le pad est vide
+    } else {
+      // 1. Convertit la signature en Data URL (Base64) format PNG
+      // PNG est préférable pour conserver la transparence/qualité du trait.
+      const dataURL = this.signaturePad.toDataURL('image/png');
+
+      // 2. Stocke la chaîne Base64 dans le champ caché qui sera envoyé au serveur Rails
+      this.outputTarget.value = dataURL;
+
+      // Le formulaire continue sa soumission
+    }
+  }
+
 }

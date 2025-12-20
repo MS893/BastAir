@@ -59,7 +59,7 @@ class Livret < ApplicationRecord
     # on regarde si le statut a été modifié
     return unless status_changed?
     
-    if status != 3
+    if status.to_i != 3
       # Si le statut n'est plus "validé", on efface la date.
       self.date = nil
     end
@@ -67,7 +67,7 @@ class Livret < ApplicationRecord
 
   # Callback pour mettre la date à aujourd'hui si le statut passe à "validé" (3) et que la date est vide
   def set_date_if_validated
-    if status == 3 && date.nil?
+    if status.to_i == 3 && date.blank?
       self.date = Date.today
     end
   end

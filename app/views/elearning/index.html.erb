@@ -20,7 +20,7 @@
               <%= simple_format(course.description) %>
               <%= link_to "Accéder au cours", elearning_path(course), class: "btn btn-outline-primary mt-3" %>
                 <%# Si l'entrée existe, que le statut est 'validé' (3) et qu'une image de signature est attachée %>
-                <% if livret_entry&.status == 3 && livret_entry&.signature_image.attached? %>
+                <% if livret_entry&.status == 3 %>
                   <%= link_to signature_livret_path(livret_entry), class: "text-decoration-none" do %>
                     <span class="badge bg-success ms-2 fw-normal">
                       <i class="fas fa-check-circle me-1"></i> Validé le <%= l(livret_entry.updated_at, format: :short_year) %>

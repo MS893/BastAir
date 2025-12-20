@@ -14,23 +14,33 @@ class LivretsController < ApplicationController
   end
 
   def update
-    # On met à jour le livret avec les paramètres autorisés
-    l_params = livret_params.to_h
+    l_params = livret_params
 
-    # Si une signature est soumise et que l'utilisateur est un instructeur (et pas l'élève propriétaire),
-    # on mappe la donnée vers la signature instructeur.
-    if l_params['signature_data'].present? && (current_user.instructeur? || current_user.admin?) && current_user != @livret.user
-      l_params['instructor_signature_data'] = l_params.delete('signature_data')
+    # Gestion de la signature : on détermine si c'est celle de l'instructeur ou de l'élève
+    if l_params[:signature_data].present?
+      if (current_user.instructeur? || current_user.admin?) && current_user != @livret.user
+        @livret.instructor_signature_data = l_params[:signature_data]
+      else
+        @livret.signature_data = l_params[:signature_data]
+      end
     end
 
+    # On assigne les autres attributs (status, date, etc.)
+    @livret.assign_attributes(l_params.except(:signature_data, :instructor_signature_data))
+
     # Sécurité : L'élève ne peut pas signer si l'instructeur n'a pas encore signé (uniquement pour les leçons de vol)
-    if l_params['signature_data'].present? && current_user == @livret.user && !@livret.instructor_signature.attached? && @livret.flight_lesson_id.present?
+    if @livret.signature_data.present? && current_user == @livret.user && !@livret.instructor_signature.attached? && @livret.flight_lesson_id.present?
       redirect_to signature_livret_path(@livret), alert: "Vous ne pouvez pas signer cette leçon tant que l'instructeur ne l'a pas signée."
       return
     end
 
+    # Auto-validation des FTP (cours théoriques) lors de la signature de l'élève
+    if @livret.course_id.present? && (@livret.signature_data.present? || l_params[:signature_data].present?)
+      @livret.status = 3
+    end
+
     respond_to do |format|
-      if @livret.update(l_params)
+      if @livret.save
         format.html do
           if @livret.flight_lesson_id.present? || request.referer&.include?('livret_progression')
             redirect_to livret_progression_path(eleve_id: @livret.user_id), notice: 'Livret mis à jour avec succès.'

@@ -7,7 +7,7 @@
       
       <div class="row mb-4">
         <%# --- Signature Élève --- %>
-        <div class="col-md-6 text-center mb-3 mb-md-0">
+        <div class="<%= @livret.flight_lesson_id.present? ? 'col-md-6' : 'col-md-12' %> text-center mb-3 mb-md-0">
           <h5 class="border-bottom pb-2 mb-3">Signature Élève</h5>
           <% if @livret.signature_image.attached? %>
             <div class="mb-2">
@@ -23,20 +23,22 @@
         </div>
 
         <%# --- Signature Instructeur --- %>
-        <div class="col-md-6 text-center">
-          <h5 class="border-bottom pb-2 mb-3">Signature Instructeur</h5>
-          <% if @livret.instructor_signature.attached? %>
-            <div class="mb-2">
-              <%= image_tag @livret.instructor_signature, class: "img-fluid border rounded bg-light", style: "max-height: 120px;" %>
-            </div>
-            <p class="text-primary small fw-bold"><i class="fas fa-check-circle"></i> Signé par l'instructeur</p>
-          <% else %>
-            <div class="alert alert-light border text-muted py-4">
-              <i class="fas fa-user-tie mb-2" style="font-size: 2rem; opacity: 0.3;"></i><br>
-              En attente de signature
-            </div>
-          <% end %>
-        </div>
+        <% if @livret.flight_lesson_id.present? %>
+          <div class="col-md-6 text-center">
+            <h5 class="border-bottom pb-2 mb-3">Signature Instructeur</h5>
+            <% if @livret.instructor_signature.attached? %>
+              <div class="mb-2">
+                <%= image_tag @livret.instructor_signature, class: "img-fluid border rounded bg-light", style: "max-height: 120px;" %>
+              </div>
+              <p class="text-primary small fw-bold"><i class="fas fa-check-circle"></i> Signé par l'instructeur</p>
+            <% else %>
+              <div class="alert alert-light border text-muted py-4">
+                <i class="fas fa-user-tie mb-2" style="font-size: 2rem; opacity: 0.3;"></i><br>
+                En attente de signature
+              </div>
+            <% end %>
+          </div>
+        <% end %>
       </div>
 
       <%# --- Zone de signature (Canvas) --- %>
@@ -70,7 +72,7 @@
           <div class="card-body text-center">
             <h4 class="card-title h6 mb-3"><%= signature_label %></h4>
             
-            <%= form_with(model: @livret, url: livret_path(@livret), method: :patch, local: true, data: { controller: "signature" }) do |form| %>
+            <%= form_with(model: @livret, url: livret_path(@livret), method: :patch, local: true, data: { controller: "signature", signature_signer_name_value: (current_user.full_name || ""), turbo: false }) do |form| %>
               <%= form.hidden_field :signature_data, data: { signature_target: "input" } %>
               
               <div class="d-flex justify-content-center mb-3">
@@ -79,7 +81,7 @@
               
               <div>
                 <button type="button" class="btn btn-outline-secondary btn-sm me-2" data-action="signature#clear">Effacer</button>
-                <%= form.submit "Valider la signature", class: "btn btn-primary btn-sm", data: { action: "signature#submit" } %>
+                <button type="button" class="btn btn-primary btn-sm" data-action="click->signature#submit">Valider la signature</button>
               </div>
             <% end %>
           </div>

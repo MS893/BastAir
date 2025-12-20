@@ -10,7 +10,7 @@
         <%= link_to download_livret_progression_path(eleve_id: @selected_eleve.id), class: "btn btn-outline-primary", target: "_blank", data: { turbo: false } do %>
           <i class="fas fa-file-pdf me-2"></i> Télécharger en PDF
         <% end %>
-        <%= link_to send_pdf_email_progression_path(eleve_id: @selected_eleve.id), data: { turbo_method: :post, turbo_confirm: "Envoyer le livret par email à #{@selected_eleve.full_name} ?" }, class: "btn btn-outline-secondary ms-2" do %>
+        <%= link_to send_pdf_email_progression_path(eleve_id: @selected_eleve.id), data: { turbo_method: :post, turbo_confirm: "Envoyer le livret par email à #{@selected_eleve.full_name} ?" }, class: "btn btn-outline-info ms-2" do %>
           <i class="fas fa-envelope me-2"></i> Envoyer par email
         <% end %>
       <% end %>
@@ -438,8 +438,8 @@
                         </div>
                         <%# On vérifie si le cours est validé et si une date est présente %>
                         <% if livret.status == 3 && livret.date.present? %>
-                          <%# Si l'utilisateur est instructeur/admin ET qu'une signature existe, on crée un lien %>
-                          <% if (current_user.instructeur? || current_user.admin?) && livret.signature_image.attached? && !@pdf %>
+                          <%# Si l'utilisateur est autorisé (instructeur/admin ou l'élève lui-même) ET qu'une signature existe, on crée un lien %>
+                          <% if (current_user.instructeur? || current_user.admin? || current_user == livret.user) && livret.signature_image.attached? && !@pdf %>
                             <%= link_to signature_livret_path(livret), class: "text-decoration-none" do %>
                               <span class="badge bg-success ms-2 fw-normal"><i class="fas fa-check-circle me-1"></i> Validé le <%= l(livret.date, format: :short_year) %></span>
                             <% end %>
@@ -447,6 +447,8 @@
                             <%# Sinon, on affiche un simple badge non cliquable %>
                             <span class="badge bg-success ms-2 fw-normal"><i class="fas fa-check-circle me-1"></i> Validé le <%= l(livret.date, format: :short_year) %></span>
                           <% end %>
+                        <% else %>
+                          <span class="badge bg-light text-dark border">Non validé</span>
                         <% end %>
                       </li>
                     <% end %>
