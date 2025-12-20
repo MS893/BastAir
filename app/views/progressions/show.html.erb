@@ -375,6 +375,21 @@
                                 <span class="<%= date_class %>"><%= date_content %></span>
                               <% end %>
 
+                              <% if @pdf %>
+                                <div class="mt-1">
+                                  <% if livret.signature_image.attached? %>
+                                    <div class="mb-1">
+                                      <%= image_tag livret.signature_image, style: "height: 25px; width: auto; display: block;" %>
+                                    </div>
+                                  <% end %>
+                                  <% if livret.instructor_signature.attached? %>
+                                    <div>
+                                      <%= image_tag livret.instructor_signature, style: "height: 25px; width: auto; display: block;" %>
+                                    </div>
+                                  <% end %>
+                                </div>
+                              <% end %>
+
                               <% if vol %>
                                 <div class="small text-muted">
                                   <%= vol.debut_vol.strftime("%H:%M") %> - <%= vol.fin_vol.strftime("%H:%M") %>

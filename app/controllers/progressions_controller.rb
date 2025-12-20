@@ -37,6 +37,7 @@ class ProgressionsController < ApplicationController
     else
       @selected_eleve = current_user
     end
+    @pdf = true
 
     # On définit @eleves pour que le formulaire dans la vue ne cause pas d'erreur, même s'il n'est pas affiché dans le PDF.
     @eleves = User.where("LOWER(fonction) = ?", 'eleve').where.not("LOWER(prenom) = ?", 'bia').order(:nom, :prenom)
