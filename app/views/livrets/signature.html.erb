@@ -1,30 +1,84 @@
-<% content_for :title, "Signature : #{@livret.display_title}" %>
+<div class="container mt-5">
+  <div class="card shadow-sm">
+    <div class="card-header bg-primary text-white">
+      <h3 class="mb-0 h5"><i class="fas fa-file-signature me-2"></i>Signature de la leçon : <%= @livret.display_title %></h3>
+    </div>
+    <div class="card-body">
+      
+      <div class="row mb-4">
+        <%# --- Signature Élève --- %>
+        <div class="col-md-6 text-center mb-3 mb-md-0">
+          <h5 class="border-bottom pb-2 mb-3">Signature Élève</h5>
+          <% if @livret.signature_image.attached? %>
+            <div class="mb-2">
+              <%= image_tag @livret.signature_image, class: "img-fluid border rounded bg-light", style: "max-height: 120px;" %>
+            </div>
+            <p class="text-success small fw-bold"><i class="fas fa-check-circle"></i> Signé par <%= @livret.user.full_name %></p>
+          <% else %>
+            <div class="alert alert-light border text-muted py-4">
+              <i class="fas fa-user-graduate mb-2" style="font-size: 2rem; opacity: 0.3;"></i><br>
+              En attente de signature
+            </div>
+          <% end %>
+        </div>
 
-<div class="container my-5">
-  <div class="text-center">
-    <h1 class="mb-3 h3">Signature</h1>
-    <p class="lead text-info"><%= @livret.display_title %></p>
-    <p class="text-muted">
-      Signé par <%= @livret.user.full_name %> le <%= l(@livret.updated_at, format: :long_with_at) %>
-    </p>
-  </div>
+        <%# --- Signature Instructeur --- %>
+        <div class="col-md-6 text-center">
+          <h5 class="border-bottom pb-2 mb-3">Signature Instructeur</h5>
+          <% if @livret.instructor_signature.attached? %>
+            <div class="mb-2">
+              <%= image_tag @livret.instructor_signature, class: "img-fluid border rounded bg-light", style: "max-height: 120px;" %>
+            </div>
+            <p class="text-primary small fw-bold"><i class="fas fa-check-circle"></i> Signé par l'instructeur</p>
+          <% else %>
+            <div class="alert alert-light border text-muted py-4">
+              <i class="fas fa-user-tie mb-2" style="font-size: 2rem; opacity: 0.3;"></i><br>
+              En attente de signature
+            </div>
+          <% end %>
+        </div>
+      </div>
 
-  <div class="d-flex justify-content-center my-4">
-    <% if @livret.signature_image.attached? %>
-      <%= image_tag @livret.signature_image, class: "img-fluid border rounded shadow-sm", style: "max-width: 600px;" %>
-    <% else %>
-      <div class="alert alert-warning text-center" role="alert">Aucune signature n'a été enregistrée pour ce livret.</div>
-    <% end %>
-  </div>
+      <%# --- Zone de signature (Canvas) --- %>
+      <% 
+        show_pad = false
+        signature_label = ""
+        
+        # L'élève signe s'il est connecté et n'a pas encore signé
+        if current_user == @livret.user && !@livret.signature_image.attached?
+          show_pad = true
+          signature_label = "Signer en tant qu'élève"
+        # L'instructeur signe s'il est connecté, n'a pas encore signé, ET n'est pas l'élève lui-même
+        elsif (current_user.instructeur? || current_user.admin?) && !@livret.instructor_signature.attached? && current_user != @livret.user
+          show_pad = true
+          signature_label = "Signer en tant qu'instructeur"
+        end
+      %>
 
-  <div class="text-center mt-4">
-    <%# Le bouton de retour est conditionnel :
-        - Pour un instructeur/admin, il retourne au livret de progression de l'élève.
-        - Pour un élève, il retourne à la liste des cours. %>
-    <% if current_user.instructeur? || current_user.admin? %>
-      <%= link_to 'Retour au livret de progression', livret_progression_path(eleve_id: @livret.user_id), class: 'btn btn-secondary' %>
-    <% else %>
-      <%= link_to 'Retour à la liste des cours', elearning_index_path, class: 'btn btn-secondary' %>
-    <% end %>
+      <% if show_pad %>
+        <div class="card bg-info border-0 mt-3">
+          <div class="card-body text-center">
+            <h4 class="card-title h6 mb-3"><%= signature_label %></h4>
+            
+            <%= form_with(model: @livret, url: livret_path(@livret), method: :patch, local: true, data: { controller: "signature" }) do |form| %>
+              <%= form.hidden_field :signature_data, data: { signature_target: "input" } %>
+              
+              <div class="d-flex justify-content-center mb-3">
+                <canvas data-signature-target="canvas" width="400" height="200" class="border bg-white shadow-sm rounded" style="touch-action: none; cursor: crosshair;"></canvas>
+              </div>
+              
+              <div>
+                <button type="button" class="btn btn-outline-secondary btn-sm me-2" data-action="signature#clear">Effacer</button>
+                <%= form.submit "Valider la signature", class: "btn btn-primary btn-sm", data: { action: "signature#submit" } %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+
+    </div>
+    <div class="card-footer bg-white">
+      <%= link_to "Retour au livret", livret_progression_path(eleve_id: @livret.user_id), class: "btn btn-outline-secondary btn-sm" %>
+    </div>
   </div>
 </div>

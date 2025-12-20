@@ -15,34 +15,25 @@ class LivretsController < ApplicationController
 
   def update
     # On met à jour le livret avec les paramètres autorisés
-    l_params = livret_params
+    l_params = livret_params.to_h
 
     # Si une signature est soumise et que l'utilisateur est un instructeur (et pas l'élève propriétaire),
     # on mappe la donnée vers la signature instructeur.
-    if l_params[:signature_data].present? && (current_user.instructeur? || current_user.admin?) && current_user != @livret.user
-      l_params[:instructor_signature_data] = l_params[:signature_data]
-      l_params.delete(:signature_data)
+    if l_params['signature_data'].present? && (current_user.instructeur? || current_user.admin?) && current_user != @livret.user
+      l_params['instructor_signature_data'] = l_params.delete('signature_data')
     end
 
     respond_to do |format|
       if @livret.update(l_params)
         format.html do
-          if request.referer&.include?('livret_progression')
+          if @livret.flight_lesson_id.present? || request.referer&.include?('livret_progression')
             redirect_to livret_progression_path(eleve_id: @livret.user_id), notice: 'Livret mis à jour avec succès.'
           else
             redirect_to elearning_index_path, notice: 'Cours validé et signé avec succès !'
           end
         end
-        # Pour les requêtes Turbo, on recharge les données et on rend la vue partial
-        #format.turbo_stream do
-        #  @selected_eleve = @livret.user
-        #  @examens_theoriques = @selected_eleve.livrets.where(course_id: nil, flight_lesson_id: nil).order(:id)
-        #  render 'progressions/examens_theoriques_list'
-        #end
-        format.turbo_stream do
-          # On recharge l'instance @livret depuis la base de données
-          @livret.reload
-        end
+      else
+        format.html { redirect_to signature_livret_path(@livret), alert: "Erreur lors de la signature : #{@livret.errors.full_messages.join(', ')}" }
       end
     end
   end

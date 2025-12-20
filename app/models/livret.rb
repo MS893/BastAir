@@ -70,11 +70,11 @@ class Livret < ApplicationRecord
       content_type, base64_data = signature_data.split(';')
       decoded_image = Base64.decode64(base64_data.split(',').last)
       
-      self.signature_image.attach(
+      self.signature_image = {
         io: StringIO.new(decoded_image),
         filename: "signature-#{self.user_id}-#{Time.current.to_i}.png",
         content_type: 'image/png'
-      )
+      }
     end
 
     # Gestion de la signature instructeur (instructor_signature)
@@ -82,11 +82,11 @@ class Livret < ApplicationRecord
       content_type, base64_data = instructor_signature_data.split(';')
       decoded_image = Base64.decode64(base64_data.split(',').last)
       
-      self.instructor_signature.attach(
+      self.instructor_signature = {
         io: StringIO.new(decoded_image),
         filename: "instructor-signature-#{self.id}-#{Time.current.to_i}.png",
         content_type: 'image/png'
-      )
+      }
     end
   end
 

@@ -1,43 +1,84 @@
 import { Controller } from "@hotwired/stimulus"
-// Importe la librairie que vous venez d'installer via Importmaps
-import SignaturePad from "signature_pad"
 
 export default class extends Controller {
-  // Déclare les éléments HTML qu'on va manipuler : 
-  // 1. Le canvas (la zone de dessin)
-  // 2. Le champ caché (pour stocker la data Base64)
-  static targets = ["canvas", "output"]
+  static targets = ["canvas", "input"]
 
   connect() {
-    console.log("Signature Controller connecté.");
-    // Initialise Signature Pad sur l'élément canvas
-    this.signaturePad = new SignaturePad(this.canvasTarget, {
-      backgroundColor: 'rgb(255, 255, 255)', // Fond blanc (très important pour le PNG)
-      penColor: 'rgb(0, 0, 0)',             // Stylo noir
-      minWidth: 1,
-      maxWidth: 3
-    });
+    this.canvas = this.canvasTarget
+    this.ctx = this.canvas.getContext("2d")
+    
+    // Configuration du style de trait
+    this.ctx.lineWidth = 2
+    this.ctx.lineJoin = "round"
+    this.ctx.lineCap = "round"
+    this.ctx.strokeStyle = "#000000"
+
+    this.isDrawing = false
+    this.hasDrawn = false
+
+    // Ajout des écouteurs d'événements pour la souris et le tactile
+    this.canvas.addEventListener("mousedown", this.startDrawing.bind(this))
+    this.canvas.addEventListener("mousemove", this.draw.bind(this))
+    this.canvas.addEventListener("mouseup", this.stopDrawing.bind(this))
+    this.canvas.addEventListener("mouseout", this.stopDrawing.bind(this))
+    
+    this.canvas.addEventListener("touchstart", this.startDrawing.bind(this))
+    this.canvas.addEventListener("touchmove", this.draw.bind(this))
+    this.canvas.addEventListener("touchend", this.stopDrawing.bind(this))
   }
 
-  // Action pour effacer le dessin (appelée par un bouton HTML)
-  clear() {
-    this.signaturePad.clear();
+  startDrawing(event) {
+    this.isDrawing = true
+    this.ctx.beginPath()
+    const { x, y } = this.getCoordinates(event)
+    this.ctx.moveTo(x, y)
+    event.preventDefault() // Empêche le scroll sur mobile
   }
 
-  // Action appelée lorsque le formulaire est soumis (important !)
-  save(event) {
-    if (this.signaturePad.isEmpty()) {
-      alert("Veuillez apposer votre signature pour valider l'acquisition du cours.");
-      event.preventDefault(); // Empêche la soumission si le pad est vide
+  draw(event) {
+    if (!this.isDrawing) return
+    const { x, y } = this.getCoordinates(event)
+    this.ctx.lineTo(x, y)
+    this.ctx.stroke()
+    this.hasDrawn = true
+    event.preventDefault()
+  }
+
+  stopDrawing() {
+    this.isDrawing = false
+  }
+
+  getCoordinates(event) {
+    const rect = this.canvas.getBoundingClientRect()
+    let clientX, clientY
+
+    if (event.touches && event.touches.length > 0) {
+      clientX = event.touches[0].clientX
+      clientY = event.touches[0].clientY
     } else {
-      // 1. Convertit la signature en Data URL (Base64) format PNG
-      // PNG est préférable pour conserver la transparence/qualité du trait.
-      const dataURL = this.signaturePad.toDataURL('image/png');
-
-      // 2. Stocke la chaîne Base64 dans le champ caché qui sera envoyé au serveur Rails
-      this.outputTarget.value = dataURL;
-
-      // Le formulaire continue sa soumission
+      clientX = event.clientX
+      clientY = event.clientY
     }
+
+    return {
+      x: clientX - rect.left,
+      y: clientY - rect.top
+    }
+  }
+
+  clear() {
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
+    this.inputTarget.value = ""
+    this.hasDrawn = false
+  }
+
+  submit(event) {
+    if (!this.hasDrawn) {
+      event.preventDefault()
+      alert("Veuillez signer dans la zone prévue avant de valider.")
+      return
+    }
+    // On met à jour le champ caché avec l'image en base64 avant la soumission
+    this.inputTarget.value = this.canvas.toDataURL("image/png")
   }
 }

@@ -69,6 +69,7 @@ class User < ApplicationRecord
   validates :controle, presence: true, unless: :is_bia?
   validates :cotisation_club, presence: true, unless: :is_bia?
   
+  validate :incompatible_roles
   # == Actions ===============================================================
   before_validation :set_bia_defaults, if: :is_bia?       # lors de la création d'un compte BIA (collège ou lycée)
   after_create :welcome_send, unless: :is_bia?            # envoie d'un email sauf si c'est un collège ou lycée BIA
@@ -184,6 +185,12 @@ class User < ApplicationRecord
 
 
   private
+
+  def incompatible_roles
+    if eleve? && instructeur?
+      errors.add(:base, "Un utilisateur ne peut pas être à la fois élève et instructeur.")
+    end
+  end
 
   # Gère la date de fin de formation lors du changement de statut
   def manage_training_end_date
