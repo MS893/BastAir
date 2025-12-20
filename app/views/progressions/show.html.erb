@@ -131,7 +131,7 @@
                                 <%= f.collection_select :livret_id, @lecons_en_vol.to_a.uniq(&:title), :id, :title, { prompt: "Choisir la leçon..." }, { class: "form-select form-select-sm", required: true, onchange: "this.form.querySelector('button').disabled = !this.value" } %>
                               </div>
                               <div class="col-md-2">
-                                <%= f.select :status, [['Vu-1', 1], ['Avancé-2', 2], ['Acquis-3', 3]], { selected: 1 }, { class: "form-select form-select-sm", required: true } %>
+                                <%= f.select :status, [['Vu', 1], ['Avancé', 2], ['Acquis', 3]], { selected: 1 }, { class: "form-select form-select-sm", required: true } %>
                               </div>
                               <div class="col-md-5">
                                 <%= f.text_field :comment, class: "form-control form-control-sm", placeholder: "Commentaire...", required: true %>
@@ -511,8 +511,6 @@
                                   date_class = "text-decoration-none text-success fw-bold" # Vert : Signé par les deux
                                 elsif instructor_signed
                                   date_class = "text-decoration-none text-primary fw-bold" # Bleu : Signé par l'instructeur uniquement
-                                elsif student_signed
-                                  date_class = "text-decoration-none text-warning fw-bold" # Jaune : Signé par l'élève uniquement
                                 end
 
                                 # On permet l'accès à la page de signature pour voir ou signer

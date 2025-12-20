@@ -70,30 +70,10 @@
     <% end %>
 
     <div class="mt-4">
-      <button type="button" class="btn btn-success d-none" data-quiz-reponses-target="validateButton" data-action="click->quiz-reponses#validate">Valider le Quiz</button>
-    </div>
-  </div>
-
-
-  <!-- Section Signature -->
-  <div class="d-none mt-5" data-quiz-page-target="signatureSection">
-    <hr>
-    <h2 class="text-center">Signature de validation du cours</h2>
-    <% if @livret %>
-      <%= form_with(model: @livret, data: { controller: "signature", action: "submit->signature#save" }) do |form| %>
-        <p class="text-center">Veuillez signer dans le cadre ci-dessous pour certifier que vous avez lu et compris le cours.</p>
-        <%= form.hidden_field :signature_data, data: { signature_target: "output" } %>
-        <div class="signature-pad-container mx-auto" style="width: 100%; max-width: 500px;">
-          <canvas class="border bg-light" data-signature-target="canvas"></canvas>
-        </div>
-        <div class="text-center mt-3">
-          <button type="button" class="btn btn-secondary" data-action="click->signature#clear">Effacer</button>
-          <%= form.submit "Valider la signature", class: "btn btn-primary" %>
-        </div>
+      <%= link_to signature_livret_path(@livret), class: "text-decoration-none" do %>
+        <button type="button" class="btn btn-success d-none" data-quiz-reponses-target="validateButton" data-action="click->quiz-reponses#validate">Valider le Quiz</button>
       <% end %>
-    <% else %>
-      <div class="alert alert-danger text-center">Le livret de l'élève n'a pas pu être chargé. La signature est désactivée.</div>
-    <% end %>
+    </div>
   </div>
 
 </div>

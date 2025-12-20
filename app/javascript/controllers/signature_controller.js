@@ -1,5 +1,4 @@
 import { Controller } from "@hotwired/stimulus"
-// Importe la librairie qui fonctionnait bien
 import SignaturePad from "signature_pad"
 
 export default class extends Controller {
@@ -24,6 +23,21 @@ export default class extends Controller {
     this.signaturePad.clear();
   }
 
+  // Helper pour redimensionner l'image à 50%
+  getResizedSignature() {
+    const ratio = 0.5;
+    const canvas = this.canvasTarget;
+    const tempCanvas = document.createElement('canvas');
+    const tempCtx = tempCanvas.getContext('2d');
+
+    tempCanvas.width = canvas.width * ratio;
+    tempCanvas.height = canvas.height * ratio;
+
+    tempCtx.drawImage(canvas, 0, 0, tempCanvas.width, tempCanvas.height);
+
+    return tempCanvas.toDataURL('image/png');
+  }
+
   // Action appelée au clic sur le bouton Valider
   submit(event) {
     event.preventDefault(); // Empêche le comportement par défaut
@@ -45,31 +59,14 @@ export default class extends Controller {
     }
     // ------------------------------------------------
 
-    // 1. Convertit la signature en Data URL (Base64) format PNG (Code restauré)
-    const dataURL = this.signaturePad.toDataURL('image/png');
+    // 1. Convertit la signature en Data URL (Base64) format PNG avec redimensionnement à 50%
+    const dataURL = this.getResizedSignature();
 
     // 2. Stocke la chaîne Base64 dans le champ caché
     this.inputTarget.value = dataURL;
 
     // 3. Soumet le formulaire manuellement (nécessaire car le bouton est de type "button")
     this.element.submit();
-  }
-
-  // Action appelée lorsque le formulaire (FTP) est soumis (important !)
-  save(event) {
-    if (this.signaturePad.isEmpty()) {
-      alert("Veuillez apposer votre signature pour valider l'acquisition du cours.");
-      event.preventDefault(); // Empêche la soumission si le pad est vide
-    } else {
-      // 1. Convertit la signature en Data URL (Base64) format PNG
-      // PNG est préférable pour conserver la transparence/qualité du trait.
-      const dataURL = this.signaturePad.toDataURL('image/png');
-
-      // 2. Stocke la chaîne Base64 dans le champ caché qui sera envoyé au serveur Rails
-      this.outputTarget.value = dataURL;
-
-      // Le formulaire continue sa soumission
-    }
   }
 
 }
