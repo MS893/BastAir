@@ -7,7 +7,7 @@ class ProgressionsController < ApplicationController
     if current_user.instructeur? || current_user.admin?
       # Pour les instructeurs, on liste les élèves pour la sélection.
       # On exclut les comptes BIA qui ne sont pas des élèves pilotes.
-      @eleves = User.where("LOWER(fonction) = ?", 'eleve').where.not("LOWER(prenom) = ?", 'bia').order(:nom, :prenom)
+      @eleves = User.joins(:livrets).distinct.where("LOWER(fonction) IN (?)", ['eleve', 'brevete']).where.not("LOWER(prenom) = ?", 'bia').order(:nom, :prenom)
 
       # Si un élève est sélectionné via les paramètres, on le charge.
       if params[:eleve_id].present?
@@ -40,7 +40,7 @@ class ProgressionsController < ApplicationController
     @pdf = true
 
     # On définit @eleves pour que le formulaire dans la vue ne cause pas d'erreur, même s'il n'est pas affiché dans le PDF.
-    @eleves = User.where("LOWER(fonction) = ?", 'eleve').where.not("LOWER(prenom) = ?", 'bia').order(:nom, :prenom)
+    @eleves = User.joins(:livrets).distinct.where("LOWER(fonction) IN (?)", ['eleve', 'brevete']).where.not("LOWER(prenom) = ?", 'bia').order(:nom, :prenom)
 
     user_livrets = Livret.where(user: @selected_eleve)
     @examens_theoriques = user_livrets.where(course_id: nil, flight_lesson_id: nil).order(:id)
@@ -55,10 +55,36 @@ class ProgressionsController < ApplicationController
             zoom: 1,
             dpi: 75,
             margin: { top: 30, bottom: 20, left: 10, right: 10 },
-            header: { html: { template: 'layouts/_pdf_progression_header', layout: false } },
+            header: { html: { template: 'layouts/_pdf_progression_header', layout: false }, spacing: 10 },
             footer: { html: { template: 'layouts/_pdf_progression_footer', layout: false } }
   end
 
+  def update_exam
+    # Vérification des droits : instructeur ou admin uniquement
+    unless current_user.instructeur? || current_user.admin?
+      redirect_to root_path, alert: "Vous n'avez pas l'autorisation d'effectuer cette action."
+      return
+    end
+
+    @selected_eleve = User.find(params[:eleve_id])
+    
+    exam_date = params[:user][:date_fin_formation]
+    update_attributes = { date_fin_formation: exam_date }
+
+    if exam_date.present?
+      update_attributes[:fonction] = 'brevete'
+      update_attributes[:date_licence] = exam_date
+    else
+      update_attributes[:fonction] = 'eleve'
+      update_attributes[:date_licence] = nil
+    end
+
+    if @selected_eleve.update(update_attributes)
+      redirect_to livret_progression_path(eleve_id: @selected_eleve.id), notice: "Statut de l'examen pratique et profil élève mis à jour."
+    else
+      redirect_to livret_progression_path(eleve_id: @selected_eleve.id), alert: "Erreur lors de la mise à jour : #{@selected_eleve.errors.full_messages.join(', ')}"
+    end
+  end
 
   private
 

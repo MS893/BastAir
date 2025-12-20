@@ -158,6 +158,7 @@ Rails.application.routes.draw do
   get 'agenda_instructeurs', to: 'static_pages#agenda_instructeurs'
   get 'livret_progression', to: 'progressions#show'
   get 'livret_progression/download', to: 'progressions#download', as: 'download_livret_progression'
+  patch 'livret_progression/update_exam', to: 'progressions#update_exam', as: 'update_exam_progression'
 
   # Route pour la gestion des disponibilités des instructeurs
   get 'mes_disponibilites', to: 'instructor_availabilities#edit', as: 'edit_instructor_availabilities'

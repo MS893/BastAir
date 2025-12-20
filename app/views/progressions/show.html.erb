@@ -1,15 +1,21 @@
 <div class="container mt-4">
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <h1>Livret de Progression</h1>
-    <% if @selected_eleve %>
-      <%= link_to download_livret_progression_path(eleve_id: @selected_eleve.id), class: "btn btn-outline-primary", target: "_blank", data: { turbo: false } do %>
-        <i class="fas fa-file-pdf me-2"></i> Télécharger en PDF
+  <% if @pdf %>
+    <div class="p-3 fw-bold border-bottom mb-4" style="background-color: #e9ecef; font-size: 24px;">
+      Livret de Progression
+    </div>
+  <% else %>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h1>Livret de Progression</h1>
+      <% if @selected_eleve %>
+        <%= link_to download_livret_progression_path(eleve_id: @selected_eleve.id), class: "btn btn-outline-primary", target: "_blank", data: { turbo: false } do %>
+          <i class="fas fa-file-pdf me-2"></i> Télécharger en PDF
+        <% end %>
       <% end %>
-    <% end %>
-  </div>
+    </div>
+  <% end %>
 
   <%# --- Sélecteur d'élève pour les instructeurs --- %>
-  <% if current_user.instructeur? || current_user.admin? %>
+  <% if (current_user.instructeur? || current_user.admin?) && !@pdf %>
     <div class="card mb-4">
       <div class="card-body">
         <h5 class="card-title">Sélectionner un élève</h5>
@@ -89,7 +95,7 @@
         <% end %>
 
         <%# --- Section Validation des vols (Visible uniquement par l'instructeur concerné) --- %>
-        <% if current_user.instructeur? && @selected_eleve %>
+        <% if current_user.instructeur? && @selected_eleve && !@pdf %>
           <%# On récupère les vols de cet élève faits avec l'instructeur connecté, qui ne sont pas encore validés (pas de livret_id) %>
           <% pending_vols = @selected_eleve.vols.where(instructeur_id: current_user.id, livret_id: nil).order(debut_vol: :asc) %>
           
@@ -184,6 +190,44 @@
             <% end %>
             <span class="<%= lacher_nav ? 'text-success fw-bold' : 'text-muted' %>">Lâcher Navigation Solo</span>
           </div>
+          <div class="d-flex align-items-center">
+            <% 
+               examen_effectue = @selected_eleve.date_fin_formation.present?
+               can_edit_examen = (current_user.instructeur? || current_user.admin?) && !@pdf
+            %>
+            <% if can_edit_examen %>
+              <% if examen_effectue %>
+                <div class="d-flex align-items-center">
+                  <%= link_to update_exam_progression_path(eleve_id: @selected_eleve.id, user: { date_fin_formation: '' }), data: { turbo_method: :patch, turbo_confirm: "Êtes-vous sûr de vouloir annuler l'examen pratique ?" }, class: "btn btn-link p-0 text-decoration-none d-flex align-items-center text-reset border-0 bg-transparent me-2" do %>
+                    <span class="d-inline-flex align-items-center justify-content-center border border-2 rounded-circle me-2" style="width: 1.5rem; height: 1.5rem;">
+                      <span class="bg-success rounded-circle" style="width: 1rem; height: 1rem;"></span>
+                    </span>
+                    <span class="text-success fw-bold">Examen pratique effectué</span>
+                  <% end %>
+                  <%= form_with(model: @selected_eleve, url: update_exam_progression_path(eleve_id: @selected_eleve.id), method: :patch) do |f| %>
+                    <%= f.date_field :date_fin_formation, class: "form-control form-control-sm", style: "width: auto;", onchange: "this.form.requestSubmit()" %>
+                  <% end %>
+                </div>
+              <% else %>
+                <%= form_with(model: @selected_eleve, url: update_exam_progression_path(eleve_id: @selected_eleve.id), method: :patch, class: "d-flex align-items-center") do |f| %>
+                  <button type="submit" class="btn btn-link p-0 text-decoration-none d-flex align-items-center text-reset border-0 bg-transparent me-2" data-turbo-confirm="Êtes-vous sûr de vouloir valider l'examen pratique ?">
+                    <span class="d-inline-block border border-2 rounded-circle me-2" style="width: 1.5rem; height: 1.5rem;"></span>
+                    <span class="text-muted">Examen pratique effectué</span>
+                  </button>
+                  <%= f.hidden_field :date_fin_formation, value: Date.today %>
+                <% end %>
+              <% end %>
+            <% else %>
+              <% if examen_effectue %>
+                <span class="d-inline-flex align-items-center justify-content-center border border-2 rounded-circle me-2" style="width: 1.5rem; height: 1.5rem;">
+                  <span class="bg-success rounded-circle" style="width: 1rem; height: 1rem;"></span>
+                </span>
+              <% else %>
+                <span class="d-inline-block border border-2 rounded-circle me-2" style="width: 1.5rem; height: 1.5rem;"></span>
+              <% end %>
+              <span class="<%= examen_effectue ? 'text-success fw-bold' : 'text-muted' %>">Examen pratique effectué<%= examen_effectue ? " (#{l(@selected_eleve.date_fin_formation)})" : "" %></span>
+            <% end %>
+          </div>
         </div>
 
         <div class="card mb-4">
@@ -247,13 +291,19 @@
         <div class="accordion" id="progressionAccordion" data-controller="progression-form">
 
           <%# --- Accordion: Examens Théoriques --- %>
-          <div class="accordion-item">
+          <div class="accordion-item" style="<%= @pdf ? 'page-break-before: always;' : '' %>">
             <h2 class="accordion-header" id="headingOne">
-              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-                Examens Théoriques (<%= @examens_theoriques.select { |l| l.status == 3 && l.date.present? }.count %>/<%= @examens_theoriques.count %>)
-              </button>
+              <% if @pdf %>
+                <div class="p-3 fw-bold border-bottom" style="background-color: #e9ecef;">
+                  Examens Théoriques (<%= @examens_theoriques.select { |l| l.status == 3 && l.date.present? }.count %>/<%= @examens_theoriques.count %>)
+                </div>
+              <% else %>
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                  Examens Théoriques (<%= @examens_theoriques.select { |l| l.status == 3 && l.date.present? }.count %>/<%= @examens_theoriques.count %>)
+                </button>
+              <% end %>
             </h2>
-            <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#progressionAccordion">
+            <div id="collapseOne" class="accordion-collapse <%= @pdf ? '' : 'collapse' %>" aria-labelledby="headingOne" data-bs-parent="#progressionAccordion">
               <div class="accordion-body">
                 <%= turbo_frame_tag "examens_theoriques_list", "data-turbo-preserve-scroll": "true" do %>
                   <% if @examens_theoriques.present? %>
@@ -271,13 +321,19 @@
           </div>
 
           <%# --- Accordion: Formations Théoriques de Proximité --- %>
-          <div class="accordion-item">
+          <div class="accordion-item" style="<%= @pdf ? 'page-break-before: always;' : '' %>">
             <h2 class="accordion-header" id="headingTwo">
-              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                Formations Théoriques de Proximité (<%= @formations_theoriques.select { |l| l.status == 3 && l.date.present? }.count %>/<%= @formations_theoriques.count %>)
-              </button>
+              <% if @pdf %>
+                <div class="p-3 fw-bold border-bottom" style="background-color: #e9ecef;">
+                  Formations Théoriques de Proximité (<%= @formations_theoriques.select { |l| l.status == 3 && l.date.present? }.count %>/<%= @formations_theoriques.count %>)
+                </div>
+              <% else %>
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                  Formations Théoriques de Proximité (<%= @formations_theoriques.select { |l| l.status == 3 && l.date.present? }.count %>/<%= @formations_theoriques.count %>)
+                </button>
+              <% end %>
             </h2>
-            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#progressionAccordion">
+            <div id="collapseTwo" class="accordion-collapse <%= @pdf ? '' : 'collapse' %>" aria-labelledby="headingTwo" data-bs-parent="#progressionAccordion">
               <div class="accordion-body">
                 <% if @formations_theoriques.present? %>
                   <ul class="list-group">
@@ -287,7 +343,7 @@
                         <%# On vérifie si le cours est validé et si une date est présente %>
                         <% if livret.status == 3 && livret.date.present? %>
                           <%# Si l'utilisateur est instructeur/admin ET qu'une signature existe, on crée un lien %>
-                          <% if (current_user.instructeur? || current_user.admin?) && livret.signature_image.attached? %>
+                          <% if (current_user.instructeur? || current_user.admin?) && livret.signature_image.attached? && !@pdf %>
                             <%= link_to signature_livret_path(livret), class: "text-decoration-none" do %>
                               <span class="badge bg-success ms-2 fw-normal"><i class="fas fa-check-circle me-1"></i> Validé le <%= l(livret.date, format: :short_year) %></span>
                             <% end %>
@@ -307,13 +363,19 @@
           </div>
 
           <%# --- Accordion: Leçons en Vol --- %>
-          <div class="accordion-item">
+          <div class="accordion-item" style="<%= @pdf ? 'page-break-before: always;' : '' %>">
             <h2 class="accordion-header" id="headingThree">
-              <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="true" aria-controls="collapseThree">
-                Leçons en Vol (<%= @lecons_en_vol.select { |l| l.status == 3 && l.date.present? }.count %>/<%= @lecons_en_vol.count %>)
-              </button>
+              <% if @pdf %>
+                <div class="p-3 fw-bold border-bottom" style="background-color: #e9ecef;">
+                  Leçons en Vol (<%= @lecons_en_vol.select { |l| l.status == 3 && l.date.present? }.count %>/<%= @lecons_en_vol.count %>)
+                </div>
+              <% else %>
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="true" aria-controls="collapseThree">
+                  Leçons en Vol (<%= @lecons_en_vol.select { |l| l.status == 3 && l.date.present? }.count %>/<%= @lecons_en_vol.count %>)
+                </button>
+              <% end %>
             </h2>
-            <div id="collapseThree" class="accordion-collapse collapse show" aria-labelledby="headingThree" data-bs-parent="#progressionAccordion">
+            <div id="collapseThree" class="accordion-collapse <%= @pdf ? '' : 'collapse show' %>" aria-labelledby="headingThree" data-bs-parent="#progressionAccordion">
               <div class="accordion-body">
                 <% if @lecons_en_vol.present? %>
                   <div class="table-responsive">
@@ -364,12 +426,10 @@
                                   <%= l(livret.date, format: :short_year) %>
                                 <% elsif livret.session_dates.present? %>
                                   <%= l(Date.parse(livret.session_dates.last), format: :short_year) %>
-                                <% else %>
-                                  <span class="text-muted small">--/--</span>
                                 <% end %>
                               <% end %>
 
-                              <% if can_access_signature %>
+                              <% if can_access_signature && !@pdf %>
                                 <%= link_to date_content, signature_livret_path(livret), class: "#{date_class}", title: "Voir ou signer la leçon" %>
                               <% else %>
                                 <span class="<%= date_class %>"><%= date_content %></span>
@@ -416,7 +476,7 @@
                             </td>
                             <td><%= show_title ? livret.flight_lesson.title : "" %></td>
                             <td>
-                              <% if current_user.instructeur? || current_user.admin? %>
+                              <% if (current_user.instructeur? || current_user.admin?) && !@pdf %>
                                 <div class="dropdown">
                                   <button class="btn btn-link text-decoration-none p-0 border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     <% case livret.status %>

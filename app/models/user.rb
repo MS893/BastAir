@@ -196,8 +196,8 @@ class User < ApplicationRecord
   def manage_training_end_date
     if fonction_changed?
       if fonction == 'brevete' && fonction_was == 'eleve'
-        # L'élève devient breveté : on fige la date de fin de formation à aujourd'hui
-        self.date_fin_formation = Date.today
+        # L'élève devient breveté : on fige la date de fin de formation à aujourd'hui si elle n'est pas fournie
+        self.date_fin_formation ||= Date.today
       elsif fonction == 'eleve'
         # Si on repasse en élève (erreur de manip ?), on efface la date pour réactiver le livret
         self.date_fin_formation = nil
