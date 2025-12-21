@@ -12,7 +12,7 @@
   <div class="card text-white <%= solde_class %> h-100">
     <div class="card-body">
       <h3 class="bi bi-bank card-title mb-5">&nbsp;&nbsp;Solde de votre compte</h3>
-      <p class="card-text display-2"><%= number_to_currency(user.solde, unit: "€", separator: ",", delimiter: " ", format: "%n %u") %></p>
+      <p class="card-text display-3"><%= number_to_currency(user.solde, unit: "€", separator: ",", delimiter: " ", format: "%n %u") %></p>
       <div class="d-flex gap-4 mt-5">
         <%= link_to "Créditer mon compte", credit_path, class: "btn btn-light btn-lg" %>
       </div>

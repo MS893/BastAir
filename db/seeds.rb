@@ -116,37 +116,43 @@ def users
 
   # Crée 27 adhérents normaux (non élève)
   puts "\nCreating 27 regular members..."
-  27.times do
+  # Pour la performance, on prépare les attributs de tous les utilisateurs
+  # pour les insérer en une seule requête SQL avec `insert_all`.
+  users_attributes = 27.times.map do
+    print "*"
     licence = ["PPL", "LAPL"].sample
-    User.create!(
-      prenom: Faker::Name.first_name,
-      nom: Faker::Name.last_name,
-      email: Faker::Internet.unique.email,
-      password: "password",
-      password_confirmation: "password",
-      date_naissance: Faker::Date.birthday(min_age: 17, max_age: 70),
-      lieu_naissance: Faker::Address.city,
-      profession: Faker::Job.title,
-      adresse: Faker::Address.full_address,
-      telephone: '0606060606',
-      contact_urgence: "#{Faker::Name.name} - #{Faker::PhoneNumber.phone_number}",
-      num_ffa: Faker::Number.number(digits: 7).to_s,
-      licence_type: licence,
-      num_licence: Faker::Number.number(digits: 8).to_s,
-      date_licence: Faker::Date.forward(days: 365 * 2),
-      medical: Faker::Date.forward(days: 365),
-      fi: nil,
-      fe: nil,
-      controle: Faker::Date.forward(days: 365),
-      solde: 0.0, # On initialise le solde à 0
-      cotisation_club: Faker::Date.forward(days: 365),
-      cotisation_ffa: Faker::Date.forward(days: 365),
-      autorise: [true, true, true, false].sample, # 75% de chance d'être autorisé
-      admin: false,
-      fonction: "brevete"
-      )
-      print "*" # barre de progression
-    end
+    # On pré-crypte le mot de passe, car `insert_all` n'exécute pas les callbacks de Devise.
+    encrypted_password = User.new(password: "password").encrypted_password
+    {
+        prenom: Faker::Name.first_name,
+        nom: Faker::Name.last_name,
+        email: Faker::Internet.unique.email,
+        encrypted_password: encrypted_password,
+        date_naissance: Faker::Date.birthday(min_age: 17, max_age: 70),
+        lieu_naissance: Faker::Address.city,
+        profession: Faker::Job.title,
+        adresse: Faker::Address.full_address,
+        telephone: '0606060606',
+        contact_urgence: "#{Faker::Name.name} - #{Faker::PhoneNumber.phone_number}",
+        num_ffa: Faker::Number.number(digits: 7).to_s,
+        licence_type: licence,
+        num_licence: Faker::Number.number(digits: 8).to_s,
+        date_licence: Faker::Date.forward(days: 365 * 2),
+        medical: Faker::Date.forward(days: 365),
+        fi: nil,
+        fe: nil,
+        controle: Faker::Date.forward(days: 365),
+        solde: 0.0,
+        cotisation_club: Faker::Date.forward(days: 365),
+        cotisation_ffa: Faker::Date.forward(days: 365),
+        autorise: [true, true, true, false].sample,
+        admin: false,
+        fonction: "brevete",
+        created_at: Time.current,
+        updated_at: Time.current
+    }
+  end
+  User.insert_all(users_attributes)
   puts "\n✅ 27 regular members created."
   puts "Total users: #{User.count}"
 
@@ -263,62 +269,61 @@ def vols
 
   compteur_actuel = 123.45  # compteur moteur
 
-  20.times do
-    depart_time = Faker::Time.between(from: 30.days.ago, to: DateTime.now)
-    
-    # On choisit un utilisateur au hasard AVANT de créer le vol
-    pilote = all_users.sample
+  # Pour les opérations complexes où les validations sur chaque enregistrement sont importantes,
+  # enrober la boucle dans une transaction unique est un excellent moyen d'accélérer le processus
+  # en ne faisant qu'un seul "commit" à la base de données à la fin.
+  ActiveRecord::Base.transaction do
+    20.times do
+      depart_time = Faker::Time.between(from: 30.days.ago, to: DateTime.now)
+      pilote = all_users.sample
+      duree_vol_aleatoire = Faker::Number.between(from: 0.55, to: 3.05).round(2)
 
-    # Génère une durée de vol aléatoire entre 0.55 et 3.05 (centièmes d'heure)
-    duree_vol_aleatoire = Faker::Number.between(from: 0.55, to: 3.05).round(2)
-    
-    vol = Vol.new(
-      user: pilote,
-      avion: @avion,
-      type_vol: types_vol.sample,
-      depart: aerodromes.sample,
-      arrivee: aerodromes.sample,
-      debut_vol: depart_time,
-      fin_vol: depart_time + (duree_vol_aleatoire * 60).minutes,
-      compteur_depart: compteur_actuel.round(2),
-      compteur_arrivee: (compteur_actuel + duree_vol_aleatoire).round(2),
-      duree_vol: duree_vol_aleatoire,
-      instructeur_id: pilote.eleve? ? instructeur.id : nil,
-      nb_atterro: [1, 2, 3].sample,
-      solo: [true, false].sample,
-      supervise: [true, false].sample,
-      nav: [true, false].sample,
-      nature: 'VFR de jour',
-      fuel_avant_vol: Faker::Number.between(from: 10.0, to: 100.0).round(1),
-      fuel_apres_vol: Faker::Number.between(from: 20.0, to: 110.0).round(1),
-      huile: Faker::Number.between(from: 2.0, to: 3.0).round(1)
-    )
-
-    if vol.save
-      # Calcul du coût du vol
-      tarif = Tarif.order(annee: :desc).first
-      cost = vol.duree_vol * tarif.tarif_horaire_avion1
-      if vol.instructeur_id.present? && !vol.solo?
-        cost += vol.duree_vol * tarif.tarif_instructeur
-      end
-
-      # Création de la transaction débitant le compte du pilote
-      Transaction.create!(
-        user: vol.user,
-        date_transaction: vol.debut_vol.to_date,
-        description: "Vol du #{vol.debut_vol.to_date.strftime('%d/%m/%Y')} sur #{vol.avion.immatriculation}",
-        mouvement: 'Dépense',
-        montant: cost.round(2),
-        source_transaction: 'Heures de Vol / Location Avions', # Remplacé par une catégorie valide
-        payment_method: 'Prélèvement sur compte',
-        is_checked: false # à vérifier
+      vol = Vol.new(
+        user: pilote,
+        avion: @avion,
+        type_vol: types_vol.sample,
+        depart: aerodromes.sample,
+        arrivee: aerodromes.sample,
+        debut_vol: depart_time,
+        fin_vol: depart_time + (duree_vol_aleatoire * 60).minutes,
+        compteur_depart: compteur_actuel.round(2),
+        compteur_arrivee: (compteur_actuel + duree_vol_aleatoire).round(2),
+        duree_vol: duree_vol_aleatoire,
+        instructeur_id: pilote.eleve? ? instructeur.id : nil,
+        nb_atterro: [1, 2, 3].sample,
+        solo: [true, false].sample,
+        supervise: [true, false].sample,
+        nav: [true, false].sample,
+        nature: 'VFR de jour',
+        fuel_avant_vol: Faker::Number.between(from: 10.0, to: 100.0).round(1),
+        fuel_apres_vol: Faker::Number.between(from: 20.0, to: 110.0).round(1),
+        huile: Faker::Number.between(from: 2.0, to: 3.0).round(1)
       )
 
-      compteur_actuel = (compteur_actuel + 1.90).round(2)  # ajoute un petit temps au sol entre 2 vols
-    else
-      puts "Error creating flight: #{vol.errors.full_messages.join(', ')}"
+      if vol.save
+        tarif = Tarif.order(annee: :desc).first
+        cost = vol.duree_vol * tarif.tarif_horaire_avion1
+        if vol.instructeur_id.present? && !vol.solo?
+          cost += vol.duree_vol * tarif.tarif_instructeur
+        end
+
+        Transaction.create!(
+          user: vol.user,
+          date_transaction: vol.debut_vol.to_date,
+          description: "Vol du #{vol.debut_vol.to_date.strftime('%d/%m/%Y')} sur #{vol.avion.immatriculation}",
+          mouvement: 'Dépense',
+          montant: cost.round(2),
+          source_transaction: 'Heures de Vol / Location Avions',
+          payment_method: 'Prélèvement sur compte',
+          is_checked: false
+        )
+
+        compteur_actuel = (compteur_actuel + 1.90).round(2)
+      else
+        puts "Error creating flight: #{vol.errors.full_messages.join(', ')}"
+      end
+      print "*"
     end
-    print "*" # barre de progression
   end
   puts "\n✅ 20 flights created."
 
@@ -332,33 +337,37 @@ def resas
   all_users = User.where.not(fonction: 'eleve') # Les élèves ne peuvent pas réserver seuls
   instructors = [@admin_user, @instructeur_user]
   types_vol = ["Standard", "Vol découverte", "Vol d'initiation", "Vol d'essai", "Convoyage", "Vol BIA"]
-  20.times do
-    # On génère une date de début dans le futur, avec une heure de début entre 7h et 15h.
-    random_day = Faker::Date.between(from: 1.day.from_now, to: 60.days.from_now)
-    random_hour = rand(7..15) # Génère une heure entre 7 et 15 inclus
-    random_minute = [0, 15, 30, 45].sample # Pour des heures de début plus réalistes
-    date_debut = random_day.to_datetime.change(hour: random_hour, min: random_minute)
-    is_instruction = [true, false].sample
-    
-    # On crée l'objet réservation sans le sauvegarder tout de suite
-    reservation = Reservation.new(
-      user: all_users.sample, # Correctly assign a random user
-      avion: @avion,           # Assign the created aircraft
-      start_time: date_debut,
-      end_time: date_debut + 1.hour, # La réservation dure 1 heure
-      instruction: is_instruction,
-      fi: is_instruction ? instructors.sample.name : nil, # On utilise le nom complet de l'instructeur
-      type_vol: types_vol.sample
-    )
 
-    # On sauvegarde la réservation. Si elle est valide, on crée l'événement Google Calendar.
-    if reservation.save
-      # On appelle le service pour créer l'événement dans Google Calendar.
-      # Le service est conçu pour gérer la création sur l'agenda de l'avion
-      # et également sur celui de l'instructeur si `instruction` est à true.
-      GoogleCalendarService.new.create_event_for_app(reservation)
+  # La création de réservations implique un appel à une API externe (Google Calendar).
+  # Le goulot d'étranglement est le temps de réponse de l'API, pas la base de données.
+  # L'utilisation d'une transaction garantit que si un appel API échoue, la base de données reste cohérente.
+  ActiveRecord::Base.transaction do
+    20.times do
+      random_day = Faker::Date.between(from: 1.day.from_now, to: 60.days.from_now)
+      random_hour = rand(7..15)
+      random_minute = [0, 15, 30, 45].sample
+      date_debut = random_day.to_datetime.change(hour: random_hour, min: random_minute)
+      is_instruction = [true, false].sample
+
+      reservation = Reservation.new(
+        user: all_users.sample,
+        avion: @avion,
+        start_time: date_debut,
+        end_time: date_debut + 1.hour,
+        instruction: is_instruction,
+        fi: is_instruction ? instructors.sample.name : nil,
+        type_vol: types_vol.sample
+      )
+
+      if reservation.save
+        # L'appel à l'API externe est la partie lente.
+        # Si cet appel échoue, la transaction sera annulée (rollback).
+        GoogleCalendarService.new.create_event_for_app(reservation)
+      else
+        puts "Error creating reservation: #{reservation.errors.full_messages.join(', ')}"
+      end
+      print "*"
     end
-    print "*" # barre de progression
   end
   puts "\n✅ 20 bookings created."
 
@@ -369,27 +378,31 @@ def events
   # 5. Création de 10 events
   # ----------------------------------------------------
   puts "\nCreating 10 events..."
-  10.times do
-    # On génère une date de début dans le futur, avec une heure de début entre 7h et 15h.
-    random_day = Faker::Date.between(from: 1.day.from_now, to: 30.days.from_now)
-    random_hour = rand(7..15) # Génère une heure entre 7 et 15 inclus
-    random_minute = [0, 15, 30, 45].sample # Pour des heures de début plus réalistes
-    date_debut = random_day.to_datetime.change(hour: random_hour, min: random_minute)
+  # Comme pour les réservations, cette méthode fait des appels API.
+  # On utilise une transaction pour la cohérence des données.
+  ActiveRecord::Base.transaction do
+    10.times do
+      random_day = Faker::Date.between(from: 1.day.from_now, to: 30.days.from_now)
+      random_hour = rand(7..15)
+      random_minute = [0, 15, 30, 45].sample
+      date_debut = random_day.to_datetime.change(hour: random_hour, min: random_minute)
 
-    event = Event.new(
-      title: Event::ALLOWED_TITLES.sample, # titre parmi les titres autorisés
-      description: Faker::Lorem.paragraph(sentence_count: 5),
-      start_date: date_debut,
-      price: 0,
-      admin: @admin_user # On associe l'événement à l'administrateur créé plus haut
-    )
-    if event.save
-      # On appelle le service pour créer l'événement dans Google Calendar
-      GoogleCalendarService.new.create_event_for_app(event)
-      puts "Created event: #{event.title}"
+      event = Event.new(
+        title: Event::ALLOWED_TITLES.sample,
+        description: Faker::Lorem.paragraph(sentence_count: 5),
+        start_date: date_debut,
+        price: 0,
+        admin: @admin_user
+      )
+      if event.save
+        GoogleCalendarService.new.create_event_for_app(event)
+        print "*"
+      else
+        puts "Error creating event: #{event.errors.full_messages.join(', ')}"
+      end
     end
   end
-  puts "✅ 10 events created."
+  puts "\n✅ 10 events created."
 
 end
 
@@ -471,24 +484,37 @@ def cours
       . Détail des exercices et de leur enchainement, critères observés, niveau attendu, contenu du briefing
     DESC
   ]
-  ftp_courses_data.each do |course_data|
-    # On cherche le cours par son titre. S'il n'existe pas, on le crée.
-    course = Course.find_or_initialize_by(title: course_data[:title])
-    # On met à jour sa description dans tous les cas.
-    course.description = course_data[:description]
+
+  # Étape 1: Création ou mise à jour des cours
+  ftp_courses_data.each do |data|
+    course = Course.find_or_initialize_by(title: data[:title])
+    course.description = data[:description]
     course.save!
+  end
+  puts "✅ FTP course records created/updated."
+
+  # Étape 2: On attache les documents aux cours qui viennent d'être créés/mis à jour.
+  puts "Attaching documents to FTP courses..."
+  # On récupère les cours par leur titre pour pouvoir les associer aux fichiers
+  courses_by_title = Course.where(title: ftp_courses_data.pluck(:title)).index_by(&:title)
+
+  ftp_courses_data.each do |course_data|
     if course_data[:file].present?
-      # Attache le fichier PDF via Active Storage
-      file_path = Rails.root.join('lib', 'assets', 'ftp', course_data[:file])
-      if File.exist?(file_path)
-        course.document.attach(io: File.open(file_path), filename: course_data[:file], content_type: 'application/pdf')
-      else
-        puts "      ⚠️  Warning: File not found : #{course_data[:file]} '#{course_data[:title]}'."
+      course = courses_by_title[course_data[:title]]
+      if course
+        file_path = Rails.root.join('lib', 'assets', 'ftp', course_data[:file])
+        if File.exist?(file_path)
+          # On vérifie si un document n'est pas déjà attaché pour être idempotent
+          unless course.document.attached?
+            course.document.attach(io: File.open(file_path), filename: course_data[:file], content_type: 'application/pdf')
+          end
+        else
+          puts "      ⚠️  Warning: File not found : #{course_data[:file]} '#{course_data[:title]}'."
+        end
       end
     end
   end
-  puts "✅ FTP courses created."
-
+  puts "✅ FTP course documents attached."
 end
 
 def podcasts
@@ -496,7 +522,7 @@ def podcasts
   # 7. Création des podcasts
   # ----------------------------------------------------
   puts "\nCreating Podcasts..."
-  Audio.destroy_all
+  Audio.delete_all # Utiliser delete_all pour la performance
 
   podcasts_data = [
     { title: "Voler par fortes chaleurs", description: "Les questions à se poser quand il fait chaud. Attention les performances de l'avion sont dégradées.", file: "HighTemperatureFlightOperations.wav" },
@@ -507,14 +533,28 @@ def podcasts
     # autres podcasts : ajouter ici
   ]
 
+  # Étape 1: Création des enregistrements audio en une seule fois.
+  audio_attributes = podcasts_data.map do |data|
+    { title: data[:title], description: data[:description], created_at: Time.current, updated_at: Time.current }
+  end
+  Audio.insert_all(audio_attributes)
+  puts "✅ #{podcasts_data.size} podcast records created."
+
+  # Étape 2: Attachement des fichiers audio.
+  puts "Attaching audio files..."
+  audios_by_title = Audio.where(title: podcasts_data.pluck(:title)).index_by(&:title)
+
   podcasts_data.each do |podcast_data|
-    audio = Audio.create!(title: podcast_data[:title], description: podcast_data[:description])
-    podcast_file_path = Rails.root.join('app', 'assets', 'files', podcast_data[:file])
-    if File.exist?(podcast_file_path)
-      audio.audio.attach(io: File.open(podcast_file_path), filename: podcast_data[:file], content_type: 'audio/mpeg')
+    audio = audios_by_title[podcast_data[:title]]
+    if audio
+      podcast_file_path = Rails.root.join('app', 'assets', 'files', podcast_data[:file])
+      if File.exist?(podcast_file_path) && !audio.audio.attached?
+        audio.audio.attach(io: File.open(podcast_file_path), filename: podcast_data[:file], content_type: 'audio/mpeg')
+      end
     end
   end
-  puts "✅ #{Audio.count} podcast(s) created."
+  puts "✅ Audio files attached."
+  puts "Total podcasts: #{Audio.count}"
 
 end
 
@@ -564,18 +604,30 @@ def lecons
     { title: "37 Utilisation du GPS", file: "lecon_37.pdf" }
   ]
 
+  # Étape 1: Création des leçons en une seule fois.
+  lesson_attributes = flight_lessons_data.map do |data|
+    { title: data[:title].split(' ', 2).last, created_at: Time.current, updated_at: Time.current }
+  end
+  FlightLesson.insert_all(lesson_attributes)
+  puts "✅ Flight Lesson records created."
+
+  # Étape 2: Attachement des documents.
+  puts "Attaching documents to flight lessons..."
+  lessons_by_title = FlightLesson.all.index_by(&:title)
+
   flight_lessons_data.each do |lesson_data|
-    lesson = FlightLesson.create!(title: lesson_data[:title].split(' ', 2).last)
-    # emplacement des fichiers pdf : 'app/assets/lecons/'
-    file_path = Rails.root.join('lib', 'assets', 'lecons', lesson_data[:file])
-    if File.exist?(file_path)
-      lesson.document.attach(io: File.open(file_path), filename: lesson_data[:file], content_type: 'application/pdf')
-    else
-      puts "      ⚠️  Warning: File not found : #{lesson_data[:file]} '#{lesson.title}'."
+    title = lesson_data[:title].split(' ', 2).last
+    lesson = lessons_by_title[title]
+    if lesson
+      file_path = Rails.root.join('lib', 'assets', 'lecons', lesson_data[:file])
+      if File.exist?(file_path) && !lesson.document.attached?
+        lesson.document.attach(io: File.open(file_path), filename: lesson_data[:file], content_type: 'application/pdf')
+      elsif !File.exist?(file_path)
+        puts "      ⚠️  Warning: File not found : #{lesson_data[:file]} '#{lesson.title}'."
+      end
     end
   end
-  puts "✅ Flight Lessons created."
-
+  puts "✅ Flight lesson documents attached."
 end
 
 def questions_ftp
@@ -591,23 +643,28 @@ def questions_ftp
 
   # Nettoyer toutes les questions existantes pour éviter les doublons
   puts "Deleting all old questions..."
-  Question.destroy_all
+  Question.delete_all
 
   question_blocks = File.read(file_path).split("\n\n")
   puts "Nombre de blocs de questions lus du fichier : #{question_blocks.size}"
-  questions_created_count = 0
+  
+  questions_attributes = []
+  now = Time.current
+
+  # On récupère les cours FTP en une seule fois pour les associer plus tard
+  ftp_courses = (1..12).map { |n| Course.find_by("title LIKE ?", "FTP#{n}%") }
 
   # Itérer sur les 12 cours FTP
   (1..12).each do |course_num|
     # Trouver le cours correspondant, par exemple "FTP1", "FTP2", etc.
-    course = Course.find_by("title LIKE ?", "FTP#{course_num}%")
+    course = ftp_courses[course_num - 1]
 
     unless course
       puts "⚠️ Warning: Course for FTP#{course_num} (title like 'FTP#{course_num} %') not found. Skipping questions for it."
       next
     end
 
-    puts "Adding questions for course: '#{course.title}'"
+    # puts "Preparing questions for course: '#{course.title}'"
 
     # Déterminer la plage de questions pour ce cours
     start_index = (course_num - 1) * 10
@@ -625,16 +682,17 @@ def questions_ftp
 
       lines = block.split("\n")
       if lines.length == 6
-        Question.create!(
-          course: course,
+        questions_attributes << {
+          course_id: course.id,
           qcm: lines[0].strip,
           answer_1: lines[1].strip,
           answer_2: lines[2].strip,
           answer_3: lines[3].strip,
           answer_4: lines[4].strip,
-          correct_answer: lines[5].to_i
-        )
-        questions_created_count += 1
+          correct_answer: lines[5].to_i,
+          created_at: now,
+          updated_at: now
+        }
       else
         puts "⚠️  Warning: Skipping block for course FTP#{course_num} (index #{start_index + course_question_blocks.index(block)}) due to incorrect format (expected 6 lines, found #{lines.length})."
         lines.each_with_index do |line, idx|
@@ -645,7 +703,10 @@ def questions_ftp
     end
   end
 
-  puts "✅ #{questions_created_count} FTP questions created successfully."
+  if questions_attributes.any?
+    Question.insert_all(questions_attributes)
+    puts "✅ #{questions_attributes.size} FTP questions created successfully."
+  end
 end
 
 def livrets
@@ -662,8 +723,11 @@ def livrets
   end
 
   # 2. On nettoie les anciens livrets de l'élève pour repartir de zéro
-  Livret.where(user: eleve_user).destroy_all
+  Livret.where(user: eleve_user).delete_all
   puts "  -> Old booklet entries for the student have been cleared."
+
+  livret_entries = []
+  now = Time.current
 
   # 3. Création des entrées pour les examens théoriques PPL (directement dans le livret)
   ppl_exam_titles = [
@@ -678,41 +742,60 @@ def livrets
     "090 - Communications"
   ]
   ppl_exam_titles.each do |exam_title|
-    Livret.create!(
-      user: eleve_user,
+    livret_entries << {
+      user_id: eleve_user.id,
       title: exam_title,
-      status: 0, # Statut initial : "non obtenu"
-      comment: ""
-    )
+      status: 0,
+      comment: "",
+      course_id: nil,
+      flight_lesson_id: nil,
+      date: nil,
+      created_at: now,
+      updated_at: now
+    }
   end
-  puts "  -> Added PPL theoretical exam entries to the booklet."
+  puts "  -> Prepared PPL theoretical exam entries."
 
   # 4. Création des entrées pour les cours FTP (titres commençant par "FTP")
   Course.where("title LIKE 'FTP%'").find_each do |course|
-    Livret.create!(
-      user: eleve_user,
-      course: course,
+    livret_entries << {
+      user_id: eleve_user.id,
+      course_id: course.id,
       title: course.title,
       status: 0,
-      comment: ""
-    )
+      comment: "",
+      flight_lesson_id: nil,
+      date: nil,
+      created_at: now,
+      updated_at: now
+    }
   end
-  puts "  -> Added FTP course entries to the booklet."
+  puts "  -> Prepared FTP course entries."
 
   # 5. Création des entrées pour les leçons de voldans seeds.rb je veut supprimer la création de cours 
   FlightLesson.find_each do |lesson|
-    Livret.create!(
-      user: eleve_user,
-      flight_lesson: lesson,
+    livret_entries << {
+      user_id: eleve_user.id,
+      flight_lesson_id: lesson.id,
       title: lesson.title,
       status: 0,
       comment: "Mettre en œuvre l’avion depuis sa prise en compte jusqu’à sa restitution.
       Maîtriser les évolutions de l’avion au sol.
-      Etre capable d’agir sur les commandes de manière souple et mesurée."
-    )
+      Etre capable d’agir sur les commandes de manière souple et mesurée.",
+      course_id: nil,
+      date: nil,
+      created_at: now,
+      updated_at: now
+    }
   end
-  puts "  -> Added flight lesson entries to the booklet."
-  puts "✅ Complete progression booklet created for student '#{eleve_user.full_name}' with #{Livret.where(user: eleve_user).count} total entries."
+  puts "  -> Prepared flight lesson entries."
+
+  # 6. Insertion en une seule fois de toutes les entrées du livret
+  if livret_entries.any?
+    Livret.insert_all(livret_entries)
+  end
+
+  puts "✅ Complete progression booklet created for student '#{eleve_user.full_name}' with #{livret_entries.count} total entries."
 end
 
 def transactions
@@ -725,22 +808,25 @@ def transactions
   descriptions_recette = ["Crédit compte", "Achat bloc 6h", "Paiement cotisation annuelle", "Participation événement BBQ"]
   descriptions_depense = ["Heure de vol F-HGBT", "Achat casque", "Taxe atterrissage", "Remboursement", "Achat essence", "Location hangar"]
   all_users = User.all
+  now = Time.current
 
-  20.times do
+  transactions_attributes = 20.times.map do
     mouvement = ['Recette', 'Dépense'].sample
     description = mouvement == 'Recette' ? descriptions_recette.sample : descriptions_depense.sample
-    
-    Transaction.create!(
-      user: all_users.sample,
+    {
+      user_id: all_users.sample.id,
       date_transaction: Faker::Date.between(from: 1.year.ago, to: Date.today),
       description: description,
       mouvement: mouvement,
       montant: Faker::Commerce.price(range: 10..500),
       payment_method: payment_methods.sample,
       is_checked: [true, false].sample,
-      source_transaction: Transaction::ALLOWED_TSN.values.sample
-    )
+      source_transaction: Transaction::ALLOWED_TSN.values.sample,
+      created_at: now,
+      updated_at: now
+    }
   end
+  Transaction.insert_all(transactions_attributes)
   puts "✅ 20 transactions created."
 
 end
@@ -805,28 +891,27 @@ else
   end
   
   puts "\nCleaning database..."
-  # On détruit les tables en respectant l'ordre des dépendances pour éviter les erreurs de clé étrangère.
-  # 1. Modèles qui dépendent d'autres modèles (ex: User, Event, Avion)
-  Attendance.destroy_all
-  Question.destroy_all # Doit être détruit avant Course
-  Comment.destroy_all
-  NewsItem.destroy_all
-  Immobilisation.destroy_all # Doit être détruit avant Transaction
-  Livret.destroy_all
-  Penalite.destroy_all
-  Reservation.destroy_all
-  Signalement.destroy_all
-  Transaction.destroy_all
-  Vol.destroy_all
-  # 2. Modèles dont d'autres dépendent
-  Event.destroy_all
-  User.destroy_all
-  Avion.destroy_all
-  # 3. Modèles généralement indépendants
-  Audio.destroy_all
-  Course.destroy_all
-  FlightLesson.destroy_all
-  Tarif.destroy_all
+  # Utilisation de delete_all au lieu de destroy_all pour une suppression beaucoup plus rapide
+  # car elle évite d'instancier chaque objet et d'exécuter les callbacks
+  # L'ordre est important pour respecter les contraintes de clés étrangères
+  Attendance.delete_all
+  Question.delete_all
+  Comment.delete_all
+  NewsItem.delete_all
+  Immobilisation.delete_all
+  Livret.delete_all
+  Penalite.delete_all
+  Reservation.delete_all
+  Signalement.delete_all
+  Transaction.delete_all
+  Vol.delete_all
+  Event.delete_all
+  User.delete_all
+  Avion.delete_all
+  Audio.delete_all
+  Course.delete_all
+  FlightLesson.delete_all
+  Tarif.delete_all
   puts "✅ Cleaned"
   
   puts "Réinitialisation des IDs de séquence pour SQLite..."
