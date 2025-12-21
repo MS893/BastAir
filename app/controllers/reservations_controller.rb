@@ -300,9 +300,10 @@ class ReservationsController < ApplicationController
       candidates = [
         ENV['GOOGLE_CALENDAR_ID'],
         ENV['GOOGLE_CALENDAR_ID_EVENTS'],
-        ENV['GOOGLE_CALENDAR_ID_AVION_F_HGBT'],
-        ENV['GOOGLE_CALENDAR_ID_INSTRUCTEUR_HUY']
-      ].compact.uniq
+        ENV['GOOGLE_CALENDAR_ID_AVION_F_HGBT']
+      ]
+      candidates += User.where.not(google_calendar_id: nil).pluck(:google_calendar_id)
+      candidates = candidates.compact.uniq
 
       Rails.logger.info("Trying explicit calendar ids: #{candidates.inspect}")
       found = []

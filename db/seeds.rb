@@ -24,8 +24,8 @@ def users
   # ---------------------------------------------------------------
   # Crée un administrateur
   @admin_user = User.create!(
-    prenom: "Admin",
-    nom: "User",
+    prenom: "Admin", # Le nom est changé pour correspondre à la variable d'environnement
+    nom: "ADM",
     email: "admin@bastair.com",
     password: "password",
     password_confirmation: "password",
@@ -44,7 +44,8 @@ def users
     fi: Faker::Date.forward(days: 365),
     fe: Faker::Date.forward(days: 365),
     controle: Faker::Date.forward(days: 365),
-    solde: 0.0, # On initialise le solde à 0
+    solde: 0.0,
+    google_calendar_id: ENV['GOOGLE_CALENDAR_ID_INSTRUCTEUR_ADM'],
     cotisation_club: Faker::Date.forward(days: 365),
     cotisation_ffa: Faker::Date.forward(days: 365),
     autorise: true,
@@ -104,7 +105,8 @@ def users
     fi: Faker::Date.forward(days: 730), # Date FI valide pour 2 ans (c'est la présence d'une date valide qui donne le statut d'instructeur)
     fe: nil,
     controle: Faker::Date.forward(days: 365),
-    solde: 0.0, # On initialise le solde à 0
+    solde: 0.0,
+    google_calendar_id: ENV['GOOGLE_CALENDAR_ID_INSTRUCTEUR_HUY'],
     cotisation_club: Faker::Date.forward(days: 365),
     cotisation_ffa: Faker::Date.forward(days: 365),
     autorise: true,
@@ -327,7 +329,8 @@ def resas
   # 4. Création de 20 réservations
   # ----------------------------------------------------
   puts "\nCreating bookings..."
-  all_users = User.all
+  all_users = User.where.not(fonction: 'eleve') # Les élèves ne peuvent pas réserver seuls
+  instructors = [@admin_user, @instructeur_user]
   types_vol = ["Standard", "Vol découverte", "Vol d'initiation", "Vol d'essai", "Convoyage", "Vol BIA"]
   20.times do
     # On génère une date de début dans le futur, avec une heure de début entre 7h et 15h.
@@ -335,6 +338,7 @@ def resas
     random_hour = rand(7..15) # Génère une heure entre 7 et 15 inclus
     random_minute = [0, 15, 30, 45].sample # Pour des heures de début plus réalistes
     date_debut = random_day.to_datetime.change(hour: random_hour, min: random_minute)
+    is_instruction = [true, false].sample
     
     # On crée l'objet réservation sans le sauvegarder tout de suite
     reservation = Reservation.new(
@@ -342,8 +346,8 @@ def resas
       avion: @avion,           # Assign the created aircraft
       start_time: date_debut,
       end_time: date_debut + 1.hour, # La réservation dure 1 heure
-      instruction: [true, false].sample,
-      fi: @instructeur_user.id.to_s, # On utilise l'ID de l'instructeur
+      instruction: is_instruction,
+      fi: is_instruction ? instructors.sample.name : nil, # On utilise le nom complet de l'instructeur
       type_vol: types_vol.sample
     )
 
@@ -780,11 +784,10 @@ else
     puts "Effacement des événements des agendas Google en cours..."
     begin
       service = GoogleCalendarService.new
-      calendar_ids = [
-        ENV['GOOGLE_CALENDAR_ID_EVENTS'],
-        ENV['GOOGLE_CALENDAR_ID_AVION_F_HGBT'],
-        ENV['GOOGLE_CALENDAR_ID_INSTRUCTEUR_HUY']
-      ].compact.uniq
+      # On récupère dynamiquement tous les IDs de calendriers à nettoyer
+      calendar_ids = [ENV['GOOGLE_CALENDAR_ID_EVENTS'], ENV['GOOGLE_CALENDAR_ID_AVION_F_HGBT']]
+      calendar_ids += User.where.not(google_calendar_id: nil).pluck(:google_calendar_id)
+      calendar_ids = calendar_ids.compact.uniq
   
       if calendar_ids.empty?
         puts "⚠️  Aucun ID de calendrier Google trouvé dans les variables d'environnement."

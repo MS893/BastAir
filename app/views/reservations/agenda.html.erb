@@ -9,14 +9,24 @@
     <div class="text-center">
       <%
         base_url = "https://calendar.google.com/calendar/embed?"
-        # Palette par défaut (hex avec #)
 
-        # Option : mapping explicite id => couleur (préférable pour contrôler précisément)
+        # 1. Initialisation de la table de correspondance avec les agendas statiques
         id_color_map = {
-          ENV['GOOGLE_CALENDAR_ID_AVION_F_HGBT'] => '#B1365F',
-          ENV['GOOGLE_CALENDAR_ID_INSTRUCTEUR_HUY'] => '#0D7813',
-          ENV['GOOGLE_CALENDAR_ID_EVENTS'] => '#1D2D50'
-        }.compact # .compact retire les paires nil si une variable d'env n'est pas définie
+          ENV['GOOGLE_CALENDAR_ID_AVION_F_HGBT'] => '#B1365F', # Couleur pour l'avion
+          ENV['GOOGLE_CALENDAR_ID_EVENTS'] => '#1D2D50'      # Couleur pour les événements
+        }.compact
+
+        # 2. Définition d'une palette de couleurs pour les instructeurs
+        instructor_colors = ['#0D7813', '#d87300ff', '#4285F4', '#DB4437', '#F4B400', '#795548', '#E67C73', '#F09300']
+        color_index = 0
+
+        # 3. Ajout dynamique des agendas des instructeurs
+        # On récupère tous les utilisateurs qui sont instructeurs et ont un ID d'agenda Google.
+        User.where('fi IS NOT NULL AND fi >= ?', Date.today).where.not(google_calendar_id: [nil, ""]).find_each do |instructor|
+          # On assigne une couleur de la palette en tournant (modulo)
+          id_color_map[instructor.google_calendar_id] = instructor_colors[color_index % instructor_colors.length]
+          color_index += 1
+        end
 
         # Pour chaque calendrier on ajoute src=...&color=%23HEX
         calendar_params = @calendar_ids.map.with_index do |id, idx|

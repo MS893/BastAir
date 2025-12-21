@@ -14,18 +14,24 @@
   <%# Champ caché pour gérer la redirection après une mise à jour depuis la page admin %>
   <%= hidden_field_tag :redirect_to, params[:redirect_to] if params[:redirect_to].present? %>
 
-  <div class="mb-3">
-    <%= form.label :avion_id, "Avion" %>
-    <%# Ce champ va déclencher l'action `updateSignalements` du contrôleur Stimulus %>
-    <%= form.collection_select :avion_id, @avions, :id, :immatriculation, {}, { 
-      class: "form-select", 
-      "data-reservation-form-target": "avionSelect",
-      "data-action": "change->reservation-form#updateSignalements"
-    } %>
+  <div class="row">
+    <div class="col-md-4 mb-3">
+      <%= form.label :avion_id, "Avion" %>
+      <%# Ce champ va déclencher l'action `updateSignalements` du contrôleur Stimulus %>
+      <%= form.collection_select :avion_id, @avions, :id, :immatriculation, {}, {
+        class: "form-select",
+        "data-reservation-form-target": "avionSelect",
+        "data-action": "change->reservation-form#updateSignalements"
+      } %>
+    </div>
+    <div class="col-md-4 mb-3">
+      <%= form.label :type_vol, "Type de vol" %>
+      <%= form.select :type_vol, ["Local", "Navigation", "Mania"], {}, { class: "form-select" } %>
+    </div>
   </div>
 
   <div class="row">
-    <div class="col-md-2 mb-3">
+    <div class="col-md-3 mb-3">
       <%= form.label :start_date, "Date de début" %>
       <%# L'action `fetchInstructors` est ajoutée pour mettre à jour la liste des instructeurs via AJAX %>
       <%= form.date_field :start_date, class: "form-control", data: { reservation_form_target: "startDate", action: "change->reservation-form#updateEndDate change->reservation-form#fetchInstructors" } %>
@@ -38,7 +44,9 @@
       <%= form.label :start_minute, "Min" %>
       <%= form.select :start_minute, (0..45).step(15).map { |m| [m.to_s.rjust(2, '0'), m] }, {}, { class: "form-select", data: { reservation_form_target: "startMinute", action: "change->reservation-form#adjustEndTime change->reservation-form#fetchInstructors" } } %>
     </div>
-    <div class="col-md-2 mb-3">
+  </div>
+  <div class="row">
+    <div class="col-md-3 mb-3">
       <%= form.label :end_date, "Date de fin" %>
       <%= form.date_field :end_date, class: "form-control", data: { reservation_form_target: "endDate" } %>
     </div>
@@ -50,11 +58,6 @@
       <%= form.label :end_minute, "Min" %>
       <%= form.select :end_minute, (0..45).step(15).map { |m| [m.to_s.rjust(2, '0'), m] }, {}, { class: "form-select", data: { reservation_form_target: "endMinute" } } %>
     </div>
-  </div>
-
-  <div class="mb-3">
-    <%= form.label :type_vol, "Type de vol" %>
-    <%= form.select :type_vol, ["Local", "Navigation", "Mania"], {}, { class: "form-select" } %>
   </div>
 
   <div class="form-check form-switch mb-3">

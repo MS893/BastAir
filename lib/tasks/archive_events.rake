@@ -8,9 +8,11 @@ namespace :calendar do
     calendar_ids = [
       ENV['GOOGLE_CALENDAR_ID'],
       ENV['GOOGLE_CALENDAR_ID_EVENTS'],
-      ENV['GOOGLE_CALENDAR_ID_AVION_F_HGBT'],
-      ENV['GOOGLE_CALENDAR_ID_INSTRUCTEUR_HUY']
-    ].compact.uniq
+      ENV['GOOGLE_CALENDAR_ID_AVION_F_HGBT']
+    ]
+    # Ajoute dynamiquement les calendriers de tous les instructeurs
+    calendar_ids += User.where.not(google_calendar_id: nil).pluck(:google_calendar_id)
+    calendar_ids = calendar_ids.compact.uniq
 
     # Define the cutoff date. Events older than this will be archived.
     cutoff_date = 1.year.ago

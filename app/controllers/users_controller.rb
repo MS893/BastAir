@@ -147,7 +147,7 @@ class UsersController < ApplicationController
     # Paramètres sensibles que seul un administrateur peut modifier
     # L'autorisation est vérifiée par `authorize_admin!` dans le `before_action`
     if current_user.admin?
-      params.require(:user).permit(:admin, :fonction, :fi)
+      params.require(:user).permit(:admin, :fonction, :fi, :fe, :nuit, :google_calendar_id)
     else
       params.require(:user).permit() # Ne rien autoriser par défaut
     end

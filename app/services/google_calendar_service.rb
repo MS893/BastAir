@@ -52,15 +52,7 @@ class GoogleCalendarService
         # On récupère l'objet User de l'instructeur à partir de son nom stocké dans `record.fi`.
         instructor_name = record.fi
 
-        # --- Table de correspondance entre le nom de l'instructeur et son agenda ---
-        # C'est ici que l'on fait le lien.
-        instructor_calendar_id =  case instructor_name
-                                  when "Christian HUY"
-                                    ENV['GOOGLE_CALENDAR_ID_INSTRUCTEUR_HUY']
-                                  # Autres instructeurs ici
-                                  # when "Autre NOM"
-                                  #   ENV['GOOGLE_CALENDAR_ID_INSTRUCTEUR_AUTRE']
-                                  end
+        instructor_calendar_id = get_instructor_calendar_id(instructor_name)
 
         if instructor_calendar_id.present?
 
@@ -111,11 +103,7 @@ class GoogleCalendarService
     instructor_event_id = record.google_instructor_event_id
     if instructor_event_id.present?
       instructor_name = record.fi
-      instructor_calendar_id =  case instructor_name
-                                when "Christian HUY"
-                                  ENV['GOOGLE_CALENDAR_ID_INSTRUCTEUR_HUY']
-                                end
-
+      instructor_calendar_id = get_instructor_calendar_id(instructor_name)
       if instructor_calendar_id.present?
         # On personnalise le titre pour l'instructeur
         instructor_event_data = build_event_from_reservation(record).merge(
@@ -175,12 +163,7 @@ class GoogleCalendarService
 
     # 1. Find the instructor's calendar ID using the existing pattern.
     instructor_name = reservation.fi
-    instructor_calendar_id =  case instructor_name
-                              when "Christian HUY"
-                                ENV['GOOGLE_CALENDAR_ID_INSTRUCTEUR_HUY']
-                              # Add other instructors here
-                              end
-
+    instructor_calendar_id = get_instructor_calendar_id(instructor_name)
     return unless instructor_calendar_id.present?
 
     # 2. Build the event data using the existing reservation helper, then customize the summary.
@@ -201,13 +184,15 @@ class GoogleCalendarService
 
   # Récupère la liste de tous les calendriers accessibles par le compte de service
   def list_calendars
-    # On récupère les IDs des calendriers depuis les variables d'environnement
+    # On récupère les IDs des calendriers de base depuis les variables d'environnement
     calendar_ids = [
       ENV['GOOGLE_CALENDAR_ID'],
       ENV['GOOGLE_CALENDAR_ID_EVENTS'],
-      ENV['GOOGLE_CALENDAR_ID_AVION_F_HGBT'],
-      ENV['GOOGLE_CALENDAR_ID_INSTRUCTEUR_HUY']
-    ].compact.uniq
+      ENV['GOOGLE_CALENDAR_ID_AVION_F_HGBT']
+    ]
+    # On y ajoute dynamiquement les IDs des calendriers de tous les instructeurs depuis la base de données
+    calendar_ids += User.where.not(google_calendar_id: nil).pluck(:google_calendar_id)
+    calendar_ids = calendar_ids.compact.uniq
 
     # Pour chaque ID, on récupère les détails du calendrier (nom, etc.)
     calendar_ids.map do |cal_id|
@@ -290,12 +275,7 @@ class GoogleCalendarService
     return unless instructor_name.present?
 
     # On utilise la même table de correspondance que pour la création.
-    instructor_calendar_id =  case instructor_name
-                              when "Christian HUY"
-                                ENV['GOOGLE_CALENDAR_ID_INSTRUCTEUR_HUY']
-                              # Ajoutez d'autres instructeurs ici
-                              end
-
+    instructor_calendar_id = get_instructor_calendar_id(instructor_name)
     return unless instructor_calendar_id.present?
 
     begin
@@ -317,15 +297,7 @@ class GoogleCalendarService
     return false unless instructor_event_id.present? && instructor_name.present?
 
     # On utilise la même table de correspondance que pour la création
-    instructor_calendar_id = case instructor_name
-                            when "Christian HUY"
-                              ENV['GOOGLE_CALENDAR_ID_INSTRUCTEUR_HUY']
-                            # Ajoutez d'autres instructeurs ici
-                            else
-                              Rails.logger.warn "🔍 [GoogleCalendarService] Instructeur '#{instructor_name}' non trouvé dans la configuration"
-                              nil
-                            end
-
+    instructor_calendar_id = get_instructor_calendar_id(instructor_name)
     return false unless instructor_calendar_id.present?
     
     Rails.logger.info "🔍 [GoogleCalendarService] Tentative suppression event #{instructor_event_id} du calendrier #{instructor_calendar_id}"
@@ -394,6 +366,20 @@ class GoogleCalendarService
 
   
   private
+
+  # Centralise la recherche de l'ID de calendrier d'un instructeur par son nom.
+  def get_instructor_calendar_id(instructor_name)
+    return nil if instructor_name.blank?
+
+    # On décompose le nom complet (ex: "Christian HUY") pour chercher sur les bonnes colonnes.
+    first_name, last_name = instructor_name.split(' ', 2)
+    # Gère le cas où le nom n'est pas complet
+    return nil unless first_name && last_name
+
+    # On cherche l'utilisateur et on retourne son ID de calendrier Google.
+    instructor = User.find_by(prenom: first_name, nom: last_name)
+    instructor&.google_calendar_id
+  end
 
   # Cette méthode retourne un tableau d'IDs de calendriers pertinents pour la réservation.
   def get_calendar_ids_for_reservation(reservation)
