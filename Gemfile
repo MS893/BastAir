@@ -34,7 +34,7 @@ gem 'rails-i18n'
 # export fichier csv
 gem 'csv' 
 # Pour le rendu des fichiers Markdown
-gem 'redcarpet'
+gem 'commonmarker'
 
 
 

@@ -48,4 +48,10 @@ module ApplicationHelper
     end
   end
 
+  def markdown(text)
+    return "" if text.blank?
+
+    MarkdownService.new.render(text)
+  end
+
 end

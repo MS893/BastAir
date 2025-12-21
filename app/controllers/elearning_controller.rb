@@ -7,9 +7,8 @@ class ElearningController < ApplicationController
     # La variable @course est maintenant définie par le before_action :set_course
 
     # On cherche un livret existant pour l'utilisateur connecté ET le cours actuel
-    # S'il n'en existe pas, on en prépare un nouveau en mémoire (find_or_initialize_by)
-    # Ce livret sera sauvegardé en base de données uniquement lors de la soumission du formulaire de signature
-    @livret = Livret.find_or_initialize_by(user: current_user, course: @course)
+    # S'il n'en existe pas, on le crée pour permettre l'accès à la page de signature (qui nécessite un ID)
+    @livret = Livret.find_or_create_by(user: current_user, course: @course)
 
     # On vérifie si le cours a déjà été validé et signé pour l'afficher dans la vue
     @quiz_validated = @livret.persisted? && @livret.status == 3 && @livret.signature_image.attached?
