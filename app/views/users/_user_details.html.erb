@@ -33,7 +33,6 @@
       <hr>
       <div class="d-flex justify-content-between align-items-center">
         <h5 class="mb-0">Solde du compte : <span class="badge bg-info fs-6"><%= number_to_currency(user.solde, unit: "€", separator: ",", delimiter: " ") %></span></h5>
-        <%= link_to "Voir le profil complet", user_path(user), class: "btn btn-sm btn-outline-primary" %>
       </div>
 
       <% if current_user.admin? %>
@@ -43,6 +42,10 @@
           <div class="mb-3 form-check">
             <%= form.check_box :admin, class: "form-check-input" %>
             <%= form.label :admin, "Administrateur", class: "form-check-label" %>
+          </div>
+          <div class="mb-3 form-check">
+            <%= form.check_box :autorise, class: "form-check-input" %>
+            <%= form.label :autorise, "Autorisé à voler", class: "form-check-label" %>
           </div>
 
           <div class="mb-3">

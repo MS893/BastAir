@@ -9,6 +9,7 @@ module Admin
     # Clé: nom de la table.
     # Valeur: un hash où la clé est le type d'ID (ex: :user_ids) et la valeur est la ou les colonnes correspondantes.
     ASSOCIATIONS_TO_PRELOAD = {
+      'activity_logs' => { user_ids: :user_id },
       'attendances'  => { user_ids: :user_id, event_ids: :event_id },
       'comments'     => { user_ids: :user_id, event_ids: :event_id },
       'events'       => { user_ids: :admin_id }, # admin_id est un user_id
@@ -28,12 +29,14 @@ module Admin
         'active_storage_attachments',
         'active_storage_blobs',
         'active_storage_variant_records',
-        'web_push_subscriptions'
+        'web_push_subscriptions',
+        'questions' # Table interne de gestion des QCM, non pertinente pour l'admin
+        # 'livrets' # à rajouter livrets de progression plus tard
       ]
 
       # On définit manuellement l'ordre des tables pour un contrôle total.
       ordered_tables = [
-        'activity_logs',                # Activity Log
+        'activity_logs',                # Historique d'activité
         'users',                        # Adhérents
         'avions',                       # Avions
         'comments',                     # Commentaires
@@ -79,6 +82,16 @@ module Admin
           filtered_records = filtered_records.where(conditions, query: query_term)
         end
 
+        # Filtre par type d'action (spécifique pour activity_logs ou tables avec colonne 'action')
+        if params[:action_type].present? && @model.column_names.include?('action')
+          filtered_records = filtered_records.where(action: params[:action_type])
+        end
+
+        # Filtre par type d'enregistrement (spécifique pour activity_logs)
+        if params[:record_type].present? && @model.column_names.include?('record_type')
+          filtered_records = filtered_records.where(record_type: params[:record_type])
+        end
+
         if params[:sort_column].present? && @model.column_names.include?(params[:sort_column])
           sort_direction = %w[asc desc].include?(params[:sort_direction]) ? params[:sort_direction] : 'asc'
           filtered_records = filtered_records.order("#{params[:sort_column]} #{sort_direction}")
@@ -86,6 +99,12 @@ module Admin
 
         # 2. Précharger les données associées en utilisant la requête filtrée (avant pagination)
         preload_associations(filtered_records)
+
+        # Récupère les actions distinctes pour le filtre (uniquement pour activity_logs)
+        if @selected_table == 'activity_logs'
+          @available_actions = @model.distinct.pluck(:action).compact.sort
+          @available_record_types = @model.distinct.pluck(:record_type).compact.sort
+        end
 
         # 3. Paginer les résultats pour l'affichage
         @records = filtered_records.page(params[:page]).per(10)
@@ -223,6 +242,16 @@ module Admin
       process_reservation_datetime_params if @table_name == 'reservations'
 
       if @record.update(record_params)
+        if @table_name == 'transactions'
+          # Enregistre la modification de la transaction et crée une entrée dans les ActivityLogs
+          ActivityLog.create(
+            user: current_user,
+            action: 'update',
+            record_type: 'transactions',
+            record_id: @record.id,
+            details: "Modification de la transaction (Admin) : #{@record.description} (#{@record.montant} €)"
+          )
+        end
         redirect_to admin_tables_path(table_name: @table_name), notice: "L'enregistrement a été mis à jour avec succès."
       else
         render :edit_record, status: :unprocessable_entity
@@ -237,6 +266,16 @@ module Admin
       process_reservation_datetime_params if @table_name == 'reservations'
 
       if @record.save
+        if @table_name == 'transactions'
+          # Enregistre la création de la transaction et crée une entrée dans les ActivityLogs
+          ActivityLog.create(
+            user: current_user,
+            action: 'create',
+            record_type: 'transactions',
+            record_id: @record.id,
+            details: "Création de la transaction (Admin) : #{@record.description} (#{@record.montant} €)"
+          )
+        end
         redirect_to admin_tables_path(table_name: @table_name), notice: "L'enregistrement a été créé avec succès."
       else
         # Si la sauvegarde échoue, on ne recrée pas un nouvel objet.
@@ -336,6 +375,7 @@ module Admin
 
     def translate_table_name(table_name)
       translations = {
+        'activity_logs' => 'Historique d\'activité',
         'attendances' => 'Participants',
         'audios' => 'Podcasts',
         'avions' => 'Avions',

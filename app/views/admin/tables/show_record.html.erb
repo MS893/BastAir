@@ -22,6 +22,8 @@
           <% end %>
           <%# On garde un bouton supprimer pour le nettoyage, mais on peut le commenter/retirer plus tard %>
           <%= link_to 'Supprimer', admin_table_record_path(table_name: @table_name, id: @record.id), data: { "turbo-method": :delete, turbo_confirm: 'Êtes-vous sûr de vouloir supprimer DÉFINITIVEMENT cet enregistrement ?' }, class: 'btn btn-danger' %>
+        <% elsif @table_name == 'activity_logs' %>
+          <%# Pas de modification ni suppression pour les logs d'activité %>
         <% elsif @table_name != 'transactions' %>
           <%# Comportement par défaut pour les autres tables %>
           <%= link_to 'Modifier', admin_edit_table_record_path(table_name: @table_name, id: @record.id), class: 'btn btn-primary', data: { turbo: false } %>

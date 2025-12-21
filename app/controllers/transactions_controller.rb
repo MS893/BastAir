@@ -142,7 +142,15 @@ class TransactionsController < ApplicationController
 
   def create
     @transaction = Transaction.new(transaction_params)
+    # Enregistre la transaction et crée une entrée dans les ActivityLogs
     if @transaction.save
+      ActivityLog.create(
+        user: current_user,
+        action: 'create',
+        record_type: 'Transaction',
+        record_id: @transaction.id,
+        details: "Création de la transaction : #{@transaction.description} (#{@transaction.montant} €)"
+      )
       redirect_to @transaction, notice: 'La transaction a été créée avec succès.'
     else
       render :new, status: :unprocessable_entity
@@ -155,6 +163,14 @@ class TransactionsController < ApplicationController
 
   def update
     if @transaction.update(transaction_params)
+      # Enregistre la transaction et crée une entrée dans les ActivityLogs
+      ActivityLog.create(
+        user: current_user,
+        action: 'update',
+        record_type: 'Transaction',
+        record_id: @transaction.id,
+        details: "Modification de la transaction : #{@transaction.description} (#{@transaction.montant} €)"
+      )
       redirect_to @transaction, notice: 'La transaction a été mise à jour avec succès.'
     else
       render :edit, status: :unprocessable_entity
@@ -162,7 +178,17 @@ class TransactionsController < ApplicationController
   end
 
   def destroy
+    log_details = "Suppression de la transaction : #{@transaction.description} (#{@transaction.montant} €)"
+    record_id = @transaction.id
     @transaction.destroy
+    # Enregistre la transaction et crée une entrée dans les ActivityLogs
+    ActivityLog.create(
+      user: current_user,
+      action: 'delete',
+      record_type: 'Transaction',
+      record_id: record_id,
+      details: log_details
+    )
     redirect_to transactions_url, notice: 'La transaction a été supprimée avec succès.'
   end
 
@@ -170,6 +196,16 @@ class TransactionsController < ApplicationController
   def toggle_check
     # @transaction est déjà chargé par le before_action
     @transaction.toggle!(:is_checked)
+    
+    status_text = @transaction.is_checked ? "vérifiée" : "non vérifiée"
+    # Enregistre la transaction et crée une entrée dans les ActivityLogs
+    ActivityLog.create(
+      user: current_user,
+      action: 'toggle_check',
+      record_type: 'Transaction',
+      record_id: @transaction.id,
+      details: "Transaction marquée comme #{status_text} : #{@transaction.description}"
+    )
 
     respond_to do |format|
       format.turbo_stream do

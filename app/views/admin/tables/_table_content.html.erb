@@ -5,6 +5,13 @@
   <!-- Barre de recherche -->
   <%= form_with(url: admin_tables_path(table_name: table_name), method: :get, class: "flex-grow-1 me-3", data: { turbo_frame: "table_content_frame", turbo_action: "advance" }) do |form| %>
     <div class="input-group">
+      <%= form.hidden_field :table_name, value: table_name %>
+      <% if table_name == 'activity_logs' && @available_actions.present? %>
+        <%= form.select :action_type, options_for_select([['Toutes actions', '']] + @available_actions.map { |a| [a.humanize, a] }, params[:action_type]), {}, class: "form-select", style: "max-width: 180px;", onchange: "this.form.requestSubmit()" %>
+      <% end %>
+      <% if table_name == 'activity_logs' && @available_record_types.present? %>
+        <%= form.select :record_type, options_for_select([['Tous types', '']] + @available_record_types.map { |t| [t, t] }, params[:record_type]), {}, class: "form-select", style: "max-width: 180px;", onchange: "this.form.requestSubmit()" %>
+      <% end %>
       <%= form.search_field :query, value: params[:query], class: "form-control", placeholder: "Rechercher dans la table..." %>
       <%= form.hidden_field :sort_column, value: params[:sort_column] %>
       <%= form.hidden_field :sort_direction, value: params[:sort_direction] %>
@@ -51,6 +58,9 @@
                   <%= user.present? ? user.name : "Utilisateur inconnu (ID: #{record.user_id})" %>
                 <% elsif table_name == 'penalites' && col == 'avion_immatriculation' %>
                   <span style="white-space: nowrap;"><%= record.avion_immatriculation %></span>
+                <% elsif table_name == 'activity_logs' && col == 'user_id' %>
+                  <% user = @users_by_id && @users_by_id[record.user_id] %>
+                  <%= user.present? ? "#{user.prenom} #{user.nom}" : record.user_id %>
                 <% elsif (table_name == 'users' && col == 'admin') || (table_name == 'reservations' && col == 'instruction') %>
                   <% if record.send(col) %>
                     <span class="badge bg-primary">Oui</span>

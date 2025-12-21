@@ -31,6 +31,16 @@
         </div>
       </div>
       <div class="mb-3">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <%= form.label :description, "Description" %>
+          <select class="form-select form-select-sm w-auto" onchange="if(this.value) { document.getElementById('transaction_description').value = this.value; }">
+            <option value="">Descriptions prédéfinies...</option>
+            <option value="Crédit compte pilote">Crédit compte pilote</option>
+            <option value="Débit compte pilote">Débit compte pilote</option>
+            <option value="Visite 100h">Visite 100h</option>
+            <option value="Visite annuelle">Visite annuelle</option>
+          </select>
+        </div>
         <%= form.text_area :description, class: "form-control", placeholder: "Description de la transaction", rows: 3 %>
       </div>
 
