@@ -1,4 +1,7 @@
-
-<% instructeurs.each do |instructeur| %>
-  <option value="<%= instructeur.id %>"><%= instructeur.full_name %></option>
+<% if instructeurs.any? %>
+  <% instructeurs.each do |instructeur| %>
+    <option value="<%= instructeur.full_name %>"><%= instructeur.full_name %></option>
+  <% end %>
+<% else %>
+  <option value="" disabled selected>Aucun instructeur disponible</option>
 <% end %>

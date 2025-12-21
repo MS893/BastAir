@@ -54,7 +54,11 @@ class ReservationsController < ApplicationController
     else
       # On recharge les données pour que le formulaire puisse se réafficher avec les erreurs
       @avions = Avion.all
-      @instructeurs = User.where("fi IS NOT NULL AND fi >= ?", Date.today).order(:nom)
+      if @reservation.start_time
+        @instructeurs = available_instructors(@reservation.start_time.to_date, @reservation.start_time.hour, @reservation.start_time.min)
+      else
+        @instructeurs = available_instructors(Date.today, 7, 0)
+      end
       render :new, status: :unprocessable_entity
     end
   end
@@ -131,7 +135,11 @@ class ReservationsController < ApplicationController
 
     else
       @avions = Avion.all
-      @instructeurs = User.where("fi IS NOT NULL AND fi >= ?", Date.today).order(:nom)
+      if @reservation.start_time
+        @instructeurs = available_instructors(@reservation.start_time.to_date, @reservation.start_time.hour, @reservation.start_time.min)
+      else
+        @instructeurs = available_instructors(Date.today, 7, 0)
+      end
       render :edit, status: :unprocessable_entity
     end
 
@@ -221,7 +229,7 @@ class ReservationsController < ApplicationController
   # Méthode pour récupérer les instructeurs disponibles en fonction de la date et de l'heure
   def available_instructors(date, hour, minute)
     # Convertir les paramètres en Time
-    start_time = Time.new(date.year, date.month, date.day, hour, minute)
+    start_time = Time.zone.local(date.year, date.month, date.day, hour, minute)
 
     # Déterminer le jour et la période de la réservation
     reservation_day = start_time.strftime('%A').downcase # ex: "monday"
@@ -234,6 +242,7 @@ class ReservationsController < ApplicationController
     # Matin: jusqu'à 13h
     # Après-midi: à partir de 12h
     possible_periods = []
+    possible_periods << 'matin' if start_time.hour <= 13
     possible_periods << 'apres-midi' if start_time.hour >= 12
 
     # Récupérer les IDs des instructeurs disponibles

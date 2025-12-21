@@ -27,16 +27,16 @@
   <div class="row">
     <div class="col-md-2 mb-3">
       <%= form.label :start_date, "Date de début" %>
-      <%# La valeur est maintenant gérée par l'attribut virtuel du modèle %>
-      <%= form.date_field :start_date, class: "form-control", data: { reservation_form_target: "startDate", action: "change->reservation-form#updateEndDate" } %>
+      <%# L'action `fetchInstructors` est ajoutée pour mettre à jour la liste des instructeurs via AJAX %>
+      <%= form.date_field :start_date, class: "form-control", data: { reservation_form_target: "startDate", action: "change->reservation-form#updateEndDate change->reservation-form#fetchInstructors" } %>
     </div>
     <div class="col-md-2 mb-3">
       <%= form.label :start_hour, "Heure" %>
-      <%= form.select :start_hour, (7..17).map { |h| [h.to_s.rjust(2, '0'), h] }, {}, { class: "form-select", data: { reservation_form_target: "startTime", action: "change->reservation-form#adjustEndTime" } } %>
+      <%= form.select :start_hour, (7..17).map { |h| [h.to_s.rjust(2, '0'), h] }, {}, { class: "form-select", data: { reservation_form_target: "startTime", action: "change->reservation-form#adjustEndTime change->reservation-form#fetchInstructors" } } %>
     </div>
     <div class="col-md-2 mb-3">
       <%= form.label :start_minute, "Min" %>
-      <%= form.select :start_minute, (0..45).step(15).map { |m| [m.to_s.rjust(2, '0'), m] }, {}, { class: "form-select", data: { action: "change->reservation-form#adjustEndTime" } } %>
+      <%= form.select :start_minute, (0..45).step(15).map { |m| [m.to_s.rjust(2, '0'), m] }, {}, { class: "form-select", data: { reservation_form_target: "startMinute", action: "change->reservation-form#adjustEndTime change->reservation-form#fetchInstructors" } } %>
     </div>
     <div class="col-md-2 mb-3">
       <%= form.label :end_date, "Date de fin" %>
@@ -66,11 +66,12 @@
   <%# On enveloppe la liste des instructeurs dans une div avec un `data-target` %>
   <div class="mb-3" data-reservation-form-target="instructorSelect">
     <%= form.label :fi, "Instructeur" %>
-    <%= form.collection_select :fi, @instructeurs, :name, :name, { include_blank: "Pas d'instructeur" }, { class: "form-select" } %>
+    <%# La cible `instructorOptions` est ajoutée pour permettre au JavaScript de remplacer uniquement les options %>
+    <%= form.collection_select :fi, @instructeurs, :name, :name, {}, { class: "form-select", "data-reservation-form-target": "instructorOptions" } %>
   </div>
 
   <div class="form-actions mt-4 mb-5 border-top pt-3">
-    <%= form.submit "Enregistrer la réservation", class: "btn btn-success" %>
+    <%= form.submit "Enregistrer la réservation", class: "btn btn-success", data: { reservation_form_target: "submitButton" } %>
     <%= link_to 'Annuler', root_path, class: 'btn btn-outline-primary ms-2' %>
   </div>
 
@@ -78,5 +79,3 @@
   <%# Pour une réservation existante, on charge les signalements tout de suite %>
   <%= turbo_frame_tag "signalements_avion", src: (signalements_list_avion_path(reservation.avion) if reservation.persisted?), data: { reservation_form_target: "signalementsFrame" } %>
 <% end %>
-
-

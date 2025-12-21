@@ -4,7 +4,9 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   // Définit les "cibles" que notre contrôleur peut manipuler.
   static targets = [
+    "instructorOptions",
     "instructorSelect",
+    "submitButton",
     "startDate", "endDate",
     "startTime", // Heure de début (select)
     "startMinute",// Minute de début (select)
@@ -22,7 +24,7 @@ export default class extends Controller {
     // On charge les signalements pour l'avion sélectionné par défaut.
     this.updateSignalements();
     // On charge les dispos instructeurs.
-    this.updateInstructors();
+    this.fetchInstructors();
     // ou une modification. On n'ajuste l'heure que pour les nouvelles réservations.
     if (!window.location.pathname.includes('/edit')) {
       this.adjustEndTime();
@@ -32,10 +34,54 @@ export default class extends Controller {
   // Cette méthode est appelée à chaque fois que la case à cocher change.
   toggleInstructor() {
     // On récupère l'état de la case à cocher.
-    const isInstruction = this.element.querySelector('#reservation_instruction').checked
-    if (this.hasInstructorSelectTarget) {
+    const checkbox = this.element.querySelector('#reservation_instruction')
+    if (checkbox && this.hasInstructorSelectTarget) {
       // On affiche ou on masque la div des instructeurs en fonction de l'état.
-      this.instructorSelectTarget.style.display = isInstruction ? "block" : "none"
+      this.instructorSelectTarget.style.display = checkbox.checked ? "block" : "none"
+    }
+    this.updateSubmitButtonState();
+  }
+
+  // Méthode pour récupérer les instructeurs disponibles via AJAX
+  fetchInstructors() {
+    const date = this.startDateTarget.value;
+    const hour = this.startTimeTarget.value;
+    const minute = this.startMinuteTarget.value;
+
+    // On construit l'URL avec les paramètres pour le contrôleur Rails
+    const url = `/reservations/fetch_available_instructors?date=${date}&hour=${hour}&minute=${minute}`;
+
+    // Utilisation de fetch natif pour éviter les problèmes d'import
+    fetch(url)
+      .then(response => {
+        if (response.ok) return response.text();
+        throw new Error('Network response was not ok.');
+      })
+      .then(html => {
+        if (this.hasInstructorOptionsTarget) {
+          this.instructorOptionsTarget.innerHTML = html;
+          this.updateSubmitButtonState();
+        }
+      })
+      .catch(error => console.error("Failed to fetch instructors:", error));
+  }
+
+  // Active/désactive le bouton d'enregistrement et stylise le sélecteur d'instructeur.
+  updateSubmitButtonState() {
+    if (!this.hasSubmitButtonTarget || !this.hasInstructorOptionsTarget) return;
+
+    const checkbox = this.element.querySelector('#reservation_instruction');
+    const isInstruction = checkbox && checkbox.checked;
+    
+    // Si l'instruction est cochée et qu'aucun instructeur n'est sélectionnable...
+    if (isInstruction && this.instructorOptionsTarget.value === "") {
+      // ...on désactive le bouton et on met le sélecteur en rouge et en gras.
+      this.submitButtonTarget.disabled = true;
+      this.instructorOptionsTarget.classList.add('text-danger', 'fw-bold');
+    } else {
+      // Sinon, on s'assure que le bouton est actif et que le style est normal.
+      this.submitButtonTarget.disabled = false;
+      this.instructorOptionsTarget.classList.remove('text-danger', 'fw-bold');
     }
   }
 
@@ -91,28 +137,4 @@ export default class extends Controller {
       this.signalementsFrameTarget.innerHTML = "";
     }
   }
-  
-  // --- Logique pour les instructeurs ---
-  updateInstructors() {
-  const date = this.startDateTarget.value
-  const hour = this.startHourTarget.value
-  const minute = this.startMinuteTarget.value
-
-  // On s'assure que la date est bien sélectionnée
-  if (!date) return;
-
-  const url = `/reservations/fetch_available_instructors?date=${date}&hour=${hour}&minute=${minute}`
-
-  fetch(url, {
-    headers: {
-      "Accept": "text/vnd.turbo-stream.html",
-    }
-  })
-    .then(response => response.text())
-    .then(html => {
-      this.instructorSelectTarget.innerHTML = html
-    })
-    .catch(error => console.error("Error fetching instructors:", error));
-  }
-
 }
