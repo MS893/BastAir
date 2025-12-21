@@ -103,11 +103,11 @@ Couper l'arrivée d'essence et l'allumage (magnétos/coupe-feu) si l'avion le pe
 Appeler les services d'urgence de l'aérodrome.
 3
 
-Lors de la préparation d'un vol VFR, quelle est la règle de base concernant la réserve de carburant de jour, conformément au PART NCO?
-Carburant suffisant pour atteindre la destination et voler 45 minutes supplémentaires.
-Carburant suffisant pour atteindre la destination et voler 30 minutes supplémentaires.
-Carburant suffisant pour atteindre la destination, l'aérodrome de dégagement et 30 minutes de réserve.
-Carburant suffisant pour voler une heure de plus que le temps de vol estimé.
+Lors de la préparation d'un voyage VFR de jour, quelle est la réserve de carburant obligatoire, conformément au PART NCO?
+30 minutes.
+45 minutes.
+10 minutes.
+1 heure.
 1
 
 L'une des compétences non techniques (Non-Technical Skills) cruciales pour un pilote est la Conscience Situationnelle (Situational Awareness). Qu'est-ce que cela englobe principalement?

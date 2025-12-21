@@ -1,17 +1,15 @@
-# FTP2 - Mise en œuvre de l’avion. Eléments de sécurité élémentaire
+### Mise en œuvre de l’avion. Eléments de sécurité élémentaire
 <br>
 
----
-
-# Introduction : Préparer et Exécuter un Vol Sûr
+**Introduction : Préparer et Exécuter un Vol Sûr**
 
 Le pilotage d'un avion, même pour le loisir, est une activité qui exige rigueur, préparation et une conscience aigüe de la sécurité. Ce document est conçu pour les futurs et actuels pilotes titulaires du PPL (Private Pilot License) en France, afin de détailler les aspects cruciaux de la préparation, de la mise en œuvre de l'avion, des éléments de sécurité fondamentaux, et de l'importance des compétences techniques et non techniques.
 
-## L'Importance de la Préparation et de la Mise en Œuvre
+**L'Importance de la Préparation et de la Mise en Œuvre**
 
 Un vol réussi et sûr commence bien avant le décollage. La phase de préparation est aussi importante que le vol lui-même. Elle permet d'anticiper les problèmes potentiels, de s'assurer de la navigabilité de l'appareil et de la faisabilité du vol dans les conditions prévues. La "mise en œuvre" de l'avion, c'est-à-dire l'ensemble des actions nécessaires pour le rendre opérationnel (depuis l'inspection pré-vol jusqu'au démarrage), est une séquence de vérifications et de procédures qui ne doit jamais être négligée.
 
-## Vue d'Ensemble des Sujets Abordés
+**Vue d'Ensemble des Sujets Abordés**
 
 Dans ce guide pratique, nous explorerons en détail :
 
@@ -25,23 +23,29 @@ Chaque section vise à renforcer votre compréhension et vos pratiques pour que 
 
 ---
 
-# Mise en Œuvre de l'Avion et Sécurité Élémentaire
+<br>
+
+#### 1. Mise en Œuvre de l'Avion et Sécurité Élémentaire</span>
+<br>
 
 La phase de mise en œuvre de l'avion est une séquence méthodique de vérifications et d'actions visant à s'assurer que l'appareil est prêt et sûr pour le vol. Elle est indissociable des éléments de sécurité de base que tout pilote doit connaître et appliquer.
 
-## Procédures de Démarrage (Mise en Route) et d'Arrêt
+Exemple de procédures d'Urgence au sol : Incendie Moteur
+En cas de début d'incendie moteur lors du démarrage au sol, après avoir coupé le mélange, l'action immédiate de sécurité consiste à couper l'arrivée d'essence (sélecteur sur OFF) puis de mettre plein gaz pour évacuer les résidus d'essence, et couper les magnétos et la batterie afin d'isoler le foyer de sa source d'énergie.
+
+**Procédures de Démarrage (Mise en Route) et d'Arrêt**
 
 Chaque type d'avion possède son propre manuel de vol qui détaille précisément les procédures de mise en route et d'arrêt. Il est impératif de suivre ces procédures à la lettre, car elles garantissent le bon fonctionnement des systèmes et la sécurité des occupants.
 
-### Exemples de Procédures de Mise en Route :
+**Exemples de Procédures de Mise en Route :**
 
-*   **Vérification de la Check-list "Avant Démarrage" :** S'assurer que tous les interrupteurs sont dans la bonne position, que la zone est dégagée, que les passagers sont briefés.
+*   **Vérification de la Check-list "Avant Démarrage" :** S'assurer que tous les interrupteurs sont dans la bonne position (après avoir mis la batterie sur ON, on vérifie le voltamètre ou l'ampèremètre), que la zone est dégagée, que les passagers sont briefés.
 *   **Alimentation Électrique :** Mise sous tension de la batterie, vérification des instruments.
 *   **Alimentation Carburant :** Sélection du réservoir, vérification de la pression.
 *   **Démarrage Moteur :** Suivi strict des étapes (amorçage, magnétos, démarreur, etc.) et surveillance des paramètres moteur (pression d'huile, température).
 *   **Vérification Post-Démarrage :** Tests des magnétos, du pas variable (si applicable), des systèmes de vol.
 
-### Exemples de Procédures d'Arrêt :
+**Exemples de Procédures d'Arrêt :**
 
 *   **Refroidissement Moteur :** Laisser le moteur tourner au ralenti un certain temps pour le refroidir.
 *   **Arrêt Moteur :** Suivre les étapes pour couper l'alimentation carburant et les systèmes moteur.
@@ -49,11 +53,11 @@ Chaque type d'avion possède son propre manuel de vol qui détaille précisémen
 
 **L'utilisation systématique des check-lists est LA règle d'or.** Elle prévient les oublis et les erreurs qui pourraient avoir des conséquences graves.
 
-## Éléments de Sécurité Élémentaire à Bord
+**Éléments de Sécurité Élémentaire à Bord**
 
 Au-delà des vérifications techniques, il est essentiel de connaître et de s'assurer de la présence et du bon fonctionnement de certains équipements de sécurité à bord, ainsi que d'adopter les bons réflexes.
 
-### Équipements de Sécurité Indispensables :
+**Équipements de Sécurité Indispensables :**
 
 *   **Extincteur :** Vérifier sa présence, son intégrité et sa date de validité. Savoir l'utiliser.
 *   **Trousse de Premiers Secours :** S'assurer qu'elle est complète et accessible.
@@ -61,7 +65,7 @@ Au-delà des vérifications techniques, il est essentiel de connaître et de s'a
 *   **Radiobalise de Détresse (ELT - Emergency Locator Transmitter) :** Vérifier son état et sa bonne activation (automatique ou manuelle).
 *   **Documentation de Sécurité :** Carte de sécurité pour les passagers, expliquant les sorties de secours et l'utilisation des équipements.
 
-### Réflexes et Procédures de Sécurité :
+**Réflexes et Procédures de Sécurité :**
 
 *   **Briefing Passagers :** Avant le vol, informer les passagers sur les règles de sécurité, l'utilisation des ceintures, l'emplacement des issues de secours, l'utilisation de l'extincteur et du gilet de sauvetage (si applicable), et comment réagir en cas d'urgence.
 *   **Positionnement des Sièges et Ceintures :** S'assurer que tous les occupants sont correctement installés et attachés pour le décollage et l'atterrissage.
@@ -72,40 +76,46 @@ La sécurité en aviation est une responsabilité partagée, mais le commandant 
 
 ---
 
-# Préparation pour le Vol : Les 5 Vérifications Essentielles (Partie 1)
+<br>
+
+#### 2. Préparation pour le Vol : Les 5 Vérifications Essentielles (Partie 1)</span>
+<br>
 
 La préparation du vol est une phase critique qui garantit la sécurité et la conformité de chaque mission aérienne. Pour les pilotes PPL, il est fondamental de maîtriser ce processus. Nous allons détailler les cinq vérifications de base, souvent mémorisées par des acronymes ou des listes de contrôle, en commençant par les documents de l'avion et le carburant.
 
-## 1. Documents de l'Avion : La Validité Légale
+**1. Documents de l'Avion : La Validité Légale**
 
 Avant chaque vol, le pilote commandant de bord est responsable de s'assurer que tous les documents requis sont à bord de l'avion et valides. Ces documents prouvent la légalité et la navigabilité de l'appareil.
 
-### Documents Essentiels à Vérifier :
+**Documents Essentiels à Vérifier :**
 
 *   **Certificat d'Immatriculation :** Prouve la propriété de l'avion et son enregistrement.
-*   **Certificat de Navigabilité (CDN) :** Atteste que l'avion est conforme aux normes de conception et est en état de vol. Il est souvent accompagné d'un "Certificat d'Examen de Navigabilité" (CEN) valide.
-*   **Licence de Station d'Aéronef :** Autorise l'utilisation des équipements radio à bord.
-*   **Manuel de Vol de l'Avion (POH - Pilot's Operating Handbook) :** Contient toutes les informations nécessaires à l'exploitation de l'appareil (performances, limites, procédures). Il doit être accessible pendant le vol.
-*   **Carnet de Route (Logbook) :** Enregistre l'histoire des vols, les maintenances, et les inspections.
+*   **Certificat de Navigabilité (CDN) :** Atteste que l'avion est conforme aux normes de conception et est en état de vol.
+*   **Certificat d'Examen de Navigabilité (CEN) :** Atteste que l'avion a été entretenu par un atelier agréé (validité annuelle, date à vérifier).
+*   **Certificat de limitation des nuisances :** Atteste que l'avion a été entretenu par un atelier agréé (validité annuelle, date à vérifier).
+*   **Licence de Station d'Aéronef :** Autorise l'utilisation des équipements radio à bord (est mis à jour si l'équipement radio est modifié).
+*   **Manuel de Vol de l'Avion :** Contient toutes les informations nécessaires à l'exploitation de l'appareil (performances, limites, procédures). Il doit être accessible pendant le vol.
+*   **Carnet de Route :** Enregistre l'histoire des vols, les maintenances, et les inspections.
+*   **Attestation d'assurance :** Bien vérifier la date d'expiration, l'avion ne peut pas voler sans assurance.
 
 **Astuce :** Vérifiez les dates de validité ! Un document expiré rendrait le vol illégal et potentiellement non assuré.
 
-## 2. Carburant : Quantité, Qualité et Gestion
+**2. Carburant : Quantité, Qualité et Gestion**
 
 Le carburant est la vie de l'avion. Une planification et une vérification rigoureuses sont impératives.
 
-### Vérification de la Quantité :
+**Vérification de la Quantité :**
 
-*   **Calcul de la Consommation :** Basé sur la durée prévue du vol, le régime moteur, les conditions météorologiques et les réserves obligatoires (30 à 45 minutes de vol selon le type de vol VFR jour/nuit).
+*   **Calcul de la Consommation :** Basé sur la durée prévue du vol, le régime moteur, les conditions météorologiques et les réserves finales obligatoires (30 minutes en navigation VFR de jour, 45 minutes en VFR de nuit, et seulement 10 minutes en VFR de jour en local en vue du terrain).
 *   **Vérification Physique :** Contrôler visuellement le niveau de carburant dans les réservoirs. Ne jamais se fier uniquement aux jauges de l'avion, qui peuvent être imprécises.
 *   **Ajustement si nécessaire :** Si la quantité est insuffisante, faire le plein en respectant les procédures de ravitaillement.
 
-### Vérification de la Qualité :
+**Vérification de la Qualité :**
 
 *   **Prélèvement d'Échantillons :** Avant le vol, prélever des échantillons de carburant aux points bas des réservoirs et du filtre décanteur.
 *   **Examen Visuel :** Vérifier l'absence d'eau (qui se décante au fond et forme des gouttelettes), de saletés ou d'une couleur anormale. Toute contamination est un motif d'interdiction de vol.
 
-### Gestion du Carburant en Vol :
+**Gestion du Carburant en Vol :**
 
 *   **Planification :** Avoir un plan détaillé de consommation, avec des points de décision pour le ravitaillement ou le déroutement.
 *   **Surveillance :** Surveiller constamment les jauges, le débitmètre (si présent) et le temps écoulé depuis le dernier plein.
@@ -115,39 +125,44 @@ La bonne gestion du carburant est une responsabilité primaire du pilote et une 
 
 ---
 
-# Préparation pour le Vol : Les 5 Vérifications Essentielles (Partie 2)
+<br>
+
+#### 3. Préparation pour le Vol : Les 5 Vérifications Essentielles (Partie 2)</span>
+<br>
 
 Continuons notre exploration des cinq vérifications essentielles avant chaque vol, en nous concentrant cette fois sur le devis de masse et centrage, le dossier météorologique, et les informations aéronautiques (NOTAMs et SUP AIP).
 
-## 3. Devis de Masse et Centrage : L'Équilibre Crucial
+**3. Devis de Masse et Centrage : L'Équilibre Crucial**
 
 Un avion doit non seulement être en dessous de sa masse maximale au décollage et à l'atterrissage, mais aussi avoir son centre de gravité (CG) situé dans les limites spécifiées par le constructeur. Un mauvais calcul de masse et centrage peut avoir des conséquences désastreuses sur la stabilité et la maniabilité de l'appareil.
 
-### Les Calculs :
+**Les Calculs :**
 
 *   **Masse :** Il s'agit de calculer la masse totale de l'avion incluant les occupants, le carburant, les bagages, et de s'assurer qu'elle ne dépasse pas les limites maximales autorisées pour le décollage et l'atterrissage.
 *   **Centrage :** Il faut déterminer la position du centre de gravité par rapport aux points de référence de l'avion et vérifier qu'il reste dans la "plage de centrage" autorisée. Cette plage est cruciale pour la stabilité de l'appareil.
 
-### Conséquences d'un Mauvais Centrage :
+**Conséquences d'un Mauvais Centrage :**
 
 *   **Centrage trop avant :** Nez lourd, augmentation de la vitesse de décrochage, difficulté à cabrer pour le décollage et l'atterrissage.
 *   **Centrage trop arrière :** Queue lourde, instabilité longitudinale, risque de décrochage à des vitesses plus élevées, difficulté à contrôler l'avion.
 
 Des logiciels, applications ou des abaques fournis dans le manuel de vol permettent de réaliser ces calculs avec précision. Ne jamais sous-estimer l'importance de cette vérification.
 
-## 4. Dossier Météorologique : Comprendre et Anticiper
+**4. Dossier Météorologique : Comprendre et Anticiper**
 
-La météo est l'un des facteurs les plus influents et les plus changeants du vol VFR. Une analyse approfondie du dossier météo est indispensable pour planifier une route sûre et prendre des décisions éclairées.
+La météo est l'un des facteurs les plus influents et les plus changeants du vol VFR. Une analyse approfondie du dossier météo est indispensable pour planifier une route sûre et prendre des décisions éclairées. Bien que tous les paramètres soient importants, le plafond nuageux et la visibilité sont les éléments les plus critiques pour la sécurité en VFR, car ils garantissent le maintien du vol à vue.
 
-### Sources d'Information Météorologique :
+**Sources d'Information Météorologique :**
+
+ : 
 
 *   **METAR (Météorological Aerodrome Report) :** Observations météorologiques actuelles des aérodromes, mises à jour toutes les 30 minutes ou à l'heure. Fournit des informations sur le vent, la visibilité, le temps présent, les nuages, la température, le point de rosée et la pression.
-*   **TAF (Terminal Aerodrome Forecast) :** Prévisions météorologiques pour les aérodromes, généralement valables pour 9, 18 ou 24 heures.
+*   **TAF (Terminal Aerodrome Forecast) :** Prévisions météorologiques pour les aérodromes, émis toutes les 3h, pour une période de 9h (TAF courts), émis toutes les 6h pour une période de 24h ou 30h (TAF longs).
 *   **Cartes Météorologiques :** Cartes de vent, de fronts, de pression, de nébulosité, de précipitations.
 *   **SIGMET/AIRMET :** Informations sur des phénomènes météorologiques significatifs et potentiellement dangereux (orages, givrage, turbulences intenses).
 *   **BRIA (Bureau de Renseignements et d'Information Aéronautiques) ou Météo France Aviation :** Services spécialisés fournissant des bulletins et des conseils.
 
-### Interprétation et Impact sur le Vol :
+**Interprétation et Impact sur le Vol :**
 
 Il ne suffit pas de lire les données, il faut les interpréter :
 
@@ -159,16 +174,16 @@ Il ne suffit pas de lire les données, il faut les interpréter :
 
 La météo dicte souvent la faisabilité et la sécurité d'un vol. Une bonne connaissance de la météorologie est une compétence clé du pilote PPL.
 
-## 5. Informations Aéronautiques (NOTAMs et SUP AIP) : Les Mises à Jour Cruciales
+**5. Informations Aéronautiques (NOTAMs et SUP AIP) : Les Mises à Jour Cruciales**
 
 Les informations aéronautiques sont des messages essentiels qui signalent des changements temporaires ou permanents affectant l'exploitation des vols. Les ignorer peut mener à des surprises dangereuses.
 
-### NOTAM (Notice to Airmen) :
+**NOTAM (Notice to Airmen) :**
 
 *   **Qu'est-ce que c'est ?** Messages diffusés rapidement, souvent par voie numérique, concernant des informations aéronautiques temporaires ou de courte durée et qui sont essentielles pour la sécurité des vols.
 *   **Exemples :** Pistes fermées, obstacles temporaires (grues), zones d'activité aérienne dangereuse (exercices militaires), pannes d'aides à la navigation, restrictions d'espace aérien.
 
-### SUP AIP (Supplément à l'AIP) :
+**SUP AIP (Supplément à l'AIP) :**
 
 *   **Qu'est-ce que c'est ?** Documents temporaires contenant des changements importants à l'AIP (Aeronautical Information Publication) qui ne justifient pas une publication immédiate dans l'AIP mais ont une durée de vie plus longue qu'un NOTAM.
 *   **Exemples :** Modifications de procédures d'aérodrome, changements de fréquences, création de zones réglementées temporaires.
@@ -177,21 +192,24 @@ Il est impératif de consulter les NOTAMs et les SUP AIP pertinents pour votre r
 
 ---
 
-# Actions Avant et Après Vol : Objectifs du Briefing et du Débriefing
+<br>
+
+#### 4. Actions Avant et Après Vol : Objectifs du Briefing et du Débriefing</span>
+<br>
 
 Le vol lui-même n'est qu'une partie de l'expérience de pilotage. Les phases qui l'encadrent, le briefing avant le vol et le débriefing après le vol, sont tout aussi essentielles pour la sécurité, l'efficacité et l'apprentissage continu du pilote. Elles permettent de consolider la préparation et de tirer les leçons de l'expérience.
 
-## Objectifs du Briefing Avant Vol
+**Objectifs du Briefing Avant Vol**
 
 Le briefing est une discussion structurée qui a lieu avant de monter à bord de l'avion. Il s'agit d'une dernière revue des éléments critiques du vol et d'une préparation mentale collective (si des passagers sont présents) ou individuelle.
 
-### Préparation Mentale du Pilote :
+**Préparation Mentale du Pilote :**
 
 *   **Revue du Plan de Vol :** Se remémorer la route prévue, les points de repère, les fréquences radio, les altitudes, les procédures d'arrivée et de départ des aérodromes.
 *   **Anticipation des Imprévus :** Réfléchir aux plans de secours (alternatives, déroutement, pannes potentielles) et aux procédures d'urgence spécifiques à la route ou à la météo.
 *   **Visualisation du Vol :** Parcourir mentalement les différentes phases du vol, du démarrage à l'atterrissage.
 
-### Partage d'Informations (si passagers à bord) :
+**Partage d'Informations (si passagers à bord) :**
 
 *   **Règles de Sécurité :** Expliquer l'utilisation des ceintures, l'interdiction de fumer, l'emplacement des sorties de secours, le fonctionnement des casques, et les comportements à adopter en cas de turbulences ou d'urgence.
 *   **Information sur le Vol :** Annoncer la durée estimée, la destination, les conditions météorologiques attendues et les points d'intérêt sur la route. Cela permet de rassurer les passagers et de les impliquer positivement.
@@ -199,11 +217,11 @@ Le briefing est une discussion structurée qui a lieu avant de monter à bord de
 
 Le briefing permet de s'assurer que toutes les parties prenantes ont une compréhension commune du vol à venir et de ses potentielles spécificités.
 
-## Objectifs du Débriefing Après Vol
+**Objectifs du Débriefing Après Vol**
 
 Le débriefing est une analyse réflexive qui a lieu immédiatement après la fin du vol. C'est un moment privilégié pour l'apprentissage et l'amélioration continue.
 
-### Analyse du Vol et Identification des Points Forts/Faibles :
+**Analyse du Vol et Identification des Points Forts/Faibles :**
 
 *   **Auto-évaluation :** Le pilote doit se poser des questions critiques sur sa performance : Qu'est-ce qui s'est bien passé ? Qu'est-ce qui aurait pu être amélioré ?
 *   **Performance des Manœuvres :** Évaluer la précision des trajectoires, la gestion de l'énergie, l'application des procédures.
@@ -211,7 +229,7 @@ Le débriefing est une analyse réflexive qui a lieu immédiatement après la fi
 *   **Gestion des Imprévus :** Analyser comment les situations inattendues ont été gérées.
 *   **Ressources :** Évaluer l'efficacité de l'utilisation des ressources (humaines, matérielles, informationnelles).
 
-### Apprentissage et Amélioration :
+**Apprentissage et Amélioration :**
 
 *   **Correction des Erreurs :** Identifier les erreurs commises et comprendre pourquoi elles se sont produites pour éviter de les répéter.
 *   **Consolidation des Acquis :** Renforcer les bonnes pratiques et les succès.
@@ -221,11 +239,14 @@ Dans le cadre d'un vol avec instructeur, le débriefing est un dialogue essentie
 
 ---
 
-# Compétences Techniques et Non Techniques en Vol
+<br>
+
+#### 5. Compétences Techniques et Non Techniques en Vol</span>
+<br>
 
 Le pilotage moderne, qu'il soit de loisir ou professionnel, ne se limite plus à la seule maîtrise des commandes de l'avion. Il intègre un ensemble de compétences, regroupées en "techniques" et "non techniques", qui sont toutes essentielles pour un vol sûr et efficace. La bonne intégration de ces deux types de compétences est le signe d'un pilote compétent.
 
-## Compétences Techniques (Hard Skills)
+**Compétences Techniques (Hard Skills)**
 
 Les compétences techniques sont celles directement liées à la manipulation de l'avion, à l'application des procédures et à l'utilisation des systèmes. Elles sont quantifiables et mesurables.
 
@@ -244,7 +265,7 @@ Les compétences techniques sont celles directement liées à la manipulation de
     *   **Écoute Active :** Comprendre les instructions du contrôle aérien et les informations des autres aéronefs.
     *   **Respect de la Phraséologie :** Utiliser la phraséologie aéronautique standard.
 
-## Compétences Non Techniques (Soft Skills ou CRM - Crew Resource Management)
+**Compétences Non Techniques (Soft Skills ou CRM - Crew Resource Management)**
 
 Les compétences non techniques, souvent appelées CRM (Crew Resource Management) même si le terme est plus souvent associé à l'équipage multiple, sont des compétences cognitives et interpersonnelles qui complètent les compétences techniques pour optimiser la sécurité et l'efficacité des opérations aériennes. Elles sont cruciales, notamment en situation de stress ou d'imprévu.
 
@@ -253,7 +274,7 @@ Les compétences non techniques, souvent appelées CRM (Crew Resource Management
     *   **Identification des Options :** Développer des solutions alternatives.
     *   **Choix et Implémentation :** Sélectionner la meilleure option et la mettre en œuvre.
     *   **Suivi :** Évaluer les résultats de la décision.
-*   **Conscience Situationnelle (SA - Situational Awareness) :**
+*   **Conscience de la situation (COS) :**
     *   **Perception :** Percevoir correctement l'environnement (météo, trafic, terrain, état de l'avion).
     *   **Compréhension :** Comprendre ce que ces informations signifient.
     *   **Projection :** Anticiper ce qui va se passer ensuite.
@@ -267,7 +288,7 @@ Les compétences non techniques, souvent appelées CRM (Crew Resource Management
     *   **Assertivité :** Exprimer ses préoccupations de manière constructive.
 *   **Gestion des Menaces et des Erreurs (TEM - Threat and Error Management) :**
     *   **Identification :** Reconnaître les menaces potentielles (météo, panne) et les erreurs (siennes ou d'autrui).
-    *   **Atténuation :** Mettre en place des stratégies pour réduire leur impact.
+    *   **Atténuation :** Mettre en place des stratégies pour réduire leur impact (contre-mesure).
     *   **Récupération :** Agir pour corriger les erreurs ou gérer les menaces qui se concrétisent.
 *   **Leadership et Travail d'Équipe :** (Même en vol solo, le pilote est le "leader" à bord)
     *   **Leadership :** Assumer la responsabilité du vol, prendre les décisions.
