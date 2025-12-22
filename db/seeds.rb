@@ -584,7 +584,7 @@ def lecons
     { title: "17 L’atterrissage", file: "17-Atterrissage-2021.pdf" },
     { title: "18 Circuits d’aérodrome", file: "18-Circuit-aerodrome-2021.pdf" },
     { title: "19 Virage engagé", file: "lecon_19.pdf" },
-    { title: "20 Pannes en phase de décollage", file: "18-Circuit-aerodrome-2021.pdf" },
+    { title: "20 Pannes en phase de décollage", file: "20-Pannes-en-phase-decollage-2021.pdf" },
     { title: "21 Virage à grande inclinaison", file: "21-Virages-Grande-Inclinaison-2021.pdf" },
     { title: "22 Le lâcher", file: "22-Le-lacher-2021.pdf" },
     { title: "23 Décollages et montées adaptés", file: "23-Decollages-et-montees-adaptes-2021.pdf" },
@@ -779,9 +779,9 @@ def livrets
       flight_lesson_id: lesson.id,
       title: lesson.title,
       status: 0,
-      comment: "Mettre en œuvre l’avion depuis sa prise en compte jusqu’à sa restitution.
+      comment: "Objectifs : Mettre en œuvre l’avion.
       Maîtriser les évolutions de l’avion au sol.
-      Etre capable d’agir sur les commandes de manière souple et mesurée.",
+      Etre capable d’agir sur les commandes de manière souple et mesurée.\n Commentaires : ",
       course_id: nil,
       date: nil,
       created_at: now,
@@ -894,17 +894,19 @@ else
   # Utilisation de delete_all au lieu de destroy_all pour une suppression beaucoup plus rapide
   # car elle évite d'instancier chaque objet et d'exécuter les callbacks
   # L'ordre est important pour respecter les contraintes de clés étrangères
+  InstructorAvailability.delete_all
+  ActivityLog.delete_all
   Attendance.delete_all
   Question.delete_all
   Comment.delete_all
   NewsItem.delete_all
   Immobilisation.delete_all
+  Vol.delete_all
   Livret.delete_all
   Penalite.delete_all
   Reservation.delete_all
   Signalement.delete_all
   Transaction.delete_all
-  Vol.delete_all
   Event.delete_all
   User.delete_all
   Avion.delete_all
