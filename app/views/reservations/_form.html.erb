@@ -60,17 +60,28 @@
     </div>
   </div>
 
+  <% user_for_reservation = reservation.persisted? ? reservation.user : current_user %>
+
   <div class="form-check form-switch mb-3">
-    <%# On ajoute un `data-action` pour déclencher notre JavaScript au changement %>
-    <%= form.check_box :instruction, { class: "form-check-input", data: { action: "reservation-form#toggleInstructor" } } %>
-    <%= form.label :instruction, "Vol en instruction", class: "form-check-label" %>
+    <% if user_for_reservation.eleve? %>
+      <%# Pour un élève, le vol est forcément en instruction. On coche et désactive la case. %>
+      <%= form.check_box :instruction, { class: "form-check-input", checked: true, disabled: true } %>
+      <%= form.label :instruction, "Vol en instruction (obligatoire)", class: "form-check-label" %>
+      <%# On ajoute un champ caché pour que la valeur `true` soit bien envoyée %>
+      <%= form.hidden_field :instruction, value: true %>
+    <% else %>
+      <%# Pour les autres utilisateurs, c'est optionnel %>
+      <%# On déclenche à la fois l'affichage et la mise à jour de la liste %>
+      <%= form.check_box :instruction, { class: "form-check-input", data: { action: "change->reservation-form#toggleInstructor change->reservation-form#fetchInstructors" } } %>
+      <%= form.label :instruction, "Vol en instruction", class: "form-check-label" %>
+    <% end %>
   </div>
 
-  <%# On enveloppe la liste des instructeurs dans une div avec un `data-target` %>
-  <div class="mb-3" data-reservation-form-target="instructorSelect">
+  <%# Liste des instructeurs %>
+  <div class="mb-3 <%= 'd-none' unless (user_for_reservation.eleve? || reservation.instruction?) %>" data-reservation-form-target="instructorSelect">
     <%= form.label :fi, "Instructeur" %>
     <%# La cible `instructorOptions` est ajoutée pour permettre au JavaScript de remplacer uniquement les options %>
-    <%= form.collection_select :fi, @instructeurs, :name, :name, {}, { class: "form-select", "data-reservation-form-target": "instructorOptions" } %>
+    <%= form.collection_select :fi, @instructeurs, :full_name, :full_name, { prompt: "Sélectionnez un instructeur" }, { class: "form-select", "data-reservation-form-target": "instructorOptions" } %>
   </div>
 
   <div class="form-actions mt-4 mb-5 border-top pt-3">

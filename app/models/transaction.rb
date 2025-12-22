@@ -69,6 +69,7 @@ class Transaction < ApplicationRecord
   # Met à jour le solde de l'utilisateur après la création d'une transaction.
   after_initialize :set_default_date, if: :new_record?
   after_create :update_user_balance
+  after_destroy :reverse_user_balance_update
 
   # Méthodes pour la suppression logique (soft delete)
   def discard
@@ -104,6 +105,20 @@ class Transaction < ApplicationRecord
     user.with_lock do
       # On utilise update_column pour modifier uniquement le solde sans déclencher
       # les autres validations du modèle User (ex: format du téléphone).
+      user.update_column(:solde, user.solde + amount_to_change)
+    end
+  end
+
+  # Met à jour le solde de l'utilisateur après la suppression d'une transaction.
+  def reverse_user_balance_update
+    # On ne fait rien si la transaction n'est pas liée à un utilisateur.
+    return if user.blank?
+
+    # On inverse le montant : si c'était une dépense (comme une pénalité), on recrédite (montant positif).
+    # Si c'était une recette, on débite (-montant).
+    amount_to_change = (mouvement == 'Recette') ? -montant : montant
+
+    user.with_lock do
       user.update_column(:solde, user.solde + amount_to_change)
     end
   end

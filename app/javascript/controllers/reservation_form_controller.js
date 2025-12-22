@@ -36,8 +36,9 @@ export default class extends Controller {
     // On récupère l'état de la case à cocher.
     const checkbox = this.element.querySelector('#reservation_instruction')
     if (checkbox && this.hasInstructorSelectTarget) {
-      // On affiche ou on masque la div des instructeurs en fonction de l'état.
-      this.instructorSelectTarget.style.display = checkbox.checked ? "block" : "none"
+      // On utilise classList.toggle pour gérer la classe 'd-none' de Bootstrap.
+      // C'est plus robuste que de manipuler le style directement à cause de `!important`.
+      this.instructorSelectTarget.classList.toggle('d-none', !checkbox.checked);
     }
     this.updateSubmitButtonState();
   }

@@ -36,8 +36,6 @@ class ReservationsController < ApplicationController
       end_datetime = "#{params[:reservation][:end_date]} #{params[:reservation][:end_hour]}:#{params[:reservation][:end_minute]}:00"
       @reservation.end_time = DateTime.parse(end_datetime)
     end
-    @avions = Avion.order(:immatriculation)
-    @instructeurs = User.where("fi IS NOT NULL AND fi >= ?", Date.today).order(:nom)
 
     # On pré-remplit le titre de l'événement avec l'immatriculation de l'avion
     if @reservation.avion_id.present?
@@ -53,7 +51,7 @@ class ReservationsController < ApplicationController
       redirect_to root_path, notice: 'Votre réservation a été créée avec succès.'
     else
       # On recharge les données pour que le formulaire puisse se réafficher avec les erreurs
-      @avions = Avion.all
+      @avions = Avion.order(:immatriculation)
       if @reservation.start_time
         @instructeurs = available_instructors(@reservation.start_time.to_date, @reservation.start_time.hour, @reservation.start_time.min)
       else
@@ -66,7 +64,7 @@ class ReservationsController < ApplicationController
   def edit
     # @reservation est chargé par le before_action
     # On charge les données pour les listes déroulantes
-    @avions = Avion.all
+    @avions = Avion.order(:immatriculation)
     @instructeurs = available_instructors(@reservation.start_time.to_date, @reservation.start_time.hour, @reservation.start_time.min)
     
     # Décomposer start_time et end_time pour le formulaire
@@ -134,7 +132,7 @@ class ReservationsController < ApplicationController
       redirect_to params[:redirect_to].presence || root_path, notice: 'Votre réservation a été mise à jour avec succès.'
 
     else
-      @avions = Avion.all
+      @avions = Avion.order(:immatriculation)
       if @reservation.start_time
         @instructeurs = available_instructors(@reservation.start_time.to_date, @reservation.start_time.hour, @reservation.start_time.min)
       else
@@ -249,7 +247,8 @@ class ReservationsController < ApplicationController
     available_instructor_ids = InstructorAvailability.where(day: reservation_day_fr, period: possible_periods).pluck(:user_id).uniq
 
     # Récupérer les instructeurs disponibles
-    instructors = User.where(id: available_instructor_ids).where("fi IS NOT NULL AND fi >= ?", Date.today).order(:nom)
+    # On exclut l'utilisateur courant car on ne peut pas être son propre instructeur
+    instructors = User.where(id: available_instructor_ids).where("fi IS NOT NULL AND fi >= ?", Date.today).where.not(id: current_user.id).order(:nom)
 
     return instructors
   end
