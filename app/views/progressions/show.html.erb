@@ -103,6 +103,11 @@
           <% pending_vols = @selected_eleve.vols.where(instructeur_id: current_user.id, livret_id: nil).order(debut_vol: :asc) %>
           
           <% if pending_vols.any? %>
+            <% 
+              livret_options = @lecons_en_vol.to_a.uniq(&:title).map do |l|
+                [l.title, l.id, { 'data-comment' => l.comment }]
+              end
+            %>
             <div class="card mb-4 border-info">
               <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
                 <h5 class="mb-0"><i class="fas fa-clipboard-check me-2"></i>Vols en attente de validation</h5>
@@ -128,13 +133,15 @@
                           <td>
                             <%= form_with(url: vol_path(vol), method: :patch, local: true, class: "row g-2 align-items-center") do |f| %>
                               <div class="col-md-4">
-                                <%= f.collection_select :livret_id, @lecons_en_vol.to_a.uniq(&:title), :id, :title, { prompt: "Choisir la leçon..." }, { class: "form-select form-select-sm", required: true, onchange: "this.form.querySelector('button').disabled = !this.value" } %>
+                                <%= f.select :livret_id, options_for_select(livret_options), { prompt: "Choisir la leçon..." }, { class: "form-select form-select-sm", required: true, onchange: "updateLessonDetails(this)" } %>
                               </div>
                               <div class="col-md-2">
                                 <%= f.select :status, [['Vu', 1], ['Avancé', 2], ['Acquis', 3]], { selected: 1 }, { class: "form-select form-select-sm", required: true } %>
                               </div>
                               <div class="col-md-5">
-                                <%= f.text_field :comment, class: "form-control form-control-sm", placeholder: "Commentaire...", required: true %>
+                                <%= f.hidden_field :comment, class: "full-comment" %>
+                                <input type="hidden" class="base-comment">
+                                <input type="text" class="form-control form-control-sm comment-complement" placeholder="Complément..." oninput="updateCommentValue(this)">
                               </div>
                               <div class="col-md-1">
                                 <button type="submit" class="btn btn-success btn-sm w-100" disabled>OK</button>
@@ -488,18 +495,22 @@
                       </thead>
                       <tbody>
                         <% 
-                          previous_lesson_id = nil
+                          # On regroupe par flight_lesson_id (ou titre) pour gérer l'affichage (remplacer le placeholder par la leçon validée)
+                          grouped_lecons = @lecons_en_vol.group_by { |l| l.flight_lesson_id || l.title }
                           row_class = ""
                         %>
-                        <% @lecons_en_vol.each do |livret| %>
+                        <% grouped_lecons.each do |key, livrets| %>
                           <% 
-                            show_title = (previous_lesson_id != livret.flight_lesson_id)
-                            if show_title
-                              row_class = (row_class == "table-active" ? "" : "table-active")
-                              previous_lesson_id = livret.flight_lesson_id
-                            end
+                            # Si une leçon est validée (status > 0), on masque celle qui est vide (status 0)
+                            has_validated = livrets.any? { |l| l.status > 0 }
+                            to_display = has_validated ? livrets.select { |l| l.status > 0 } : livrets
+                            row_class = (row_class == "table-active" ? "" : "table-active")
                           %>
-                          <% vol = Vol.where(livret_id: livret.id).order(debut_vol: :desc).first %>
+                          <% to_display.each_with_index do |livret, index| %>
+                            <% 
+                              show_title = (index == 0)
+                              vol = Vol.where(livret_id: livret.id).order(debut_vol: :desc).first 
+                            %>
                           <tr class="<%= row_class %>">
                             <td>
                               <% 
@@ -575,7 +586,7 @@
                                 </div>
                               <% end %>
                             </td>
-                            <td><%= show_title ? livret.flight_lesson.title : "" %></td>
+                            <td><%= show_title ? livret.display_title : "" %></td>
                             <td>
                               <% if (current_user.instructeur? || current_user.admin?) && !@pdf %>
                                 <div class="dropdown">
@@ -611,8 +622,9 @@
                                 </div>
                               <% end %>
                             </td>
-                            <td><%= livret.comment %></td>
+                            <td><%= sanitize(livret.comment.to_s).gsub("Commentaires :", "<br>Commentaires :").html_safe %></td>
                           </tr>
+                        <% end %>
                         <% end %>
                       </tbody>
                     </table>
@@ -634,6 +646,39 @@
 </div>
 
 <script>
+  function updateLessonDetails(select) {
+    const selectedOption = select.options[select.selectedIndex];
+    const comment = selectedOption.getAttribute('data-comment');
+    const form = select.form;
+    const baseCommentField = form.querySelector('.base-comment');
+    const fullCommentField = form.querySelector('.full-comment');
+    const complementField = form.querySelector('.comment-complement');
+    const submitButton = form.querySelector('button[type="submit"]');
+
+    if (baseCommentField) {
+      baseCommentField.value = comment || "";
+      if (fullCommentField) fullCommentField.value = comment || "";
+      if (complementField) complementField.value = "";
+    }
+    if (submitButton) {
+      submitButton.disabled = !select.value;
+    }
+  }
+
+  function updateCommentValue(input) {
+    const form = input.form;
+    const baseComment = form.querySelector('.base-comment').value;
+    const fullCommentField = form.querySelector('.full-comment');
+    
+    if (fullCommentField) {
+      if (baseComment && input.value) {
+        fullCommentField.value = baseComment + " " + input.value;
+      } else {
+        fullCommentField.value = baseComment || input.value;
+      }
+    }
+  }
+
   document.addEventListener("turbo:load", function() {
     const accordions = document.querySelectorAll('.accordion-collapse');
     
