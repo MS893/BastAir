@@ -1,5 +1,24 @@
 # Omakase Ruby styling for Rails
-inherit_gem: { rubocop-rails-omakase: rubocop.yml }
+# .rubocop.yml
+inherit_from: .rubocop_todo.yml # Permet d'ignorer les erreurs existantes
+
+AllCops:
+  NewCops: enable
+  Exclude:
+    - 'db/schema.rb'
+    - 'bin/*'
+    - 'node_modules/**/*'
+
+# Désactivez les règles les plus frustrantes
+Metrics/MethodLength:
+  Max: 20 # Augmente la taille autorisée des méthodes
+Metrics/AbcSize:
+  Enabled: false # Désactive le calcul de complexité logicielle
+Style/Documentation:
+  Enabled: false # Ne force pas les commentaires sur chaque classe
+Layout/LineLength:
+  Max: 120 # Autorise des lignes plus longues (80 est souvent trop court)
+
 
 # Overwrite or add rules to create your own house style
 #

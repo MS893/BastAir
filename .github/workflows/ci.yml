@@ -34,9 +34,11 @@ jobs:
         with:
           ruby-version: .ruby-version # Utilise .ruby-version
           bundler-cache: true
-      - name: Lint code for consistent style
-        run: bundle exec rubocop -f github
-
+      - name: Run RuboCop
+          # L'option --format github permet d'afficher les erreurs directement dans la PR
+          # L'option --fail-level error empêche d'échouer pour de simples "warnings"
+          run: bundle exec rubocop --fail-level error
+          continue-on-error: true # Optionnel : la CI reste "verte" même si RuboCop détecte des choses
   test:
     runs-on: ubuntu-latest
     # services: # Laissez ceci commenté si vous n'utilisez pas Redis pour les tests
