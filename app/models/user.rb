@@ -227,7 +227,7 @@ class User < ApplicationRecord
 
     # 3. Création des entrées pour les leçons de vol
     FlightLesson.find_each do |lesson|
-      Livret.create(user: self, flight_lesson: lesson, title: lesson.title, status: 0)
+      Livret.create(user: self, flight_lesson: lesson, title: lesson.title, status: 0, comment: lesson.description)
     end
   end
 

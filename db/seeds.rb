@@ -53,6 +53,13 @@ def users
   )
   puts "✅ Administrator created: #{@admin_user.email}"
 
+  # Création des disponibilités pour l'administrateur (tous les jours, matin et après-midi)
+  %w[lundi mardi mercredi jeudi vendredi samedi dimanche].each do |day|
+    %w[matin apres-midi].each do |period|
+      InstructorAvailability.create!(user: @admin_user, day: day, period: period)
+    end
+  end
+
   # Crée un élève
   eleve_user = User.create!(
     prenom: "Eleve",
@@ -113,6 +120,13 @@ def users
     fonction: "tresorier"
   )
   puts "✅ Instructor created: #{@instructeur_user.email}"
+
+  # Création des disponibilités pour l'instructeur (tous les jours, matin et après-midi)
+  %w[lundi mardi mercredi jeudi vendredi samedi dimanche].each do |day|
+    %w[matin apres-midi].each do |period|
+      InstructorAvailability.create!(user: @instructeur_user, day: day, period: period)
+    end
+  end
 
   # Crée 27 adhérents normaux (non élève)
   puts "\nCreating 27 regular members..."
@@ -564,66 +578,51 @@ def lecons
   # ----------------------------------------------------
   puts "\nCreating Flight Lessons..."
 
-  flight_lessons_data = [
-    { title: "1 Mise en œuvre, roulage et vol d’accoutumance", file: "01-Mise-en-Oeuvre-Roulage-Vol-accoutumance-2023.pdf" },
-    { title: "2 Assiette, inclinaison et ligne droite", file: "02-Assiette-inclinaison-ligne-droite-2023.pdf" },
-    { title: "3 Utilisation du moteur et du compensateur", file: "03-Utilisation-moteur-compensateur-2023.pdf" },
-    { title: "4 Alignement et décollage", file: "04-Alignement-decollage-2023.pdf" },
-    { title: "5 Assiette - Vitesse assiette - Trajectoire", file: "05-Assiette-trajectoire-assiette-vitesse-2023.pdf" },
-    { title: "6 Relation puissance vitesse - Incidence", file: "lecon_6.pdf" },
-    { title: "7 Contrôle du cap", file: "lecon_7.pdf" },
-    { title: "8 Palier, montée et descente symétrie du vol", file: "05-Assiette-trajectoire-assiette-vitesse-2023.pdf" },
-    { title: "9 Virages en palier, montée et descente symétrie du vol", file: "lecon_9.pdf" },
-    { title: "10 Relations dans le virage", file: "10-Relations-dans-virage-2021.pdf" },
-    { title: "11 Effets du vent traversier sur les trajectoires sol", file: "11-Vents-trajectoires-sol-2021.pdf" },
-    { title: "12 Changement de configuration", file: "12-Vol à Differentes-config-2021.pdf" },
-    { title: "13 Décrochage", file: "13-Decrochage-2021.pdf" },
-    { title: "14 Vol lent", file: "lecon_14.pdf" },
-    { title: "15 Chargement, centrage et stabilité longitudinale", file: "15-Chargement-centrage-stabilite-2021.pdf" },
-    { title: "16 Approche et approche interrompue", file: "16-Approche-1-3-Vs-API-2021.pdf" },
-    { title: "17 L’atterrissage", file: "17-Atterrissage-2021.pdf" },
-    { title: "18 Circuits d’aérodrome", file: "18-Circuit-aerodrome-2021.pdf" },
-    { title: "19 Virage engagé", file: "lecon_19.pdf" },
-    { title: "20 Pannes en phase de décollage", file: "20-Pannes-en-phase-decollage-2021.pdf" },
-    { title: "21 Virage à grande inclinaison", file: "21-Virages-Grande-Inclinaison-2021.pdf" },
-    { title: "22 Le lâcher", file: "22-Le-lacher-2021.pdf" },
-    { title: "23 Décollages et montées adaptés", file: "23-Decollages-et-montees-adaptes-2021.pdf" },
-    { title: "24 Approches et atterrissages adaptés", file: "24-Approches-atterrissages-adaptes-2021.pdf" },
-    { title: "25 Atterrissage de précaution", file: "25-Interruption-Volontaire-du-Vol-2021.pdf" },
-    { title: "26 Le vol moteur réduit", file: "26-Vol-Moteur-Reduit-2021.pdf" },
-    { title: "27 La vrille", file: "27-La-Vrille-2021.pdf" },
-    { title: "28 Procédures anormales et d’urgence", file: "28-Procedures-anormales-et-urgences-2021.pdf" },
-    { title: "29 Virage à forte inclinaison en descente moteur réduit", file: "29-Virage-forte-incli-descente-moteur-off-2021.pdf" },
-    { title: "30 L’estime élémentaire", file: "lecon_30.pdf" },
-    { title: "31 Le cheminement", file: "lecon_31.pdf" },
-    { title: "32 Navigation", file: "lecon_32.pdf" },
-    { title: "33 Application au voyage", file: "lecon_33.pdf" },
-    { title: "34 Radionavigation", file: "34-Radionavigation.pdf" },
-    { title: "35 Egarement", file: "35-Egarement.pdf" },
-    { title: "36 Perte de références extérieures", file: "lecon_36.pdf" },
-    { title: "37 Utilisation du GPS", file: "lecon_37.pdf" }
-  ]
+  file_path = Rails.root.join('lib', 'assets', 'lecons.txt')
+  unless File.exist?(file_path)
+    puts "❌ Erreur : Le fichier de leçons n'a pas été trouvé à l'emplacement '#{file_path}'."
+    return
+  end
+
+  # On normalise les fins de ligne (Windows/Unix) et on sépare les blocs par les lignes vides.
+  lesson_blocks = File.read(file_path).gsub(/\r\n?/, "\n").split("\n\n")
+
+  flight_lessons_data = lesson_blocks.map do |block|
+    lines = block.strip.split("\n")
+    next if lines.length < 3 # Ignore les blocs mal formés
+    {
+      full_title: lines[0].strip,
+      file: lines[1].strip,
+      # On remplace le littéral '\n' par un vrai retour à la ligne pour un meilleur affichage.
+      description: lines[2].strip.gsub(/\\n/, "\n")
+    }
+  end.compact
 
   # Étape 1: Création des leçons en une seule fois.
   lesson_attributes = flight_lessons_data.map do |data|
-    { title: data[:title].split(' ', 2).last, created_at: Time.current, updated_at: Time.current }
+    {
+      title: data[:full_title].split(' ', 2).last,
+      description: data[:description],
+      created_at: Time.current,
+      updated_at: Time.current
+    }
   end
-  FlightLesson.insert_all(lesson_attributes)
-  puts "✅ Flight Lesson records created."
+  FlightLesson.insert_all(lesson_attributes) if lesson_attributes.any?
+  puts "✅ #{lesson_attributes.size} Flight Lesson records created."
 
   # Étape 2: Attachement des documents.
   puts "Attaching documents to flight lessons..."
   lessons_by_title = FlightLesson.all.index_by(&:title)
 
   flight_lessons_data.each do |lesson_data|
-    title = lesson_data[:title].split(' ', 2).last
-    lesson = lessons_by_title[title]
+    short_title = lesson_data[:full_title].split(' ', 2).last
+    lesson = lessons_by_title[short_title]
     if lesson
       file_path = Rails.root.join('lib', 'assets', 'lecons', lesson_data[:file])
       if File.exist?(file_path) && !lesson.document.attached?
         lesson.document.attach(io: File.open(file_path), filename: lesson_data[:file], content_type: 'application/pdf')
       elsif !File.exist?(file_path)
-        puts "      ⚠️  Warning: File not found : #{lesson_data[:file]} '#{lesson.title}'."
+        puts "      ⚠️  Warning: File not found : #{lesson_data[:file]} for lesson '#{lesson.title}'."
       end
     end
   end
@@ -779,9 +778,7 @@ def livrets
       flight_lesson_id: lesson.id,
       title: lesson.title,
       status: 0,
-      comment: "Objectifs : Mettre en œuvre l’avion.
-      Maîtriser les évolutions de l’avion au sol.
-      Etre capable d’agir sur les commandes de manière souple et mesurée.\n Commentaires : ",
+      comment: lesson.description,
       course_id: nil,
       date: nil,
       created_at: now,
