@@ -16,7 +16,7 @@
   <div class="container-fluid pt-4 pb-4">
     <h2 class="mb-5 ms-2">Bienvenue 
       <%= current_user.prenom %> 
-      <%= link_to "Proroger / renouveler ma qualification SEP", 'https://sigebelext.aviation-civile.gouv.fr/sigebelext/identificationpn.htm', class: "btn btn-outline-warning ms-5", target: '_blank' %>
+      <%= link_to "Proroger / renouveler ma qualification SEP", 'https://sigebelext.aviation-civile.gouv.fr/sigebelext/identificationpn.htm', class: "btn btn-outline-secondary ms-5", target: '_blank' %>
     </h2>
 
     <%= turbo_stream_from current_user %>
