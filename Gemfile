@@ -11,7 +11,7 @@ gem "dotenv-rails"
 # système d'authentification complet
 gem "devise"
 # paiement en ligne
-gem "stripe"
+gem "stripe", '~> 17.1.0'
 # chargement d'images
 gem "image_processing", ">= 1.2"
 # Active Storage pour le chargement de fichiers
@@ -26,8 +26,8 @@ gem 'recaptcha', require: 'recaptcha/rails'
 gem 'whenever', require: false
 # APIs Google
 gem 'googleauth'
-gem 'google-apis-calendar_v3', '~> 0.5.0'
-gem 'google-apis-drive_v3', '~> 0.5.0'
+gem 'google-apis-calendar_v3', '~> 0.48.0'
+gem 'google-apis-drive_v3', '~> 0.73.0'
 # graphiques pour la compta
 gem 'chartkick'
 gem 'rails-i18n'
@@ -97,7 +97,7 @@ group :development, :test do
   gem 'letter_opener'
 
   # Rspec pour les tests
-  gem "rspec-rails", "~> 6.1"
+  gem "rspec-rails", '~> 8.0.2'
 
 end
 
