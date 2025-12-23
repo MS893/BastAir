@@ -104,8 +104,11 @@
           
           <% if pending_vols.any? %>
             <% 
-              livret_options = @lecons_en_vol.to_a.uniq(&:title).map do |l|
-                [l.title, l.id, { 'data-comment' => l.comment }]
+              lecons_array = @lecons_en_vol.to_a
+              livret_options = lecons_array.uniq(&:title).map do |l|
+                has_validated = lecons_array.any? { |item| item.title == l.title && item.status > 0 }
+                comment_val = has_validated ? "" : l.comment
+                [l.title, l.id, { 'data-comment' => comment_val }]
               end
             %>
             <div class="card mb-4 border-info">
@@ -587,7 +590,7 @@
                               <% end %>
                             </td>
                             <td><%= show_title ? livret.display_title : "" %></td>
-                            <td>
+                            <td class="text-center">
                               <% if (current_user.instructeur? || current_user.admin?) && !@pdf %>
                                 <div class="dropdown">
                                   <button class="btn btn-link text-decoration-none p-0 border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -646,6 +649,7 @@
 </div>
 
 <script>
+
   function updateLessonDetails(select) {
     const selectedOption = select.options[select.selectedIndex];
     const comment = selectedOption.getAttribute('data-comment');
@@ -698,4 +702,5 @@
       });
     });
   });
+
 </script>
