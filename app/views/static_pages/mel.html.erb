@@ -15,6 +15,7 @@
 <% end %>
 
 <% content_for :title, "Minimum Equipment List (MEL)" %>
+<% nogo = "<span class='text-danger fw-bold'>NO-GO</span>".html_safe %>
 
 <div class="container my-5">
 
@@ -28,7 +29,7 @@
     <div class="accordion-item">
       <h2 class="accordion-header" id="headingPreamble">
         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePreamble" aria-expanded="false" aria-controls="collapsePreamble">
-          <strong>1.1. LME Préambule</strong>
+          <strong>1. LME Préambule</strong>
         </button>
       </h2>
       <div id="collapsePreamble" class="accordion-collapse collapse" aria-labelledby="headingPreamble" data-bs-parent="#preambleAccordion">
@@ -90,7 +91,7 @@
     <div class="accordion-item">
       <h2 class="accordion-header" id="headingItems">
         <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseItems" aria-expanded="true" aria-controls="collapseItems">
-          <strong>1.2. Liste des équipements</strong>
+          <strong>2. Liste des équipements</strong>
         </button>
       </h2>
       <div id="collapseItems" class="accordion-collapse collapse show" aria-labelledby="headingItems" data-bs-parent="#itemsAccordion">
@@ -99,189 +100,31 @@
           <%# --- Accordéon interne pour les chapitres --- %>
           <div class="accordion" id="chaptersAccordion">
 
-            <%# --- 10 - CONDITIONNEMENT D'AIR --- %>
-            <div class="accordion-item">
-              <h2 class="accordion-header" id="heading10"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse10" aria-expanded="false" aria-controls="collapse10">10 - CONDITIONNEMENT D'AIR</button></h2>
-              <div id="collapse10" class="accordion-collapse collapse" aria-labelledby="heading10" data-bs-parent="#chaptersAccordion">
-                <div class="accordion-body p-2">
-                  <%= render_chapter_table([
-                    { name: "10-01 Commandes de chauffage", installed: 3, required: 0, notes: "Température au sol inférieure à 5°C" }
-                  ]) %>
+            <% cache ["mel_list", Mel.maximum(:updated_at)] do %>
+            <% Mel.order(:id).group_by(&:title_1).each_with_index do |(chapter, mels), index| %>
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="heading<%= index %>">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<%= index %>" aria-expanded="false" aria-controls="collapse<%= index %>">
+                    <%= chapter %>
+                  </button>
+                </h2>
+                <div id="collapse<%= index %>" class="accordion-collapse collapse" aria-labelledby="heading<%= index %>" data-bs-parent="#chaptersAccordion">
+                  <div class="accordion-body p-2">
+                    <% 
+                      table_rows = mels.map do |mel|
+                        note_content = mel.tolerance
+                        if note_content.strip.downcase == 'nogo'
+                          note_content = nogo
+                        end
+                        { name: mel.title_2, installed: mel.installed, required: mel.required, notes: note_content }
+                      end
+                    %>
+                    <%= render_chapter_table(table_rows) %>
+                  </div>
                 </div>
               </div>
-            </div>
-
-            <%# --- 20 - COMMUNICATIONS --- %>
-            <div class="accordion-item">
-              <h2 class="accordion-header" id="heading20"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse20" aria-expanded="false" aria-controls="collapse20">20 - COMMUNICATIONS</button></h2>
-              <div id="collapse20" class="accordion-collapse collapse" aria-labelledby="heading20" data-bs-parent="#chaptersAccordion">
-                <div class="accordion-body p-2">
-                  <%= render_chapter_table([
-                    { name: "20-01 VHF non 8.33", installed: 1, required: 0, notes: "" },
-                    { name: "20-02 VHF 8.33", installed: 1, required: 1, notes: "NO-GO" },
-                    { name: "20-03 Intercom.", installed: 1, required: 0, notes: "Pas de vol d’instruction" },
-                    { name: "20-04 Haut parleur", installed: 1, required: 0, notes: "Vol avec casque" },
-                    { name: "20-05 Micro main", installed: 1, required: 0, notes: "Vol avec casque" },
-                    { name: "20-06 Balise de détresse (RBDA)", installed: 1, required: 1, notes: "NO-GO" },
-                    { name: "20-07 Transpondeur mode S", installed: 1, required: 1, notes: "NO-GO" }
-                  ]) %>
-                </div>
-              </div>
-            </div>
-
-            <%# --- 30 - CIRCUIT ELECTRIQUE --- %>
-            <div class="accordion-item">
-              <h2 class="accordion-header" id="heading30"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse30" aria-expanded="false" aria-controls="collapse30">30 - CIRCUIT ELECTRIQUE</button></h2>
-              <div id="collapse30" class="accordion-collapse collapse" aria-labelledby="heading30" data-bs-parent="#chaptersAccordion">
-                <div class="accordion-body p-2">
-                  <%= render_chapter_table([
-                    { name: "30-01 Batterie", installed: 1, required: 1, notes: "NO-GO" },
-                    { name: "30-02 Alternateur", installed: 1, required: 1, notes: "NO-GO" },
-                    { name: "30-04 Votmètre", installed: 1, required: 1, notes: "NO-GO" },
-                    { name: "30-05 Témoin de charge", installed: 1, required: 1, notes: "NO-GO" }
-                  ]) %>
-                </div>
-              </div>
-            </div>
-
-            <%# --- 40 - EQUIPEMENTS --- %>
-            <div class="accordion-item">
-              <h2 class="accordion-header" id="heading40"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse40" aria-expanded="false" aria-controls="collapse40">40 - EQUIPEMENTS</button></h2>
-              <div id="collapse40" class="accordion-collapse collapse" aria-labelledby="heading40" data-bs-parent="#chaptersAccordion">
-                <div class="accordion-body p-2">
-                  <%= render_chapter_table([
-                    { name: "40-01 Indicateur de température extérieure", installed: 0, required: 0, notes: "" },
-                    { name: "40-02 Verrouillage sièges avant", installed: 2, required: 1, notes: "Si panne concerne le siège inoccupé" },
-                    { name: "40-03 Réglage sièges avant", installed: 2, required: 1, notes: "Si la panne concerne le siège inoccupé" },
-                    { name: "40-04 Ceintures et harnais de sécurité", installed: 4, required: 1, notes: "Peuvent être inopérants si siège inoccupé" },
-                    { name: "40-05 Horamètre", installed: 1, required: 0, notes: "Vols retour vers LFMA" }
-                  ]) %>
-                </div>
-              </div>
-            </div>
-
-            <%# --- 50 - COMMANDES DE VOL --- %>
-            <div class="accordion-item">
-              <h2 class="accordion-header" id="heading50"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse50" aria-expanded="false" aria-controls="collapse50">50 - COMMANDES DE VOL</button></h2>
-              <div id="collapse50" class="accordion-collapse collapse" aria-labelledby="heading50" data-bs-parent="#chaptersAccordion">
-                <div class="accordion-body p-2">
-                  <%= render_chapter_table([
-                    { name: "50-01 Verrouillage des volets", installed: 1, required: 1, notes: "NO-GO" },
-                    { name: "50-02 Commande du compensateur", installed: 1, required: 1, notes: "NO-GO" },
-                    { name: "50-03 Avertisseur de décrochage", installed: 1, required: 1, notes: "NO-GO" }
-                  ]) %>
-                </div>
-              </div>
-            </div>
-
-            <%# --- 60 - CIRCUIT CARBURANT --- %>
-            <div class="accordion-item">
-              <h2 class="accordion-header" id="heading60"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse60" aria-expanded="false" aria-controls="collapse60">60 - CIRCUIT CARBURANT</button></h2>
-              <div id="collapse60" class="accordion-collapse collapse" aria-labelledby="heading60" data-bs-parent="#chaptersAccordion">
-                <div class="accordion-body p-2">
-                  <%= render_chapter_table([
-                    { name: "60-01 Pompe électrique", installed: 1, required: 1, notes: "NO-GO" },
-                    { name: "60-02 Voyant de pression carburant", installed: 1, required: 1, notes: "NO-GO" },
-                    { name: "60-03 Manomètre de pression carburant", installed: 1, required: 0, notes: "A condition que le voyant de pression ait été vérifié lors de la mise en route" },
-                    { name: "60-04 Voyant bas niveau", installed: 1, required: 1, notes: "Vol de jour avec plein complet effectué, le jaugeur fonctionne. 2 heures de vol max" },
-                    { name: "60-05 Jaugeurs", installed: 1, required: 0, notes: "Alarme bas niveau fonctionne. Retour au terrain possible de jour si plein complet avant départ et 2 heures de vol max." },
-                    { name: "60-06 Vanne de fermeture ou permutation de réservoir", installed: 1, required: 1, notes: "NO-GO" }
-                  ]) %>
-                </div>
-              </div>
-            </div>
-
-            <%# --- 70 - INSTRUMENTS DE BORD --- %>
-            <div class="accordion-item">
-              <h2 class="accordion-header" id="heading70"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse70" aria-expanded="false" aria-controls="collapse70">70 - INSTRUMENTS DE BORD</button></h2>
-              <div id="collapse70" class="accordion-collapse collapse" aria-labelledby="heading70" data-bs-parent="#chaptersAccordion">
-                <div class="accordion-body p-2">
-                  <%= render_chapter_table([
-                    { name: "70-01 Altimètre", installed: 1, required: 1, notes: "NO-GO" },
-                    { name: "70-02 Variomètre", installed: 1, required: 0, notes: "Vol de jour" },
-                    { name: "70-03 Horizon artificiel", installed: 1, required: 0, notes: "Vol de jour. VFR \"ON TOP\" et survol maritime interdits" },
-                    { name: "70-04 Compas magnétique", installed: 1, required: 1, notes: "NO-GO" },
-                    { name: "70-05 Conservateur de cap", installed: 1, required: 0, notes: "Vol « ON TOP » - survol maritime - vol de nuit interdit. Utilisation du compas magnétique" },
-                    { name: "70-06 Indicateur de virage", installed: 1, required: 0, notes: "Vol de jour. VFR « ON TOP » - survol maritime interdits." },
-                    { name: "70-07 Indicateur de dérapage", installed: 1, required: 1, notes: "NO-GO" },
-                    { name: "70-08 Montre", installed: 1, required: 0, notes: "Le pilote possède une montre chronomètre." }
-                  ]) %>
-                </div>
-              </div>
-            </div>
-
-            <%# --- 80 - ECLAIRAGE --- %>
-            <div class="accordion-item">
-              <h2 class="accordion-header" id="heading80"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse80" aria-expanded="false" aria-controls="collapse80">80 - ECLAIRAGE</button></h2>
-              <div id="collapse80" class="accordion-collapse collapse" aria-labelledby="heading80" data-bs-parent="#chaptersAccordion">
-                <div class="accordion-body p-2">
-                  <%= render_chapter_table([
-                    { name: "80-01 Feu anticollision", installed: 1, required: 0, notes: "Vol de jour, mise en route sur une aire dégagée" },
-                    { name: "80-02 Feux de navigation", installed: 3, required: 0, notes: "Vol de jour" },
-                    { name: "80-03 Phare d'atterrissage", installed: 1, required: 0, notes: "Vol de jour" },
-                    { name: "80-04 Eclairage tableau de bord", installed: 1, required: 0, notes: "Vol de jour" },
-                    { name: "80-05 Phare de roulage", installed: 1, required: 0, notes: "" }
-                  ]) %>
-                </div>
-              </div>
-            </div>
-
-            <%# --- 90 - SYSTEME DE NAVIGATION --- %>
-            <div class="accordion-item">
-              <h2 class="accordion-header" id="heading90"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse90" aria-expanded="false" aria-controls="collapse90">90 - SYSTEME DE NAVIGATION</button></h2>
-              <div id="collapse90" class="accordion-collapse collapse" aria-labelledby="heading90" data-bs-parent="#chaptersAccordion">
-                <div class="accordion-body p-2">
-                  <%= render_chapter_table([
-                    { name: "90-01 Récepteur VOR", installed: 1, required: 0, notes: "Vol \"ON TOP\" interdit. Vol de nuit local (Tours de piste)" },
-                    { name: "90-02 GPS (si installé)", installed: 1, required: 0, notes: "" }
-                  ]) %>
-                </div>
-              </div>
-            </div>
-
-            <%# --- 100 - GENERATION PNEUMATIQUE --- %>
-            <div class="accordion-item">
-              <h2 class="accordion-header" id="heading100"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse100" aria-expanded="false" aria-controls="collapse100">100 - GENERATION PNEUMATIQUE</button></h2>
-              <div id="collapse100" class="accordion-collapse collapse" aria-labelledby="heading100" data-bs-parent="#chaptersAccordion">
-                <div class="accordion-body p-2">
-                  <%= render_chapter_table([
-                    { name: "100-01 Pompe à vide", installed: 1, required: 0, notes: "HA et conservateur de cap HS ; vol \"ON TOP\" - survols maritimes - vol de nuit interdits. Utilisation du compas magnétique" },
-                    { name: "100-02 Manomètre de dépression", installed: 1, required: 0, notes: "Surveiller HA et conservateur de cap." }
-                  ]) %>
-                </div>
-              </div>
-            </div>
-
-            <%# --- 110 - COMMANDES MOTEUR --- %>
-            <div class="accordion-item">
-              <h2 class="accordion-header" id="heading110"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse110" aria-expanded="false" aria-controls="collapse110">110 - COMMANDES MOTEUR</button></h2>
-              <div id="collapse110" class="accordion-collapse collapse" aria-labelledby="heading110" data-bs-parent="#chaptersAccordion">
-                <div class="accordion-body p-2">
-                  <%= render_chapter_table([
-                    { name: "110-01 Manette des gaz", installed: 1, required: 1, notes: "NO-GO" },
-                    { name: "110-02 Commande de richesse", installed: 1, required: 1, notes: "NO-GO" },
-                    { name: "110-03 Réchauffage carburateur", installed: 1, required: 1, notes: "NO-GO" }
-                  ]) %>
-                </div>
-              </div>
-            </div>
-
-            <%# --- 120 - CONTROLE MOTEUR --- %>
-            <div class="accordion-item">
-              <h2 class="accordion-header" id="heading120"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse120" aria-expanded="false" aria-controls="collapse120">120 - CONTROLE MOTEUR</button></h2>
-              <div id="collapse120" class="accordion-collapse collapse" aria-labelledby="heading120" data-bs-parent="#chaptersAccordion">
-                <div class="accordion-body p-2">
-                  <%= render_chapter_table([
-                    { name: "120-01 Tachymètre", installed: 1, required: 1, notes: "NO-GO" },
-                    { name: "120-02 Indicateur de température d'huile", installed: 1, required: 1, notes: "NO-GO" },
-                    { name: "120-03 Indicateur de pression d'huile", installed: 1, required: 1, notes: "NO-GO" },
-                    { name: "120-04 Voyant de pression d'huile", installed: 1, required: 1, notes: "NO-GO" },
-                    { name: "120-05 Indicateur de pression carburant", installed: 1, required: 1, notes: "NO-GO" },
-                    { name: "120-06 Voyant de pression essence", installed: 1, required: 1, notes: "NO-GO" }
-                  ]) %>
-                </div>
-              </div>
-            </div>
+            <% end %>
+            <% end %>
 
           </div>
 
@@ -328,21 +171,29 @@
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('turbo:load', function() {
   // Sélectionne toutes les lignes cliquables
   const clickableRows = document.querySelectorAll('.clickable-row');
   // Sélectionne l'élément dans la modale où afficher les détails
   const nogoItemDetails = document.getElementById('nogo-item-details');
-  // Crée une instance de la modale Bootstrap
-  const nogoModal = new bootstrap.Modal(document.getElementById('nogoModal'));
+  const modalElement = document.getElementById('nogoModal');
 
-  clickableRows.forEach(row => {
-    row.addEventListener('click', function() {
-      // Récupère le nom de l'item depuis l'attribut data-item-name
-      const itemName = this.dataset.itemName;
-      nogoItemDetails.textContent = itemName;
-      nogoModal.show();
+  if (modalElement) {
+    // Utilise getOrCreateInstance pour éviter les conflits d'instances (bug du backdrop)
+    const nogoModal = bootstrap.Modal.getOrCreateInstance(modalElement);
+
+    clickableRows.forEach(row => {
+      // Vérifie si l'événement est déjà attaché pour éviter les doublons
+      if (row.dataset.listenerAttached) return;
+      row.dataset.listenerAttached = "true";
+
+      row.addEventListener('click', function() {
+        // Récupère le nom de l'item depuis l'attribut data-item-name
+        const itemName = this.dataset.itemName;
+        nogoItemDetails.textContent = itemName;
+        nogoModal.show();
+      });
     });
-  });
-});
+  }
+}, { once: true });
 </script>

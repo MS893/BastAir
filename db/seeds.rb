@@ -795,6 +795,67 @@ def livrets
   puts "✅ Complete progression booklet created for student '#{eleve_user.full_name}' with #{livret_entries.count} total entries."
 end
 
+def mels
+  puts "\nCreating MEL entries from file..."
+  file_path = Rails.root.join('lib', 'assets', 'mel.txt')
+
+  unless File.exist?(file_path)
+    puts "❌ Erreur : Le fichier mel.txt n'a pas été trouvé à l'emplacement '#{file_path}'."
+    return
+  end
+
+  Mel.delete_all
+
+  lines = File.readlines(file_path).map(&:strip).reject(&:empty?)
+  
+  mel_attributes = []
+  current_title_1 = nil
+  i = 0
+  now = Time.current
+
+  while i < lines.length
+    line = lines[i]
+    
+    if !line.start_with?('*')
+      current_title_1 = line
+      i += 1
+    else
+      # Bloc de 3 lignes : Title 2, Nombres, Tolérance
+      title_2 = line.sub(/^\*\s?/, '')
+      
+      if i + 1 < lines.length
+        numbers_str = lines[i+1].sub(/^\*\s?/, '')
+        installed, required = numbers_str.split.map(&:to_i)
+      else
+        break
+      end
+
+      if i + 2 < lines.length
+        tolerance = lines[i+2].sub(/^\*\s?/, '')
+      else
+        break
+      end
+
+      mel_attributes << {
+        title_1: current_title_1,
+        title_2: title_2,
+        installed: installed,
+        required: required,
+        tolerance: tolerance,
+        created_at: now,
+        updated_at: now
+      }
+      
+      i += 3
+    end
+  end
+
+  if mel_attributes.any?
+    Mel.insert_all(mel_attributes)
+    puts "✅ #{mel_attributes.size} MEL entries created."
+  end
+end
+
 def transactions
 
   # 9. Création de 20 transactions
@@ -853,6 +914,7 @@ if Rails.env.production?
   lecons        # Appel de la méthode pour créer les leçons de vol
   livrets       # Crée les livrets APRÈS les leçons et cours
   questions_ftp # Appel de la méthode pour créer les questions
+  mels          # Appel de la méthode pour créer les MELs
   # en production on n'a pas besoin de remplir les autres tables
 
 else
@@ -900,6 +962,7 @@ else
   Immobilisation.delete_all
   Vol.delete_all
   Livret.delete_all
+  Mel.delete_all
   Penalite.delete_all
   Reservation.delete_all
   Signalement.delete_all
@@ -940,6 +1003,7 @@ else
   lecons        # Appel de la méthode pour créer les leçons de vol
   livrets       # Crée les livrets APRÈS les leçons et cours
   questions_ftp # Appel de la méthode pour créer les questions BIA
+  mels          # Appel de la méthode pour créer les MELs
   transactions  # Appel de la méthode pour créer les transactions
     
 end

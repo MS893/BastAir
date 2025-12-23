@@ -1,0 +1,2 @@
+class Mel < ApplicationRecord
+end

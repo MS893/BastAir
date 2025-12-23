@@ -1,0 +1,177 @@
+10 - CONDITIONNEMENT D'AIR
+* 10-01 Commandes de chauffage
+* 3 0
+* Température au sol inférieure à 5°C
+
+20 - COMMUNICATIONS
+* 20-01 VHF non 8.33
+* 1 0
+* 
+* 20-02 VHF 8.33
+* 1 1
+* nogo
+* 20-03 Intercom.
+* 1 0
+* Pas de vol d’instruction
+* 20-04 Haut parleur
+* 1 0
+* Vol avec casque
+* 20-05 Micro main
+* 1 0
+* Vol avec casque
+* 20-06 Balise de détresse (RBDA)
+* 1 1
+* nogo
+* 20-07 Transpondeur mode S
+* 1 1
+* nogo
+
+30 - CIRCUIT ELECTRIQUE
+* 30-01 Batterie
+* 1 1
+* nogo
+* 30-02 Alternateur
+* 1 1
+* nogo
+* 30-04 Votmètre
+* 1 1
+* nogo
+* 30-05 Témoin de charge
+* 1 1
+* nogo
+
+40 - EQUIPEMENTS
+* 40-01 Indicateur de température extérieure
+* 1 0
+* 
+* 40-02 Verrouillage sièges avant
+* 2 1
+* Si panne concerne le siège inoccupé
+* 40-03 Réglage sièges avant
+* 2 1
+* Si la panne concerne le siège inoccupé
+* 40-04 Ceintures et harnais de sécurité
+* 4 1
+* Peuvent être inopérants si siège inoccupé
+* 40-05 Horamètre
+* 1 0
+* Vols retour vers l'érodrome
+
+50 - COMMANDES DE VOL
+* 50-01 Verrouillage des volets
+* 1 1
+* nogo
+* 50-02 Commande du compensateur
+* 1 1
+* nogo
+* 50-03 Avertisseur de décrochage
+* 1 1
+* nogo
+
+60 - CIRCUIT CARBURANT
+* 60-01 Pompe électrique
+* 1 1
+* nogo
+* 60-02 Voyant de pression carburant
+* 1 1
+* nogo
+* 60-03 Manomètre de pression carburant
+* 1 0
+* A condition que le voyant de pression ait été vérifié lors de la mise en route
+* 60-04 Voyant bas niveau
+* 1 0
+* Vol de jour avec plein complet effectué, le jaugeur fonctionne. 2 heures de vol max
+* 60-05 Jaugeurs
+* 1 0
+* Alarme bas niveau fonctionne. Retour au terrain possible de jour si plein complet avant départ et 2 heures de vol max.
+* 60-06 Vanne de fermeture ou permutation de réservoir
+* 1 1
+* nogo
+
+70 - INSTRUMENTS DE BORD
+* 70-01 Altimètre
+* 1 1
+* nogo
+* 70-02 Variomètre
+* 1 0
+* Vol de jour
+* 70-03 Horizon artificiel
+* 1 0
+* Vol de jour. VFR "ON TOP" et survol maritime interdits
+* 70-04 Compas magnétique
+* 1 1
+* nogo
+* 70-05 Conservateur de cap
+* 1 0
+* Vol « ON TOP » - survol maritime - vol de nuit interdit. Utilisation du compas magnétique
+* 70-06 Indicateur de virage
+* 1 0
+* Vol de jour. VFR « ON TOP » - survol maritime interdits.
+* 70-07 Indicateur de dérapage
+* 1 1
+* nogo
+* 70-08 Montre
+* 1 0
+* Le pilote possède une montre chronomètre.
+
+80 - ECLAIRAGE
+* 80-01 Feu anticollision
+* 1 0
+* Vol de jour, mise en route sur une aire dégagée
+* 80-02 Feux de navigation
+* 3 0
+* Vol de jour
+* 80-03 Phare d'atterrissage
+* 1 0
+* Vol de jour
+* 80-04 Eclairage tableau de bord
+* 1 0
+* Vol de jour
+* 80-05 Phare de roulage
+* 1 0
+* Vol de jour
+
+90 - SYSTEME DE NAVIGATION
+* 90-01 Récepteur VOR
+* 1 0
+* Vol "ON TOP" interdit. Vol de nuit local (Tours de piste)
+* 90-02 GPS (si installé)
+* 1 0
+* 100 - GENERATION PNEUMATIQUE
+* 100-01 Pompe à vide
+* 1 0
+* HA et conservateur de cap HS ; vol "ON TOP" - survols maritimes - vol de nuit interdits. Utilisation du compas magnétique
+* 100-02 Manomètre de dépression
+* 1 0
+* Surveiller HA et conservateur de cap.
+
+110 - COMMANDES MOTEUR
+* 110-01 Manette des gaz
+* 1 1
+* nogo
+* 110-02 Commande de richesse
+* 1 1
+* nogo
+* 110-03 Réchauffage carburateur
+* 1 1
+* nogo
+120 - CONTROLE MOTEUR
+
+* 120-01 Tachymètre
+* 1 1
+* nogo
+* 120-02 Indicateur de température d'huile
+* 1 1
+* nogo
+* 120-03 Indicateur de pression d'huile
+* 1 1
+* nogo
+* 120-04 Voyant de pression d'huile
+* 1 1
+* nogo
+* 120-05 Indicateur de pression carburant
+* 1 1
+* nogo
+* 120-06 Voyant de pression essence
+* 1 1
+* nogo
