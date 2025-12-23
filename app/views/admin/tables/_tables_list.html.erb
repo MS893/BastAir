@@ -1,4 +1,6 @@
-<p>Sélectionnez une table pour afficher son contenu.</p>
+<% if !local_assigns.fetch(:show_header, true) %>
+  <p>Sélectionnez une table pour afficher son contenu.</p>
+<% end %>
 <div class="list-group">
   <% tables.each do |table| %>
     <%# On ajoute `format: :turbo_stream` pour s'assurer que le contrôleur rendra la bonne vue %>

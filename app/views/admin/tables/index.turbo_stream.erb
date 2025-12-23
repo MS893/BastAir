@@ -1,6 +1,8 @@
 <%# Met à jour la liste des tables à gauche pour que le lien actif soit correct %>
 <%= turbo_stream.update "tables_list" do %>
-  <%= render 'tables_list', tables: @tables, selected_table: @selected_table %>
+  <%= render 'tables_list', tables: @tables.first(1), selected_table: @selected_table, show_header: false %>
+  <div class="mb-4"></div>
+  <%= render 'tables_list', tables: @tables.drop(1), selected_table: @selected_table, show_header: true %>
 <% end %>
 
 <%# Met à jour le contenu de la table à droite %>

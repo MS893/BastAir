@@ -521,7 +521,7 @@
                                 if student_signed && instructor_signed
                                   date_class = "text-decoration-none text-success fw-bold" # Vert : Signé par les deux
                                 elsif instructor_signed
-                                  date_class = "text-decoration-none text-primary fw-bold" # Bleu : Signé par l'instructeur uniquement
+                                  date_class = "text-decoration-none text-warning fw-bold" # jaune : Signé par l'instructeur uniquement
                                 end
 
                                 # On permet l'accès à la page de signature pour voir ou signer
@@ -672,9 +672,11 @@
     
     if (fullCommentField) {
       if (baseComment && input.value) {
-        fullCommentField.value = baseComment + " " + input.value;
+        fullCommentField.value = baseComment + " Commentaires : " + input.value;
+      } else if (input.value) {
+        fullCommentField.value = "Commentaires : " + input.value;
       } else {
-        fullCommentField.value = baseComment || input.value;
+        fullCommentField.value = baseComment || "";
       }
     }
   }

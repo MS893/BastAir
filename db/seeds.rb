@@ -953,6 +953,13 @@ else
   # Utilisation de delete_all au lieu de destroy_all pour une suppression beaucoup plus rapide
   # car elle évite d'instancier chaque objet et d'exécuter les callbacks
   # L'ordre est important pour respecter les contraintes de clés étrangères
+
+  # Nettoyage des pièces jointes (signatures, documents) pour éviter les conflits d'ID après reset
+  ActiveStorage::Attachment.delete_all
+  ActiveStorage::Blob.delete_all
+  # Suppression des fichiers physiques dans le dossier storage (nettoyage disque)
+  FileUtils.rm_rf(Dir[Rails.root.join('storage', '*')])
+
   InstructorAvailability.delete_all
   ActivityLog.delete_all
   Attendance.delete_all

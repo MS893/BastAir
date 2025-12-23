@@ -15,7 +15,9 @@
 
     <div class="col-md-2 mt-3 mb-5">
       <%= turbo_frame_tag "tables_list" do %>
-        <%= render 'tables_list', tables: @tables, selected_table: @selected_table %>
+        <%= render 'tables_list', tables: @tables.first(1), selected_table: @selected_table, show_header: false %>
+        <div class="mb-4"></div>
+        <%= render 'tables_list', tables: @tables.drop(1), selected_table: @selected_table, show_header: true %>
       <% end %>
     </div>
 

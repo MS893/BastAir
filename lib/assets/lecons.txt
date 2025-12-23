@@ -1,147 +1,147 @@
 1 Mise en œuvre, roulage et vol d’accoutumance
 01-Mise-en-Oeuvre-Roulage-Vol-accoutumance-2023.pdf
-Objectifs : Mettre en œuvre l’avion. Maîtriser les évolutions de l’avion au sol. Etre capable d’agir sur les commandes de manière souple et mesurée.  Commentaires : 
+Objectifs : Mettre en œuvre l’avion. Maîtriser les évolutions de l’avion au sol. Etre capable d’agir sur les commandes de manière souple et mesurée.
 
 2 Assiette, inclinaison et ligne droite
 02-Assiette-inclinaison-ligne-droite-2023.pdf
-Objectifs : Afficher et maintenir les assiettes de palier, montée et descente. Afficher et maintenir différentes inclinaisons. Effectuer des lignes droites. Commentaires : 
+Objectifs : Afficher et maintenir les assiettes de palier, montée et descente. Afficher et maintenir différentes inclinaisons. Effectuer des lignes droites.
 
 3 Utilisation du moteur et du compensateur
 03-Utilisation-moteur-compensateur-2023.pdf
-Objectifs : Associer une puissance aux assiettes de palier, montée et descente, contrer les effets moteur et utiliser le compensateur. Commentaires : 
+Objectifs : Associer une puissance aux assiettes de palier, montée et descente, contrer les effets moteur et utiliser le compensateur.
 
 4 Alignement et décollage
 04-Alignement-decollage-2023.pdf
-Objectifs : S’aligner, maintenir une trajectoire d’accélération rectiligne, provoquer le décollage et stabiliser l’assiette de montée. Commentaires : 
+Objectifs : S’aligner, maintenir une trajectoire d’accélération rectiligne, provoquer le décollage et stabiliser l’assiette de montée.
 
 5 Assiette - Vitesse assiette - Trajectoire
 05-Assiette-trajectoire-assiette-vitesse-2023.pdf
-Objectifs : A puissance constante, maîtriser une Vi ou une pente par l’intermédiaire de l’assiette. Commentaires : 
+Objectifs : A puissance constante, maîtriser une Vi ou une pente par l’intermédiaire de l’assiette.
 
 6 Relation puissance vitesse - Incidence
 lecon_6.pdf
-Objectifs : Faire varier la vitesse et maintenir la trajectoire constante (en palier), en adaptant l’assiette. Commentaires : 
+Objectifs : Faire varier la vitesse et maintenir la trajectoire constante (en palier), en adaptant l’assiette.
 
 7 Contrôle du cap
 lecon_7.pdf
-Objectifs : Contrôler l’orientation de l’avion par rapport au nord magnétique. Commentaires : 
+Objectifs : Contrôler l’orientation de l’avion par rapport au nord magnétique.
 
 8 Palier, montée et descente symétrie du vol
 05-Assiette-trajectoire-assiette-vitesse-2023.pdf
-Objectifs : Stabiliser les trajectoires de palier, montée et descente en fixant des paramètres de référence. Effectuer les séquences de changement de trajectoire. Commentaires : 
+Objectifs : Stabiliser les trajectoires de palier, montée et descente en fixant des paramètres de référence. Effectuer les séquences de changement de trajectoire.
 
 9 Virages en palier, montée et descente symétrie du vol
 lecon_9.pdf
-Objectifs : Effectuer des virages symétriques en palier, montée et descente. Commentaires : 
+Objectifs : Effectuer des virages symétriques en palier, montée et descente.
 
 10 Relations dans le virage
 10-Relations-dans-virage-2021.pdf
-Objectifs : Maîtriser le taux et le rayon du virage, en fonction de l’inclinaison et de la vitesse, en vue d’effectuer des interceptions d’axe. Commentaires : 
+Objectifs : Maîtriser le taux et le rayon du virage, en fonction de l’inclinaison et de la vitesse, en vue d’effectuer des interceptions d’axe.
 
 11 Effets du vent traversier sur les trajectoires sol
 11-Vents-trajectoires-sol-2021.pdf
-Objectifs : Corriger les effets du vent sur les trajectoires sol. Commentaires : 
+Objectifs : Corriger les effets du vent sur les trajectoires sol.
 
 12 Changement de configuration
 12-Vol à Differentes-config-2021.pdf
-Objectifs : Évoluer en vol à différentes configurations en maîtrisant la symétrie. Commentaires : 
+Objectifs : Évoluer en vol à différentes configurations en maîtrisant la symétrie.
 
 13 Décrochage
 13-Decrochage-2021.pdf
-Objectifs : Lors de décrochages en ligne droite ou en virage, à différentes configurations et différentes positions de compensateur, identifier le comportement de l’avion et appliquer la procédure de retour au vol normal avec ou sans puissance. Commentaires : 
+Objectifs : Lors de décrochages en ligne droite ou en virage, à différentes configurations et différentes positions de compensateur, identifier le comportement de l’avion et appliquer la procédure de retour au vol normal avec ou sans puissance.
 
 14 Vol lent
 lecon_14.pdf
-Objectifs : Identifier les caractéristiques du vol lent, savoir réagir de façon adéquate à l’identification de la limite basse du domaine de vol. Évoluer en vol lent en maîtrisant la symétrie. Commentaires : 
+Objectifs : Identifier les caractéristiques du vol lent, savoir réagir de façon adéquate à l’identification de la limite basse du domaine de vol. Évoluer en vol lent en maîtrisant la symétrie.
 
 15 Chargement, centrage et stabilité longitudinale
 15-Chargement-centrage-stabilite-2021.pdf
-Objectifs : Faire constater au cours de la progression l’influence du chargement et du centrage sur le comportement de l’avion. Commentaires : 
+Objectifs : Faire constater au cours de la progression l’influence du chargement et du centrage sur le comportement de l’avion.
 
 16 Approche et approche interrompue
 16-Approche-1-3-Vs-API-2021.pdf
-Objectifs :  Intercepter et suivre l’axe d’approche et le plan de 5% qui conduisent au point d’aboutissement, à Vref jusqu’à la décision d’approche interrompue ou d’arrondi. Commentaires : 
+Objectifs :  Intercepter et suivre l’axe d’approche et le plan de 5% qui conduisent au point d’aboutissement, à Vref jusqu’à la décision d’approche interrompue ou d’arrondi.
 
 17 L’atterrissage
 17-Atterrissage-2021.pdf
-Objectifs :  Amener l’avion en contact avec le sol, maintenir l’axe de piste jusqu’au contrôle de la vitesse de roulage. Commentaires : 
+Objectifs :  Amener l’avion en contact avec le sol, maintenir l’axe de piste jusqu’au contrôle de la vitesse de roulage.
 
 18 Circuits d’aérodrome
 18-Circuit-aerodrome-2021.pdf
-Objectifs : Adapter la trajectoire autour d’un aérodrome en fonction des conditions météorologiques, de trafic et d’environnement pour rejoindre le plan d’approche. Commentaires : 
+Objectifs : Adapter la trajectoire autour d’un aérodrome en fonction des conditions météorologiques, de trafic et d’environnement pour rejoindre le plan d’approche.
 
 19 Virage engagé
 lecon_19.pdf
-Objectifs : Détecter une situation de virage engagé et effectuer la procédure de sortie de virage engagé. Commentaires : 
+Objectifs : Détecter une situation de virage engagé et effectuer la procédure de sortie de virage engagé.
 
 20 Pannes en phase de décollage
 20-Pannes-en-phase-decollage-2021.pdf
-Objectifs : Adapter les actions de pilotage et mettre en oeuvre des procédures en situation de panne pouvant se produire pendant la phase de décollage. Commentaires : 
+Objectifs : Adapter les actions de pilotage et mettre en oeuvre des procédures en situation de panne pouvant se produire pendant la phase de décollage.
 
 21 Virage à grande inclinaison
 21-Virages-Grande-Inclinaison-2021.pdf
-Objectifs : Stabiliser des virages à 45° d’inclinaison en palier et en descente. Commentaires : 
+Objectifs : Stabiliser des virages à 45° d’inclinaison en palier et en descente.
 
 22 Le lâcher
 22-Le-lacher-2021.pdf
-Commentaires : 
+Ojectif : que l'élève fasse un ou plusieurs tours de piste
 
 23 Décollages et montées adaptés
 23-Decollages-et-montees-adaptes-2021.pdf
-Objectifs : Décoller sur une piste limitative. Décoller avec du vent traversier. Décoller sur un terrain meuble. Rejoindre au plus tôt une altitude donnée. Franchir des obstacles. Suivre une trajectoire sol anti-bruit. Commentaires : 
+Objectifs : Décoller sur une piste limitative. Décoller avec du vent traversier. Décoller sur un terrain meuble. Rejoindre au plus tôt une altitude donnée. Franchir des obstacles. Suivre une trajectoire sol anti-bruit.
 
 24 Approches et atterrissages adaptés
 24-Approches-atterrissages-adaptes-2021.pdf
-Objectifs : Atterrir avec du vent traversier. Atterrir sur un terrain meuble. Atterrir volets 0°. Atterrir sur piste limitative. Suivre une trajectoire anti-bruit. Commentaires : 
+Objectifs : Atterrir avec du vent traversier. Atterrir sur un terrain meuble. Atterrir volets 0°. Atterrir sur piste limitative. Suivre une trajectoire anti-bruit.
 
 25 Atterrissage de précaution
 25-Interruption-Volontaire-du-Vol-2021.pdf
-Objectifs : Conduire un atterrissage hors aérodrome. Commentaires : 
+Objectifs : Conduire un atterrissage hors aérodrome.
 
 26 Le vol moteur réduit
 26-Vol-Moteur-Reduit-2021.pdf
-Objectifs : Visualiser et maîtriser les trajectoires moteur réduit en vue de l’atterrissage en panne moteur. Commentaires : 
+Objectifs : Visualiser et maîtriser les trajectoires moteur réduit en vue de l’atterrissage en panne moteur.
 
 27 La vrille
 27-La-Vrille-2021.pdf
-Objectifs : Détecter les situations favorables à la vrille et l’éviter. Commentaires : 
+Objectifs : Détecter les situations favorables à la vrille et l’éviter.
 
 28 Procédures anormales et d’urgence
 28-Procedures-anormales-et-urgences-2021.pdf
-Objectifs : Identifier une situation dégradée et appliquer la procédure adaptée. Commentaires : 
+Objectifs : Identifier une situation dégradée et appliquer la procédure adaptée.
 
 29 Virage à forte inclinaison en descente moteur réduit
 29-Virage-forte-incli-descente-moteur-off-2021.pdf
-Objectifs : Garder la maîtrise de l’avion lors d’une descente dans un espace restreint. Commentaires : 
+Objectifs : Garder la maîtrise de l’avion lors d’une descente dans un espace restreint.
 
 30 L’estime élémentaire
 lecon_30.pdf
-Objectifs : Déterminer en fonction du vent, le cap à prendre pour suivre une route et le temps nécessaire pour rejoindre un point sol donné. Choisir une altitude ou un niveau de vol. Commentaires : 
+Objectifs : Déterminer en fonction du vent, le cap à prendre pour suivre une route et le temps nécessaire pour rejoindre un point sol donné. Choisir une altitude ou un niveau de vol.
 
 31 Le cheminement
 lecon_31.pdf
-Objectifs : Connaître la position de l’avion et faire route en suivant des repères avec une évaluation du temps de vol et de l’orientation moyenne. Commentaires : 
+Objectifs : Connaître la position de l’avion et faire route en suivant des repères avec une évaluation du temps de vol et de l’orientation moyenne.
 
 32 Navigation
 lecon_32.pdf
-Objectifs : Organiser une phase de départ, naviguer à l’estime contrôlée par lecture de cartes, déterminer le début de descente et s’intégrer dans le circuit d’aérodrome. Commentaires : 
+Objectifs : Organiser une phase de départ, naviguer à l’estime contrôlée par lecture de cartes, déterminer le début de descente et s’intégrer dans le circuit d’aérodrome.
 
 33 Application au voyage
 lecon_33.pdf
-Objectifs : Apprendre à utiliser un VOR afin de pouvoir se situer géographiquement par rapport à une station et à naviguer. Suivre un radial en rapprochement ou en éloignement d’une station. Commentaires : 
+Objectifs : Apprendre à utiliser un VOR afin de pouvoir se situer géographiquement par rapport à une station et à naviguer. Suivre un radial en rapprochement ou en éloignement d’une station.
 
 34 Radionavigation
 34-Radionavigation.pdf
-Objectifs : Apprendre à utiliser un radiocompas ou ADF afin de pouvoir se situer géographiquement par rapport à une station et à naviguer. Commentaires : 
+Objectifs : Apprendre à utiliser un radiocompas ou ADF afin de pouvoir se situer géographiquement par rapport à une station et à naviguer.
 
 35 Egarement
 35-Egarement.pdf
-Objectifs : Fixer les priorités, déterminer un secteur de position probable ou un axe de ralliement à l’aide de tous les moyens disponibles et réorganiser la navigation. Commentaires : 
+Objectifs : Fixer les priorités, déterminer un secteur de position probable ou un axe de ralliement à l’aide de tous les moyens disponibles et réorganiser la navigation.
 
 36 Perte de références extérieures
 lecon_36.pdf
-Objectifs : Garder la maîtrise de l’avion à l’aide des indications instrumentales en ligne droite et en virage, en palier, en montée et en descente, le temps de retrouver les conditions VMC. Commentaires : 
+Objectifs : Garder la maîtrise de l’avion à l’aide des indications instrumentales en ligne droite et en virage, en palier, en montée et en descente, le temps de retrouver les conditions VMC.
 
 37 Utilisation du GPS
 lecon_37.pdf
-Objectifs : Améliorer la précision d’une navigation dégrossie à l’estime et diminuer la charge de travail par une bonne organisation des tâches. Commentaires : 
+Objectifs : Améliorer la précision d’une navigation dégrossie à l’estime et diminuer la charge de travail par une bonne organisation des tâches.

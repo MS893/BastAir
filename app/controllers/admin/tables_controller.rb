@@ -47,6 +47,7 @@ module Admin
         'events',                       # Evènements
         'immobs',                       # Immobilisations
         'flight_lessons',               # Instruction
+        'mels',                         # MEL
         'settings',                     # Paramètres
         'attendances',                  # Participants
         'penalites',                    # Pénalités
@@ -393,6 +394,7 @@ module Admin
         'users' => 'Adhérents',
         'penalites' => 'Pénalités',
         'settings' => 'Paramètres',
+        'mels' => 'MEL',
         'vols' => 'Vols'
       }
       translations.fetch(table_name, table_name.humanize)
