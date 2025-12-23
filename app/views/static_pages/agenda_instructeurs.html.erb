@@ -71,3 +71,30 @@
     padding: 2px 0;
   }
 </style>
+
+<div class="container my-5">
+  <h2 class="text-center mb-4">Nos instructeurs</h2>
+  <div class="row justify-content-center">
+    <%# On récupère tous les fichiers du répertoire app/assets/images/fi %>
+    <% files = Dir.glob(Rails.root.join('app', 'assets', 'images', 'fi', '*.{png,jpg,jpeg,gif,PNG,JPG,JPEG,GIF}')).sort %>
+
+    <% if files.present? %>
+      <% files.each do |file_path| %>
+        <div class="col-lg-2 col-md-3 col-sm-4 col-6 mb-4">
+          <div class="card h-100">
+            <%# les vignettes doivent avoir en filigramme le trigramme de l'instructeur en bas, et en haut sa fonction (FI, FE,...) %>
+            <% begin %>
+              <%= image_tag "fi/#{File.basename(file_path)}", class: "card-img-top", alt: "Instructeur", style: "object-fit: contain; height: 180px; width: 100%;" %>
+            <% rescue StandardError %>
+              <div class="d-flex align-items-center justify-content-center bg-light text-muted" style="height: 180px; width: 100%;">Image indisponible</div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    <% else %>
+      <div class="col-12 text-center">
+        <p class="text-muted">Aucune image trouvée dans le dossier <code>app/assets/images/fi/</code>.</p>
+      </div>
+    <% end %>
+  </div>
+</div>
