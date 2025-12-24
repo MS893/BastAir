@@ -92,10 +92,12 @@
               <li><%= link_to '<i class="bi bi-airplane me-2"></i>Afficher les vols'.html_safe, vols_path, class: "dropdown-item" %></li>
               <li><%= link_to '<i class="bi bi-calendar-check me-2"></i>Gestion des Réservations'.html_safe, admin_reservations_path, class: "dropdown-item" %></li>
               <li><hr class="dropdown-divider"></li>
+              <li><%= link_to '<i class="bi bi-wrench-adjustable me-2"></i>Maintenance avion(s)'.html_safe, admin_maintenances_path, class: "dropdown-item" %></li>
+              <li><hr class="dropdown-divider"></li>
               <li><%= link_to '<i class="bi bi-server me-2"></i>Gérer les tables (BDD)'.html_safe, admin_tables_path, class: "dropdown-item" %></li>
               <li><%= link_to '<i class="bi bi-clock-history me-2"></i>Historique d\'activité'.html_safe, admin_tables_path(table_name: 'activity_logs'), class: "dropdown-item" %></li>
               <li><hr class="dropdown-divider"></li>
-              <li><%= link_to '<i class="bi bi-wrench-adjustable me-2"></i>Effacer les agendas Google (IRREVERSIBLE)'.html_safe, admin_google_calendars_path, class: "dropdown-item" %></li>
+              <li><%= link_to '<i class="bi bi-exclamation-square me-2"></i>Effacer les agendas Google (IRREVERSIBLE)'.html_safe, admin_google_calendars_path, class: "dropdown-item" %></li>
               <li><%= link_to '<i class="bi bi-clock me-2"></i>Modifier le fuseau horaire'.html_safe, edit_admin_setting_path, class: "dropdown-item" %></li>
             </ul>
           </li>

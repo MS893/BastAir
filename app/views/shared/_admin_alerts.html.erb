@@ -1,0 +1,30 @@
+<% if user_signed_in? && current_user.admin? %>
+  <% avions_alert = Avion.where("next_100h < ?", 10) %>
+  <% avions_cen_alert = Avion.where("cert_examen_navigabilite < ?", 30.days.from_now) %>
+  
+  <% if avions_alert.any? %>
+    <div class="alert alert-danger alert-dismissible fade show my-3" role="alert">
+      <h4 class="alert-heading fs-5"><i class="bi bi-exclamation-triangle-fill me-2"></i>Alerte Maintenance</h4>
+      <p class="mb-1">Les avions suivants ont un potentiel inférieur à 10h :</p>
+      <ul class="mb-0">
+        <% avions_alert.each do |avion| %>
+          <li><strong><%= avion.immatriculation %></strong> : <%= avion.next_100h %>h restantes</li>
+        <% end %>
+      </ul>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  <% end %>
+
+  <% if avions_cen_alert.any? %>
+    <div class="alert alert-warning alert-dismissible fade show my-3" role="alert">
+      <h4 class="alert-heading fs-5"><i class="bi bi-calendar-exclamation me-2"></i>Alerte CEN</h4>
+      <p class="mb-1">Les avions suivants ont un CEN expirant dans moins de 30 jours :</p>
+      <ul class="mb-0">
+        <% avions_cen_alert.each do |avion| %>
+          <li><strong><%= avion.immatriculation %></strong> : expire le <%= avion.cert_examen_navigabilite&.strftime('%d/%m/%Y') %></li>
+        <% end %>
+      </ul>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  <% end %>
+<% end %>

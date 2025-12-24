@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <h2>Alerte Expiration CEN</h2>
+    <p>Bonjour,</p>
+    <p>Le Certificat d'Examen de Navigabilité (CEN) de l'avion <strong><%= @avion.immatriculation %></strong> arrive à échéance le <strong><%= @avion.cert_examen_navigabilite.strftime('%d/%m/%Y') %></strong>.</p>
+    <p>Il reste moins de 30 jours avant l'expiration.</p>
+    <p>Merci de prévoir le renouvellement ou la prorogation.</p>
+    <p>L'équipe BastAir</p>
+  </body>
+</html>

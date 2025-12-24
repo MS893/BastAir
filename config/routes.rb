@@ -72,14 +72,27 @@ Rails.application.routes.draw do
   # Route pour la liste des signalements sur un avion
   resources :signalements, only: [:index, :show, :edit, :update, :destroy]
 
+
+
   # routes pour l'administration
   namespace :admin do
-
     resources :users, only: [:new, :create]
     # On ajoute les routes pour gérer les actualités (sauf la page "show" qui n'est pas utile ici)
     resources :news_items, except: [:show]
     # Route pour la gestion des réservations par les admins
     resources :reservations, only: [:index, :destroy]
+    # Route pour la maintenance des avions
+    resources :maintenances, only: [:index, :update] do
+      member do
+        patch :reset_100h
+        patch :reset_moteur
+        patch :reset_annuelle
+        patch :reset_cen
+      end
+      collection do
+        post :notify_grounded
+      end
+    end
     resources :tables, only: [:index], param: :table_name
     delete 'tables/:table_name/records/:id', to: 'tables#destroy_record', as: 'table_record'
     get 'tables/:table_name/records/:id/edit', to: 'tables#edit_record', as: 'edit_table_record'
@@ -92,20 +105,16 @@ Rails.application.routes.draw do
       get 'treasury_report', on: :collection
       get 'yearly_accounting_report', on: :collection
     end
-
     # Routes spécifiques pour la gestion des pénalités
     resources :penalites, only: [] do
       patch 'apply', on: :member
       patch 'cancel', on: :member
     end
-
     # Route pour la gestion des agendas Google
     resources :google_calendars, only: [:index] do
       delete 'clear', on: :collection
     end
-
     resource :setting, only: [:edit, :update], path: 'parametres'
-    
   end
 
   # routes pour les cours (à compléter avec les cours du club)

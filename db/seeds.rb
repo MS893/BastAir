@@ -212,8 +212,10 @@ def avion
     gv: Faker::Date.forward(days: 1095),
     helice: Faker::Date.forward(days: 1095),
     parachute: Faker::Date.forward(days: 1095),
-    potentiel_cellule: 5000.00,
-    potentiel_moteur: 2000.00
+    potentiel_cellule: 50000.00,
+    potentiel_moteur: 1000.00,
+    next_100h: 50.00,
+    next_100h: 100.00
   )
   puts "✅ Aircraft created: #{@avion.immatriculation}"
   # Création de la transaction d'achat de l'avion et de l'immobilisation correspondante
@@ -955,10 +957,10 @@ else
   # L'ordre est important pour respecter les contraintes de clés étrangères
 
   # Nettoyage des pièces jointes (signatures, documents) pour éviter les conflits d'ID après reset
-  ActiveStorage::Attachment.delete_all
-  ActiveStorage::Blob.delete_all
+  #ActiveStorage::Attachment.delete_all
+  #ActiveStorage::Blob.delete_all
   # Suppression des fichiers physiques dans le dossier storage (nettoyage disque)
-  FileUtils.rm_rf(Dir[Rails.root.join('storage', '*')])
+  #FileUtils.rm_rf(Dir[Rails.root.join('storage', '*')])
 
   InstructorAvailability.delete_all
   ActivityLog.delete_all

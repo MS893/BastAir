@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <h2>Avion Indisponible</h2>
+    <p>Bonjour <%= @user.prenom %>,</p>
+    <p>Vous avez une réservation prévue le <strong><%= @reservation.start_time.strftime('%d/%m/%Y à %H:%M') %></strong> sur l'avion <strong><%= @avion.immatriculation %></strong>.</p>
+    <p>Nous vous informons que cet avion est passé <strong>indisponible pour maintenance</strong> (potentiel épuisé ou document expiré).</p>
+    <p>Votre réservation est compromise. Merci de contacter le club ou de vérifier le planning avant de vous déplacer.</p>
+    <p>L'équipe BastAir</p>
+  </body>
+</html>

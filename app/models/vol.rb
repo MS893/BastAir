@@ -17,6 +17,12 @@ class Vol < ApplicationRecord
   after_create :create_debit_transaction
   # Crée un vol miroir pour l'instructeur, sauf si ce vol est déjà un vol d'instructeur.
   after_create :create_instructor_flight_log, unless: :is_instructor_log?
+  
+  # Gestion du potentiel avion
+  after_create :decrement_avion_potential
+  after_update :adjust_avion_potential, if: :saved_change_to_duree_vol?
+  after_destroy :restore_avion_potential
+
   before_validation :calculate_fin_vol, if: -> { debut_vol.present? && duree_vol.present? }
 
   # Validation pour les compteurs
@@ -25,6 +31,8 @@ class Vol < ApplicationRecord
   validate :pilote_qualifie_pour_voler
   # Validation pour s'assurer qu'un élève sélectionne toujours un instructeur
   validate :instructeur_obligatoire_pour_eleve
+  # Validation du potentiel avion à la création
+  validate :verifie_potentiel_suffisant, on: :create
   # Validations des champs du vol
   validates :user, presence: true
   validates :avion, presence: true
@@ -92,6 +100,70 @@ class Vol < ApplicationRecord
 
   
   private
+
+  def decrement_avion_potential
+    return unless avion.present? && duree_vol.present?
+    
+    # On retire la durée du vol au potentiel moteur et au compteur 100h
+    avion.with_lock do
+      was_grounded = avion.grounded? # On capture l'état avant modification
+      previous_100h = avion.next_100h
+      
+      avion.decrement(:potentiel_moteur, duree_vol.to_d)
+      avion.decrement(:next_100h, duree_vol.to_d) if avion.next_100h
+      avion.save(validate: false)
+
+      # Si l'avion devient indisponible suite à ce vol, on prévient les futurs pilotes
+      if !was_grounded && avion.grounded?
+        avion.notify_future_reservations
+      end
+
+      # Si le potentiel passe sous les 10h (et qu'il était au-dessus avant), on alerte
+      if avion.next_100h && previous_100h >= 10 && avion.next_100h < 10
+        MaintenanceMailer.low_potential_alert(avion).deliver_later
+      end
+    end
+  end
+
+  def adjust_avion_potential
+    return unless avion.present?
+
+    # On récupère l'ancienne et la nouvelle durée
+    old_duree, new_duree = saved_change_to_duree_vol
+    
+    # On calcule la différence et on ajuste le potentiel
+    difference = new_duree.to_d - (old_duree&.to_d || 0)
+    
+    avion.with_lock do
+      was_grounded = avion.grounded?
+      previous_100h = avion.next_100h
+
+      avion.decrement(:potentiel_moteur, difference)
+      avion.decrement(:next_100h, difference) if avion.next_100h
+      avion.save(validate: false)
+
+      # Si l'avion devient indisponible suite à l'ajustement
+      if !was_grounded && avion.grounded?
+        avion.notify_future_reservations
+      end
+
+      # Vérification du seuil après ajustement
+      if avion.next_100h && previous_100h >= 10 && avion.next_100h < 10
+        MaintenanceMailer.low_potential_alert(avion).deliver_later
+      end
+    end
+  end
+
+  def restore_avion_potential
+    return unless avion.present? && duree_vol.present?
+
+    # Si le vol est supprimé, on rend les heures à l'avion
+    avion.with_lock do
+      avion.increment(:potentiel_moteur, duree_vol.to_d)
+      avion.increment(:next_100h, duree_vol.to_d) if avion.next_100h
+      avion.save(validate: false)
+    end
+  end
 
   # Crée la transaction de débit après la création du vol
   def create_debit_transaction
@@ -190,6 +262,23 @@ class Vol < ApplicationRecord
     # La validation s'applique si l'utilisateur est un élève et qu'aucun instructeur n'est sélectionné.
     if user&.eleve? && instructeur_id.blank?
       errors.add(:instructeur_id, "doit être sélectionné pour un élève.")
+    end
+  end
+
+  # Vérifie que l'avion a assez de potentiel pour effectuer le vol
+  def verifie_potentiel_suffisant
+    return unless avion.present? && duree_vol.present?
+    
+    if avion.grounded?
+      errors.add(:base, "L'avion est indisponible pour maintenance (date expirée ou potentiel épuisé).")
+    end
+
+    if avion.potentiel_moteur < duree_vol.to_d
+      errors.add(:base, "Le potentiel moteur de l'avion est insuffisant pour ce vol (#{avion.potentiel_moteur}h restantes).")
+    end
+
+    if avion.next_100h.present? && avion.next_100h < duree_vol.to_d
+      errors.add(:base, "Le potentiel pour la visite des 100h est insuffisant pour ce vol (#{avion.next_100h}h restantes).")
     end
   end
 

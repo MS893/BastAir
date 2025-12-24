@@ -1,31 +1,35 @@
 # config/schedule.rb
 
-# Learn more: http://github.com/javan/whenever
+# Définit l'environnement (par défaut 'production', mais s'adapte si vous êtes en dev)
+set :environment, ENV['RAILS_ENV'] || 'development'
 
-# Use this file to easily define all of your cron jobs.
-#
-# It's helpful, but not entirely necessary to understand cron before proceeding.
-# http://en.wikipedia.org/wiki/Cron
-
-# Example:
-#
-# set :output, "/path/to/my/cron_log.log"
-#
-# every 2.hours do
-#   command "/usr/bin/some_great_command"
-#   runner "MyModel.some_method"
-#   rake "some:great:rake:task"
-# end
-
-# Définit le chemin du fichier de log pour les tâches cron.
+# Redirige les logs (très utile pour déboguer si la tâche ne se lance pas)
 set :output, "log/cron.log"
 
-# Exécute la tâche Rake tous les jours à 4h du matin.
-every 1.day, at: '4:00 am' do
-  rake "validity:check_and_notify"
+# Tâche de vérification du CEN (tous les jours à 8h00 : envoi d'email si CEN expire dans les 30 jours)
+# attention : cela ne fonctionnera que si l'ordinateur est allumé à 8h00 !!!
+every 1.day, at: '8:00 am' do
+  rake "maintenance:check_cen"
 end
 
-# Archive les anciens événements Google Calendar le 1er de chaque mois à 5h du matin
-# every 1.month, at: '5:00 am' do
-#  rake "calendar:archive_old_events"
-# end
+# Vérifie les réservations sur avions indisponibles et prévient les pilotes (tous les jours à 8h30)
+every 1.day, at: '8:30 am' do
+  rake "maintenance:notify_grounded_reservations"
+end
+
+# Bonus : Tâche de vérification des qualifications instructeurs (tous les jours à 9h00)
+# (Basé sur votre fichier lib/tasks/instructor_notifications.rake)
+every 1.day, at: '9:00 am' do
+  rake "instructors:notify_expiring_fi"
+end
+
+
+
+# ATTENTION
+# Si vous hébergez votre site sur Heroku, whenever ne fonctionnera pas car le système de fichiers est éphémère.
+# Vous devrez utiliser l'add-on gratuit Heroku Scheduler et ajouter la commande rake maintenance:check_cen via leur interface web.
+# Après avoir modifié ce fichier, n'oubliez pas de mettre à jour la crontab avec la commande :
+#   whenever --update-crontab
+# Vous pouvez vérifier les tâches planifiées avec (terminal) :
+#   crontab -l
+# Pour plus d'informations, consultez la documentation de la gem 'whenever' : https://github.com/javan/whenever

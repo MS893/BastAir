@@ -17,6 +17,7 @@ class Reservation < ApplicationRecord
   validate :within_allowed_hours
   validate :instructor_required_if_instruction
   validate :instructor_is_available, if: -> { instruction? && fi.present? }
+  validate :avion_disponible_pour_reservation
 
 
   
@@ -110,4 +111,11 @@ class Reservation < ApplicationRecord
 
     errors.add(:base, "L'instructeur n'est pas disponible sur ce créneau.") unless is_available
   end
+
+  def avion_disponible_pour_reservation
+    if avion.present? && avion.grounded?
+      errors.add(:avion, "est indisponible pour maintenance (potentiel épuisé ou visite expirée).")
+    end
+  end
+
 end

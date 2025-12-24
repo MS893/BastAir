@@ -86,8 +86,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_23_082656) do
     t.date "gv"
     t.date "helice"
     t.date "parachute"
-    t.float "potentiel_cellule"
-    t.float "potentiel_moteur"
+    t.decimal "potentiel_cellule", precision: 7, scale: 2
+    t.decimal "potentiel_moteur", precision: 7, scale: 2
+    t.decimal "next_100h", precision: 5, scale: 2
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

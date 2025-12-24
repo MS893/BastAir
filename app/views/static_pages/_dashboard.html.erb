@@ -19,6 +19,9 @@
       <%= link_to "Proroger / renouveler ma qualification SEP", 'https://sigebelext.aviation-civile.gouv.fr/sigebelext/identificationpn.htm', class: "btn btn-outline-secondary ms-5", target: '_blank' %>
     </h2>
 
+    <%# Alerte pour les administrateurs (Maintenance avions) %>
+    <%= render 'shared/admin_alerts' %>
+
     <%= turbo_stream_from current_user %>
 
     <div class="row g-4">

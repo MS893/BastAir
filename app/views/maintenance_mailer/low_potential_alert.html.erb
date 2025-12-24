@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <h2>Alerte Maintenance</h2>
+    <p>Bonjour,</p>
+    <p>L'avion <strong><%= @avion.immatriculation %></strong> arrive bientôt à échéance de sa visite des 100 heures.</p>
+    <p>Potentiel restant : <strong style="color: red;"><%= @avion.next_100h %> heures</strong>.</p>
+    <p>Merci de prévoir la maintenance nécessaire.</p>
+    <p>L'équipe BastAir</p>
+  </body>
+</html>
