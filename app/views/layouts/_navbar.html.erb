@@ -138,6 +138,7 @@
 
       <div class="d-flex align-items-center ms-3">
         <%# Sélecteur de langue %>
+        <% unless user_signed_in? %>
         <div class="dropdown me-3">
           <a class="text-decoration-none text-light dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             <%= I18n.locale.to_s.upcase %>
@@ -147,6 +148,7 @@
             <li><%= link_to "EN", url_for(request.params.merge(locale: 'en')), data: { turbo: false }, class: "dropdown-item #{'active' if I18n.locale == :en}" %></li>
           </ul>
         </div>
+        <% end %>
 
         <i class="bi bi-sun-fill text-light me-2"></i>
         <div class="form-check form-switch">

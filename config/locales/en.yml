@@ -1,4 +1,7 @@
 en:
+  time:
+    formats:
+      short_time: "%H:%M"
   layouts:
     navbar:
       home: "Home"

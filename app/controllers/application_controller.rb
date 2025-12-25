@@ -19,8 +19,12 @@ class ApplicationController < ActionController::Base
   private
 
   def set_locale
-    # Définit la locale à partir des paramètres ou utilise la valeur par défaut
-    I18n.locale = params[:locale] || I18n.default_locale
+    if user_signed_in?
+      I18n.locale = :fr
+    else
+      # Définit la locale à partir des paramètres ou utilise la valeur par défaut
+      I18n.locale = params[:locale] || I18n.default_locale
+    end
   end
 
   def default_url_options
