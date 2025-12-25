@@ -1,7 +1,8 @@
-class Reservation < ApplicationRecord
+# frozen_string_literal: true
 
+class Reservation < ApplicationRecord
   # == Attributs virtuels pour le formulaire de saisie de date/heure ==
-  attr_accessor :start_date, :start_hour, :start_minute, :end_date, :end_hour, :end_minute  
+  attr_accessor :start_date, :start_hour, :start_minute, :end_date, :end_hour, :end_minute
 
   # == Associations ===========================================================
   belongs_to :user
@@ -19,8 +20,6 @@ class Reservation < ApplicationRecord
   validate :instructor_is_available, if: -> { instruction? && fi.present? }
   validate :avion_disponible_pour_reservation
 
-
-  
   private
 
   # Initialise les attributs virtuels de date/heure.
@@ -39,9 +38,9 @@ class Reservation < ApplicationRecord
   def end_time_after_start_time
     return if end_time.blank? || start_time.blank?
 
-    if end_time <= start_time
-      errors.add(:end_time, "doit être après l'heure de début")
-    end
+    return unless end_time <= start_time
+
+    errors.add(:end_time, "doit être après l'heure de début")
   end
 
   # S'assure qu'il n'y a pas de réservation qui se chevauche pour le même avion.
@@ -51,13 +50,13 @@ class Reservation < ApplicationRecord
     # Recherche les réservations qui se chevauchent pour le même avion.
     # Un chevauchement existe si une autre réservation commence avant la fin de celle-ci
     # ET se termine après le début de celle-ci.
-    overlapping =  Reservation.where(avion_id: avion_id)
-                              .where.not(id: id) # Exclut l'enregistrement actuel lors d'une mise à jour
-                              .where("start_time < ? AND end_time > ?", end_time, start_time)
+    overlapping = Reservation.where(avion_id: avion_id)
+                             .where.not(id: id) # Exclut l'enregistrement actuel lors d'une mise à jour
+                             .where('start_time < ? AND end_time > ?', end_time, start_time)
 
-    if overlapping.exists?
-      errors.add(:base, "Un autre vol est déjà réservé sur cet avion pendant ce créneau.")
-    end
+    return unless overlapping.exists?
+
+    errors.add(:base, 'Un autre vol est déjà réservé sur cet avion pendant ce créneau.')
   end
 
   # S'assure que la réservation se fait dans les heures autorisées (7h à 17h)
@@ -65,16 +64,16 @@ class Reservation < ApplicationRecord
     return if start_time.blank?
 
     # On vérifie si l'heure de début est en dehors de la plage 7h - 17h (inclu)
-    if start_time.hour < 7 || start_time.hour > 17
-      errors.add(:start_time, "doit être entre 7h00 et 17h00")
-    end
+    return unless start_time.hour < 7 || start_time.hour > 17
+
+    errors.add(:start_time, 'doit être entre 7h00 et 17h00')
   end
 
   # S'assure qu'un instructeur est sélectionné si le vol est en instruction.
   def instructor_required_if_instruction
-    if instruction? && fi.blank?
-      errors.add(:fi, "doit être sélectionné pour un vol en instruction")
-    end
+    return unless instruction? && fi.blank?
+
+    errors.add(:fi, 'doit être sélectionné pour un vol en instruction')
   end
 
   # S'assure que l'instructeur est disponible sur le créneau de la réservation.
@@ -93,7 +92,8 @@ class Reservation < ApplicationRecord
     # Déterminer le jour et la période de la réservation
     reservation_day = start_time.strftime('%A').downcase # ex: "monday"
     # Les jours en base sont en français (ex: "lundi")
-    day_translation = { "monday" => "lundi", "tuesday" => "mardi", "wednesday" => "mercredi", "thursday" => "jeudi", "friday" => "vendredi", "saturday" => "samedi", "sunday" => "dimanche" }
+    day_translation = { 'monday' => 'lundi', 'tuesday' => 'mardi', 'wednesday' => 'mercredi', 'thursday' => 'jeudi',
+                        'friday' => 'vendredi', 'saturday' => 'samedi', 'sunday' => 'dimanche' }
     reservation_day_fr = day_translation[reservation_day]
 
     # Définir les périodes possibles en fonction de l'heure de début
@@ -104,7 +104,10 @@ class Reservation < ApplicationRecord
     possible_periods << 'apres-midi' if start_time.hour >= 12
 
     # S'il n'y a aucune période possible (ex: vol à 5h du matin), on bloque.
-    return errors.add(:base, "La réservation est en dehors des créneaux de disponibilité (matin/après-midi).") if possible_periods.empty?
+    if possible_periods.empty?
+      return errors.add(:base,
+                        'La réservation est en dehors des créneaux de disponibilité (matin/après-midi).')
+    end
 
     # Vérifier si au moins une disponibilité correspondante existe pour l'une des périodes possibles.
     is_available = instructor.instructor_availabilities.where(day: reservation_day_fr, period: possible_periods).exists?
@@ -113,9 +116,8 @@ class Reservation < ApplicationRecord
   end
 
   def avion_disponible_pour_reservation
-    if avion.present? && avion.grounded?
-      errors.add(:avion, "est indisponible pour maintenance (potentiel épuisé ou visite expirée).")
-    end
-  end
+    return unless avion.present? && avion.grounded?
 
+    errors.add(:avion, 'est indisponible pour maintenance (potentiel épuisé ou visite expirée).')
+  end
 end

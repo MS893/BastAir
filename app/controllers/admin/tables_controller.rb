@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 # app/controllers/admin/tables_controller.rb
-require  'kaminari'
+require 'kaminari'
 
 module Admin
   class TablesController < ApplicationController
@@ -10,16 +12,16 @@ module Admin
     # Valeur: un hash où la clé est le type d'ID (ex: :user_ids) et la valeur est la ou les colonnes correspondantes.
     ASSOCIATIONS_TO_PRELOAD = {
       'activity_logs' => { user_ids: :user_id },
-      'attendances'  => { user_ids: :user_id, event_ids: :event_id },
-      'comments'     => { user_ids: :user_id, event_ids: :event_id },
-      'events'       => { user_ids: :admin_id }, # admin_id est un user_id
+      'attendances' => { user_ids: :user_id, event_ids: :event_id },
+      'comments' => { user_ids: :user_id, event_ids: :event_id },
+      'events' => { user_ids: :admin_id }, # admin_id est un user_id
       'instructor_availabilities' => { user_ids: :user_id },
-      'news_items'   => { user_ids: :user_id },
+      'news_items' => { user_ids: :user_id },
       'reservations' => { user_ids: :user_id, avion_ids: :avion_id },
       'signalements' => { user_ids: :user_id, avion_ids: :avion_id },
       'transactions' => { user_ids: :user_id },
-      'immobs'       => { transaction_ids: :purchase_transaction_id },
-      'vols'         => { user_ids: [:user_id, :instructeur_id], avion_ids: :avion_id }
+      'immobs' => { transaction_ids: :purchase_transaction_id },
+      'vols' => { user_ids: %i[user_id instructeur_id], avion_ids: :avion_id }
     }.freeze
 
     def index
@@ -64,59 +66,59 @@ module Admin
         ordered_tables.index(table_name) || Float::INFINITY
       end
 
-      if params[:table_name].present? && @tables.include?(params[:table_name])
-        @selected_table = params[:table_name]
-        @model = create_anonymous_model(params[:table_name])
-        
-        # 1. Construire la requête de base avec filtres et tri (sans l'exécuter)
-        filtered_records =  if @selected_table == 'transactions'
-                              Transaction.unscoped # Inclut les transactions "discarded"
-                            else
-                              @model.all
-                            end
+      return unless params[:table_name].present? && @tables.include?(params[:table_name])
 
-        if params[:query].present?
-          query_term = "%#{params[:query].downcase}%"
-          conditions = @model.column_names.map do |col|
-            "LOWER(CAST(#{col} AS TEXT)) LIKE :query"
-          end.join(' OR ')
-          filtered_records = filtered_records.where(conditions, query: query_term)
-        end
+      @selected_table = params[:table_name]
+      @model = create_anonymous_model(params[:table_name])
 
-        # Filtre par type d'action (spécifique pour activity_logs ou tables avec colonne 'action')
-        if params[:action_type].present? && @model.column_names.include?('action')
-          filtered_records = filtered_records.where(action: params[:action_type])
-        end
+      # 1. Construire la requête de base avec filtres et tri (sans l'exécuter)
+      filtered_records = if @selected_table == 'transactions'
+                           Transaction.unscoped # Inclut les transactions "discarded"
+                         else
+                           @model.all
+                         end
 
-        # Filtre par type d'enregistrement (spécifique pour activity_logs)
-        if params[:record_type].present? && @model.column_names.include?('record_type')
-          filtered_records = filtered_records.where(record_type: params[:record_type])
-        end
+      if params[:query].present?
+        query_term = "%#{params[:query].downcase}%"
+        conditions = @model.column_names.map do |col|
+          "LOWER(CAST(#{col} AS TEXT)) LIKE :query"
+        end.join(' OR ')
+        filtered_records = filtered_records.where(conditions, query: query_term)
+      end
 
-        if params[:sort_column].present? && @model.column_names.include?(params[:sort_column])
-          sort_direction = %w[asc desc].include?(params[:sort_direction]) ? params[:sort_direction] : 'asc'
-          filtered_records = filtered_records.order("#{params[:sort_column]} #{sort_direction}")
-        end
+      # Filtre par type d'action (spécifique pour activity_logs ou tables avec colonne 'action')
+      if params[:action_type].present? && @model.column_names.include?('action')
+        filtered_records = filtered_records.where(action: params[:action_type])
+      end
 
-        # 2. Précharger les données associées en utilisant la requête filtrée (avant pagination)
-        preload_associations(filtered_records)
+      # Filtre par type d'enregistrement (spécifique pour activity_logs)
+      if params[:record_type].present? && @model.column_names.include?('record_type')
+        filtered_records = filtered_records.where(record_type: params[:record_type])
+      end
 
-        # Récupère les actions distinctes pour le filtre (uniquement pour activity_logs)
-        if @selected_table == 'activity_logs'
-          @available_actions = @model.distinct.pluck(:action).compact.sort
-          @available_record_types = @model.distinct.pluck(:record_type).compact.sort
-        end
+      if params[:sort_column].present? && @model.column_names.include?(params[:sort_column])
+        sort_direction = %w[asc desc].include?(params[:sort_direction]) ? params[:sort_direction] : 'asc'
+        filtered_records = filtered_records.order("#{params[:sort_column]} #{sort_direction}")
+      end
 
-        # 3. Paginer les résultats pour l'affichage
-        @records = filtered_records.page(params[:page]).per(10)
+      # 2. Précharger les données associées en utilisant la requête filtrée (avant pagination)
+      preload_associations(filtered_records)
 
-        respond_to do |format|
-          format.html # pour le chargement initial de la page
-          # Pour les mises à jour via Turbo, on s'assure de re-rendre la liste des tables et le contenu de la table sélectionnée.
-          # Le rendu se fait via la vue `index.turbo_stream.erb` qui est implicitement appelée.
-          # Nous nous assurons que les variables d'instance sont correctement définies pour cette vue.
-          format.turbo_stream
-        end
+      # Récupère les actions distinctes pour le filtre (uniquement pour activity_logs)
+      if @selected_table == 'activity_logs'
+        @available_actions = @model.distinct.pluck(:action).compact.sort
+        @available_record_types = @model.distinct.pluck(:record_type).compact.sort
+      end
+
+      # 3. Paginer les résultats pour l'affichage
+      @records = filtered_records.page(params[:page]).per(10)
+
+      respond_to do |format|
+        format.html # pour le chargement initial de la page
+        # Pour les mises à jour via Turbo, on s'assure de re-rendre la liste des tables et le contenu de la table sélectionnée.
+        # Le rendu se fait via la vue `index.turbo_stream.erb` qui est implicitement appelée.
+        # Nous nous assurons que les variables d'instance sont correctement définies pour cette vue.
+        format.turbo_stream
       end
     end
 
@@ -132,26 +134,22 @@ module Admin
 
       # Détecte les clés étrangères et charge les enregistrements associés.
       @model.columns.each do |column|
-        if column.name.end_with?('_id') && column.name != 'id'
-          associated_model_name = if column.name == 'admin_id'
-                                    'User'
-                                  else
-                                    column.name.chomp('_id').classify
-                                  end
-          if column.name == 'purchase_transaction_id'
-            associated_model_name = 'Transaction'
+        next unless column.name.end_with?('_id') && column.name != 'id'
+
+        associated_model_name = if column.name == 'admin_id'
+                                  'User'
+                                else
+                                  column.name.chomp('_id').classify
+                                end
+        associated_model_name = 'Transaction' if column.name == 'purchase_transaction_id'
+        begin
+          associated_model_class = associated_model_name.constantize
+          if associated_model_class < ActiveRecord::Base
+            record_id = @record.send(column.name)
+            @associated_records[column.name] = associated_model_class.find_by(id: record_id) if record_id.present?
           end
-          begin
-            associated_model_class = associated_model_name.constantize
-            if associated_model_class < ActiveRecord::Base
-              record_id = @record.send(column.name)
-              if record_id.present?
-                @associated_records[column.name] = associated_model_class.find_by(id: record_id)
-              end
-            end
-          rescue NameError
-            next # Ignore si le modèle déduit n'existe pas.
-          end
+        rescue NameError
+          next # Ignore si le modèle déduit n'existe pas.
         end
       end
     end
@@ -160,12 +158,15 @@ module Admin
       @table_name = params[:table_name]
       @model = create_anonymous_model(@table_name)
       @record = @model.find(params[:id])
-      @type_vols = ["Vol découverte", "Vol d'initiation", "Vol d'essai", "Convoyage", "Vol BIA"] # Maintenu pour 'reservations' et 'vols'
+      @type_vols = ['Vol découverte', "Vol d'initiation", "Vol d'essai", 'Convoyage', 'Vol BIA'] # Maintenu pour 'reservations' et 'vols'
 
       # Prépare la liste des instructeurs pour le formulaire d'édition des réservations.
       # Un instructeur est un utilisateur avec une date de qualification FI valide.
-      if @table_name == 'reservations'
-        @instructors_for_select = User.where('fi IS NOT NULL AND fi >= ?', Date.today).order(:nom, :prenom).map { |u| ["#{u.prenom} #{u.nom}", u.id] }
+      case @table_name
+      when 'reservations'
+        @instructors_for_select = User.where('fi IS NOT NULL AND fi >= ?', Date.today).order(:nom, :prenom).map do |u|
+          ["#{u.prenom} #{u.nom}", u.id]
+        end
         @google_calendar_colors = {
           '1' => 'Lavande',
           '2' => 'Sauge',
@@ -179,25 +180,27 @@ module Admin
           '10' => 'Vert',
           '11' => 'Rouge'
         }.invert.to_a # On inverse pour avoir [Nom, ID]
-        @reservation_visibilities = ['public', 'private']
-        @reservation_statuses = ['confirmed', 'tentative', 'cancelled']
+        @reservation_visibilities = %w[public private]
+        @reservation_statuses = %w[confirmed tentative cancelled]
         @reservation_time_zones = Setting::ALLOWED_TIME_ZONES
-      elsif @table_name == 'signalements'
+      when 'signalements'
         # Prépare la liste des statuts pour le formulaire d'édition des signalements.
         @signalement_statuses = ['Ouvert', 'En cours', 'Résolu']
-      elsif @table_name == 'users'
+      when 'users'
         # Prépare la liste des fonctions pour le formulaire d'édition des utilisateurs.
         @user_fonctions = User::ALLOWED_FCT.values
         @user_medical_types = User::ALLOWED_MED.values
         @user_licence_types = User::ALLOWED_LIC.values
-      elsif @table_name == 'events'
+      when 'events'
         @event_titles = Event::ALLOWED_TITLES
-      elsif @table_name == 'vols'
-        @instructors_for_select = User.where('fi IS NOT NULL AND fi >= ?', Date.today).order(:nom, :prenom).map { |u| ["#{u.prenom} #{u.nom}", u.id] }
-        @nature_vols = ["VFR de jour", "VFR de nuit", "IFR"]
-      elsif @table_name == 'tarifs'
+      when 'vols'
+        @instructors_for_select = User.where('fi IS NOT NULL AND fi >= ?', Date.today).order(:nom, :prenom).map do |u|
+          ["#{u.prenom} #{u.nom}", u.id]
+        end
+        @nature_vols = ['VFR de jour', 'VFR de nuit', 'IFR']
+      when 'tarifs'
         current_year = Date.current.year
-        @tarif_annee_options = (current_year..current_year + 2).to_a
+        @tarif_annee_options = (current_year..(current_year + 2)).to_a
       end
       set_foreign_key_options
     end
@@ -283,7 +286,7 @@ module Admin
         # On prépare les données nécessaires pour le formulaire (clés étrangères, etc.)
         # et on ré-affiche le formulaire d'édition avec l'objet @record actuel, qui contient les erreurs.
         set_foreign_key_options
-        
+
         render :edit_record, status: :unprocessable_content
       end
     end
@@ -292,19 +295,19 @@ module Admin
       @table_name = params[:table_name]
       @model = create_anonymous_model(@table_name)
       notice_message = "L'enregistrement a été supprimé avec succès."
-      
+
       if @table_name == 'transactions'
         @record = Transaction.unscoped.find(params[:id]) # On doit pouvoir trouver la transaction même si elle est déjà "supprimée"
         if params[:force] == 'true'
           action_type = 'delete'
           log_details = "Suppression DÉFINITIVE de la transaction: #{@record.description} d'un montant de #{@record.montant} €"
           @record.destroy! # Suppression physique forcée
-          notice_message = "La transaction a été supprimée définitivement."
+          notice_message = 'La transaction a été supprimée définitivement.'
         else
           action_type = 'discard'
           log_details = "Mise à la corbeille de la transaction: #{@record.description} d'un montant de #{@record.montant} €"
           @record.discard # Marque la transaction comme supprimée logiquement
-          notice_message = "La transaction a été mise à la corbeille."
+          notice_message = 'La transaction a été mise à la corbeille.'
         end
       else
         @record = @model.find(params[:id])
@@ -340,11 +343,10 @@ module Admin
         details: "Restauration de la transaction: #{@record.description} d'un montant de #{@record.montant} €"
       )
 
-      redirect_to admin_tables_path(table_name: @table_name), notice: "La transaction a été restaurée avec succès.", status: :see_other
+      redirect_to admin_tables_path(table_name: @table_name), notice: 'La transaction a été restaurée avec succès.',
+                                                              status: :see_other
     end
 
-
-    
     private
 
     def preload_associations(records)
@@ -368,10 +370,18 @@ module Admin
       end
 
       # Charge les enregistrements associés en une seule requête par modèle
-      @users_by_id = User.where(id: ids_to_fetch[:user_ids].compact.uniq).index_by(&:id) if ids_to_fetch[:user_ids].present?
-      @avions_by_id = Avion.where(id: ids_to_fetch[:avion_ids].compact.uniq).index_by(&:id) if ids_to_fetch[:avion_ids].present?
-      @events_by_id = Event.where(id: ids_to_fetch[:event_ids].compact.uniq).index_by(&:id) if ids_to_fetch[:event_ids].present?
-      @transactions_by_id = Transaction.where(id: ids_to_fetch[:transaction_ids].compact.uniq).index_by(&:id) if ids_to_fetch[:transaction_ids].present?
+      if ids_to_fetch[:user_ids].present?
+        @users_by_id = User.where(id: ids_to_fetch[:user_ids].compact.uniq).index_by(&:id)
+      end
+      if ids_to_fetch[:avion_ids].present?
+        @avions_by_id = Avion.where(id: ids_to_fetch[:avion_ids].compact.uniq).index_by(&:id)
+      end
+      if ids_to_fetch[:event_ids].present?
+        @events_by_id = Event.where(id: ids_to_fetch[:event_ids].compact.uniq).index_by(&:id)
+      end
+      return unless ids_to_fetch[:transaction_ids].present?
+
+      @transactions_by_id = Transaction.where(id: ids_to_fetch[:transaction_ids].compact.uniq).index_by(&:id)
     end
 
     def translate_table_name(table_name)
@@ -408,22 +418,26 @@ module Admin
       # fonctionnent correctement avec un objet issu d'une classe anonyme.
       Class.new(ApplicationRecord) do
         self.table_name = table_name
-        def self.model_name; ActiveModel::Name.new(self, nil, "Record") end
+        def self.model_name = ActiveModel::Name.new(self, nil, 'Record')
         # On ajoute des accesseurs pour nos champs virtuels si c'est une réservation
-        attr_accessor :start_date, :start_hour, :start_minute, :end_date, :end_hour, :end_minute if table_name == 'reservations'
+        if table_name == 'reservations'
+          attr_accessor :start_date, :start_hour, :start_minute, :end_date, :end_hour,
+                        :end_minute
+        end
 
         # Ajout de validations spécifiques à la table
         if table_name == 'tarifs'
-          validates :annee, uniqueness: { scope: :avion_id, message: "Un tarif existe déjà pour cet avion et cette année." }
-          validates :avion_id, presence: { message: "Veuillez sélectionner un avion." }
+          validates :annee,
+                    uniqueness: { scope: :avion_id, message: 'Un tarif existe déjà pour cet avion et cette année.' }
+          validates :avion_id, presence: { message: 'Veuillez sélectionner un avion.' }
           validates :tarif_horaire_avion1, presence: { message: "Le tarif horaire de l'avion est obligatoire." }
-          validates :tarif_instructeur, presence: { message: "Le tarif instructeur est obligatoire." }
+          validates :tarif_instructeur, presence: { message: 'Le tarif instructeur est obligatoire.' }
         end
 
         # Ajoute dynamiquement des validations basées sur les propriétés des colonnes
-        self.columns.each do |column|
+        columns.each do |column|
           # Exclut les colonnes 'id', 'created_at', 'updated_at' des validations automatiques
-          next if ['id', 'created_at', 'updated_at'].include?(column.name)
+          next if %w[id created_at updated_at].include?(column.name)
 
           # Validation de présence pour les colonnes NOT NULL
           unless column.null
@@ -435,13 +449,13 @@ module Admin
           end
 
           # Validation de numericalité pour les types numériques
-          if [:integer, :float, :decimal].include?(column.type)
+          if %i[integer float decimal].include?(column.type)
             # allow_blank: true est utilisé pour éviter des erreurs en double si validates_presence_of est déjà appliqué
             validates_numericality_of column.name, allow_blank: true
           end
 
           # Validation de longueur pour les colonnes string/text avec une limite définie
-          if [:string, :text].include?(column.type) && column.limit.present? && column.limit > 0
+          if %i[string text].include?(column.type) && column.limit.present? && column.limit.positive?
             validates_length_of column.name, maximum: column.limit, allow_blank: true
           end
         end
@@ -452,67 +466,82 @@ module Admin
       @foreign_key_options = {}
       @model.columns.each do |column|
         # Vérifie si c'est une clé étrangère (se termine par _id, mais n'est pas 'id' lui-même)
-        if column.name.end_with?('_id') && column.name != 'id'
-          # Déduit le nom du modèle associé (ex: 'user_id' -> 'User')
-          associated_model_name = if column.name == 'admin_id'
-                                    'User'
-                                  else
-                                    column.name.chomp('_id').classify
-                                  end
-          if column.name == 'purchase_transaction_id' # This is correct for set_foreign_key_options
-            associated_model_name = 'Transaction'
-          end
-          begin
-            associated_model_class = associated_model_name.constantize
-            # S'assure que c'est bien un modèle ActiveRecord
-            if associated_model_class < ActiveRecord::Base
-              # Détermine un attribut ou une méthode d'affichage approprié pour la liste déroulante
-              if column.name == 'admin_id'
-                # Cas spécial pour admin_id (table events) : ne lister que les admins
-                @foreign_key_options[column.name] = User.where(admin: true).order(:nom, :prenom).map { |record| ["#{record.prenom} #{record.nom}", record.id] }
-              elsif %w[comments attendances news_items signalements transactions].include?(@table_name) && column.name == 'user_id'
-                # Cas spécial pour user_id (tables comments, attendances, news_items, signalements, transactions) : ne lister que les admins
-                @foreign_key_options[column.name] = { options: User.where(admin: true).order(:nom, :prenom).map { |record| ["#{record.prenom} #{record.nom}", record.id] }, selected: @record.user_id }
-              elsif associated_model_class.column_names.include?('prenom') && associated_model_class.column_names.include?('nom')
-                # Cas spécial pour les modèles avec prénom et nom (comme User)
-                @foreign_key_options[column.name] = associated_model_class.all.map { |record| ["#{record.prenom} #{record.nom}", record.id] }
-              elsif associated_model_class.column_names.include?('immatriculation')
-                # Cas spécial pour les modèles avec une immatriculation (comme Avion)
-                @foreign_key_options[column.name] = associated_model_class.order(:immatriculation).map { |record| [record.immatriculation, record.id] }
-              elsif associated_model_class.column_names.include?('title')
-                # Cas spécial pour les modèles avec un titre (comme Event), en s'assurant de l'unicité du titre.
-                options = associated_model_class.select('MIN(id) as id, title').group(:title).order(:title).map { |r| [r.title, r.id] }
-                current_value = @record.send(column.name)
-                # S'assure que l'ID actuel est dans la liste, même si ce n'est pas le MIN(id)
-                unless options.any? { |opt| opt[1] == current_value }
-                  current_event = associated_model_class.find_by(id: current_value)
-                  options << [current_event.title, current_event.id] if current_event
-                end
-                @foreign_key_options[column.name] = options
-              elsif column.name == 'purchase_transaction_id' # This is correct for set_foreign_key_options
-                # Cas spécial pour la transaction d'achat d'une immobilisation.
-                # Si l'ID est déjà présent (pré-rempli), on ne génère pas la liste déroulante.
-                # Le formulaire utilisera un champ caché à la place.
-                next if @record.purchase_transaction_id.present?
+        next unless column.name.end_with?('_id') && column.name != 'id'
 
-                @foreign_key_options[column.name] = associated_model_class.order(date_transaction: :desc).map { |record| ["#{l(record.date_transaction, format: :short)} - #{record.description.truncate(50)}", record.id] }
-              else
-                display_attribute = if associated_model_class.column_names.include?('name')
-                                      'name'
-                                    elsif associated_model_class.column_names.include?('title')
-                                      'title'
-                                    elsif associated_model_class.column_names.include?('email')
-                                      'email'
-                                    else
-                                      'id' # Retourne à l'ID si aucun attribut d'affichage commun
-                                    end
-                # Récupère tous les enregistrements du modèle associé et les formate pour options_for_select
-                @foreign_key_options[column.name] = associated_model_class.all.map { |record| [record.send(display_attribute).to_s, record.id] }
+        # Déduit le nom du modèle associé (ex: 'user_id' -> 'User')
+        associated_model_name = if column.name == 'admin_id'
+                                  'User'
+                                else
+                                  column.name.chomp('_id').classify
+                                end
+        if column.name == 'purchase_transaction_id' # This is correct for set_foreign_key_options
+          associated_model_name = 'Transaction'
+        end
+        begin
+          associated_model_class = associated_model_name.constantize
+          # S'assure que c'est bien un modèle ActiveRecord
+          if associated_model_class < ActiveRecord::Base
+            # Détermine un attribut ou une méthode d'affichage approprié pour la liste déroulante
+            if column.name == 'admin_id'
+              # Cas spécial pour admin_id (table events) : ne lister que les admins
+              @foreign_key_options[column.name] = User.where(admin: true).order(:nom, :prenom).map do |record|
+                ["#{record.prenom} #{record.nom}", record.id]
+              end
+            elsif %w[comments attendances news_items signalements
+                     transactions].include?(@table_name) && column.name == 'user_id'
+              # Cas spécial pour user_id (tables comments, attendances, news_items, signalements, transactions) : ne lister que les admins
+              @foreign_key_options[column.name] = { options: User.where(admin: true).order(:nom, :prenom).map do |record|
+                ["#{record.prenom} #{record.nom}", record.id]
+              end, selected: @record.user_id }
+            elsif associated_model_class.column_names.include?('prenom') && associated_model_class.column_names.include?('nom')
+              # Cas spécial pour les modèles avec prénom et nom (comme User)
+              @foreign_key_options[column.name] = associated_model_class.all.map do |record|
+                ["#{record.prenom} #{record.nom}", record.id]
+              end
+            elsif associated_model_class.column_names.include?('immatriculation')
+              # Cas spécial pour les modèles avec une immatriculation (comme Avion)
+              @foreign_key_options[column.name] = associated_model_class.order(:immatriculation).map do |record|
+                [record.immatriculation, record.id]
+              end
+            elsif associated_model_class.column_names.include?('title')
+              # Cas spécial pour les modèles avec un titre (comme Event), en s'assurant de l'unicité du titre.
+              options = associated_model_class.select('MIN(id) as id, title').group(:title).order(:title).map do |r|
+                [r.title, r.id]
+              end
+              current_value = @record.send(column.name)
+              # S'assure que l'ID actuel est dans la liste, même si ce n'est pas le MIN(id)
+              unless options.any? { |opt| opt[1] == current_value }
+                current_event = associated_model_class.find_by(id: current_value)
+                options << [current_event.title, current_event.id] if current_event
+              end
+              @foreign_key_options[column.name] = options
+            elsif column.name == 'purchase_transaction_id' # This is correct for set_foreign_key_options
+              # Cas spécial pour la transaction d'achat d'une immobilisation.
+              # Si l'ID est déjà présent (pré-rempli), on ne génère pas la liste déroulante.
+              # Le formulaire utilisera un champ caché à la place.
+              next if @record.purchase_transaction_id.present?
+
+              @foreign_key_options[column.name] = associated_model_class.order(date_transaction: :desc).map do |record|
+                ["#{l(record.date_transaction, format: :short)} - #{record.description.truncate(50)}", record.id]
+              end
+            else
+              display_attribute = if associated_model_class.column_names.include?('name')
+                                    'name'
+                                  elsif associated_model_class.column_names.include?('title')
+                                    'title'
+                                  elsif associated_model_class.column_names.include?('email')
+                                    'email'
+                                  else
+                                    'id' # Retourne à l'ID si aucun attribut d'affichage commun
+                                  end
+              # Récupère tous les enregistrements du modèle associé et les formate pour options_for_select
+              @foreign_key_options[column.name] = associated_model_class.all.map do |record|
+                [record.send(display_attribute).to_s, record.id]
               end
             end
-          rescue NameError # Si le modèle déduit n'existe pas, le traite comme un champ entier normal
-            next
           end
+        rescue NameError # Si le modèle déduit n'existe pas, le traite comme un champ entier normal
+          next
         end
       end
     end
@@ -528,19 +557,21 @@ module Admin
       if @table_name == 'reservations'
         # On combine les champs séparés en vrais champs datetime AVANT la validation.
         if record_params[:start_date].present? && record_params[:start_hour].present? && record_params[:start_minute].present?
-          record_params[:start_time] = Time.zone.parse("#{record_params[:start_date]} #{record_params[:start_hour]}:#{record_params[:start_minute]}")
+          record_params[:start_time] =
+            Time.zone.parse("#{record_params[:start_date]} #{record_params[:start_hour]}:#{record_params[:start_minute]}")
         end
         if record_params[:end_date].present? && record_params[:end_hour].present? && record_params[:end_minute].present?
-          record_params[:end_time] = Time.zone.parse("#{record_params[:end_date]} #{record_params[:end_hour]}:#{record_params[:end_minute]}")
+          record_params[:end_time] =
+            Time.zone.parse("#{record_params[:end_date]} #{record_params[:end_hour]}:#{record_params[:end_minute]}")
         end
       end
 
-      excluded_params = ['id', 'created_at', 'updated_at']
+      excluded_params = %w[id created_at updated_at]
 
-            permitted_params = @model.column_names - excluded_params # Autorise les vrais champs du modèle
+      permitted_params = @model.column_names - excluded_params # Autorise les vrais champs du modèle
       if @table_name == 'reservations'
         # On autorise explicitement les champs virtuels du formulaire pour qu'ils ne soient pas filtrés
-        permitted_params += ['start_date', 'start_hour', 'start_minute', 'end_date', 'end_hour', 'end_minute']
+        permitted_params += %w[start_date start_hour start_minute end_date end_hour end_minute]
       end
       record_params.permit(permitted_params.uniq)
     end

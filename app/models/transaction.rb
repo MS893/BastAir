@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Transaction < ApplicationRecord
   # == Associations ===========================================================
   # Une transaction peut être liée à un utilisateur (ex: cotisation d'un adhérent),
@@ -15,7 +17,7 @@ class Transaction < ApplicationRecord
   ALLOWED_MVT = {
     recette: 'Recette',
     depense: 'Dépense'
-  }
+  }.freeze
 
   ALLOWED_PYT = {
     virement: 'Virement',
@@ -23,7 +25,7 @@ class Transaction < ApplicationRecord
     especes: 'Espèces',
     carte: 'Carte bancaire',
     prelevement: 'Prélèvement sur compte'
-  }
+  }.freeze
 
   # --- Libellés pour les recettes ---
   INCOME_SOURCES = {
@@ -83,8 +85,6 @@ class Transaction < ApplicationRecord
   def discarded?
     deleted_at.present?
   end
-  
-
 
   private
 
@@ -98,7 +98,7 @@ class Transaction < ApplicationRecord
     return if user.blank?
 
     # Détermine le montant à ajouter ou à soustraire.
-    amount_to_change = (mouvement == 'Recette') ? montant : -montant
+    amount_to_change = mouvement == 'Recette' ? montant : -montant
 
     # Utilise une transaction de base de données pour la sécurité.
     # lock! empêche les conditions de concurrence pendant la mise à jour du solde.
@@ -116,11 +116,10 @@ class Transaction < ApplicationRecord
 
     # On inverse le montant : si c'était une dépense (comme une pénalité), on recrédite (montant positif).
     # Si c'était une recette, on débite (-montant).
-    amount_to_change = (mouvement == 'Recette') ? -montant : montant
+    amount_to_change = mouvement == 'Recette' ? -montant : montant
 
     user.with_lock do
       user.update_column(:solde, user.solde + amount_to_change)
     end
   end
-
 end

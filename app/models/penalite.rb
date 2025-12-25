@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Penalite < ApplicationRecord
   # --- Associations ---
   belongs_to :user
@@ -11,5 +13,4 @@ class Penalite < ApplicationRecord
   validates :penalty_amount, presence: true, numericality: { greater_than_or_equal_to: 0 }
   validates :status, presence: true, inclusion: { in: ['En attente', 'Appliquée', 'Annulée'] }
   validates :cancellation_reason, presence: true
-
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateInstructorAvailabilities < ActiveRecord::Migration[7.1]
   def change
     create_table :instructor_availabilities do |t|
@@ -7,6 +9,6 @@ class CreateInstructorAvailabilities < ActiveRecord::Migration[7.1]
 
       t.timestamps
     end
-    add_index :instructor_availabilities, [:user_id, :day, :period], unique: true
+    add_index :instructor_availabilities, %i[user_id day period], unique: true
   end
 end

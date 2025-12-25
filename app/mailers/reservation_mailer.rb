@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ReservationMailer < ApplicationMailer
   default from: 'no-reply@bastair.com'
 
@@ -5,7 +7,7 @@ class ReservationMailer < ApplicationMailer
     @reservation = reservation
     @user = reservation.user
     @avion = reservation.avion
-    
-    mail(to: @user.email, subject: "⚠️ Attention : Avion indisponible pour votre réservation")
+
+    mail(to: @user.email, subject: '⚠️ Attention : Avion indisponible pour votre réservation')
   end
 end

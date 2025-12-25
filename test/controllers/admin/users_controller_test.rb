@@ -1,13 +1,17 @@
-require "test_helper"
+# frozen_string_literal: true
 
-class Admin::UsersControllerTest < ActionDispatch::IntegrationTest
-  test "should get new" do
-    get admin_users_new_url
-    assert_response :success
-  end
+require 'test_helper'
 
-  test "should get create" do
-    get admin_users_create_url
-    assert_response :success
+module Admin
+  class UsersControllerTest < ActionDispatch::IntegrationTest
+    test 'should get new' do
+      get admin_users_new_url
+      assert_response :success
+    end
+
+    test 'should get create' do
+      get admin_users_create_url
+      assert_response :success
+    end
   end
 end

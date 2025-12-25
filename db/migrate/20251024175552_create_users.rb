@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateUsers < ActiveRecord::Migration[8.0]
   def change
     create_table :users do |t|
@@ -8,8 +10,8 @@ class CreateUsers < ActiveRecord::Migration[8.0]
       t.string :profession
       t.string :adresse
       t.string :telephone
-      t.string :email, null: false, default: ""
-      t.string :encrypted_password, null: false, default: ""
+      t.string :email, null: false, default: ''
+      t.string :encrypted_password, null: false, default: ''
       t.string :contact_urgence
       t.string :num_ffa
       t.string :licence_type    # ATPL, CPL, PPL ou LAPL

@@ -1,0 +1,3 @@
+# This file is referenced in .rubocop.yml to handle existing offenses.
+# Run `rubocop --auto-gen-config` to populate this file if needed.
+# Currently empty to resolve "Configuration file not found" error.

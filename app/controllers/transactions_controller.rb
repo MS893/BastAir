@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 class TransactionsController < ApplicationController
   before_action :authenticate_user!
   # La gestion des transactions reste réservée aux trésoriers/admins, sauf pour l'affichage de détail et l'index (sous conditions)
-  before_action :authorize_treasurer_or_admin!, except: [:show, :index]
+  before_action :authorize_treasurer_or_admin!, except: %i[show index]
   before_action :set_transaction, only: %i[show edit update destroy toggle_check]
   before_action :authorize_view_transaction!, only: [:show]
   before_action :authorize_transactions_index!, only: [:index] # Nouvelle autorisation pour l'action index
@@ -24,10 +26,16 @@ class TransactionsController < ApplicationController
     @selected_month = params[:month]
     @selected_year = params[:year]
     @selected_source = params[:source]
-    
+
     # Application des filtres de la vue (mois, année, source)
-    @transactions = @transactions.where("strftime('%m', date_transaction) = ?", @selected_month.to_s.rjust(2, '0')) if @selected_month.present?
-    @transactions = @transactions.where("strftime('%Y', date_transaction) = ?", @selected_year.to_s) if @selected_year.present?
+    if @selected_month.present?
+      @transactions = @transactions.where("strftime('%m', date_transaction) = ?",
+                                          @selected_month.to_s.rjust(2, '0'))
+    end
+    if @selected_year.present?
+      @transactions = @transactions.where("strftime('%Y', date_transaction) = ?",
+                                          @selected_year.to_s)
+    end
     @transactions = @transactions.where(source_transaction: @selected_source) if @selected_source.present?
 
     # --- Calcul des totaux ---
@@ -36,11 +44,11 @@ class TransactionsController < ApplicationController
     is_filtered = @selected_month.present? || @selected_year.present? || @selected_source.present?
     is_standard_user = !current_user.admin? && current_user.fonction != 'tresorier'
 
-    if is_standard_user && !is_filtered
-      @solde_total = current_user.solde
-    else
-      @solde_total = @transactions.sum("CASE WHEN mouvement = 'Recette' THEN montant ELSE -montant END")
-    end
+    @solde_total = if is_standard_user && !is_filtered
+                     current_user.solde
+                   else
+                     @transactions.sum("CASE WHEN mouvement = 'Recette' THEN montant ELSE -montant END")
+                   end
     @total_recettes = @transactions.where(mouvement: 'Recette').sum(:montant)
     @total_depenses = @transactions.where(mouvement: 'Dépense').sum(:montant)
 
@@ -48,16 +56,14 @@ class TransactionsController < ApplicationController
     title_parts = []
     title_parts << l(Date.new(2000, @selected_month.to_i), format: '%B') if @selected_month.present?
     title_parts << @selected_year if @selected_year.present?
-    
-    if @selected_source.present?
-      title_parts << "(#{@selected_source})"
-    end
+
+    title_parts << "(#{@selected_source})" if @selected_source.present?
 
     @solde_title = if title_parts.any?
-                      "Solde pour #{title_parts.join(' ')}"
-                    else
-                      "Solde Total Actuel"
-                    end
+                     "Solde pour #{title_parts.join(' ')}"
+                   else
+                     'Solde Total Actuel'
+                   end
 
     # Ordonne les résultats
     @transactions = @transactions.order(date_transaction: :desc, id: :desc)
@@ -73,12 +79,13 @@ class TransactionsController < ApplicationController
     @selected_year = params[:year].present? ? params[:year].to_i : Date.today.year
 
     transactions_for_year = Transaction.where("strftime('%Y', date_transaction) = ?", @selected_year.to_s)
-    transactions_for_previous_year = Transaction.where("strftime('%Y', date_transaction) = ?", (@selected_year - 1).to_s)
+    transactions_for_previous_year = Transaction.where("strftime('%Y', date_transaction) = ?",
+                                                       (@selected_year - 1).to_s)
 
     # Données pour le graphique en barres (Recettes vs Dépenses par mois)
     recettes_by_month = transactions_for_year.where(mouvement: 'Recette')
-                                              .group("strftime('%m', date_transaction)")
-                                              .sum(:montant)
+                                             .group("strftime('%m', date_transaction)")
+                                             .sum(:montant)
 
     # --- NOUVEAU GRAPHIQUE DE COMPARAISON ---
     # 1. Récupérer les recettes de l'année précédente
@@ -88,8 +95,12 @@ class TransactionsController < ApplicationController
 
     # 2. Préparer les données pour le graphique de comparaison
     month_names = I18n.t('date.month_names', default: []).drop(1) # Mois de Janvier à Décembre
-    current_year_revenue = month_names.map.with_index { |name, i| [name, recettes_by_month[(i + 1).to_s.rjust(2, '0')] || 0] }.to_h
-    previous_year_revenue = month_names.map.with_index { |name, i| [name, recettes_by_month_previous_year[(i + 1).to_s.rjust(2, '0')] || 0] }.to_h
+    current_year_revenue = month_names.map.with_index do |name, i|
+      [name, recettes_by_month[(i + 1).to_s.rjust(2, '0')] || 0]
+    end.to_h
+    previous_year_revenue = month_names.map.with_index do |name, i|
+      [name, recettes_by_month_previous_year[(i + 1).to_s.rjust(2, '0')] || 0]
+    end.to_h
 
     @revenue_comparison_data = [
       { name: "Recettes #{@selected_year}", data: current_year_revenue },
@@ -97,10 +108,9 @@ class TransactionsController < ApplicationController
     ]
     # --- FIN DU NOUVEAU GRAPHIQUE ---
 
-
     depenses_by_month = transactions_for_year.where(mouvement: 'Dépense')
-                                              .group("strftime('%m', date_transaction)")
-                                              .sum(:montant)
+                                             .group("strftime('%m', date_transaction)")
+                                             .sum(:montant)
 
     # Formater les données pour Chartkick avec les noms des mois en français
     month_names = I18n.t('date.month_names', default: [])
@@ -125,15 +135,14 @@ class TransactionsController < ApplicationController
                                           .sum("CASE WHEN mouvement = 'Recette' THEN montant ELSE -montant END")
 
     # 2. Obtenir les changements nets par jour pour l'année sélectionnée
-    daily_net_changes = transactions_for_year.group("date(date_transaction)")
-                                              .sum("CASE WHEN mouvement = 'Recette' THEN montant ELSE -montant END")
+    daily_net_changes = transactions_for_year.group('date(date_transaction)')
+                                             .sum("CASE WHEN mouvement = 'Recette' THEN montant ELSE -montant END")
 
     # 3. Construire le graphique du solde cumulé
     @cumulative_balance_data = build_cumulative_data(balance_at_start_of_year, daily_net_changes)
   end
 
-  def show
-  end
+  def show; end
 
   def new
     @transaction = Transaction.new
@@ -196,8 +205,8 @@ class TransactionsController < ApplicationController
   def toggle_check
     # @transaction est déjà chargé par le before_action
     @transaction.toggle!(:is_checked)
-    
-    status_text = @transaction.is_checked ? "vérifiée" : "non vérifiée"
+
+    status_text = @transaction.is_checked ? 'vérifiée' : 'non vérifiée'
     # Enregistre la transaction et crée une entrée dans les ActivityLogs
     ActivityLog.create(
       user: current_user,
@@ -216,8 +225,6 @@ class TransactionsController < ApplicationController
     end
   end
 
-
-  
   private
 
   def set_transaction
@@ -225,14 +232,16 @@ class TransactionsController < ApplicationController
   end
 
   def transaction_params
-    params.require(:transaction).permit(:date_transaction, :description, :mouvement, :montant, :source_transaction, :payment_method, :user_id, :is_checked)
+    params.require(:transaction).permit(:date_transaction, :description, :mouvement, :montant, :source_transaction,
+                                        :payment_method, :user_id, :is_checked)
   end
 
   # Méthode de sécurité pour empêcher la modification des transactions vérifiées
   def prevent_modification_if_checked
-    if @transaction.is_checked?
-      redirect_to transactions_path, alert: "Action impossible : cette transaction est déjà vérifiée et ne peut être ni modifiée, ni supprimée."
-    end
+    return unless @transaction.is_checked?
+
+    redirect_to transactions_path,
+                alert: 'Action impossible : cette transaction est déjà vérifiée et ne peut être ni modifiée, ni supprimée.'
   end
 
   # visualiser l'évolution du solde au fil du temps
@@ -252,7 +261,10 @@ class TransactionsController < ApplicationController
     return if current_user.admin? || current_user.fonction == 'tresorier'
 
     # Un utilisateur ne peut voir que ses propres transactions.
-    redirect_to root_path, alert: "Vous n'êtes pas autorisé à voir cette transaction." unless @transaction.user == current_user
+    return if @transaction.user == current_user
+
+    redirect_to root_path,
+                alert: "Vous n'êtes pas autorisé à voir cette transaction."
   end
 
   # Méthode de sécurité pour l'action index des transactions
@@ -267,8 +279,8 @@ class TransactionsController < ApplicationController
       end
     else
       # Si aucun user_id n'est spécifié, un utilisateur normal ne peut pas voir l'index général.
-      redirect_to root_path, alert: "Accès réservé aux administrateurs et au trésorier pour la liste complète des transactions."
+      redirect_to root_path,
+                  alert: 'Accès réservé aux administrateurs et au trésorier pour la liste complète des transactions.'
     end
   end
-
 end

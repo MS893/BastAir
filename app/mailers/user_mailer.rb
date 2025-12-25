@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # app/mailers/user_mailer.rb
 
 class UserMailer < ApplicationMailer
@@ -6,11 +8,12 @@ class UserMailer < ApplicationMailer
   def new_participant_notification(attendance)
     @attendance = attendance
     @event = attendance.event
-    @participant = attendance.user 
+    @participant = attendance.user
     @organizer = @event.admin || User.find_by(admin: true) # Plan B: trouver un admin général
     # Si, même après le plan B, aucun organisateur n'est trouvé, on n'envoie pas d'email
     # pour éviter de faire planter l'application.
     return unless @organizer
+
     # On prépare le nom de l'organisateur ici, en un seul endroit.
     @organizer_name = @organizer.name.presence || @organizer.email
     mail(to: @organizer.email, subject: "Nouveau participant à votre événement : #{@event.title}")
@@ -35,7 +38,7 @@ class UserMailer < ApplicationMailer
     @reservation = reservation
     mail(to: @user.email, subject: 'Confirmation d\'annulation de votre réservation')
   end
-    
+
   # Notification d'une tentative d'annulation tardive à un admin
   def late_cancellation_attempt_notification(admin, user, reservation)
     @admin = admin
@@ -50,7 +53,7 @@ class UserMailer < ApplicationMailer
     @user = user
     @reservation = reservation
     @reason = reason
-    mail(to: @admin.email, subject: "Info : Annulation tardive de réservation")
+    mail(to: @admin.email, subject: 'Info : Annulation tardive de réservation')
   end
 
   # Notification d'une annulation tardive (< 48h) à un instructeur
@@ -120,14 +123,14 @@ class UserMailer < ApplicationMailer
   # envoi d'un email si l'élève a réussi son test pratique
   def exam_success_email(user)
     @user = user
-    mail(to: @user.email, subject: "Félicitations ! Validation de votre examen pratique")
+    mail(to: @user.email, subject: 'Félicitations ! Validation de votre examen pratique')
   end
 
   # envoi du livret par email en pièce jointe
   def progression_booklet_email(user, pdf_content)
     @user = user
-    attachments["Livret_progression_#{@user.full_name.parameterize}_#{Date.today.strftime('%d-%m-%Y')}.pdf"] = pdf_content
+    attachments["Livret_progression_#{@user.full_name.parameterize}_#{Date.today.strftime('%d-%m-%Y')}.pdf"] =
+      pdf_content
     mail(to: @user.email, subject: "Votre Livret de Progression Bast'Air")
   end
-  
 end

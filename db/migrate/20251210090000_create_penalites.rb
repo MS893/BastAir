@@ -1,7 +1,8 @@
+# frozen_string_literal: true
+
 class CreatePenalites < ActiveRecord::Migration[8.0]
   def change
     create_table :penalites do |t|
-      
       # --- Qui est concerné ? ---
       t.references :user, foreign_key: true
 
@@ -14,7 +15,7 @@ class CreatePenalites < ActiveRecord::Migration[8.0]
       # --- Détails de la pénalité ---
       t.text :cancellation_reason
       t.decimal :penalty_amount, precision: 8, scale: 2
-      t.string :status, default: 'En attente'                               # 'En attente', 'Appliquée', 'Annulée'
+      t.string :status, default: 'En attente' # 'En attente', 'Appliquée', 'Annulée'
       t.references :admin, foreign_key: { to_table: :users }, null: true
       t.text :admin_comment
 

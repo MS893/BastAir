@@ -1,20 +1,21 @@
+# frozen_string_literal: true
+
 class CommentsController < ApplicationController
-  
   before_action :set_event
   before_action :authenticate_user!
-  before_action :set_comment, only: [:edit, :update, :destroy]
-  before_action :check_author, only: [:edit, :update, :destroy]
+  before_action :set_comment, only: %i[edit update destroy]
+  before_action :check_author, only: %i[edit update destroy]
 
   def create
     # On vérifie si l'utilisateur a déjà commenté cet événement
     if @event.comments.exists?(user_id: current_user.id)
-      redirect_to event_path(@event), alert: "Vous avez déjà laissé un commentaire pour cet événement."
+      redirect_to event_path(@event), alert: 'Vous avez déjà laissé un commentaire pour cet événement.'
       return
     end
 
     @comment = @event.comments.new(comment_params)
     # on associe le commentaire à l'utilisateur actuellement connecté
-    @comment.user = current_user    
+    @comment.user = current_user
     if @comment.save
       redirect_to event_path(@event), notice: 'Commentaire ajouté !'
     else
@@ -41,23 +42,24 @@ class CommentsController < ApplicationController
     redirect_to event_path(@event), notice: 'Commentaire supprimé.', status: :see_other
   end
 
-
-
   private
+
   def set_event
     @event = Event.find(params[:event_id])
   end
+
   def set_comment
     @comment = @event.comments.find(params[:id])
   end
+
   def comment_params
     params.require(:comment).permit(:content)
   end
+
   def check_author
     # @comment est déjà chargé par le before_action :set_comment
-    unless current_user == @comment.user
-      redirect_to event_path(@event), flash: { danger: "Action impossible" }
-    end
-  end
+    return if current_user == @comment.user
 
+    redirect_to event_path(@event), flash: { danger: 'Action impossible' }
+  end
 end

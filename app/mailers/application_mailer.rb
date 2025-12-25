@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 class ApplicationMailer < ActionMailer::Base
-  default from: ENV["FREE_EMAIL_USER"]
-#  default from: "no-reply@monsite.fr"
-  layout "mailer"
+  default from: ENV.fetch('FREE_EMAIL_USER', nil)
+  #  default from: "no-reply@monsite.fr"
+  layout 'mailer'
 end

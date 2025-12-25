@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # app/controllers/admin/penalites_controller.rb
 module Admin
   class PenalitesController < ApplicationController
@@ -7,12 +9,16 @@ module Admin
     # Action pour appliquer une pénalité
     def apply
       # On vérifie que la pénalité n'est pas déjà appliquée pour éviter les doublons
-      if @penalite.status != 'Appliquée'
+      if @penalite.status == 'Appliquée'
+        redirect_to admin_show_table_record_path(table_name: 'penalites', id: @penalite.id),
+                    alert: 'Cette pénalité a déjà été appliquée.'
+      else
         # On crée la transaction de débit sur le compte de l'utilisateur
         Transaction.create!(
           user: @penalite.user,
           date_transaction: Date.today,
-          description: "Pénalité pour annulation tardive du vol du #{l(@penalite.reservation_start_time, format: :short_year_time)}",
+          description: "Pénalité pour annulation tardive du vol du #{l(@penalite.reservation_start_time,
+                                                                       format: :short_year_time)}",
           mouvement: 'Dépense',
           montant: @penalite.penalty_amount,
           source_transaction: 'Charges Exceptionnelles',
@@ -25,9 +31,8 @@ module Admin
         # On envoie un email à l'utilisateur pour le notifier
         UserMailer.penalty_applied_notification(@penalite.user, @penalite).deliver_later
 
-        redirect_to admin_show_table_record_path(table_name: 'penalites', id: @penalite.id), notice: "La pénalité de #{@penalite.penalty_amount} € a été appliquée au compte de #{@penalite.user.name}."
-      else
-        redirect_to admin_show_table_record_path(table_name: 'penalites', id: @penalite.id), alert: "Cette pénalité a déjà été appliquée."
+        redirect_to admin_show_table_record_path(table_name: 'penalites', id: @penalite.id),
+                    notice: "La pénalité de #{@penalite.penalty_amount} € a été appliquée au compte de #{@penalite.user.name}."
       end
     end
 
@@ -41,30 +46,29 @@ module Admin
           user: @penalite.user,
           mouvement: 'Dépense',
           montant: @penalite.penalty_amount,
-          description: "Pénalité pour annulation tardive du vol du #{l(@penalite.reservation_start_time, format: :short_year_time)}"
+          description: "Pénalité pour annulation tardive du vol du #{l(@penalite.reservation_start_time,
+                                                                       format: :short_year_time)}"
         )
 
         if original_debit_transaction
           original_debit_transaction.destroy
-          flash[:notice] = "La pénalité a été retirée."
+          flash[:notice] = 'La pénalité a été retirée.'
         else
           # Cas où la transaction originale n'est pas trouvée (devrait être rare si le flux est respecté)
-          flash[:alert] = "La pénalité correspondante n'a pas été trouvée. Le compte de l'utilisateur n'a pas été recrédité."
+          flash[:alert] =
+            "La pénalité correspondante n'a pas été trouvée. Le compte de l'utilisateur n'a pas été recrédité."
         end
       end
 
       @penalite.update(status: 'Annulée', admin: current_user)
-      redirect_to admin_show_table_record_path(table_name: 'penalites', id: @penalite.id), notice: "La pénalité a été annulée."
+      redirect_to admin_show_table_record_path(table_name: 'penalites', id: @penalite.id),
+                  notice: 'La pénalité a été annulée.'
     end
-
-
 
     private
 
     def set_penalite
       @penalite = Penalite.find(params[:id])
     end
-    
   end
-
 end

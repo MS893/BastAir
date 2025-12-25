@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module SignalementsHelper
   # Renvoie la classe CSS Bootstrap pour la couleur du badge en fonction du statut du signalement.
   def signalement_status_badge_class(status)

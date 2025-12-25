@@ -1,13 +1,15 @@
+# frozen_string_literal: true
+
 # Pin npm packages by running ./bin/importmap
 
-pin "application", preload: true
-pin "@hotwired/turbo-rails", to: "turbo.min.js", preload: true
-pin "@hotwired/stimulus", to: "stimulus.min.js", preload: true
-pin "@hotwired/stimulus-loading", to: "stimulus-loading.js", preload: true
-pin_all_from "app/javascript/controllers", under: "controllers"
+pin 'application', preload: true
+pin '@hotwired/turbo-rails', to: 'turbo.min.js', preload: true
+pin '@hotwired/stimulus', to: 'stimulus.min.js', preload: true
+pin '@hotwired/stimulus-loading', to: 'stimulus-loading.js', preload: true
+pin_all_from 'app/javascript/controllers', under: 'controllers'
 
-pin "bootstrap", to: "bootstrap.min.js", preload: true
-pin "@popperjs/core", to: "popper.js", preload: true
+pin 'bootstrap', to: 'bootstrap.min.js', preload: true
+pin '@popperjs/core', to: 'popper.js', preload: true
 
-pin "stimulus-use", to: "https://ga.jspm.io/npm:stimulus-use@0.52.0/dist/index.js"
-pin "signature_pad" # @5.1.2
+pin 'stimulus-use', to: 'https://ga.jspm.io/npm:stimulus-use@0.52.0/dist/index.js'
+pin 'signature_pad' # @5.1.2

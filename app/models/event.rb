@@ -1,16 +1,19 @@
+# frozen_string_literal: true
+
 class Event < ApplicationRecord
   # titres autorisés
-  ALLOWED_TITLES = ["Pot", "Cours théorique", "Aide vols BIA", "Aide journée portes ouvertes", "Aide nettoyage locaux", "Sortie club", "Objets trouvés"]
+  ALLOWED_TITLES = ['Pot', 'Cours théorique', 'Aide vols BIA', 'Aide journée portes ouvertes', 'Aide nettoyage locaux',
+                    'Sortie club', 'Objets trouvés'].freeze
 
   # Map pour les durées fixes des events
   DURATION_MAP = {
-    "Cours théorique" => "1h",
-    "Pot" => "3h",
-    "Objets trouvés" => "Boite des objets trouvés",
-    "Sortie club" => "Journée",
-    "Aide nettoyage locaux" => "2h",
-    "Aide journée portes ouvertes" => "La matinée",
-    "Aide vols BIA" => "3h30"
+    'Cours théorique' => '1h',
+    'Pot' => '3h',
+    'Objets trouvés' => 'Boite des objets trouvés',
+    'Sortie club' => 'Journée',
+    'Aide nettoyage locaux' => '2h',
+    'Aide journée portes ouvertes' => 'La matinée',
+    'Aide vols BIA' => '3h30'
   }.freeze
 
   # Validations
@@ -29,7 +32,7 @@ class Event < ApplicationRecord
                     size: { less_than: 10.megabytes, message: 'doit peser moins de 10 Mo' }
 
   # Associations
-  belongs_to :admin, class_name: "User"
+  belongs_to :admin, class_name: 'User'
   has_many :attendances, dependent: :destroy
   has_many :users, through: :attendances
   has_many :comments, dependent: :destroy
@@ -39,7 +42,6 @@ class Event < ApplicationRecord
     price.nil? || price.zero?
   end
 
-  
   private
 
   def set_duration_from_title
@@ -51,7 +53,6 @@ class Event < ApplicationRecord
     return if start_date.nil?
 
     # Arrondit la date au quart d'heure inférieur
-    self.start_date = start_date.beginning_of_hour + (start_date.min / 15) * 15.minutes
+    self.start_date = start_date.beginning_of_hour + ((start_date.min / 15) * 15.minutes)
   end
-
 end

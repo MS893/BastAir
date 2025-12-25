@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 class CreateAvions < ActiveRecord::Migration[8.0]
   def change
     create_table :avions do |t|
-      #spécifications
+      # spécifications
       t.string :immatriculation
       t.string :marque
       t.string :modele
@@ -22,7 +24,7 @@ class CreateAvions < ActiveRecord::Migration[8.0]
       t.date :_100h
       t.date :annuelle
       t.date :_1000h
-      t.date :gv              # grande visite
+      t.date :gv # grande visite
       t.date :tbo_helice
       t.date :tbo_parachute
       t.decimal :potentiel_cellule, precision: 7, scale: 2

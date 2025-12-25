@@ -1,12 +1,14 @@
+# frozen_string_literal: true
+
 namespace :validity do
-  desc "Vérifie les validités des utilisateurs expirant dans 60, 30 et 7 jours et envoie des e-mails de rappel."
+  desc 'Vérifie les validités des utilisateurs expirant dans 60, 30 et 7 jours et envoie des e-mails de rappel.'
   task check_and_notify: :environment do
-    puts "Vérification des validités expirant dans 60, 30, et 7 jours..."
+    puts 'Vérification des validités expirant dans 60, 30, et 7 jours...'
     reminder_intervals = [60, 30, 7]
     validity_fields = {
-      date_licence: "votre licence",
-      medical: "votre visite médicale",
-      controle: "votre contrôle en vol"
+      date_licence: 'votre licence',
+      medical: 'votre visite médicale',
+      controle: 'votre contrôle en vol'
     }
 
     # Vérifie les butées (licence, médical, contrôle)
@@ -24,6 +26,6 @@ namespace :validity do
       end
     end
 
-    puts "Vérification terminée."
+    puts 'Vérification terminée.'
   end
 end

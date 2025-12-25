@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 # lib/tasks/instructor_notifications.rake
 
 namespace :instructors do
-  desc "Envoie un e-mail de rappel aux instructeurs dont la qualification FI expire dans moins de 30 jours."
+  desc 'Envoie un e-mail de rappel aux instructeurs dont la qualification FI expire dans moins de 30 jours.'
   task notify_expiring_fi: :environment do
     puts "Vérification des qualifications d'instructeur expirant bientôt..."
 
@@ -18,18 +20,19 @@ namespace :instructors do
       puts "Envoi de notifications à #{expiring_instructors.count} instructeur(s)..."
       expiring_instructors.each do |instructor|
         # Utilise le mailer existant pour envoyer la notification
-        UserMailer.validity_reminder_email(instructor, "votre qualification d'instructeur (FI)", instructor.fi).deliver_later
+        UserMailer.validity_reminder_email(instructor, "votre qualification d'instructeur (FI)",
+                                           instructor.fi).deliver_later
         puts "- Notification envoyée à #{instructor.email} (expiration le #{instructor.fi.strftime('%d/%m/%Y')})"
       end
 
       # Envoi d'un e-mail de résumé à tous les administrateurs
       admins = User.where(admin: true)
       if admins.any?
-        puts "Envoi du résumé aux administrateurs..."
+        puts 'Envoi du résumé aux administrateurs...'
         UserMailer.expiring_fi_summary(admins, expiring_instructors).deliver_later
       end
     end
 
-    puts "Vérification terminée."
+    puts 'Vérification terminée.'
   end
 end

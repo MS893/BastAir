@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AttendancesController < ApplicationController
   before_action :authenticate_user!
 
@@ -6,15 +8,16 @@ class AttendancesController < ApplicationController
 
     # Vérifie si l'utilisateur est déjà inscrit
     if @event.users.include?(current_user)
-      redirect_to @event, alert: "Vous êtes déjà inscrit à cet événement."
+      redirect_to @event, alert: 'Vous êtes déjà inscrit à cet événement.'
       return
     end
 
     # Si l'événement est payant, on gère le débit du compte
-    if @event.price > 0
+    if @event.price.positive?
       # Vérifie si le solde de l'utilisateur est suffisant
       if current_user.solde < @event.price
-        redirect_to @event, alert: "Votre solde est insuffisant pour vous inscrire à cet événement. Veuillez créditer votre compte."
+        redirect_to @event,
+                    alert: 'Votre solde est insuffisant pour vous inscrire à cet événement. Veuillez créditer votre compte.'
         return
       end
 
@@ -35,7 +38,8 @@ class AttendancesController < ApplicationController
 
       # envoie un email de notification à l'organisateur
       UserMailer.new_participant_notification(@attendance).deliver_later
-      redirect_to @event, notice: "Félicitations ! Vous êtes inscrit à l'événement. Votre compte a été débité de #{@event.price} €."
+      redirect_to @event,
+                  notice: "Félicitations ! Vous êtes inscrit à l'événement. Votre compte a été débité de #{@event.price} €."
     else
       # Si l'événement est gratuit, on crée simplement la participation
       @attendance = @event.attendances.new(user: current_user)
@@ -67,7 +71,7 @@ class AttendancesController < ApplicationController
     end
 
     # Si l'événement était payant, on rembourse l'utilisateur
-    if @event.price > 0
+    if @event.price.positive?
       ActiveRecord::Base.transaction do
         # On crée une transaction comptable pour le remboursement.
         # Le callback du modèle Transaction se chargera de mettre à jour le solde.
@@ -87,5 +91,4 @@ class AttendancesController < ApplicationController
       redirect_to @event, notice: "Vous avez bien été désinscrit de l'événement."
     end
   end
-
 end

@@ -1,18 +1,21 @@
+# frozen_string_literal: true
+
 class UsersController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_user, only: [:show, :update, :update_profil]
-  before_action :authorize_user, only: [:show, :update_profil]
-  before_action :authorize_admin!, only: [:index, :update] # Seuls les admins peuvent voir la liste des users et mettre à jour les rôles
+  before_action :set_user, only: %i[show update update_profil]
+  before_action :authorize_user, only: %i[show update_profil]
+  before_action :authorize_admin!, only: %i[index update] # Seuls les admins peuvent voir la liste des users et mettre à jour les rôles
 
   def index
     @users = User.order(:nom, :prenom)
     if params[:query].present?
-      @users = @users.where("LOWER(nom) LIKE LOWER(?) OR LOWER(prenom) LIKE LOWER(?)", "%#{params[:query]}%", "%#{params[:query]}%")
+      @users = @users.where('LOWER(nom) LIKE LOWER(?) OR LOWER(prenom) LIKE LOWER(?)', "%#{params[:query]}%",
+                            "%#{params[:query]}%")
     end
 
     # Si la requête vient d'un Turbo Frame, on ne rend que la liste des résultats, sinon, on rend la page complète
     if turbo_frame_request?
-      render(partial: "users/user_list", locals: { users: @users })
+      render(partial: 'users/user_list', locals: { users: @users })
     else
       # Comportement normal pour le chargement initial de la page
     end
@@ -23,30 +26,34 @@ class UsersController < ApplicationController
     @users = User.order(:nom, :prenom)
     if params[:query].present?
       # Recherche insensible à la casse sur le nom et le prénom
-      @users = @users.where("LOWER(nom) LIKE LOWER(?) OR LOWER(prenom) LIKE LOWER(?)", "%#{params[:query]}%", "%#{params[:query]}%")
+      @users = @users.where('LOWER(nom) LIKE LOWER(?) OR LOWER(prenom) LIKE LOWER(?)', "%#{params[:query]}%",
+                            "%#{params[:query]}%")
     end
     # On rend une vue partielle sans le layout global
-    render partial: "users/search_results", locals: { users: @users }
+    render partial: 'users/search_results', locals: { users: @users }
   end
 
   def show
     # Si la requête vient d'un Turbo Frame, on ne rend que le partiel des détails, sinon, on rend la page de profil complète (défaut)
-    if turbo_frame_request? && turbo_frame_request_id == 'user_details'
-      # On vérifie si le contact d'urgence est invalide pour afficher une alerte.
-      # L'alerte ne s'affiche que si l'utilisateur consulte son propre profil.
-      if @user == current_user && @user.contact_urgence.present? && !@user.valid?(:update_profil)
-        flash.now[:warning] = "Votre numéro de contact d'urgence semble invalide. #{view_context.link_to('Veuillez le corriger ici', edit_profil_user_path(@user))}".html_safe
-      end
+    return unless turbo_frame_request? && turbo_frame_request_id == 'user_details'
 
-      # On vérifie les validités qui expirent bientôt
-      validity_warnings = @user.validity_warnings
-      if @user == current_user && validity_warnings.any?
-        # On combine les avertissements en un seul message flash.
-        flash.now[:info] = validity_warnings.join('<br>').html_safe
-      end
-
-      render partial: 'user_details', locals: { user: @user }
+    # On vérifie si le contact d'urgence est invalide pour afficher une alerte.
+    # L'alerte ne s'affiche que si l'utilisateur consulte son propre profil.
+    if @user == current_user && @user.contact_urgence.present? && !@user.valid?(:update_profil)
+      flash.now[:warning] =
+        "Votre numéro de contact d'urgence semble invalide. #{view_context.link_to('Veuillez le corriger ici',
+                                                                                   edit_profil_user_path(@user))}".html_safe
     end
+
+    # On vérifie les validités qui expirent bientôt
+    validity_warnings = @user.validity_warnings
+    if @user == current_user && validity_warnings.any?
+      # On combine les avertissements en un seul message flash.
+      flash.now[:info] = validity_warnings.join('<br>').html_safe
+    end
+
+    render partial: 'user_details', locals: { user: @user }
+
     # Si ce n'est pas une requête Turbo Frame, Rails rendra implicitement `show.html.erb`.
   end
 
@@ -65,7 +72,8 @@ class UsersController < ApplicationController
         start_date = Date.parse(params[:start_date])
         end_date = Date.parse(params[:end_date])
         vols_for_csv = @user.vols.where(debut_vol: start_date.beginning_of_day..end_date.end_of_day).order(debut_vol: :asc)
-        send_data Vol.to_csv(vols_for_csv), filename: "carnet-de-vol-#{@user.nom.parameterize}-#{start_date}-#{end_date}.csv"
+        send_data Vol.to_csv(vols_for_csv),
+                  filename: "carnet-de-vol-#{@user.nom.parameterize}-#{start_date}-#{end_date}.csv"
       end
     end
 
@@ -73,10 +81,10 @@ class UsersController < ApplicationController
     if params[:start_date].present? && params[:end_date].present?
       @start_date = Date.parse(params[:start_date])
       @end_date = Date.parse(params[:end_date])
-      
+
       # On filtre les vols sur la période sélectionnée
       vols_in_period = @user.vols.where(debut_vol: @start_date.beginning_of_day..@end_date.end_of_day)
-      
+
       # On stocke les résultats dans des variables dédiées aux totaux partiels
       @partial_totals = true
       @partial_total_duree_vol = vols_in_period.sum(:duree_vol)
@@ -102,7 +110,7 @@ class UsersController < ApplicationController
 
     # Total des heures d'instruction (uniquement si l'utilisateur est un instructeur)
     @total_heures_instruction = @user.instructeur? ? all_user_vols.where(type_vol: 'Instruction').sum(:duree_vol) : 0
-    
+
     # Total des atterrissages de jour et de nuit
     @total_atterrissages_jour = all_user_vols.where(nature: 'VFR de jour').sum(:nb_atterro)
     @total_atterrissages_nuit = all_user_vols.where(nature: 'VFR de nuit').sum(:nb_atterro)
@@ -123,14 +131,13 @@ class UsersController < ApplicationController
   # Nouvelle action pour la mise à jour du profil par l'utilisateur lui-même
   def update_profil
     if @user.update(profile_params)
-      redirect_to user_path(@user), notice: "Votre profil a été mis à jour avec succès."
+      redirect_to user_path(@user), notice: 'Votre profil a été mis à jour avec succès.'
     else
       # En cas d'erreur, on affiche à nouveau la page d'édition
       render 'edit_profil', status: :unprocessable_content
     end
   end
 
-  
   private
 
   def set_user
@@ -138,9 +145,9 @@ class UsersController < ApplicationController
   end
 
   def authorize_user
-    unless current_user == @user || current_user.admin?
-      redirect_to root_path, alert: "Vous n'êtes pas autorisé à voir cette page."
-    end
+    return if current_user == @user || current_user.admin?
+
+    redirect_to root_path, alert: "Vous n'êtes pas autorisé à voir cette page."
   end
 
   def user_params
@@ -149,7 +156,7 @@ class UsersController < ApplicationController
     if current_user.admin?
       params.require(:user).permit(:admin, :fonction, :fi, :fe, :nuit, :google_calendar_id)
     else
-      params.require(:user).permit() # Ne rien autoriser par défaut
+      params.require(:user).permit # Ne rien autoriser par défaut
     end
   end
 
@@ -157,5 +164,4 @@ class UsersController < ApplicationController
   def profile_params
     params.require(:user).permit(:email, :telephone, :adresse, :contact_urgence, :avatar)
   end
-  
 end

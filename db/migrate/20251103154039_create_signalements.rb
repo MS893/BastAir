@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # db/migrate/YYYYMMDDHHMMSS_create_signalements.rb
 class CreateSignalements < ActiveRecord::Migration[8.0]
   def change

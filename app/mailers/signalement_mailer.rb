@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class SignalementMailer < ApplicationMailer
   default from: 'no-reply@bastair.com'
 

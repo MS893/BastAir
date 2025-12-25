@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe Admin::UsersController, type: :controller do
@@ -5,23 +7,25 @@ RSpec.describe Admin::UsersController, type: :controller do
 
   before { sign_in admin }
 
-  describe "GET #new" do
-    it "répond avec succès" do
+  describe 'GET #new' do
+    it 'répond avec succès' do
       get :new
       expect(response).to be_successful
       expect(assigns(:user)).to be_a_new(User)
     end
   end
 
-  describe "POST #create" do
-    let(:valid_attributes) { attributes_for(:user).merge(email: "newuser@example.com", password: "password", password_confirmation: "password") }
-    let(:invalid_attributes) { attributes_for(:user).merge(email: "") }
+  describe 'POST #create' do
+    let(:valid_attributes) do
+      attributes_for(:user).merge(email: 'newuser@example.com', password: 'password', password_confirmation: 'password')
+    end
+    let(:invalid_attributes) { attributes_for(:user).merge(email: '') }
 
-    context "avec des paramètres valides" do
-      it "crée un nouvel utilisateur" do
-        expect {
+    context 'avec des paramètres valides' do
+      it 'crée un nouvel utilisateur' do
+        expect do
           post :create, params: { user: valid_attributes }
-        }.to change(User, :count).by(1)
+        end.to change(User, :count).by(1)
       end
 
       it "redirige vers le profil de l'utilisateur" do
@@ -30,11 +34,11 @@ RSpec.describe Admin::UsersController, type: :controller do
       end
     end
 
-    context "avec des paramètres invalides" do
+    context 'avec des paramètres invalides' do
       it "ne crée pas d'utilisateur et rend le template new" do
-        expect {
+        expect do
           post :create, params: { user: invalid_attributes }
-        }.not_to change(User, :count)
+        end.not_to change(User, :count)
         expect(response).to have_http_status(:unprocessable_content)
         expect(response).to render_template(:new)
       end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AudiosController < ApplicationController
   before_action :authenticate_user!
 
@@ -11,8 +13,7 @@ class AudiosController < ApplicationController
                 type: audio.audio.content_type,
                 disposition: 'inline' # 'inline' demande au navigateur de lire le fichier
     else
-      redirect_to cours_theoriques_path, alert: "Le fichier audio pour ce podcast est introuvable."
+      redirect_to cours_theoriques_path, alert: 'Le fichier audio pour ce podcast est introuvable.'
     end
   end
-
 end

@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 class GoogleCalendarService
   SCOPE = Google::Apis::CalendarV3::AUTH_CALENDAR
 
   def initialize
-    credentials_path = ENV['GOOGLE_APPLICATION_CREDENTIALS']
+    credentials_path = ENV.fetch('GOOGLE_APPLICATION_CREDENTIALS', nil)
 
     # On vérifie que la variable d'environnement est définie et que le fichier existe.
     unless credentials_path.present? && File.exist?(credentials_path)
@@ -101,23 +103,23 @@ class GoogleCalendarService
 
     # --- 2. Mise à jour de l'événement de l'instructeur ---
     instructor_event_id = record.google_instructor_event_id
-    if instructor_event_id.present?
-      instructor_name = record.fi
-      instructor_calendar_id = get_instructor_calendar_id(instructor_name)
-      if instructor_calendar_id.present?
-        # On personnalise le titre pour l'instructeur
-        instructor_event_data = build_event_from_reservation(record).merge(
-          summary: "Instruction avec #{record.user.name}"
-        )
-        instructor_event = Google::Apis::CalendarV3::Event.new(**instructor_event_data)
+    return unless instructor_event_id.present?
 
-        begin
-          @service.update_event(instructor_calendar_id, instructor_event_id, instructor_event)
-          Rails.logger.info "[GoogleCalendarService] Événement instructeur (ID: #{instructor_event_id}) mis à jour avec succès."
-        rescue Google::Apis::Error => e
-          Rails.logger.error "[GoogleCalendarService] Erreur lors de la mise à jour de l'événement instructeur : #{e.message}"
-        end
-      end
+    instructor_name = record.fi
+    instructor_calendar_id = get_instructor_calendar_id(instructor_name)
+    return unless instructor_calendar_id.present?
+
+    # On personnalise le titre pour l'instructeur
+    instructor_event_data = build_event_from_reservation(record).merge(
+      summary: "Instruction avec #{record.user.name}"
+    )
+    instructor_event = Google::Apis::CalendarV3::Event.new(**instructor_event_data)
+
+    begin
+      @service.update_event(instructor_calendar_id, instructor_event_id, instructor_event)
+      Rails.logger.info "[GoogleCalendarService] Événement instructeur (ID: #{instructor_event_id}) mis à jour avec succès."
+    rescue Google::Apis::Error => e
+      Rails.logger.error "[GoogleCalendarService] Erreur lors de la mise à jour de l'événement instructeur : #{e.message}"
     end
   end
 
@@ -131,13 +133,13 @@ class GoogleCalendarService
     if record.is_a?(Reservation)
       # On récupère uniquement l'agenda de l'avion.
       avion = record.avion
-      calendar_id = if avion.immatriculation == "F-HGBT"
-                      ENV['GOOGLE_CALENDAR_ID_AVION_F_HGBT']
+      calendar_id = if avion.immatriculation == 'F-HGBT'
+                      ENV.fetch('GOOGLE_CALENDAR_ID_AVION_F_HGBT', nil)
                     else
-                      ENV['GOOGLE_CALENDAR_ID']
+                      ENV.fetch('GOOGLE_CALENDAR_ID', nil)
                     end
     elsif record.is_a?(Event)
-      calendar_id = ENV['GOOGLE_CALENDAR_ID_EVENTS']
+      calendar_id = ENV.fetch('GOOGLE_CALENDAR_ID_EVENTS', nil)
     end
 
     return unless calendar_id
@@ -147,7 +149,7 @@ class GoogleCalendarService
       Rails.logger.info "[GoogleCalendarService] Événement principal (ID: #{google_event_id}) supprimé avec succès du calendrier #{calendar_id}."
     rescue Google::Apis::ClientError => e
       # Si l'événement n'est pas trouvé (déjà supprimé), on ne lève pas d'erreur.
-      if e.status_code == 404 || e.status_code == 410
+      if [404, 410].include?(e.status_code)
         puts "INFO: L'événement Google Calendar #{google_event_id} n'a pas été trouvé sur le calendrier #{calendar_id}. Il a probablement déjà été supprimé."
       else
         # Pour les autres erreurs (ex: problème de permission), on affiche le message.
@@ -186,9 +188,9 @@ class GoogleCalendarService
   def list_calendars
     # On récupère les IDs des calendriers de base depuis les variables d'environnement
     calendar_ids = [
-      ENV['GOOGLE_CALENDAR_ID'],
-      ENV['GOOGLE_CALENDAR_ID_EVENTS'],
-      ENV['GOOGLE_CALENDAR_ID_AVION_F_HGBT']
+      ENV.fetch('GOOGLE_CALENDAR_ID', nil),
+      ENV.fetch('GOOGLE_CALENDAR_ID_EVENTS', nil),
+      ENV.fetch('GOOGLE_CALENDAR_ID_AVION_F_HGBT', nil)
     ]
     # On y ajoute dynamiquement les IDs des calendriers de tous les instructeurs depuis la base de données
     calendar_ids += User.where.not(google_calendar_id: nil).pluck(:google_calendar_id)
@@ -225,12 +227,12 @@ class GoogleCalendarService
 
   # Archive old events in a specific calendar by changing their title and color
   def archive_old_events(calendar_id, older_than_date)
-    raise "Calendar ID cannot be blank." if calendar_id.blank?
-    raise "Cutoff date must be a valid date." unless older_than_date.is_a?(Time) || older_than_date.is_a?(Date)
+    raise 'Calendar ID cannot be blank.' if calendar_id.blank?
+    raise 'Cutoff date must be a valid date.' unless older_than_date.is_a?(Time) || older_than_date.is_a?(Date)
 
     archived_count = 0
     page_token = nil
-    
+
     # The time must be in RFC3339 format for the API
     time_max = older_than_date.to_datetime.rfc3339
 
@@ -282,7 +284,7 @@ class GoogleCalendarService
       @service.delete_event(instructor_calendar_id, instructor_event_id)
       Rails.logger.info "[GoogleCalendarService] Événement instructeur (ID: #{instructor_event_id}) supprimé avec succès du calendrier #{instructor_calendar_id}."
     rescue Google::Apis::ClientError => e
-      if e.status_code == 404 || e.status_code == 410
+      if [404, 410].include?(e.status_code)
         Rails.logger.warn "[GoogleCalendarService] Événement instructeur (ID: #{instructor_event_id}) non trouvé. Il a probablement déjà été supprimé."
       else
         Rails.logger.error "[GoogleCalendarService] Erreur API lors de la suppression de l'événement instructeur pour la réservation ##{reservation.id}: #{e.message}"
@@ -293,37 +295,37 @@ class GoogleCalendarService
   # Supprime l'événement de l'instructeur en utilisant le nom et l'ID stocké
   def delete_instructor_event_by_id(instructor_name, instructor_event_id)
     Rails.logger.info "🔍 [GoogleCalendarService] delete_instructor_event_by_id called with: instructor_name=#{instructor_name}, event_id=#{instructor_event_id}"
-    
+
     return false unless instructor_event_id.present? && instructor_name.present?
 
     # On utilise la même table de correspondance que pour la création
     instructor_calendar_id = get_instructor_calendar_id(instructor_name)
     return false unless instructor_calendar_id.present?
-    
+
     Rails.logger.info "🔍 [GoogleCalendarService] Tentative suppression event #{instructor_event_id} du calendrier #{instructor_calendar_id}"
 
     begin
       @service.delete_event(instructor_calendar_id, instructor_event_id)
       Rails.logger.info "[GoogleCalendarService] ✅ Événement instructeur (ID: #{instructor_event_id}) supprimé avec succès du calendrier #{instructor_calendar_id}."
-      return true
+      true
     rescue Google::Apis::ClientError => e
-      if e.status_code == 404 || e.status_code == 410
+      if [404, 410].include?(e.status_code)
         Rails.logger.warn "[GoogleCalendarService] ⚠️ Événement instructeur (ID: #{instructor_event_id}) non trouvé. Il a probablement déjà été supprimé."
-        return true
+        true
       else
         Rails.logger.error "[GoogleCalendarService] ❌ Erreur API lors de la suppression de l'événement instructeur (status #{e.status_code}): #{e.message}"
-        return false
+        false
       end
-    rescue => e
+    rescue StandardError => e
       Rails.logger.error "[GoogleCalendarService] ❌ Erreur inattendue: #{e.class}: #{e.message}"
-      return false
+      false
     end
   end
 
   # Nouvelle méthode dédiée à la mise à jour d'un événement (modèle Event) sur Google Calendar
   def update_google_event_for_app_event(app_event)
     google_event_id = app_event.google_event_id
-    calendar_id = ENV['GOOGLE_CALENDAR_ID_EVENTS']
+    calendar_id = ENV.fetch('GOOGLE_CALENDAR_ID_EVENTS', nil)
 
     # On ne fait rien si l'ID de l'événement ou du calendrier est manquant
     return unless google_event_id.present? && calendar_id.present?
@@ -337,7 +339,7 @@ class GoogleCalendarService
       Rails.logger.info "[GoogleCalendarService] Événement (ID: #{google_event_id}) mis à jour avec succès dans le calendrier #{calendar_id}."
     rescue Google::Apis::ClientError => e
       Rails.logger.error "[GoogleCalendarService] Erreur API lors de la mise à jour de l'événement pour Event ##{app_event.id}: #{e.message}"
-    rescue => e
+    rescue StandardError => e
       Rails.logger.error "[GoogleCalendarService] Erreur inattendue lors de la mise à jour de l'événement pour Event ##{app_event.id}: #{e.class}: #{e.message}"
     end
   end
@@ -345,7 +347,7 @@ class GoogleCalendarService
   # Nouvelle méthode dédiée à la suppression d'un événement (modèle Event) de Google Calendar
   def delete_google_event_for_app_event(app_event)
     google_event_id = app_event.google_event_id
-    calendar_id = ENV['GOOGLE_CALENDAR_ID_EVENTS']
+    calendar_id = ENV.fetch('GOOGLE_CALENDAR_ID_EVENTS', nil)
 
     # On ne fait rien si l'ID de l'événement ou du calendrier est manquant
     return unless google_event_id.present? && calendar_id.present?
@@ -355,7 +357,7 @@ class GoogleCalendarService
       Rails.logger.info "[GoogleCalendarService] Événement (ID: #{google_event_id}) supprimé avec succès du calendrier #{calendar_id}."
     rescue Google::Apis::ClientError => e
       # Si l'événement n'est pas trouvé (code 404 ou 410), c'est qu'il a déjà été supprimé. On ne lève pas d'erreur.
-      if e.status_code == 404 || e.status_code == 410
+      if [404, 410].include?(e.status_code)
         Rails.logger.warn "[GoogleCalendarService] L'événement Google Calendar #{google_event_id} n'a pas été trouvé. Il a probablement déjà été supprimé."
       else
         # Pour toute autre erreur API, on la journalise.
@@ -364,7 +366,6 @@ class GoogleCalendarService
     end
   end
 
-  
   private
 
   # Centralise la recherche de l'ID de calendrier d'un instructeur par son nom.
@@ -385,17 +386,17 @@ class GoogleCalendarService
   def get_calendar_ids_for_reservation(reservation)
     ids = []
     avion_calendar_id = nil
-    
+
     # On cherche d'abord un agenda spécifique à l'avion.
     avion = reservation.avion
     case avion.immatriculation
-    when "F-HGBT"
-      avion_calendar_id = ENV['GOOGLE_CALENDAR_ID_AVION_F_HGBT']
-    # Ajoutez d'autres cas pour d'autres avions ici.
+    when 'F-HGBT'
+      avion_calendar_id = ENV.fetch('GOOGLE_CALENDAR_ID_AVION_F_HGBT', nil)
+      # Ajoutez d'autres cas pour d'autres avions ici.
     end
 
     # On ajoute l'agenda de l'avion s'il a été trouvé, sinon on utilise l'agenda principal par défaut.
-    ids << (avion_calendar_id || ENV['GOOGLE_CALENDAR_ID'])
+    ids << (avion_calendar_id || ENV.fetch('GOOGLE_CALENDAR_ID', nil))
 
     # NOTE: La logique de récupération de l'agenda de l'instructeur est maintenant gérée
     # directement dans la méthode `create_event_for_app` pour plus de clarté.
@@ -408,12 +409,12 @@ class GoogleCalendarService
   def build_event_from_reservation(reservation)
     # Le summary doit inclure l'immatriculation de l'avion et le nom/prénom du user
     summary_text = "#{reservation.user.name} / #{reservation.avion.immatriculation}"
-    
+
     description_text = "Réservation de vol\n"
     description_text += "Pilote : #{reservation.user.name}\n"
     description_text += "Avion : #{reservation.avion.immatriculation}\n"
     description_text += "Type de vol : #{reservation.type_vol}\n"
-    
+
     if reservation.instruction? && reservation.fi.present?
       # On décompose le nom complet (ex: "Christian HUY") pour chercher sur les bonnes colonnes.
       first_name, last_name = reservation.fi.split(' ', 2)
@@ -444,20 +445,20 @@ class GoogleCalendarService
     start_time = app_event.start_date.to_time
     end_time = start_time # On initialise l'heure de fin à l'heure de début
     duration_str = app_event.duration.to_s.downcase
-    
+
     # On extrait les heures et les minutes de la chaîne de durée (ex: "3h30")
     hours = duration_str.match(/(\d+)\s*h/i)&.captures&.first.to_i
     minutes = duration_str.match(/(\d+)\s*min/i)&.captures&.first.to_i
-    
+
     # Gère le cas "3h30"
     minutes += 30 if duration_str.include?('h30')
-    
-    end_time += hours.hours if hours > 0
-    end_time += minutes.minutes if minutes > 0
-    
+
+    end_time += hours.hours if hours.positive?
+    end_time += minutes.minutes if minutes.positive?
+
     # Si aucune durée n'a pu être calculée (ex: "Journée"), on met une durée par défaut de 1h.
     end_time = start_time + 1.hour if end_time == start_time
-    
+
     # On récupère le fuseau horaire configuré dans l'application.
     time_zone = Setting.find_by(var: 'time_zone')&.val || 'Europe/Paris'
 
@@ -473,5 +474,4 @@ class GoogleCalendarService
       end: { date_time: end_time_str, time_zone: time_zone }
     }
   end
-
 end

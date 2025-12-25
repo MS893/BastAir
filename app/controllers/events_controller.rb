@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 class EventsController < ApplicationController
   before_action :authenticate_user!, only: %i[new create edit update destroy confirm_destroy] # l'utilisateur est connecté
   before_action :set_event, only: %i[show edit update destroy confirm_destroy]
   before_action :authorize_admin!, only: %i[new create edit update destroy confirm_destroy delete_past] # seul un admin peut gérer les événements
-  before_action :combine_date_and_time, only: %i[ create update ]
+  before_action :combine_date_and_time, only: %i[create update]
 
   def index
     @events = Event.order(start_date: :asc)
@@ -21,7 +23,7 @@ class EventsController < ApplicationController
     @event = Event.new(event_params)
     # On associe l'administrateur actuel à l'événement
     @event.admin = current_user
-    
+
     # On s'assure que le prix est à 0 s'il n'est pas spécifié
     @event.price ||= 0
 
@@ -45,7 +47,7 @@ class EventsController < ApplicationController
       @event.users.each do |participant|
         # --- Synchronisation avec Google Calendar ---
         GoogleCalendarService.new.update_google_event_for_app_event(@event)
-        
+
         UserMailer.event_updated_notification(participant, @event).deliver_later
       end
       redirect_to @event, notice: "L'événement a été mis à jour avec succès."
@@ -81,14 +83,12 @@ class EventsController < ApplicationController
     # On sélectionne les événements à supprimer :
     # - Dont la date de début est antérieure à aujourd'hui.
     # - Dont le titre n'est PAS "Objets trouvés".
-    events_to_delete = Event.where("start_date < ?", Time.zone.now.beginning_of_day)
-                            .where.not(title: "Objets trouvés")
-    
+    events_to_delete = Event.where('start_date < ?', Time.zone.now.beginning_of_day)
+                            .where.not(title: 'Objets trouvés')
+
     count = events_to_delete.destroy_all.size
     redirect_to events_path, notice: "#{count} événement(s) passé(s) ont été supprimé(s)."
   end
-  
-
 
   private
 
@@ -97,19 +97,20 @@ class EventsController < ApplicationController
   end
 
   def combine_date_and_time
-    if params[:event][:start_date].present? && params[:event][:start_date_hour].present? && params[:event][:start_date_minute].present?
-      date = Date.parse(params[:event][:start_date])
-      hour = params[:event][:start_date_hour].to_i
-      minute = params[:event][:start_date_minute].to_i
-      
-      # On reconstruit le paramètre start_date avec la date et l'heure
-      # avant qu'il ne soit utilisé par event_params
-      params[:event][:start_date] = Time.zone.local(date.year, date.month, date.day, hour, minute)
+    unless params[:event][:start_date].present? && params[:event][:start_date_hour].present? && params[:event][:start_date_minute].present?
+      return
     end
+
+    date = Date.parse(params[:event][:start_date])
+    hour = params[:event][:start_date_hour].to_i
+    minute = params[:event][:start_date_minute].to_i
+
+    # On reconstruit le paramètre start_date avec la date et l'heure
+    # avant qu'il ne soit utilisé par event_params
+    params[:event][:start_date] = Time.zone.local(date.year, date.month, date.day, hour, minute)
   end
 
   def event_params
     params.require(:event).permit(:title, :description, :start_date, :price, :photo)
   end
-
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Immobilisation < ApplicationRecord
   belongs_to :purchase_transaction, class_name: 'Transaction', optional: true
 
@@ -20,14 +22,11 @@ class Immobilisation < ApplicationRecord
     (amortissement_annuel * annees_amorties).round(2)
   end
 
-
-  
   private
 
   def date_acquisition_cannot_be_in_the_future
-    if date_acquisition.present? && date_acquisition > Date.today
-      errors.add(:date_acquisition, "ne peut pas être dans le futur")
-    end
+    return unless date_acquisition.present? && date_acquisition > Date.today
+
+    errors.add(:date_acquisition, 'ne peut pas être dans le futur')
   end
-  
 end

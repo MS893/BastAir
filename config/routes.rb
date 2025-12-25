@@ -1,19 +1,21 @@
+# frozen_string_literal: true
+
 # config/routes.rb
 
 Rails.application.routes.draw do
   # Defines the root path route ("/")
-  root "static_pages#home"
+  root 'static_pages#home'
 
   # Configuration de Devise :
   # On désactive la création de compte publique (gérée par l'admin).
   # On regroupe les routes de Devise ici pour éviter les conflits.
-  devise_for :users, 
-    path: 'auth', # On préfixe les routes Devise avec 'auth' pour éviter les conflits (ex: /auth/sign_in)
-    skip: [:registrations], # On désactive les routes d'inscription publiques publiques
-    controllers: { 
-      sessions: 'users_auth/sessions', # Contrôleur personnalisé pour la connexion (avec reCAPTCHA)
-      passwords: 'users_auth/passwords' # Contrôleur personnalisé pour les mots de passe
-    }
+  devise_for :users,
+             path: 'auth', # On préfixe les routes Devise avec 'auth' pour éviter les conflits (ex: /auth/sign_in)
+             skip: [:registrations], # On désactive les routes d'inscription publiques publiques
+             controllers: {
+               sessions: 'users_auth/sessions', # Contrôleur personnalisé pour la connexion (avec reCAPTCHA)
+               passwords: 'users_auth/passwords' # Contrôleur personnalisé pour les mots de passe
+             }
 
   # On recrée manuellement les routes pour que les utilisateurs puissent modifier leur profil,
   # tout en utilisant le contrôleur par défaut de Devise pour les registrations.
@@ -24,7 +26,7 @@ Rails.application.routes.draw do
     put 'users' => 'devise/registrations#update', as: 'user_registration'
   end
   # --- Routes pour les utilisateurs et l'authentification ---
-  resources :users, only: [:index, :show, :edit, :update], constraints: { id: /\d+/ } do
+  resources :users, only: %i[index show edit update], constraints: { id: /\d+/ } do
     collection do
       get :search # /users/search
     end
@@ -34,13 +36,13 @@ Rails.application.routes.draw do
 
   # routes pour l'administration (gestion par un admninistrateur)
   namespace :admin do
-    resources :users, only: [:new, :create]
+    resources :users, only: %i[new create]
     # On ajoute les routes pour gérer les actualités (sauf la page "show" qui n'est pas utile ici)
     resources :news_items, except: [:show]
     # Route pour la gestion des réservations par les admins
-    resources :reservations, only: [:index, :destroy]
+    resources :reservations, only: %i[index destroy]
     # Route pour la maintenance des avions
-    resources :maintenances, only: [:index, :show, :update] do
+    resources :maintenances, only: %i[index show update] do
       member do
         patch :reset_100h
         patch :reset_50h
@@ -75,12 +77,12 @@ Rails.application.routes.draw do
     resources :google_calendars, only: [:index] do
       delete 'clear', on: :collection
     end
-    resource :setting, only: [:edit, :update], path: 'parametres'
+    resource :setting, only: %i[edit update], path: 'parametres'
   end
 
   # Routes pour la création de réservations et gestion agenda
   get 'agenda', to: 'reservations#agenda'
-  resources :reservations, only: [:index, :new, :create, :edit, :update, :destroy] do
+  resources :reservations, only: %i[index new create edit update destroy] do
     get 'fetch_available_instructors', on: :collection, as: :fetch_available_instructors
   end
 
@@ -99,7 +101,7 @@ Rails.application.routes.draw do
   post 'stripe-webhooks', to: 'stripe_webhooks#create'
 
   # routes pour la gestion des vols
-  resources :vols, only: [:new, :create, :index, :show, :update]
+  resources :vols, only: %i[new create index show update]
   # Route pour récupérer des informations sur les avions (ex: dernier compteur)
   resources :avions, only: [] do
     # Route pour le formulaire de signalement pour un avion spécifique
@@ -110,22 +112,22 @@ Rails.application.routes.draw do
     end
   end
   # Route pour la liste des signalements sur un avion
-  resources :signalements, only: [:index, :show, :edit, :update, :destroy]
+  resources :signalements, only: %i[index show edit update destroy]
 
   # routes pour les cours en ligne
-  resources :elearning, only: [:index, :show] do
+  resources :elearning, only: %i[index show] do
     member do
       get 'document'
     end
   end
   # routes pour les leçons de vol
-  resources :flight_lessons, only: [:index, :show] do
+  resources :flight_lessons, only: %i[index show] do
     get :pdf, on: :member
   end
   # route pour les podcasts audio
   resources :audios, only: [:show]
   # routes pour le livret de progression
-  resources :livrets, only: [:create, :update, :show] do
+  resources :livrets, only: %i[create update show] do
     member do
       get :signature
     end
@@ -138,13 +140,13 @@ Rails.application.routes.draw do
 
   # routes pour les événements, avec des routes imbriquées pour les participants + page de confirmation de suppression
   resources :events do
-    resources :attendances, only: [:new, :create]
+    resources :attendances, only: %i[new create]
     member do
       get 'confirm_destroy'
     end
     delete 'delete_past', on: :collection # Ajoute la route DELETE /events/delete_past
-    resources :attendances, only: [:create, :destroy]
-    resources :comments, only: [:create, :edit, :update, :destroy]
+    resources :attendances, only: %i[create destroy]
+    resources :comments, only: %i[create edit update destroy]
   end
 
   # routes pour les pages statiques de la navbar
@@ -171,24 +173,22 @@ Rails.application.routes.draw do
   # Routes pour la gestion des disponibilités des instructeurs
   get 'mes_disponibilites', to: 'instructor_availabilities#edit', as: 'edit_instructor_availabilities'
   patch 'mes_disponibilites', to: 'instructor_availabilities#update', as: 'update_instructor_availabilities'
-  
+
   # Route pour gérer le téléchargement des fichiers
-  get 'download/:filename', to: 'static_pages#download', as: 'download_file', constraints: { filename: /[^\/]+/ }
-  
+  get 'download/:filename', to: 'static_pages#download', as: 'download_file', constraints: { filename: %r{[^/]+} }
+
   # --- Routes pour l'authentification Google Calendar ---
   namespace :google_auth do
     get 'redirect', to: 'authentication#redirect', as: 'redirect'
     get 'callback', to: 'authentication#callback', as: 'callback'
   end
 
-  
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.
   # Health check
-  get "up" => "rails/health#show", as: :rails_health_check
-  
-  # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
-  get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
-  get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
+  get 'up' => 'rails/health#show', as: :rails_health_check
 
+  # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
+  get 'manifest' => 'rails/pwa#manifest', as: :pwa_manifest
+  get 'service-worker' => 'rails/pwa#service_worker', as: :pwa_service_worker
 end

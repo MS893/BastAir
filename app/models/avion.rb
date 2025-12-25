@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Avion < ApplicationRecord
   has_many :reservations, dependent: :destroy
   has_many :vols, dependent: :destroy
@@ -6,7 +8,7 @@ class Avion < ApplicationRecord
   # Document CEN scanné
   has_one_attached :cen_document
   validates :cen_document, content_type: { in: 'application/pdf', message: 'doit être un format PDF' },
-            size: { less_than: 5.megabytes, message: 'doit peser moins de 5 Mo' }
+                           size: { less_than: 5.megabytes, message: 'doit peser moins de 5 Mo' }
   validates :tbo_helice, presence: true
   validates :tbo_parachute, presence: true
   validates :immatriculation, presence: true, uniqueness: true
@@ -17,7 +19,7 @@ class Avion < ApplicationRecord
   validate :tbo_helice_must_be_in_the_future
   validate :tbo_parachute_must_be_in_the_future
   validate :_1000h_must_be_in_the_future
-  
+
   # Réinitialise le compteur pour la visite des 50 heures
   def reset_potential_50h!
     update_attribute(:next_50h, 50.0)
@@ -60,31 +62,28 @@ class Avion < ApplicationRecord
 
   # Notifie les pilotes ayant une réservation future si l'avion est indisponible
   def notify_future_reservations
-    reservations.where("start_time > ?", Time.current).find_each do |reservation|
+    reservations.where('start_time > ?', Time.current).find_each do |reservation|
       ReservationMailer.aircraft_grounded_alert(reservation).deliver_later
     end
   end
 
-
-
   private
 
   def tbo_helice_must_be_in_the_future
-    if tbo_helice_changed? && tbo_helice.present? && tbo_helice <= Date.today
-      errors.add(:tbo_helice, "doit être dans le futur")
-    end
+    return unless tbo_helice_changed? && tbo_helice.present? && tbo_helice <= Date.today
+
+    errors.add(:tbo_helice, 'doit être dans le futur')
   end
 
   def tbo_parachute_must_be_in_the_future
-    if tbo_parachute_changed? && tbo_parachute.present? && tbo_parachute <= Date.today
-      errors.add(:tbo_parachute, "doit être dans le futur")
-    end
+    return unless tbo_parachute_changed? && tbo_parachute.present? && tbo_parachute <= Date.today
+
+    errors.add(:tbo_parachute, 'doit être dans le futur')
   end
 
   def _1000h_must_be_in_the_future
-    if _1000h_changed? && _1000h.present? && _1000h <= Date.today
-      errors.add(:_1000h, "doit être dans le futur")
-    end
+    return unless _1000h_changed? && _1000h.present? && _1000h <= Date.today
+
+    errors.add(:_1000h, 'doit être dans le futur')
   end
-  
 end

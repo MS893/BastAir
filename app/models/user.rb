@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class User < ApplicationRecord
   # == Constants ==============================================================
   # Fonctions des utilisateurs
@@ -24,10 +26,10 @@ class User < ApplicationRecord
   # == Devise =================================================================
   # Include default devise modules. Others available are : :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable,
-          :registerable,
-          :recoverable,
-          :rememberable,
-          :validatable
+         :registerable,
+         :recoverable,
+         :rememberable,
+         :validatable
 
   # == Associations ===========================================================
   has_many :vols, dependent: :destroy
@@ -49,17 +51,19 @@ class User < ApplicationRecord
   validates :nom, presence: true
   validates :prenom, presence: true
   validates :email,
-    presence: true,
-    uniqueness: true,
-    format: { with: /\A[^@\s]+@([^@\s]+\.)+[^@\s]+\z/, message: "email address please" },
-    unless: :is_bia?
+            presence: true,
+            uniqueness: true,
+            format: { with: /\A[^@\s]+@([^@\s]+\.)+[^@\s]+\z/, message: 'email address please' },
+            unless: :is_bia?
   validates :fonction, presence: true, inclusion: { in: ALLOWED_FCT.values }, unless: :is_bia?
   validates :licence_type, presence: true, inclusion: { in: ALLOWED_LIC.values }, unless: :is_bia?
-  validates :num_licence, format: { with: /\A\d{8}\z/, message: "doit être composé de 8 chiffres" }, allow_blank: true
-  validates :telephone, presence: true, format: { with: /\A(?:(?:\+|00)33[\s.-]{0,3}(?:\(0\)[\s.-]{0,3})?|0)[1-9](?:(?:[\s.-]?\d{2}){4}|\d{8})\z/, message: "n'est pas un format de téléphone valide" }, allow_blank: true
+  validates :num_licence, format: { with: /\A\d{8}\z/, message: 'doit être composé de 8 chiffres' }, allow_blank: true
+  validates :telephone, presence: true,
+                        format: { with: /\A(?:(?:\+|00)33[\s.-]{0,3}(?:\(0\)[\s.-]{0,3})?|0)[1-9](?:(?:[\s.-]?\d{2}){4}|\d{8})\z/, message: "n'est pas un format de téléphone valide" }, allow_blank: true
   # Validation personnalisée pour le contact d'urgence, qui peut contenir un nom.
   validate :validate_contact_urgence_phone_format, on: :update_profil, if: -> { contact_urgence.present? }
-  validates :num_ffa, presence: true, format: { with: /\A\d{7}\z/, message: "doit être composé de 7 chiffres" }, allow_blank: true, unless: :is_bia?
+  validates :num_ffa, presence: true, format: { with: /\A\d{7}\z/, message: 'doit être composé de 7 chiffres' },
+                      allow_blank: true, unless: :is_bia?
   validates :type_medical, presence: true, inclusion: { in: ALLOWED_MED.values }, allow_blank: true, unless: :is_bia?
   validates :date_naissance, presence: true, unless: :is_bia?
   validates :lieu_naissance, presence: true, unless: :is_bia?
@@ -68,7 +72,7 @@ class User < ApplicationRecord
   validates :medical, presence: true, unless: :is_bia?
   validates :controle, presence: true, unless: :is_bia?
   validates :cotisation_club, presence: true, unless: :is_bia?
-  
+
   validate :incompatible_roles
   # == Actions ===============================================================
   before_validation :set_bia_defaults, if: :is_bia?       # lors de la création d'un compte BIA (collège ou lycée)
@@ -80,14 +84,12 @@ class User < ApplicationRecord
   # Turbo Streams pour la mise à jour du solde en temps réel
   # On s'assure que le solde est toujours un Decimal, avec 0.0 par défaut.
   attribute :solde, :decimal, default: 0.0
-  broadcasts_to ->(user) { [user, "solde"] }, inserts_by: :prepend
-
-
+  broadcasts_to ->(user) { [user, 'solde'] }, inserts_by: :prepend
 
   def welcome_send
     UserMailer.welcome_email(self).deliver_now
   end
-  
+
   def full_name
     "#{prenom} #{nom}".strip
   end
@@ -131,7 +133,7 @@ class User < ApplicationRecord
   def is_bia?
     prenom.to_s.downcase == 'bia'
   end
-  
+
   # Devise override: Empêche les comptes BIA de se connecter.
   def active_for_authentication?
     super && !is_bia?
@@ -154,7 +156,7 @@ class User < ApplicationRecord
       Transaction.create!(
         user: self,
         date_transaction: Date.today,
-        description: "Crédit du compte via paiement en ligne",
+        description: 'Crédit du compte via paiement en ligne',
         mouvement: 'Recette',
         montant: amount.to_d,
         payment_method: 'Carte bancaire', # Le paiement Stripe est par carte
@@ -181,47 +183,45 @@ class User < ApplicationRecord
 
     warnings
   end
-  
-
 
   private
 
   def incompatible_roles
-    if eleve? && instructeur?
-      errors.add(:base, "Un utilisateur ne peut pas être à la fois élève et instructeur.")
-    end
+    return unless eleve? && instructeur?
+
+    errors.add(:base, 'Un utilisateur ne peut pas être à la fois élève et instructeur.')
   end
 
   # Gère la date de fin de formation lors du changement de statut
   def manage_training_end_date
-    if fonction_changed?
-      if fonction == 'brevete' && fonction_was == 'eleve'
-        # L'élève devient breveté : on fige la date de fin de formation à aujourd'hui si elle n'est pas fournie
-        self.date_fin_formation ||= Date.today
-      elsif fonction == 'eleve'
-        # Si on repasse en élève (erreur de manip ?), on efface la date pour réactiver le livret
-        self.date_fin_formation = nil
-      end
+    return unless fonction_changed?
+
+    if fonction == 'brevete' && fonction_was == 'eleve'
+      # L'élève devient breveté : on fige la date de fin de formation à aujourd'hui si elle n'est pas fournie
+      self.date_fin_formation ||= Date.today
+    elsif fonction == 'eleve'
+      # Si on repasse en élève (erreur de manip ?), on efface la date pour réactiver le livret
+      self.date_fin_formation = nil
     end
   end
 
   def create_progression_livret
     # 1. Création des entrées pour les examens théoriques PPL
     ppl_exam_titles = [
-      "010 - Droit Aérien (Réglementation)",
+      '010 - Droit Aérien (Réglementation)',
       "020 - Connaissances Générales de l'Aéronef",
-      "030 - Performances et Préparation du Vol",
-      "040 - Performance Humaine (Facteurs Humains)",
-      "050 - Météorologie",
-      "060 - Navigation",
-      "070 - Procédures Opérationnelles",
-      "080 - Principes du Vol",
-      "090 - Communications"
+      '030 - Performances et Préparation du Vol',
+      '040 - Performance Humaine (Facteurs Humains)',
+      '050 - Météorologie',
+      '060 - Navigation',
+      '070 - Procédures Opérationnelles',
+      '080 - Principes du Vol',
+      '090 - Communications'
     ]
     ppl_exam_titles.each { |title| Livret.create(user: self, title: title, status: 0) }
 
     # 2. Création des entrées pour les cours théoriques (FTP)
-    Course.where("title LIKE ?", 'FTP%').find_each do |course|
+    Course.where('title LIKE ?', 'FTP%').find_each do |course|
       Livret.create(user: self, course: course, title: course.title, status: 0)
     end
 
@@ -234,36 +234,36 @@ class User < ApplicationRecord
   def validate_contact_urgence_phone_format
     # Regex pour un numéro de téléphone français, autorisant les espaces.
     phone_regex = /(?:(?:\+|00)33[\s.-]{0,3}(?:\(0\)[\s.-]{0,3})?|0)[1-9](?:(?:[\s.-]?\d{2}){4}|\d{8})/
-    
+
     # On extrait la partie qui ressemble à un numéro de téléphone.
     phone_part = contact_urgence.match(phone_regex)
 
     # Si aucune partie ne correspond au format d'un numéro, on ajoute une erreur.
-    unless phone_part
-      errors.add(:contact_urgence, "ne contient pas un format de téléphone valide")
-    end
+    return if phone_part
+
+    errors.add(:contact_urgence, 'ne contient pas un format de téléphone valide')
   end
 
   def check_for_negative_balance
     # solde_before_last_save est fourni par ActiveModel::Dirty
     # On vérifie si le solde précédent était positif ou nul et que le nouveau est négatif.
     previous_solde = solde_before_last_save || 0.0
-    if solde < 0 && previous_solde >= 0
-      UserMailer.negative_balance_email(self).deliver_later
-    end
+    return unless solde.negative? && previous_solde >= 0
+
+    UserMailer.negative_balance_email(self).deliver_later
   end
 
   def set_bia_defaults
     self.date_naissance ||= Date.new(1900, 1, 1)
-    self.lieu_naissance ||= "N/A"
-    self.profession ||= "N/A"
-    self.fonction ||= "eleve" # Ou une autre valeur par défaut qui existe
+    self.lieu_naissance ||= 'N/A'
+    self.profession ||= 'N/A'
+    self.fonction ||= 'eleve' # Ou une autre valeur par défaut qui existe
     self.autorise = true
-    self.licence_type ||= "LAPL" # Valeur par défaut pour passer la validation si besoin
+    self.licence_type ||= 'LAPL' # Valeur par défaut pour passer la validation si besoin
     self.num_licence ||= nil
     self.num_ffa ||= nil
     self.date_licence ||= Date.new(1900, 1, 1)
-    self.type_medical ||= "LAPL" # Valeur par défaut
+    self.type_medical ||= 'LAPL' # Valeur par défaut
     self.medical ||= Date.new(1900, 1, 1)
     self.controle ||= Date.new(1900, 1, 1)
     self.password ||= Devise.friendly_token.first(8) if new_record?
@@ -276,15 +276,11 @@ class User < ApplicationRecord
   # car ils ne peuvent pas se connecter et le champ est masqué dans le formulaire.
   def password_required?
     return false if is_bia?
+
     super
   end
 
-
-
-=begin
-INFOS
-- avec .deliver_now : User.create -> Attendre la génération de l'email -> Fin.
-- avec .deliver_later : User.create -> Mettre l'envoi de l'email dans une file d'attente -> Fin. L'email est ensuite envoyé par un autre processus, sans bloquer l'utilisateur.
-=end
-
+  # INFOS
+  # - avec .deliver_now : User.create -> Attendre la génération de l'email -> Fin.
+  # - avec .deliver_later : User.create -> Mettre l'envoi de l'email dans une file d'attente -> Fin. L'email est ensuite envoyé par un autre processus, sans bloquer l'utilisateur.
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class InstructorAvailabilitiesController < ApplicationController
   before_action :authenticate_user!
   before_action :check_if_instructor
@@ -54,8 +56,6 @@ class InstructorAvailabilitiesController < ApplicationController
     end
   end
 
-
-  
   private
 
   def check_if_instructor

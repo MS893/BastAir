@@ -1,46 +1,50 @@
-class GoogleAuth::AuthenticationController < ApplicationController
-  before_action :authenticate_user!
-  before_action :authorize_admin!
+# frozen_string_literal: true
 
-  # Portée de l'autorisation : nous demandons la permission de lire et écrire sur le calendrier.
-  SCOPE = Google::Apis::CalendarV3::AUTH_CALENDAR
+module GoogleAuth
+  class AuthenticationController < ApplicationController
+    before_action :authenticate_user!
+    before_action :authorize_admin!
 
-  # Étape 1 : Redirige l'administrateur vers la page de consentement de Google.
-  def redirect
-    client = Signet::OAuth2::Client.new(client_options)
-    # Ligne de débogage : Affiche le client_id dans les logs du serveur Rails.
-    puts "DEBUG: Using Google Client ID: #{client.client_id}"
+    # Portée de l'autorisation : nous demandons la permission de lire et écrire sur le calendrier.
+    SCOPE = Google::Apis::CalendarV3::AUTH_CALENDAR
 
-    redirect_to client.authorization_uri.to_s, allow_other_host: true
-  end
+    # Étape 1 : Redirige l'administrateur vers la page de consentement de Google.
+    def redirect
+      client = Signet::OAuth2::Client.new(client_options)
+      # Ligne de débogage : Affiche le client_id dans les logs du serveur Rails.
+      puts "DEBUG: Using Google Client ID: #{client.client_id}"
 
-  # Étape 2 : Google redirige ici après le consentement de l'utilisateur.
-  def callback
-    client = Signet::OAuth2::Client.new(client_options)
-    client.code = params[:code] # Le code d'autorisation fourni par Google
+      redirect_to client.authorization_uri.to_s, allow_other_host: true
+    end
 
-    response = client.fetch_access_token!
+    # Étape 2 : Google redirige ici après le consentement de l'utilisateur.
+    def callback
+      client = Signet::OAuth2::Client.new(client_options)
+      client.code = params[:code] # Le code d'autorisation fourni par Google
 
-    # On sauvegarde les tokens d'accès et de rafraîchissement sur le compte de l'admin.
-    current_user.update(
-      google_access_token: response['access_token'],
-      google_refresh_token: response['refresh_token'],
-      google_token_expires_at: Time.now + response['expires_in'].to_i.seconds
-    )
+      response = client.fetch_access_token!
 
-    redirect_to root_path, notice: "Votre compte a bien été connecté à Google Calendar."
-  end
+      # On sauvegarde les tokens d'accès et de rafraîchissement sur le compte de l'admin.
+      current_user.update(
+        google_access_token: response['access_token'],
+        google_refresh_token: response['refresh_token'],
+        google_token_expires_at: Time.now + response['expires_in'].to_i.seconds
+      )
 
-  private
+      redirect_to root_path, notice: 'Votre compte a bien été connecté à Google Calendar.'
+    end
 
-  def client_options
-    {
-      client_id: ENV['GOOGLE_CLIENT_ID'],
-      client_secret: ENV['GOOGLE_CLIENT_SECRET'],
-      authorization_uri: 'https://accounts.google.com/o/oauth2/auth',
-      token_credential_uri: 'https://accounts.google.com/o/oauth2/token',
-      scope: SCOPE,
-      redirect_uri: google_auth_callback_url # L'URL de notre action callback
-    }
+    private
+
+    def client_options
+      {
+        client_id: ENV.fetch('GOOGLE_CLIENT_ID', nil),
+        client_secret: ENV.fetch('GOOGLE_CLIENT_SECRET', nil),
+        authorization_uri: 'https://accounts.google.com/o/oauth2/auth',
+        token_credential_uri: 'https://accounts.google.com/o/oauth2/token',
+        scope: SCOPE,
+        redirect_uri: google_auth_callback_url # L'URL de notre action callback
+      }
+    end
   end
 end

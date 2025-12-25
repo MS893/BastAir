@@ -1,12 +1,13 @@
+# frozen_string_literal: true
+
 require 'csv'
 
 class Vol < ApplicationRecord
-
   # Attributs pour le formulaire de saisie de la date et de l'heure pour les accepter sans essayer de les sauvegarder dans la table
   attr_accessor :debut_vol_date, :debut_vol_hour, :debut_vol_minute, :bia_user_id
 
   # Constante définissant les types de vols qui sont à la charge du club et non du pilote.
-  FLIGHT_TYPES_DEBITED_TO_CLUB = ["Vol découverte", "Vol d'initiation", "Vol d'essai", "Convoyage"].freeze
+  FLIGHT_TYPES_DEBITED_TO_CLUB = ['Vol découverte', "Vol d'initiation", "Vol d'essai", 'Convoyage'].freeze
 
   # == Associations ===========================================================
   belongs_to :user
@@ -17,7 +18,7 @@ class Vol < ApplicationRecord
   after_create :create_debit_transaction
   # Crée un vol miroir pour l'instructeur, sauf si ce vol est déjà un vol d'instructeur.
   after_create :create_instructor_flight_log, unless: :is_instructor_log?
-  
+
   # Gestion du potentiel avion
   after_create :decrement_avion_potential
   after_update :adjust_avion_potential, if: :saved_change_to_duree_vol?
@@ -45,7 +46,8 @@ class Vol < ApplicationRecord
   validates :duree_vol, presence: true, numericality: { greater_than: 0 }
   validates :nb_atterro, presence: true, numericality: { only_integer: true, greater_than: 0 }
   validates :nature, presence: true, inclusion: { in: ['VFR de jour', 'VFR de nuit', 'IFR'] }
-  validates :type_vol, presence: true, inclusion: { in: ['Standard', 'Vol découverte', 'Vol d\'initiation', 'Vol d\'essai', 'Convoyage', 'Vol BIA', 'Instruction'] }
+  validates :type_vol, presence: true,
+                       inclusion: { in: ['Standard', 'Vol découverte', 'Vol d\'initiation', 'Vol d\'essai', 'Convoyage', 'Vol BIA', 'Instruction'] }
   validates :solo, inclusion: { in: [true, false] }
   validates :supervise, inclusion: { in: [true, false] }
   validates :nav, inclusion: { in: [true, false] }
@@ -85,9 +87,7 @@ class Vol < ApplicationRecord
 
     # Ajout du coût de l'instructeur si le vol est en double commande (non solo)
     # La présence d'un instructeur_id et la case "solo" non cochée déterminent un vol en instruction
-    if instructeur_id.present? && !solo?
-      cost += duree_vol.to_d * tarif.tarif_instructeur.to_d
-    end
+    cost += duree_vol.to_d * tarif.tarif_instructeur.to_d if instructeur_id.present? && !solo?
 
     cost.round(2)
   end
@@ -98,17 +98,16 @@ class Vol < ApplicationRecord
     type_vol == 'Instruction'
   end
 
-  
   private
 
   def decrement_avion_potential
     return unless avion.present? && duree_vol.present?
-    
+
     # On retire la durée du vol au potentiel moteur et au compteur 100h
     avion.with_lock do
       was_grounded = avion.grounded? # On capture l'état avant modification
       previous_100h = avion.next_100h
-      
+
       avion.decrement(:potentiel_moteur, duree_vol.to_d)
       avion.decrement(:potentiel_cellule, duree_vol.to_d)
       avion.decrement(:next_50h, duree_vol.to_d) if avion.next_50h
@@ -117,9 +116,7 @@ class Vol < ApplicationRecord
       avion.save(validate: false)
 
       # Si l'avion devient indisponible suite à ce vol, on prévient les futurs pilotes
-      if !was_grounded && avion.grounded?
-        avion.notify_future_reservations
-      end
+      avion.notify_future_reservations if !was_grounded && avion.grounded?
 
       # Si le potentiel passe sous les 10h (et qu'il était au-dessus avant), on alerte
       if avion.next_100h && previous_100h >= 10 && avion.next_100h < 10
@@ -133,10 +130,10 @@ class Vol < ApplicationRecord
 
     # On récupère l'ancienne et la nouvelle durée
     old_duree, new_duree = saved_change_to_duree_vol
-    
+
     # On calcule la différence et on ajuste le potentiel
     difference = new_duree.to_d - (old_duree&.to_d || 0)
-    
+
     avion.with_lock do
       was_grounded = avion.grounded?
       previous_100h = avion.next_100h
@@ -149,9 +146,7 @@ class Vol < ApplicationRecord
       avion.save(validate: false)
 
       # Si l'avion devient indisponible suite à l'ajustement
-      if !was_grounded && avion.grounded?
-        avion.notify_future_reservations
-      end
+      avion.notify_future_reservations if !was_grounded && avion.grounded?
 
       # Vérification du seuil après ajustement
       if avion.next_100h && previous_100h >= 10 && avion.next_100h < 10
@@ -186,7 +181,8 @@ class Vol < ApplicationRecord
       # Elle est enregistrée comme une charge d'exploitation liée à l'activité de vol
       Transaction.create!(
         user: nil,
-        description: "Vol #{type_vol} du #{I18n.l(debut_vol.to_date, format: :short_year)} - Pilote: #{user.full_name} - Avion: #{avion.immatriculation}",
+        description: "Vol #{type_vol} du #{I18n.l(debut_vol.to_date,
+                                                  format: :short_year)} - Pilote: #{user.full_name} - Avion: #{avion.immatriculation}",
         montant: cout_total,
         mouvement: 'Dépense',
         date_transaction: debut_vol.to_date,
@@ -197,9 +193,11 @@ class Vol < ApplicationRecord
       # Pour les vols BIA, on débite le compte du collège/lycée sélectionné
       bia_user = User.find_by(id: bia_user_id)
       return unless bia_user # Sécurité si l'ID est invalide
+
       Transaction.create!(
         user: bia_user,
-        description: "Vol BIA du #{I18n.l(debut_vol.to_date, format: :short_year)} - Pilote: #{user.full_name} - Avion: #{avion.immatriculation}",
+        description: "Vol BIA du #{I18n.l(debut_vol.to_date,
+                                          format: :short_year)} - Pilote: #{user.full_name} - Avion: #{avion.immatriculation}",
         montant: cout_total,
         mouvement: 'Dépense',
         date_transaction: debut_vol.to_date,
@@ -211,7 +209,8 @@ class Vol < ApplicationRecord
       # La transaction est associée au pilote, ce qui déclenchera la mise à jour de son solde
       Transaction.create!(
         user: user,
-        description: "Vol #{type_vol} du #{I18n.l(debut_vol.to_date, format: :short_year)} - Avion: #{avion.immatriculation}",
+        description: "Vol #{type_vol} du #{I18n.l(debut_vol.to_date,
+                                                  format: :short_year)} - Avion: #{avion.immatriculation}",
         montant: cout_total,
         mouvement: 'Dépense',
         date_transaction: debut_vol.to_date,
@@ -231,10 +230,10 @@ class Vol < ApplicationRecord
     # On ne lance la validation que si les deux champs sont présents
     return if compteur_depart.blank? || compteur_arrivee.blank?
 
-    if compteur_arrivee <= compteur_depart
-      # Ajoute une erreur sur le champ 'compteur_arrivee' si la condition n'est pas respectée
-      errors.add(:compteur_arrivee, "doit être supérieur au compteur de départ.")
-    end
+    return unless compteur_arrivee <= compteur_depart
+
+    # Ajoute une erreur sur le champ 'compteur_arrivee' si la condition n'est pas respectée
+    errors.add(:compteur_arrivee, 'doit être supérieur au compteur de départ.')
   end
 
   # Crée un vol miroir pour l'instructeur après la création du vol de l'élève.
@@ -243,9 +242,9 @@ class Vol < ApplicationRecord
     return unless instructeur_id.present? && !solo?
 
     # On duplique les attributs du vol de l'élève.
-    instructor_flight = self.dup
+    instructor_flight = dup
     # On assigne l'instructeur comme pilote du nouveau vol.
-    instructor_flight.user_id = self.instructeur_id
+    instructor_flight.user_id = instructeur_id
     # On marque ce vol comme "Instruction" pour éviter la facturation et les callbacks en boucle.
     instructor_flight.type_vol = 'Instruction'
     instructor_flight.save!
@@ -258,41 +257,49 @@ class Vol < ApplicationRecord
     return if user.nil? || debut_vol.nil?
 
     # La visite médicale est obligatoire pour tous les pilotes, y compris les élèves.
-    errors.add(:base, "Le pilote n'a pas de visite médicale valide à la date du vol.") if user.medical.nil? || user.medical < debut_vol.to_date
+    if user.medical.nil? || user.medical < debut_vol.to_date
+      errors.add(:base,
+                 "Le pilote n'a pas de visite médicale valide à la date du vol.")
+    end
 
     # On ne vérifie la licence que si le pilote n'est ni un élève, ni un instructeur (dont la validité est gérée par la date FI).
-    unless user.eleve? || user.instructeur?
-      errors.add(:base, "Le pilote n'a pas de licence valide à la date du vol.") if user.date_licence.nil? || user.date_licence < debut_vol.to_date
-    end
+    return if user.eleve? || user.instructeur?
+
+    return unless user.date_licence.nil? || user.date_licence < debut_vol.to_date
+
+    errors.add(:base,
+               "Le pilote n'a pas de licence valide à la date du vol.")
   end
 
   # S'assure qu'un élève sélectionne toujours un instructeur.
   def instructeur_obligatoire_pour_eleve
     # La validation s'applique si l'utilisateur est un élève et qu'aucun instructeur n'est sélectionné.
-    if user&.eleve? && instructeur_id.blank?
-      errors.add(:instructeur_id, "doit être sélectionné pour un élève.")
-    end
+    return unless user&.eleve? && instructeur_id.blank?
+
+    errors.add(:instructeur_id, 'doit être sélectionné pour un élève.')
   end
 
   # Vérifie que l'avion a assez de potentiel pour effectuer le vol
   def verifie_potentiel_suffisant
     return unless avion.present? && duree_vol.present?
-    
+
     if avion.grounded?
       errors.add(:base, "L'avion est indisponible pour maintenance (date expirée ou potentiel épuisé).")
     end
 
     if avion.potentiel_moteur < duree_vol.to_d
-      errors.add(:base, "Le potentiel moteur de l'avion est insuffisant pour ce vol (#{avion.potentiel_moteur}h restantes).")
+      errors.add(:base,
+                 "Le potentiel moteur de l'avion est insuffisant pour ce vol (#{avion.potentiel_moteur}h restantes).")
     end
 
     if avion.next_100h.present? && avion.next_100h < duree_vol.to_d
-      errors.add(:base, "Le potentiel pour la visite des 100h est insuffisant pour ce vol (#{avion.next_100h}h restantes).")
+      errors.add(:base,
+                 "Le potentiel pour la visite des 100h est insuffisant pour ce vol (#{avion.next_100h}h restantes).")
     end
 
-    if avion.next_1000h.present? && avion.next_1000h < duree_vol.to_d
-      errors.add(:base, "Le potentiel pour la visite des 1000h est insuffisant pour ce vol (#{avion.next_1000h}h restantes).")
-    end
+    return unless avion.next_1000h.present? && avion.next_1000h < duree_vol.to_d
+
+    errors.add(:base,
+               "Le potentiel pour la visite des 1000h est insuffisant pour ce vol (#{avion.next_1000h}h restantes).")
   end
-
 end

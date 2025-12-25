@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :avion do
     sequence(:immatriculation) { |n| "F-G#{n}AA" }
-    marque { "Robin" }
-    modele { "DR400" }
-    moteur { "Lycoming" }
+    marque { 'Robin' }
+    modele { 'DR400' }
+    moteur { 'Lycoming' }
     conso_horaire { 25 }
     tbo_helice { Date.today + 1.year }
     tbo_parachute { Date.today + 1.year }

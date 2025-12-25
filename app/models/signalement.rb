@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 class Signalement < ApplicationRecord
   # Associations
   belongs_to :user
   belongs_to :avion
 
   # Enums pour le statut
-  STATUS_OPTIONS = ['Ouvert', 'En cours', 'Résolu']
+  STATUS_OPTIONS = ['Ouvert', 'En cours', 'Résolu'].freeze
 
   # Validations
   validates :description, presence: true, length: { minimum: 10 }

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe CommentsController, type: :controller do
@@ -7,36 +9,35 @@ RSpec.describe CommentsController, type: :controller do
 
   before { sign_in user }
 
-  describe "POST #create" do
-    it "creates a comment" do
+  describe 'POST #create' do
+    it 'creates a comment' do
       # Un user ne peut commenter qu'une fois par event selon le contrôleur
       other_event = create(:event)
-      expect {
-        post :create, params: { event_id: other_event.id, comment: { content: "Super !" } }
-      }.to change(Comment, :count).by(1)
+      expect do
+        post :create, params: { event_id: other_event.id, comment: { content: 'Super !' } }
+      end.to change(Comment, :count).by(1)
     end
   end
 
-  describe "PATCH #update" do
-    it "updates own comment" do
-      patch :update, params: { event_id: event.id, id: comment.id, comment: { content: "Updated" } }
-      expect(comment.reload.content).to eq("Updated")
+  describe 'PATCH #update' do
+    it 'updates own comment' do
+      patch :update, params: { event_id: event.id, id: comment.id, comment: { content: 'Updated' } }
+      expect(comment.reload.content).to eq('Updated')
     end
 
-    it "prevents updating others comment" do
+    it 'prevents updating others comment' do
       other_comment = create(:comment, event: event) # Created by another user factory default
-      patch :update, params: { event_id: event.id, id: other_comment.id, comment: { content: "Hacked" } }
+      patch :update, params: { event_id: event.id, id: other_comment.id, comment: { content: 'Hacked' } }
       expect(response).to redirect_to(event_path(event))
-      expect(flash[:danger]).to eq("Action impossible")
+      expect(flash[:danger]).to eq('Action impossible')
     end
   end
 
-  describe "DELETE #destroy" do
-    it "deletes own comment" do
-      expect {
+  describe 'DELETE #destroy' do
+    it 'deletes own comment' do
+      expect do
         delete :destroy, params: { event_id: event.id, id: comment.id }
-      }.to change(Comment, :count).by(-1)
+      end.to change(Comment, :count).by(-1)
     end
   end
-  
 end

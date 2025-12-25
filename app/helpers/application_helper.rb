@@ -1,13 +1,14 @@
+# frozen_string_literal: true
+
 # app/helpers/application_helper.rb
 
 module ApplicationHelper
-
   def bootstrap_class_for_flash(type)
     case type
-      when 'notice' then "alert-info"
-      when 'success' then "alert-success"
-      when 'error' then "alert-danger"
-      when 'alert' then "alert-warning"
+    when 'notice' then 'alert-info'
+    when 'success' then 'alert-success'
+    when 'error' then 'alert-danger'
+    when 'alert' then 'alert-warning'
     end
   end
 
@@ -31,7 +32,7 @@ module ApplicationHelper
         concat(content_tag(:tbody) do
           items.each do |item|
             tr_options = {}
-            if item[:installed].to_i > 0 && item[:installed] == item[:required]
+            if item[:installed].to_i.positive? && item[:installed] == item[:required]
               tr_options[:class] = 'clickable-row'
               tr_options[:data] = { item_name: item[:name] }
             end
@@ -49,9 +50,8 @@ module ApplicationHelper
   end
 
   def markdown(text)
-    return "" if text.blank?
+    return '' if text.blank?
 
     MarkdownService.new.render(text)
   end
-
 end

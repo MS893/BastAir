@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # This file should ensure the existence of records required to run the application in every environment (production,
 # development, test). The code here should be idempotent so that it can be executed at any point in every environment.
 # The data can then be loaded with the bin/rails db:seed command.
@@ -14,7 +15,7 @@ def settings
   Setting.find_or_create_by!(var: 'penalty_amount_2', val: '10')
   Setting.find_or_create_by!(var: 'penalty_delay_3', val: '12')
   Setting.find_or_create_by!(var: 'penalty_amount_3', val: '20')
-  puts "✅ Paramètres de pénalité créés"
+  puts '✅ Paramètres de pénalité créés'
 end
 
 def users
@@ -24,32 +25,32 @@ def users
   # ---------------------------------------------------------------
   # Crée un administrateur
   @admin_user = User.create!(
-    prenom: "Admin", # Le nom est changé pour correspondre à la variable d'environnement
-    nom: "ADM",
-    email: "admin@bastair.com",
-    password: "password",
-    password_confirmation: "password",
+    prenom: 'Admin', # Le nom est changé pour correspondre à la variable d'environnement
+    nom: 'ADM',
+    email: 'admin@bastair.com',
+    password: 'password',
+    password_confirmation: 'password',
     admin: true,
     date_naissance: Faker::Date.birthday(min_age: 61, max_age: 65),
     lieu_naissance: Faker::Address.city,
-    profession: "Administrateur Système",
+    profession: 'Administrateur Système',
     adresse: Faker::Address.full_address,
     telephone: '0606060606',
     contact_urgence: "#{Faker::Name.name} - #{Faker::PhoneNumber.phone_number}",
     num_ffa: Faker::Number.number(digits: 7).to_s,
-    licence_type: "ATPL",
+    licence_type: 'ATPL',
     num_licence: Faker::Number.number(digits: 8).to_s,
-    date_licence: "2026-12-31",
+    date_licence: '2026-12-31',
     medical: Faker::Date.forward(days: 365),
     fi: Faker::Date.forward(days: 365),
     fe: Faker::Date.forward(days: 365),
     controle: Faker::Date.forward(days: 365),
     solde: 0.0,
-    google_calendar_id: ENV['GOOGLE_CALENDAR_ID_INSTRUCTEUR_ADM'],
+    google_calendar_id: ENV.fetch('GOOGLE_CALENDAR_ID_INSTRUCTEUR_ADM', nil),
     cotisation_club: Faker::Date.forward(days: 365),
     cotisation_ffa: Faker::Date.forward(days: 365),
     autorise: true,
-    fonction: "president"
+    fonction: 'president'
   )
   puts "✅ Administrator created: #{@admin_user.email}"
 
@@ -62,20 +63,20 @@ def users
 
   # Crée un élève
   eleve_user = User.create!(
-    prenom: "Eleve",
-    nom: "Debutant",
-    email: "eleve@bastair.com",
-    password: "password",
-    password_confirmation: "password",
+    prenom: 'Eleve',
+    nom: 'Debutant',
+    email: 'eleve@bastair.com',
+    password: 'password',
+    password_confirmation: 'password',
     admin: false,
     date_naissance: Faker::Date.birthday(min_age: 61, max_age: 65),
     lieu_naissance: Faker::Address.city,
-    profession: "Administrateur Système",
+    profession: 'Administrateur Système',
     adresse: Faker::Address.full_address,
     telephone: '0606060606',
     contact_urgence: "#{Faker::Name.name} - #{Faker::PhoneNumber.phone_number}",
     num_ffa: Faker::Number.number(digits: 7).to_s,
-    licence_type: "PPL",
+    licence_type: 'PPL',
     num_licence: nil,
     date_licence: nil,
     medical: Faker::Date.forward(days: 365),
@@ -86,26 +87,26 @@ def users
     cotisation_club: Faker::Date.forward(days: 365),
     cotisation_ffa: Faker::Date.forward(days: 365),
     autorise: true,
-    fonction: "eleve"
+    fonction: 'eleve'
   )
   puts "✅ Trainee created: #{eleve_user.email}"
 
   # Crée un instructeur
   @instructeur_user = User.create!(
-    prenom: "Christian",
-    nom: "HUY",
-    email: "instructeur@bastair.com",
-    password: "password",
-    password_confirmation: "password",
+    prenom: 'Christian',
+    nom: 'HUY',
+    email: 'instructeur@bastair.com',
+    password: 'password',
+    password_confirmation: 'password',
     admin: false,
     date_naissance: Faker::Date.birthday(min_age: 40, max_age: 60),
     lieu_naissance: Faker::Address.city,
-    profession: "Pilote de ligne",
+    profession: 'Pilote de ligne',
     adresse: Faker::Address.full_address,
     telephone: '0607070707',
     contact_urgence: "#{Faker::Name.name} - #{Faker::PhoneNumber.phone_number}",
     num_ffa: Faker::Number.number(digits: 7).to_s,
-    licence_type: "CPL",
+    licence_type: 'CPL',
     num_licence: Faker::Number.number(digits: 8).to_s,
     date_licence: Faker::Date.backward(days: 365),
     medical: Faker::Date.forward(days: 365),
@@ -113,11 +114,11 @@ def users
     fe: nil,
     controle: Faker::Date.forward(days: 365),
     solde: 0.0,
-    google_calendar_id: ENV['GOOGLE_CALENDAR_ID_INSTRUCTEUR_HUY'],
+    google_calendar_id: ENV.fetch('GOOGLE_CALENDAR_ID_INSTRUCTEUR_HUY', nil),
     cotisation_club: Faker::Date.forward(days: 365),
     cotisation_ffa: Faker::Date.forward(days: 365),
     autorise: true,
-    fonction: "tresorier"
+    fonction: 'tresorier'
   )
   puts "✅ Instructor created: #{@instructeur_user.email}"
 
@@ -133,12 +134,12 @@ def users
   # Pour la performance, on prépare les attributs de tous les utilisateurs
   # pour les insérer en une seule requête SQL avec `insert_all`.
   users_attributes = 27.times.map do
-    print "*"
-    licence = ["PPL", "LAPL"].sample
+    print '*'
+    licence = ['PPL', 'LAPL'].sample
     # On pré-crypte le mot de passe, car `insert_all` n'exécute pas les callbacks de Devise.
-    encrypted_password = User.new(password: "password").encrypted_password
+    encrypted_password = User.new(password: 'password').encrypted_password
     {
-        prenom: Faker::Name.first_name,
+      prenom: Faker::Name.first_name,
         nom: Faker::Name.last_name,
         email: Faker::Internet.unique.email,
         encrypted_password: encrypted_password,
@@ -161,7 +162,7 @@ def users
         cotisation_ffa: Faker::Date.forward(days: 365),
         autorise: [true, true, true, false].sample,
         admin: false,
-        fonction: "brevete",
+        fonction: 'brevete',
         created_at: Time.current,
         updated_at: Time.current
     }
@@ -169,7 +170,6 @@ def users
   User.insert_all(users_attributes)
   puts "\n✅ 27 regular members created."
   puts "Total users: #{User.count}"
-
 end
 
 def crediter
@@ -179,7 +179,7 @@ def crediter
     Transaction.create!(
       user: user,
       date_transaction: user.created_at.to_date,
-      description: "Crédit initial du compte",
+      description: 'Crédit initial du compte',
       mouvement: 'Recette',
       montant: 1000.0,
       source_transaction: 'Cotisations des Membres', # Mis à jour pour correspondre aux nouvelles catégories
@@ -187,7 +187,7 @@ def crediter
       is_checked: true
     )
   end
-  puts "✅ Initial transactions created."
+  puts '✅ Initial transactions created.'
 end
 
 def avion
@@ -195,10 +195,10 @@ def avion
   # ----------------------------------------------------
   puts "\nCreating aircraft..."
   @avion = Avion.create!(
-    immatriculation: "F-HGBT",
-    marque: "Elixir Aircraft",
-    modele: "Exlixir",
-    moteur: "Rotax 912iS",
+    immatriculation: 'F-HGBT',
+    marque: 'Elixir Aircraft',
+    modele: 'Exlixir',
+    moteur: 'Rotax 912iS',
     conso_horaire: 18,
     certif_immat: Faker::Date.forward(days: 365),
     cert_navigabilite: Faker::Date.forward(days: 365),
@@ -214,7 +214,7 @@ def avion
     gv: Faker::Date.forward(days: 1095),
     tbo_helice: Faker::Date.forward(days: 1095),
     tbo_parachute: Faker::Date.forward(days: 1095),
-    potentiel_cellule: 50000.00,
+    potentiel_cellule: 50_000.00,
     potentiel_moteur: 2000.00,
     next_100h: 50.00,
     next_100h: 100.00,
@@ -222,10 +222,10 @@ def avion
   )
   puts "✅ Aircraft created: #{@avion.immatriculation}"
   @avion = Avion.create!(
-    immatriculation: "F-HGCU",
-    marque: "Elixir Aircraft",
-    modele: "Exlixir",
-    moteur: "Rotax 912iS",
+    immatriculation: 'F-HGCU',
+    marque: 'Elixir Aircraft',
+    modele: 'Exlixir',
+    moteur: 'Rotax 912iS',
     conso_horaire: 18,
     certif_immat: Faker::Date.forward(days: 365),
     cert_navigabilite: Faker::Date.forward(days: 365),
@@ -241,7 +241,7 @@ def avion
     gv: Faker::Date.forward(days: 1095),
     tbo_helice: Faker::Date.forward(days: 1095),
     tbo_parachute: Faker::Date.forward(days: 1095),
-    potentiel_cellule: 50000.00,
+    potentiel_cellule: 50_000.00,
     potentiel_moteur: 2000.00,
     next_100h: 50.00,
     next_100h: 100.00,
@@ -253,21 +253,21 @@ def avion
   purchase_date = 2.years.ago.to_date
   aircraft_purchase_transaction = Transaction.create!(
     date_transaction: purchase_date,
-    description: "Achat avion Elixir F-HGBT",
+    description: 'Achat avion Elixir F-HGBT',
     mouvement: 'Dépense',
-    montant: 300000.0,
+    montant: 300_000.0,
     source_transaction: 'Charges Exceptionnelles', # Remplacé par une catégorie valide
     payment_method: 'Virement',
     is_checked: true
   )
   Immobilisation.create!(
-    description: "Avion Elixir F-HGBT",
+    description: 'Avion Elixir F-HGBT',
     date_acquisition: purchase_date,
-    valeur_acquisition: 300000.0,
+    valeur_acquisition: 300_000.0,
     duree_amortissement: 7, # en années
     purchase_transaction: aircraft_purchase_transaction
   )
-  puts "✅ Aircraft immobilization created."
+  puts '✅ Aircraft immobilization created.'
 end
 
 def tarifs
@@ -298,12 +298,11 @@ def tarifs
 end
 
 def vols
-
   # 3. Création de 20 vols
   # ----------------------------------------------------
   puts "\nCreating 20 flights..."
-  aerodromes = ["TFFB", "TFFS", "TFFM", "TFFR", "TFFC", "TFFA"]
-  types_vol = ["Standard", "Vol découverte", "Vol d'initiation", "Vol d'essai", "Convoyage", "Vol BIA"]
+  aerodromes = ['TFFB', 'TFFS', 'TFFM', 'TFFR', 'TFFC', 'TFFA']
+  types_vol = ['Standard', 'Vol découverte', "Vol d'initiation", "Vol d'essai", 'Convoyage', 'Vol BIA']
 
   # On sépare les élèves des autres pour la logique de création des vols
   eleve_users = User.where(fonction: 'eleve')
@@ -313,7 +312,7 @@ def vols
   # On récupère l'instructeur créé plus haut
   instructeur = User.find_by(email: 'instructeur@bastair.com')
 
-  compteur_actuel = 123.45  # compteur moteur
+  compteur_actuel = 123.45 # compteur moteur
 
   # Pour les opérations complexes où les validations sur chaque enregistrement sont importantes,
   # enrober la boucle dans une transaction unique est un excellent moyen d'accélérer le processus
@@ -349,9 +348,7 @@ def vols
       if vol.save
         tarif = Tarif.order(annee: :desc).first
         cost = vol.duree_vol * tarif.tarif_horaire_avion1
-        if vol.instructeur_id.present? && !vol.solo?
-          cost += vol.duree_vol * tarif.tarif_instructeur
-        end
+        cost += vol.duree_vol * tarif.tarif_instructeur if vol.instructeur_id.present? && !vol.solo?
 
         Transaction.create!(
           user: vol.user,
@@ -368,21 +365,19 @@ def vols
       else
         puts "Error creating flight: #{vol.errors.full_messages.join(', ')}"
       end
-      print "*"
+      print '*'
     end
   end
   puts "\n✅ 20 flights created."
-
 end
 
 def resas
-
   # 4. Création de 20 réservations
   # ----------------------------------------------------
   puts "\nCreating bookings..."
   all_users = User.where.not(fonction: 'eleve') # Les élèves ne peuvent pas réserver seuls
   instructors = [@admin_user, @instructeur_user]
-  types_vol = ["Standard", "Vol découverte", "Vol d'initiation", "Vol d'essai", "Convoyage", "Vol BIA"]
+  types_vol = ['Standard', 'Vol découverte', "Vol d'initiation", "Vol d'essai", 'Convoyage', 'Vol BIA']
 
   # La création de réservations implique un appel à une API externe (Google Calendar).
   # Le goulot d'étranglement est le temps de réponse de l'API, pas la base de données.
@@ -412,15 +407,13 @@ def resas
       else
         puts "Error creating reservation: #{reservation.errors.full_messages.join(', ')}"
       end
-      print "*"
+      print '*'
     end
   end
   puts "\n✅ 20 bookings created."
-
 end
 
 def events
-
   # 5. Création de 10 events
   # ----------------------------------------------------
   puts "\nCreating 10 events..."
@@ -442,44 +435,44 @@ def events
       )
       if event.save
         GoogleCalendarService.new.create_event_for_app(event)
-        print "*"
+        print '*'
       else
         puts "Error creating event: #{event.errors.full_messages.join(', ')}"
       end
     end
   end
   puts "\n✅ 10 events created."
-
 end
 
 def cours
-
   # 6. Création des cours théoriques (PPL et FTP)
   # ----------------------------------------------------
   puts "\nCreating Courses..."
 
   # --- Cours FTP ---
-  ftp_courses_data = [    
-    { title: "FTP1 - Environnement réglementaire de la formation", description: <<~DESC, file: "ftp1.md" },
+  ftp_courses_data = [
+    { title: 'FTP1 - Environnement réglementaire de la formation', description: <<~DESC, file: 'ftp1.md' },
       Environnement réglementaire de la formation :
       - Eléments du PART NCO,
       - SGS (ATO) ou politique de sécurité (DTO),
       - Retour d’expérience REX FFA et occurrence reporting dans le cadre du règlement 376/2014,
       - Manuel de sécurité FFA
     DESC
-    { title: "FTP2 - Mise en œuvre de l’avion. Eléments de sécurité élémentaire", description: <<~DESC, file: "ftp2.md" },
+    { title: 'FTP2 - Mise en œuvre de l’avion. Eléments de sécurité élémentaire', description: <<~DESC, 
+file: 'ftp2.md' },
       . Mise en œuvre de l’avion
       . Éléments de sécurité élémentaire
       . Préparation pour le vol (les 5 vérifications de base : documents avion, carburant, devis de masse et centrage, dossier météo, info aéro dont NOTAMs et SUP AIP)
       . Actions avant et après vol (objectifs du briefing et du débriefing)
       . Compétences techniques / non techniques
     DESC
-    { title: "FTP3 - Bases d’aérodynamique (assiette – incidence – pente)", description: <<~DESC, file: "ftp3.md" },
+    { title: 'FTP3 - Bases d’aérodynamique (assiette – incidence – pente)', description: <<~DESC, file: 'ftp3.md' },
       . Bases d’aérodynamique (assiette, incidence, pente)
       . Puissance nécessaire au vol
       . Relation puissance / assiette / vitesse / trajectoire
     DESC
-    { title: "FTP4 - Signaux de guidage au sol. Procédures de contrôle de la circulation aérienne", description: <<~DESC, file: "ftp4.md" },
+    { title: 'FTP4 - Signaux de guidage au sol. Procédures de contrôle de la circulation aérienne', 
+description: <<~DESC, file: 'ftp4.md' },
       . Signaux de guidage au sol
       . Procédures du contrôle de la circulation aérienne
       . Urgences : panne de freins et de direction
@@ -487,32 +480,36 @@ def cours
       . Contrôle du cap : utilisation du compas et du conservateur de cap
       . Effet du vent : notions de dérive
     DESC
-    { title: "FTP5 - Mécanique du vol et vitesses caractéristiques (évolution – V réf…)", description: <<~DESC, file: "ftp5.md" },
+    { title: 'FTP5 - Mécanique du vol et vitesses caractéristiques (évolution – V réf…)', description: <<~DESC, 
+file: 'ftp5.md' },
       . Mécanique du vol et vitesses caractéristiques (évolutions, V réf ...)
       . Limitations avion et dangers associés
       . Circonstances menant aux situations inusuelles, détection et récupération
     DESC
-    { title: "FTP6 - Le tour de piste – communication", description: <<~DESC, file: "ftp6.md" },
+    { title: 'FTP6 - Le tour de piste – communication', description: <<~DESC, file: 'ftp6.md' },
       . Le tour de piste
       . Communication
       . Approche gestion menaces et erreurs (Menaces, erreurs et situations indésirables) dans le cadre des vols locaux
     DESC
-    { title: "FTP7 - Pannes et procédures particulières : Identifier, analyser, appliquer une procédure", description: <<~DESC, file: "ftp7.md" },
+    { title: 'FTP7 - Pannes et procédures particulières : Identifier, analyser, appliquer une procédure', 
+description: <<~DESC, file: 'ftp7.md' },
       . Pannes et procédures particulières : identifier, analyser, appliquer une procédure
       . Situations d’urgence : Appliquer une procédure d’urgence
     DESC
-    { title: "FTP8 - Méthodes de navigation. Préparation d’une navigation (journal de navigation)", description: <<~DESC, file: "ftp8.md" },
+    { title: 'FTP8 - Méthodes de navigation. Préparation d’une navigation (journal de navigation)', 
+description: <<~DESC, file: 'ftp8.md' },
       . Méthodes de navigation
       . Préparation d’une navigation (journal de navigation)
       . Rappels réglementation : espaces aériens, conditions VMC, altitudes et niveaux de vol,
       . services ATC, intégration sur les aérodromes, phraséologie AD et SIV, prévention des incursions en espace à clairance.
     DESC
-    { title: "FTP9 - Présentation des moyens de radionavigations conventionnels et du GPS", description: <<~DESC, file: "ftp9.md" },
+    { title: 'FTP9 - Présentation des moyens de radionavigations conventionnels et du GPS', description: <<~DESC, 
+file: 'ftp9.md' },
       . Présentation des moyens de radionavigation conventionnels et du GPS
       . Utilisation et organisation des moyens radios
       . Approche gestion menaces et erreurs (Menaces, erreurs et situations indésirables) dans le cadre du vol sur la campagne.
     DESC
-    { title: "FTP10 - Présentation du dossier de vol", description: <<~DESC, file: "ftp10.md" },
+    { title: 'FTP10 - Présentation du dossier de vol', description: <<~DESC, file: 'ftp10.md' },
       . Présentation du dossier de vol
       . Préparation d’un voyage aérien (avitaillement, assistance...)
       . Approche gestion menaces et erreurs (Menaces, erreurs et situations indésirables) dans le cadre du vol de voyage avec des passagers
@@ -520,16 +517,16 @@ def cours
       . Déroutement
       . Interruption volontaire du vol
     DESC
-    { title: "FTP11 - Pilotage sans visibilité", description: <<~DESC, file: "ftp11.md" },
+    { title: 'FTP11 - Pilotage sans visibilité', description: <<~DESC, file: 'ftp11.md' },
       . Pilotage sans visibilité (VSV, circuit visuel)
       . Approche gestion menaces et erreurs (Menaces, erreurs et situations indésirables) dans le cadre du VSV
       . Maintien des conditions VMC, réactions en cas de perte de conditions VMC, retour aux conditions VMC
     DESC
-    { title: "FTP12 - Présentation de l’examen", description: <<~DESC, file: "ftp12.md" },
+    { title: 'FTP12 - Présentation de l’examen', description: <<~DESC, file: 'ftp12.md' }
       . Présentation de l’examen PPL(A) au travers du guide FFA de l’examen en vol PPL(A) et du manuel de sécurité FFA
       . Détail des exercices et de leur enchainement, critères observés, niveau attendu, contenu du briefing
     DESC
-  ]
+]
 
   # Étape 1: Création ou mise à jour des cours
   ftp_courses_data.each do |data|
@@ -537,45 +534,48 @@ def cours
     course.description = data[:description]
     course.save!
   end
-  puts "✅ FTP course records created/updated."
+  puts '✅ FTP course records created/updated.'
 
   # Étape 2: On attache les documents aux cours qui viennent d'être créés/mis à jour.
-  puts "Attaching documents to FTP courses..."
+  puts 'Attaching documents to FTP courses...'
   # On récupère les cours par leur titre pour pouvoir les associer aux fichiers
   courses_by_title = Course.where(title: ftp_courses_data.pluck(:title)).index_by(&:title)
 
   ftp_courses_data.each do |course_data|
-    if course_data[:file].present?
-      course = courses_by_title[course_data[:title]]
-      if course
-        file_path = Rails.root.join('lib', 'assets', 'ftp', course_data[:file])
-        if File.exist?(file_path)
-          # On vérifie si un document n'est pas déjà attaché pour être idempotent
-          unless course.document.attached?
-            course.document.attach(io: File.open(file_path), filename: course_data[:file], content_type: 'application/pdf')
-          end
-        else
-          puts "      ⚠️  Warning: File not found : #{course_data[:file]} '#{course_data[:title]}'."
+    next unless course_data[:file].present?
+    course = courses_by_title[course_data[:title]]
+    if course
+      file_path = Rails.root.join('lib', 'assets', 'ftp', course_data[:file])
+      if File.exist?(file_path)
+        # On vérifie si un document n'est pas déjà attaché pour être idempotent
+        unless course.document.attached?
+          course.document.attach(io: File.open(file_path), filename: course_data[:file], 
+content_type: 'application/pdf')
         end
+      else
+        puts "      ⚠️  Warning: File not found : #{course_data[:file]} '#{course_data[:title]}'."
       end
     end
   end
-  puts "✅ FTP course documents attached."
+  puts '✅ FTP course documents attached.'
 end
 
 def podcasts
-
   # 7. Création des podcasts
   # ----------------------------------------------------
   puts "\nCreating Podcasts..."
   Audio.delete_all # Utiliser delete_all pour la performance
 
   podcasts_data = [
-    { title: "Voler par fortes chaleurs", description: "Les questions à se poser quand il fait chaud. Attention les performances de l'avion sont dégradées.", file: "HighTemperatureFlightOperations.wav" },
-    { title: "Les virages", description: "Des explications sur les bonnes pratiques pour effectuer un virage parfait.", file: "AerialManeuversTurnsSymmetry.wav" },
-    { title: "Le SIV", description: "Le Service D'Information de Vol (SIV), c'est quoi ?", file: "FlightInformationService.wav" },
-    { title: "Préparer une navigation VFR", description: "Un podcast qui explique la préparation d'une navigation VFR.", file: "PracticalGuideVFRNavigation.wav" },
-    { title: "SIV et espaces aériens", description: "Les espaces aériens et le SIV.", file: "VFRAirspace.wav" }
+    { title: 'Voler par fortes chaleurs', 
+description: "Les questions à se poser quand il fait chaud. Attention les performances de l'avion sont dégradées.", file: 'HighTemperatureFlightOperations.wav' },
+    { title: 'Les virages', description: 'Des explications sur les bonnes pratiques pour effectuer un virage parfait.', 
+file: 'AerialManeuversTurnsSymmetry.wav' },
+    { title: 'Le SIV', description: "Le Service D'Information de Vol (SIV), c'est quoi ?", 
+file: 'FlightInformationService.wav' },
+    { title: 'Préparer une navigation VFR', 
+description: "Un podcast qui explique la préparation d'une navigation VFR.", file: 'PracticalGuideVFRNavigation.wav' },
+    { title: 'SIV et espaces aériens', description: 'Les espaces aériens et le SIV.', file: 'VFRAirspace.wav' }
     # autres podcasts : ajouter ici
   ]
 
@@ -587,25 +587,22 @@ def podcasts
   puts "✅ #{podcasts_data.size} podcast records created."
 
   # Étape 2: Attachement des fichiers audio.
-  puts "Attaching audio files..."
+  puts 'Attaching audio files...'
   audios_by_title = Audio.where(title: podcasts_data.pluck(:title)).index_by(&:title)
 
   podcasts_data.each do |podcast_data|
     audio = audios_by_title[podcast_data[:title]]
-    if audio
-      podcast_file_path = Rails.root.join('app', 'assets', 'files', podcast_data[:file])
-      if File.exist?(podcast_file_path) && !audio.audio.attached?
-        audio.audio.attach(io: File.open(podcast_file_path), filename: podcast_data[:file], content_type: 'audio/mpeg')
-      end
+    next unless audio
+    podcast_file_path = Rails.root.join('app', 'assets', 'files', podcast_data[:file])
+    if File.exist?(podcast_file_path) && !audio.audio.attached?
+      audio.audio.attach(io: File.open(podcast_file_path), filename: podcast_data[:file], content_type: 'audio/mpeg')
     end
   end
-  puts "✅ Audio files attached."
+  puts '✅ Audio files attached.'
   puts "Total podcasts: #{Audio.count}"
-
 end
 
 def lecons
-
   # 8. Création des leçons de vol
   # ----------------------------------------------------
   puts "\nCreating Flight Lessons..."
@@ -622,11 +619,12 @@ def lecons
   flight_lessons_data = lesson_blocks.map do |block|
     lines = block.strip.split("\n")
     next if lines.length < 3 # Ignore les blocs mal formés
+
     {
       full_title: lines[0].strip,
       file: lines[1].strip,
       # On remplace le littéral '\n' par un vrai retour à la ligne pour un meilleur affichage.
-      description: lines[2].strip.gsub(/\\n/, "\n")
+      description: lines[2].strip.gsub("\\n", "\n")
     }
   end.compact
 
@@ -643,22 +641,21 @@ def lecons
   puts "✅ #{lesson_attributes.size} Flight Lesson records created."
 
   # Étape 2: Attachement des documents.
-  puts "Attaching documents to flight lessons..."
+  puts 'Attaching documents to flight lessons...'
   lessons_by_title = FlightLesson.all.index_by(&:title)
 
   flight_lessons_data.each do |lesson_data|
     short_title = lesson_data[:full_title].split(' ', 2).last
     lesson = lessons_by_title[short_title]
-    if lesson
-      file_path = Rails.root.join('lib', 'assets', 'lecons', lesson_data[:file])
-      if File.exist?(file_path) && !lesson.document.attached?
-        lesson.document.attach(io: File.open(file_path), filename: lesson_data[:file], content_type: 'application/pdf')
-      elsif !File.exist?(file_path)
-        puts "      ⚠️  Warning: File not found : #{lesson_data[:file]} for lesson '#{lesson.title}'."
-      end
+    next unless lesson
+    file_path = Rails.root.join('lib', 'assets', 'lecons', lesson_data[:file])
+    if File.exist?(file_path) && !lesson.document.attached?
+      lesson.document.attach(io: File.open(file_path), filename: lesson_data[:file], content_type: 'application/pdf')
+    elsif !File.exist?(file_path)
+      puts "      ⚠️  Warning: File not found : #{lesson_data[:file]} for lesson '#{lesson.title}'."
     end
   end
-  puts "✅ Flight lesson documents attached."
+  puts '✅ Flight lesson documents attached.'
 end
 
 def questions_ftp
@@ -673,17 +670,17 @@ def questions_ftp
   end
 
   # Nettoyer toutes les questions existantes pour éviter les doublons
-  puts "Deleting all old questions..."
+  puts 'Deleting all old questions...'
   Question.delete_all
 
   question_blocks = File.read(file_path).split("\n\n")
   puts "Nombre de blocs de questions lus du fichier : #{question_blocks.size}"
-  
+
   questions_attributes = []
   now = Time.current
 
   # On récupère les cours FTP en une seule fois pour les associer plus tard
-  ftp_courses = (1..12).map { |n| Course.find_by("title LIKE ?", "FTP#{n}%") }
+  ftp_courses = (1..12).map { |n| Course.find_by('title LIKE ?', "FTP#{n}%") }
 
   # Itérer sur les 12 cours FTP
   (1..12).each do |course_num|
@@ -701,7 +698,7 @@ def questions_ftp
     start_index = (course_num - 1) * 10
     end_index = start_index + 9
     course_question_blocks = question_blocks[start_index..end_index]
-    
+
     if course_question_blocks.nil?
       puts "⚠️ Warning: course_question_blocks is nil for FTP#{course_num}. start_index: #{start_index}, end_index: #{end_index}, question_blocks.size: #{question_blocks.size}"
       puts "⚠️ Warning: No question blocks found for FTP#{course_num}. start_index: #{start_index}, end_index: #{end_index}, question_blocks.size: #{question_blocks.size}"
@@ -734,20 +731,20 @@ def questions_ftp
     end
   end
 
-  if questions_attributes.any?
+  return unless questions_attributes.any?
     Question.insert_all(questions_attributes)
     puts "✅ #{questions_attributes.size} FTP questions created successfully."
-  end
+  
 end
 
 def livrets
   # Mise à jour des livrets
   # ----------------------------------------------------
   puts "\nCreating progression booklet for the test student..."
-  
+
   # 1. On récupère l'élève de test
   eleve_user = User.find_by(email: 'eleve@bastair.com')
-  
+
   unless eleve_user
     puts "⚠️  Could not create progression booklet because test student 'eleve@bastair.com' was not found."
     return
@@ -755,29 +752,28 @@ def livrets
 
   # 2. On nettoie les anciens livrets de l'élève pour repartir de zéro
   Livret.where(user: eleve_user).delete_all
-  puts "  -> Old booklet entries for the student have been cleared."
+  puts '  -> Old booklet entries for the student have been cleared.'
 
-  livret_entries = []
   now = Time.current
 
   # 3. Création des entrées pour les examens théoriques PPL (directement dans le livret)
   ppl_exam_titles = [
-    "010 - Droit Aérien (Réglementation)",
+    '010 - Droit Aérien (Réglementation)',
     "020 - Connaissances Générales de l'Aéronef",
-    "030 - Performances et Préparation du Vol",
-    "040 - Performance Humaine (Facteurs Humains)",
-    "050 - Météorologie",
-    "060 - Navigation",
-    "070 - Procédures Opérationnelles",
-    "080 - Principes du Vol",
-    "090 - Communications"
+    '030 - Performances et Préparation du Vol',
+    '040 - Performance Humaine (Facteurs Humains)',
+    '050 - Météorologie',
+    '060 - Navigation',
+    '070 - Procédures Opérationnelles',
+    '080 - Principes du Vol',
+    '090 - Communications'
   ]
-  ppl_exam_titles.each do |exam_title|
-    livret_entries << {
+  livret_entries = ppl_exam_titles.map do |exam_title|
+    {
       user_id: eleve_user.id,
       title: exam_title,
       status: 0,
-      comment: "",
+      comment: '',
       course_id: nil,
       flight_lesson_id: nil,
       date: nil,
@@ -785,7 +781,7 @@ def livrets
       updated_at: now
     }
   end
-  puts "  -> Prepared PPL theoretical exam entries."
+  puts '  -> Prepared PPL theoretical exam entries.'
 
   # 4. Création des entrées pour les cours FTP (titres commençant par "FTP")
   Course.where("title LIKE 'FTP%'").find_each do |course|
@@ -794,16 +790,16 @@ def livrets
       course_id: course.id,
       title: course.title,
       status: 0,
-      comment: "",
+      comment: '',
       flight_lesson_id: nil,
       date: nil,
       created_at: now,
       updated_at: now
     }
   end
-  puts "  -> Prepared FTP course entries."
+  puts '  -> Prepared FTP course entries.'
 
-  # 5. Création des entrées pour les leçons de voldans seeds.rb je veut supprimer la création de cours 
+  # 5. Création des entrées pour les leçons de voldans seeds.rb je veut supprimer la création de cours
   FlightLesson.find_each do |lesson|
     livret_entries << {
       user_id: eleve_user.id,
@@ -817,12 +813,10 @@ def livrets
       updated_at: now
     }
   end
-  puts "  -> Prepared flight lesson entries."
+  puts '  -> Prepared flight lesson entries.'
 
   # 6. Insertion en une seule fois de toutes les entrées du livret
-  if livret_entries.any?
-    Livret.insert_all(livret_entries)
-  end
+  Livret.insert_all(livret_entries) if livret_entries.any?
 
   puts "✅ Complete progression booklet created for student '#{eleve_user.full_name}' with #{livret_entries.count} total entries."
 end
@@ -839,7 +833,7 @@ def mels
   Mel.delete_all
 
   lines = File.readlines(file_path).map(&:strip).reject(&:empty?)
-  
+
   mel_attributes = []
   current_title_1 = nil
   i = 0
@@ -847,26 +841,26 @@ def mels
 
   while i < lines.length
     line = lines[i]
-    
+
     if !line.start_with?('*')
       current_title_1 = line
       i += 1
     else
       # Bloc de 3 lignes : Title 2, Nombres, Tolérance
       title_2 = line.sub(/^\*\s?/, '')
-      
-      if i + 1 < lines.length
-        numbers_str = lines[i+1].sub(/^\*\s?/, '')
-        installed, required = numbers_str.split.map(&:to_i)
-      else
-        break
-      end
 
-      if i + 2 < lines.length
-        tolerance = lines[i+2].sub(/^\*\s?/, '')
-      else
-        break
-      end
+      break unless i + 1 < lines.length
+        numbers_str = lines[i + 1].sub(/^\*\s?/, '')
+        installed, required = numbers_str.split.map(&:to_i)
+      
+        
+      
+
+      break unless i + 2 < lines.length
+        tolerance = lines[i + 2].sub(/^\*\s?/, '')
+      
+        
+      
 
       mel_attributes << {
         title_1: current_title_1,
@@ -877,26 +871,27 @@ def mels
         created_at: now,
         updated_at: now
       }
-      
+
       i += 3
     end
   end
 
-  if mel_attributes.any?
+  return unless mel_attributes.any?
     Mel.insert_all(mel_attributes)
     puts "✅ #{mel_attributes.size} MEL entries created."
-  end
+  
 end
 
 def transactions
-
   # 9. Création de 20 transactions
   # ----------------------------------------------------
   puts "\nCreating 20 transactions..."
 
   payment_methods = ['Carte bancaire', 'Virement', 'Chèque', 'Espèces']
-  descriptions_recette = ["Crédit compte", "Achat bloc 6h", "Paiement cotisation annuelle", "Participation événement BBQ"]
-  descriptions_depense = ["Heure de vol F-HGBT", "Achat casque", "Taxe atterrissage", "Remboursement", "Achat essence", "Location hangar"]
+  descriptions_recette = ['Crédit compte', 'Achat bloc 6h', 'Paiement cotisation annuelle', 
+'Participation événement BBQ']
+  descriptions_depense = ['Heure de vol F-HGBT', 'Achat casque', 'Taxe atterrissage', 'Remboursement', 'Achat essence', 
+'Location hangar']
   all_users = User.all
   now = Time.current
 
@@ -917,8 +912,7 @@ def transactions
     }
   end
   Transaction.insert_all(transactions_attributes)
-  puts "✅ 20 transactions created."
-
+  puts '✅ 20 transactions created.'
 end
 
 # --------------------------------------------------- SEEDS ---------------------------------------------------------
@@ -929,15 +923,15 @@ if Rails.env.production?
 
   # initialisation du fuseau horaire
   # initialisation du fuseau horaire
-  print "Quel fuseau voulez-vous utiliser ? (1 Antilles / 2 France) "
-  response = STDIN.gets.chomp.downcase
-  
+  print 'Quel fuseau voulez-vous utiliser ? (1 Antilles / 2 France) '
+  response = $stdin.gets.chomp.downcase
+
   if response == '1'
     Setting.create(var: 'time_zone', val: 'America/Martinique')
-    puts "✅ Fuseau horaire initialisé aux Antilles"
+    puts '✅ Fuseau horaire initialisé aux Antilles'
   else
     Setting.create(var: 'time_zone', val: 'Europe/Paris')
-    puts "✅ Fuseau horaire initialisé à Paris"
+    puts '✅ Fuseau horaire initialisé à Paris'
   end
 
   settings      # Appel de la méthode pour créer les paramètres
@@ -954,18 +948,18 @@ else
   puts "\n⚠️  L'application est en mode DEVELOPPEMENT, initialisation totale\n"
 
   puts "\n--- Gestion des Agendas Google ---"
-  print "Voulez-vous effacer les rendez-vous des agendas ? (o/N) "
-  response = STDIN.gets.chomp.downcase
-  
+  print 'Voulez-vous effacer les rendez-vous des agendas ? (o/N) '
+  response = $stdin.gets.chomp.downcase
+
   if response == 'o'
-    puts "Effacement des événements des agendas Google en cours..."
+    puts 'Effacement des événements des agendas Google en cours...'
     begin
       service = GoogleCalendarService.new
       # On récupère dynamiquement tous les IDs de calendriers à nettoyer
-      calendar_ids = [ENV['GOOGLE_CALENDAR_ID_EVENTS'], ENV['GOOGLE_CALENDAR_ID_AVION_F_HGBT']]
+      calendar_ids = [ENV.fetch('GOOGLE_CALENDAR_ID_EVENTS', nil), ENV.fetch('GOOGLE_CALENDAR_ID_AVION_F_HGBT', nil)]
       calendar_ids += User.where.not(google_calendar_id: nil).pluck(:google_calendar_id)
       calendar_ids = calendar_ids.compact.uniq
-  
+
       if calendar_ids.empty?
         puts "⚠️  Aucun ID de calendrier Google trouvé dans les variables d'environnement."
       else
@@ -973,24 +967,24 @@ else
           puts "\nTraitement de l'agenda : #{cal_id}"
           service.clear_calendar(cal_id)
         end
-        puts "✅ Tous les événements ont été effacés des agendas."
+        puts '✅ Tous les événements ont été effacés des agendas.'
       end
-    rescue => e
+    rescue StandardError => e
       puts "❌ Erreur lors de la communication avec l'API Google Calendar : #{e.message}"
       puts "Veuillez vérifier vos credentials et la configuration de l'API."
     end
   end
-  
+
   puts "\nCleaning database..."
   # Utilisation de delete_all au lieu de destroy_all pour une suppression beaucoup plus rapide
   # car elle évite d'instancier chaque objet et d'exécuter les callbacks
   # L'ordre est important pour respecter les contraintes de clés étrangères
 
   # Nettoyage des pièces jointes (signatures, documents) pour éviter les conflits d'ID après reset
-  #ActiveStorage::Attachment.delete_all
-  #ActiveStorage::Blob.delete_all
+  # ActiveStorage::Attachment.delete_all
+  # ActiveStorage::Blob.delete_all
   # Suppression des fichiers physiques dans le dossier storage (nettoyage disque)
-  #FileUtils.rm_rf(Dir[Rails.root.join('storage', '*')])
+  # FileUtils.rm_rf(Dir[Rails.root.join('storage', '*')])
 
   InstructorAvailability.delete_all
   ActivityLog.delete_all
@@ -1013,22 +1007,22 @@ else
   Course.delete_all
   FlightLesson.delete_all
   Tarif.delete_all
-  puts "✅ Cleaned"
-  
-  puts "Réinitialisation des IDs de séquence pour SQLite..."
+  puts '✅ Cleaned'
+
+  puts 'Réinitialisation des IDs de séquence pour SQLite...'
   ActiveRecord::Base.connection.tables.each do |t|
     ActiveRecord::Base.connection.execute("DELETE FROM sqlite_sequence WHERE name = '#{t}'")
   end
-  puts "✅ Cleaned"
+  puts '✅ Cleaned'
 
   # On désactive temporairement l'envoi d'e-mails pour éviter les erreurs de letter_opener
-  original_delivery_method = ActionMailer::Base.delivery_method
+  ActionMailer::Base.delivery_method
   ActionMailer::Base.delivery_method = :test
-  
+
   # initialisation du fuseau horaire
   Setting.create(var: 'time_zone', val: 'Europe/Paris')
-  puts "✅ Fuseau horaire initialisé à Paris"
-  
+  puts '✅ Fuseau horaire initialisé à Paris'
+
   settings      # Appel de la méthode pour créer les paramètres
   users         # Appel de la méthode pour créer les utilisateurs
   crediter      # Appel de la méthode pour créer les transactions
@@ -1044,7 +1038,7 @@ else
   questions_ftp # Appel de la méthode pour créer les questions BIA
   mels          # Appel de la méthode pour créer les MELs
   transactions  # Appel de la méthode pour créer les transactions
-    
+
 end
 
 puts "\nSeed finished successfully!"

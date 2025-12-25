@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe MarkdownService do
@@ -5,11 +7,11 @@ RSpec.describe MarkdownService do
 
   describe '#render' do
     it 'converts markdown to html' do
-      content = "**Texte en gras**"
+      content = '**Texte en gras**'
       result = subject.render(content)
-      
+
       # Vérifie que le markdown est bien interprété (gras -> strong)
-      expect(result).to match(/<strong>Texte en gras<\/strong>/)
+      expect(result).to match(%r{<strong>Texte en gras</strong>})
     end
 
     it 'sanitizes script tags' do

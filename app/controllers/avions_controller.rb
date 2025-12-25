@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AvionsController < ApplicationController
   before_action :authenticate_user!
 
@@ -28,5 +30,4 @@ class AvionsController < ApplicationController
       render partial: 'signalements/show_for_reservation', locals: { signalements: @signalements }
     end
   end
-
 end

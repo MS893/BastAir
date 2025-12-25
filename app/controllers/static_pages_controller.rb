@@ -1,14 +1,14 @@
+# frozen_string_literal: true
+
 class StaticPagesController < ApplicationController
-  
   def home
     # Affiche un message si le paiement a été annulé
-    if params[:canceled]
-      flash.now[:alert] = "Le paiement a été annulé."
-    end
+    flash.now[:alert] = 'Le paiement a été annulé.' if params[:canceled]
 
     # Gestion de la redirection après un paiement Stripe réussi
     if params[:success]
-      flash.now[:notice] = "Paiement réussi ! Votre compte a été crédité. Le solde peut prendre quelques instants pour se mettre à jour."
+      flash.now[:notice] =
+        'Paiement réussi ! Votre compte a été crédité. Le solde peut prendre quelques instants pour se mettre à jour.'
     end
 
     # On récupère les 5 dernières transactions de l'utilisateur connecté pour le dashboard
@@ -16,7 +16,9 @@ class StaticPagesController < ApplicationController
       # On vérifie si le contact d'urgence est invalide pour afficher une alerte
       # On ne lance la validation que si le champ n'est pas vide.
       if current_user.contact_urgence.present? && !current_user.valid?(:update_profil)
-        flash.now[:warning] = "Votre numéro de contact d'urgence semble invalide. #{view_context.link_to('Veuillez le corriger ici', edit_profil_user_path(current_user))}".html_safe
+        flash.now[:warning] =
+          "Votre numéro de contact d'urgence semble invalide. #{view_context.link_to('Veuillez le corriger ici',
+                                                                                     edit_profil_user_path(current_user))}".html_safe
       end
 
       # On vérifie les validités qui expirent bientôt
@@ -29,7 +31,8 @@ class StaticPagesController < ApplicationController
       @transactions = current_user.transactions.order(date_transaction: :desc).limit(5)
 
       # On charge les 3 prochaines réservations de l'utilisateur
-      @upcoming_reservations = current_user.reservations.where('start_time >= ?', Time.current).order(start_time: :asc).limit(3)
+      @upcoming_reservations = current_user.reservations.where('start_time >= ?',
+                                                               Time.current).order(start_time: :asc).limit(3)
       @upcoming_reservations_count = current_user.reservations.where('start_time >= ?', Time.current).count
     end
 
@@ -82,13 +85,13 @@ class StaticPagesController < ApplicationController
     end
 
     # On prépare les données pour la vue afin de gérer les clics des instructeurs
-    if user_signed_in?
-      @instructor_status = {
-        is_instructor: current_user.instructeur?,
-        fi_present: current_user.fi.present?,
-        fi_expired: current_user.fi.present? && current_user.fi < Date.today
-      }
-    end
+    return unless user_signed_in?
+
+    @instructor_status = {
+      is_instructor: current_user.instructeur?,
+      fi_present: current_user.fi.present?,
+      fi_expired: current_user.fi.present? && current_user.fi < Date.today
+    }
   end
 
   def documents_divers
@@ -134,8 +137,8 @@ class StaticPagesController < ApplicationController
     else
       # Envoyer l'email
       ContactMailer.contact_email(@nom, @prenom, @email, @message).deliver_now
-      redirect_to baptemes_path, notice: "Votre message a bien été envoyé. Nous vous répondrons dans les plus brefs délais."
+      redirect_to baptemes_path,
+                  notice: 'Votre message a bien été envoyé. Nous vous répondrons dans les plus brefs délais.'
     end
   end
-
 end

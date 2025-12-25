@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ProgressionsController < ApplicationController
   before_action :authenticate_user!
   before_action :authorize_access, only: [:show]
@@ -7,7 +9,9 @@ class ProgressionsController < ApplicationController
     if current_user.instructeur? || current_user.admin?
       # Pour les instructeurs, on liste les élèves pour la sélection.
       # On exclut les comptes BIA qui ne sont pas des élèves pilotes.
-      @eleves = User.joins(:livrets).distinct.where("LOWER(fonction) IN (?)", ['eleve', 'brevete']).where.not("LOWER(prenom) = ?", 'bia').order(:nom, :prenom)
+      @eleves = User.joins(:livrets).distinct.where('LOWER(fonction) IN (?)', %w[eleve brevete]).where.not('LOWER(prenom) = ?', 'bia').order(
+        :nom, :prenom
+      )
 
       # Si un élève est sélectionné via les paramètres, on le charge.
       if params[:eleve_id].present?
@@ -30,17 +34,19 @@ class ProgressionsController < ApplicationController
       @lecons_en_vol = Livret.none
     end
   end
-  
+
   def download
-    if params[:eleve_id].present? && (current_user.instructeur? || current_user.admin?)
-      @selected_eleve = User.find(params[:eleve_id])
-    else
-      @selected_eleve = current_user
-    end
+    @selected_eleve = if params[:eleve_id].present? && (current_user.instructeur? || current_user.admin?)
+                        User.find(params[:eleve_id])
+                      else
+                        current_user
+                      end
     @pdf = true
 
     # On définit @eleves pour que le formulaire dans la vue ne cause pas d'erreur, même s'il n'est pas affiché dans le PDF.
-    @eleves = User.joins(:livrets).distinct.where("LOWER(fonction) IN (?)", ['eleve', 'brevete']).where.not("LOWER(prenom) = ?", 'bia').order(:nom, :prenom)
+    @eleves = User.joins(:livrets).distinct.where('LOWER(fonction) IN (?)', %w[eleve brevete]).where.not('LOWER(prenom) = ?', 'bia').order(
+      :nom, :prenom
+    )
 
     user_livrets = Livret.where(user: @selected_eleve)
     @examens_theoriques = user_livrets.where(course_id: nil, flight_lesson_id: nil).order(:id)
@@ -48,7 +54,7 @@ class ProgressionsController < ApplicationController
     @lecons_en_vol = user_livrets.where.not(flight_lesson_id: nil).order(:id)
 
     render  pdf: "Livret_progression_#{@selected_eleve.full_name.parameterize}_#{Date.today.strftime('%d-%m-%Y')}",
-            template: "progressions/show",
+            template: 'progressions/show',
             layout: 'pdf',
             page_size: 'A4',
             orientation: 'Portrait',
@@ -67,7 +73,7 @@ class ProgressionsController < ApplicationController
     end
 
     @selected_eleve = User.find(params[:eleve_id])
-    
+
     exam_date = params[:user][:date_fin_formation]
     update_attributes = { date_fin_formation: exam_date }
 
@@ -80,9 +86,11 @@ class ProgressionsController < ApplicationController
     end
 
     if @selected_eleve.update(update_attributes)
-      redirect_to livret_progression_path(eleve_id: @selected_eleve.id), notice: "Statut de l'examen pratique et profil élève mis à jour."
+      redirect_to livret_progression_path(eleve_id: @selected_eleve.id),
+                  notice: "Statut de l'examen pratique et profil élève mis à jour."
     else
-      redirect_to livret_progression_path(eleve_id: @selected_eleve.id), alert: "Erreur lors de la mise à jour : #{@selected_eleve.errors.full_messages.join(', ')}"
+      redirect_to livret_progression_path(eleve_id: @selected_eleve.id),
+                  alert: "Erreur lors de la mise à jour : #{@selected_eleve.errors.full_messages.join(', ')}"
     end
   end
 
@@ -94,10 +102,10 @@ class ProgressionsController < ApplicationController
     end
 
     @selected_eleve = User.find(params[:eleve_id])
-    
+
     if @selected_eleve.date_fin_formation.present?
       UserMailer.exam_success_email(@selected_eleve).deliver_later
-      
+
       # On enregistre l'action dans les logs pour savoir que l'email a été envoyé
       ActivityLog.create(
         user: current_user,
@@ -106,22 +114,25 @@ class ProgressionsController < ApplicationController
         record_id: @selected_eleve.id,
         details: "Email de félicitations envoyé à #{@selected_eleve.full_name}"
       )
-      redirect_to livret_progression_path(eleve_id: @selected_eleve.id), notice: "Email de félicitations envoyé à l'élève."
+      redirect_to livret_progression_path(eleve_id: @selected_eleve.id),
+                  notice: "Email de félicitations envoyé à l'élève."
     else
       redirect_to livret_progression_path(eleve_id: @selected_eleve.id), alert: "L'examen pratique n'est pas validé."
     end
   end
 
   def send_pdf_email
-    if params[:eleve_id].present? && (current_user.instructeur? || current_user.admin?)
-      @selected_eleve = User.find(params[:eleve_id])
-    else
-      @selected_eleve = current_user
-    end
+    @selected_eleve = if params[:eleve_id].present? && (current_user.instructeur? || current_user.admin?)
+                        User.find(params[:eleve_id])
+                      else
+                        current_user
+                      end
     @pdf = true
 
     # Préparation des données (identique à l'action download)
-    @eleves = User.joins(:livrets).distinct.where("LOWER(fonction) IN (?)", ['eleve', 'brevete']).where.not("LOWER(prenom) = ?", 'bia').order(:nom, :prenom)
+    @eleves = User.joins(:livrets).distinct.where('LOWER(fonction) IN (?)', %w[eleve brevete]).where.not('LOWER(prenom) = ?', 'bia').order(
+      :nom, :prenom
+    )
     user_livrets = Livret.where(user: @selected_eleve)
     @examens_theoriques = user_livrets.where(course_id: nil, flight_lesson_id: nil).order(:id)
     @formations_theoriques = user_livrets.where.not(course_id: nil).order(:id)
@@ -130,7 +141,7 @@ class ProgressionsController < ApplicationController
     # Génération du PDF en mémoire
     pdf = render_to_string(
       pdf: "Livret_progression_#{@selected_eleve.full_name.parameterize}_#{Date.today.strftime('%d-%m-%Y')}",
-      template: "progressions/show",
+      template: 'progressions/show',
       layout: 'pdf',
       page_size: 'A4',
       orientation: 'Portrait',
@@ -142,14 +153,17 @@ class ProgressionsController < ApplicationController
     )
 
     UserMailer.progression_booklet_email(@selected_eleve, pdf).deliver_later
-    redirect_to livret_progression_path(eleve_id: @selected_eleve.id), notice: "Le livret de progression a été envoyé par email à #{@selected_eleve.full_name}."
+    redirect_to livret_progression_path(eleve_id: @selected_eleve.id),
+                notice: "Le livret de progression a été envoyé par email à #{@selected_eleve.full_name}."
   end
 
   private
 
   def authorize_access
     # Seuls les élèves et les instructeurs peuvent accéder à cette page.
-    redirect_to root_path, alert: "Vous n'avez pas l'autorisation d'accéder à cette page." unless current_user.eleve? || current_user.instructeur? || current_user.admin?
+    return if current_user.eleve? || current_user.instructeur? || current_user.admin?
+
+    redirect_to root_path,
+                alert: "Vous n'avez pas l'autorisation d'accéder à cette page."
   end
-  
 end

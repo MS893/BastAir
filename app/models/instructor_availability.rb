@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class InstructorAvailability < ApplicationRecord
   belongs_to :user
 
@@ -5,5 +7,6 @@ class InstructorAvailability < ApplicationRecord
   validates :day, presence: true, inclusion: { in: %w[lundi mardi mercredi jeudi vendredi samedi dimanche] }
   validates :period, presence: true, inclusion: { in: %w[matin apres-midi] }
   # Assure qu'un instructeur ne peut avoir qu'une seule entrée pour un créneau donné
-  validates :user_id, uniqueness: { scope: [:day, :period], message: "a déjà une disponibilité définie pour ce créneau." }
+  validates :user_id,
+            uniqueness: { scope: %i[day period], message: 'a déjà une disponibilité définie pour ce créneau.' }
 end
