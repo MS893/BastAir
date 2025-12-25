@@ -39,7 +39,7 @@ class SignalementsController < ApplicationController
     if @signalement.update(signalement_update_params)
       redirect_to signalements_path, notice: 'Le statut du signalement a été mis à jour avec succès.'
     else
-      render :edit, status: ::unprocessable_content
+      render :edit, status: :unprocessable_content
     end
   end
 
@@ -69,7 +69,7 @@ class SignalementsController < ApplicationController
         # En cas d'échec, on redirige vers la page d'index avec un message d'erreur
         error_message = @signalement.errors.full_messages.to_sentence.presence || "Une erreur est survenue."
         format.html { redirect_to signalements_path(by_avion: @avion.id), alert: "Le signalement n'a pas pu être créé : #{error_message}" }
-        format.json { render json: @signalement.errors, status: ::unprocessable_content }
+        format.json { render json: @signalement.errors, status: :unprocessable_content }
       end
     end
   end

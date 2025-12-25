@@ -103,7 +103,7 @@ RSpec.describe TransactionsController, type: :controller do
           expect {
             post :create, params: { transaction: invalid_attributes }
           }.not_to change(Transaction, :count)
-          expect(response).to have_http_status(::unprocessable_content)
+          expect(response).to have_http_status(:unprocessable_content)
           expect(response).to render_template(:new)
         end
       end
@@ -131,7 +131,7 @@ RSpec.describe TransactionsController, type: :controller do
           patch :update, params: { id: transaction.id, transaction: invalid_attributes }
           transaction.reload
           expect(transaction.montant).not_to be_nil # Vérifie que la valeur n'a pas été écrasée
-          expect(response).to have_http_status(::unprocessable_content)
+          expect(response).to have_http_status(:unprocessable_content)
           expect(response).to render_template(:edit)
         end
       end

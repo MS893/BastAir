@@ -153,7 +153,7 @@ class TransactionsController < ApplicationController
       )
       redirect_to @transaction, notice: 'La transaction a été créée avec succès.'
     else
-      render :new, status: ::unprocessable_content
+      render :new, status: :unprocessable_content
     end
   end
 
@@ -173,7 +173,7 @@ class TransactionsController < ApplicationController
       )
       redirect_to @transaction, notice: 'La transaction a été mise à jour avec succès.'
     else
-      render :edit, status: ::unprocessable_content
+      render :edit, status: :unprocessable_content
     end
   end
 

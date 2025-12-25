@@ -47,7 +47,7 @@ class VolsController < ApplicationController
       @instructeurs = User.where("fi IS NOT NULL AND fi >= ?", Date.today).order(:prenom, :nom)
       @bia_users = User.where("LOWER(prenom) = ?", 'bia').order(:nom)
       @tarif = Tarif.order(annee: :desc).first
-      render :new, status: ::unprocessable_content
+      render :new, status: :unprocessable_content
     end
   end
 

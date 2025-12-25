@@ -255,7 +255,7 @@ module Admin
         end
         redirect_to admin_tables_path(table_name: @table_name), notice: "L'enregistrement a été mis à jour avec succès."
       else
-        render :edit_record, status: ::unprocessable_content
+        render :edit_record, status: :unprocessable_content
       end
     end
 
@@ -284,7 +284,7 @@ module Admin
         # et on ré-affiche le formulaire d'édition avec l'objet @record actuel, qui contient les erreurs.
         set_foreign_key_options
         
-        render :edit_record, status: ::unprocessable_content
+        render :edit_record, status: :unprocessable_content
       end
     end
 

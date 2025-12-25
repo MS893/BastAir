@@ -22,7 +22,7 @@ class Admin::NewsItemsController < Admin::BaseController
     if @news_item.save
       redirect_to admin_news_items_path, notice: 'Consigne créée avec succès.'
     else
-      render :new, status: ::unprocessable_content, alert: "Erreur lors de la création de la consigne."
+      render :new, status: :unprocessable_content, alert: "Erreur lors de la création de la consigne."
     end
   end
 
@@ -35,7 +35,7 @@ class Admin::NewsItemsController < Admin::BaseController
     if @news_item.update(news_item_params)
       redirect_to admin_news_items_path, notice: 'Consigne mise à jour avec succès.'
     else
-      render :edit, status: ::unprocessable_content, alert: "Erreur lors de la mise à jour de la consigne."
+      render :edit, status: :unprocessable_content, alert: "Erreur lors de la mise à jour de la consigne."
     end
   end
 

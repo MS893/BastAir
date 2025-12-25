@@ -35,7 +35,7 @@ RSpec.describe Admin::UsersController, type: :controller do
         expect {
           post :create, params: { user: invalid_attributes }
         }.not_to change(User, :count)
-        expect(response).to have_http_status(::unprocessable_content)
+        expect(response).to have_http_status(:unprocessable_content)
         expect(response).to render_template(:new)
       end
     end

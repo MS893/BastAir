@@ -83,7 +83,7 @@ RSpec.describe EventsController, type: :controller do
           expect {
             post :create, params: { event: { title: "" } } # Titre manquant
           }.not_to change(Event, :count)
-          expect(response).to have_http_status(::unprocessable_content)
+          expect(response).to have_http_status(:unprocessable_content)
           expect(response).to render_template(:new)
         end
       end
@@ -108,7 +108,7 @@ RSpec.describe EventsController, type: :controller do
       context "with invalid parameters" do
         it "renders the edit template" do
           patch :update, params: { id: event.id, event: { title: "" } }
-          expect(response).to have_http_status(::unprocessable_content)
+          expect(response).to have_http_status(:unprocessable_content)
           expect(response).to render_template(:edit)
         end
       end
