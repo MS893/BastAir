@@ -2,7 +2,10 @@ class ApplicationController < ActionController::Base
   # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
   allow_browser versions: :modern
 
+  # pour passer du site français à anglais selon la locale choisie
+  before_action :set_locale
 
+  
   
   protected
 
@@ -14,6 +17,16 @@ class ApplicationController < ActionController::Base
 
 
   private
+
+  def set_locale
+    # Définit la locale à partir des paramètres ou utilise la valeur par défaut
+    I18n.locale = params[:locale] || I18n.default_locale
+  end
+
+  def default_url_options
+    # Ajoute le paramètre locale à toutes les URLs générées par l'application
+    { locale: I18n.locale }
+  end
 
   # Vérifie si l'utilisateur est un administrateur
   def authorize_admin!

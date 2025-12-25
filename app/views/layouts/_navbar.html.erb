@@ -14,12 +14,15 @@
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav me-auto">
         <li class="nav-item">
-          <%= link_to "Accueil", root_path, class: "nav-link #{'active' if current_page?(root_path)}" %>
+          <%= link_to t('layouts.navbar.home'), root_path, class: "nav-link #{'active' if current_page?(root_path)}" %>
         </li>
+        <% unless I18n.locale == :en %>
         <li class="nav-item">
           <%= link_to "Tarifs", tarifs_path, class: "nav-link #{'active' if current_page?(tarifs_path)}" %>
         </li>
+        <% end %>
         <% if user_signed_in? %>
+          <% unless I18n.locale == :en %>
           <li class="nav-item">
             <%= link_to "Agenda", agenda_path, class: "nav-link #{'active' if current_page?(agenda_path)}" %>
           </li>
@@ -49,25 +52,30 @@
               </ul>
             </li>
           <% end %>
+          <% end %>
         <% else %>
           <li class="nav-item">
-            <%= link_to "Médiathèque", mediatheque_path, class: "nav-link #{'active' if current_page?(mediatheque_path)}" %>
+            <%= link_to t('layouts.navbar.media_library'), mediatheque_path, class: "nav-link #{'active' if current_page?(mediatheque_path)}" %>
           </li>
         <% end %>
         <% unless user_signed_in? %>
           <li class="nav-item">
-            <%= link_to "La flotte", flotte_path, class: "nav-link #{'active' if current_page?(flotte_path)}" %>
+            <%= link_to t('layouts.navbar.fleet'), flotte_path, class: "nav-link #{'active' if current_page?(flotte_path)}" %>
           </li>
+          <% unless I18n.locale == :en %>
           <li class="nav-item">
             <%= link_to "BIA", bia_path, class: "nav-link #{'active' if current_page?(bia_path)}" %>
           </li>
+          <% end %>
           <li class="nav-item">
-            <%= link_to "Baptêmes", baptemes_path, class: "nav-link #{'active' if current_page?(baptemes_path)}" %>
+            <%= link_to t('layouts.navbar.discovery_flights'), baptemes_path, class: "nav-link #{'active' if current_page?(baptemes_path)}" %>
           </li>
         <% end %>
+        <% unless I18n.locale == :en %>
         <li class="nav-item">
           <%= link_to "Outils", outils_path, class: "nav-link #{'active' if current_page?(outils_path)}" %>
         </li>
+        <% end %>
         </li>
       </ul>
 
@@ -77,7 +85,7 @@
         <% if user_signed_in? && current_user.admin? %>
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownAdmin" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <i class="bi bi-gear-fill"></i> Admin
+            <i class="bi bi-gear-fill"></i> <%= t('layouts.navbar.admin') %>
             </a>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownAdmin">
               <li><%= link_to '<i class="bi bi-exclamation-triangle me-2"></i>Gestion Consignes'.html_safe, admin_news_items_path, class: "dropdown-item" %></li>
@@ -109,24 +117,37 @@
               <%= current_user.email %>
             </a>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-              <li><%= link_to "Mon Profil", user_path(current_user), class: "dropdown-item" %></li>
-              <li><%= link_to "Modifier mon profil", edit_profil_user_path, class: "dropdown-item" %></li>
-              <li><%= link_to "Modifier mon mot de passe", edit_user_registration_path, class: "dropdown-item" %></li>
+              <li><%= link_to t('layouts.navbar.profile'), user_path(current_user), class: "dropdown-item" %></li>
+              <li><%= link_to t('layouts.navbar.edit_profile'), edit_profil_user_path, class: "dropdown-item" %></li>
+              <li><%= link_to t('layouts.navbar.edit_password'), edit_user_registration_path, class: "dropdown-item" %></li>
               <li><hr class="dropdown-divider"></li>
               <li>
                 <%# Utilisation de button_to pour la déconnexion, ce qui génère un formulaire avec la méthode DELETE (voir stackoverflow) %>
-                <%= button_to "Se déconnecter", destroy_user_session_path, method: :delete, class: "dropdown-item", form_class: "d-inline" %>
+                <%= button_to t('layouts.navbar.logout'), destroy_user_session_path, method: :delete, class: "dropdown-item", form_class: "d-inline" %>
               </li>
             </ul>
           </li>
         <% else %>
+          <% unless I18n.locale == :en %>
           <li class="nav-item">
-            <%= link_to "Espace adhérents", new_user_session_path, class: "nav-link" %>
+            <%= link_to t('layouts.navbar.member_area'), new_user_session_path, class: "nav-link" %>
           </li>
+          <% end %>
         <% end %>
       </ul>
 
       <div class="d-flex align-items-center ms-3">
+        <%# Sélecteur de langue %>
+        <div class="dropdown me-3">
+          <a class="text-decoration-none text-light dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <%= I18n.locale.to_s.upcase %>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end" style="min-width: auto;">
+            <li><%= link_to "FR", url_for(request.params.merge(locale: 'fr')), data: { turbo: false }, class: "dropdown-item #{'active' if I18n.locale == :fr}" %></li>
+            <li><%= link_to "EN", url_for(request.params.merge(locale: 'en')), data: { turbo: false }, class: "dropdown-item #{'active' if I18n.locale == :en}" %></li>
+          </ul>
+        </div>
+
         <i class="bi bi-sun-fill text-light me-2"></i>
         <div class="form-check form-switch">
           <input class="form-check-input" type="checkbox" role="switch" id="theme-toggle">

@@ -3,26 +3,26 @@
         <div class="row">
             <!-- Colonne 1: Marque et description -->
             <div class="col-md-4 mb-2">
-                <h5 class="text-uppercase fw-bold">BastAir</h5>
+                <h5 class="text-uppercase fw-bold"><%= t('layouts.footer.about_title') %></h5>
                 <p class="text-white-50">
-                    Votre partenaire pour l'aviation de loisir. Découvrez nos outils et notre communauté.
+                    <%= t('layouts.footer.about_text') %>
                 </p>
             </div>
 
             <!-- Colonne 2: Liens utiles -->
             <div class="col-md-4 mb-2">
-                <h5 class="text-uppercase fw-bold">Liens utiles</h5>
+                <h5 class="text-uppercase fw-bold"><%= t('layouts.footer.links_title') %></h5>
                 <ul class="list-unstyled">
-                    <li><%= link_to 'FAQ', faq_path, class: 'footer-link' %></li>
-                    <li><%= link_to 'Contact', contact_path, class: 'footer-link' %></li>
-                    <li><%= link_to 'Notre équipe', team_path, class: 'footer-link' %></li>
-                    <li><%= link_to 'Politique de Confidentialité', privacy_policy_path, class: 'footer-link' %></li>
+                    <li><%= link_to t('layouts.footer.faq'), faq_path, class: 'footer-link' %></li>
+                    <li><%= link_to t('layouts.footer.contact'), contact_path, class: 'footer-link' %></li>
+                    <li><%= link_to t('layouts.footer.team'), team_path, class: 'footer-link' %></li>
+                    <li><%= link_to t('layouts.footer.privacy'), privacy_policy_path, class: 'footer-link' %></li>
                 </ul>
             </div>
 
             <!-- Colonne 3: Réseaux sociaux -->
             <div class="col-md-4 mb-2">
-                <h5 class="text-uppercase fw-bold">Suivez-nous</h5>
+                <h5 class="text-uppercase fw-bold"><%= t('layouts.footer.follow_us') %></h5>
                 <a href="#" class="social-icon me-3"><i class="bi bi-facebook"></i></a>
                 <a href="#" class="social-icon me-3"><i class="bi bi-twitter-x"></i></a>
                 <a href="#" class="social-icon"><i class="bi bi-linkedin"></i></a>
@@ -32,7 +32,7 @@
         <hr class="bg-white-50">
         
         <div class="text-center text-white-50">
-            <small>Copyright &copy; 2025 - <span class="current-year"></span> BastAir. Tous droits réservés.</small>
+            <small>Copyright &copy; 2025 - <span class="current-year"></span> BastAir. <%= t('layouts.footer.copyright') %></small>
         </div>
     </div>
 </footer>

@@ -1,4 +1,4 @@
-<% content_for :title, "Contact" %>
+<% content_for :title, t('static_pages.contact.title') %>
 
 <div class="container mt-5">
 <br><br>
@@ -7,13 +7,13 @@
     <div class="col-md-6 col-lg-5 mb-4">
       <div class="card h-100">
         <div class="card-body">
-          <h4 class="card-title mb-4">Coordonnées</h4>
+          <h4 class="card-title mb-4"><%= t('static_pages.contact.coordinates_title') %></h4>
           <p>
-            <strong>Adresse :</strong><br>
+            <strong><%= t('static_pages.contact.address_label') %></strong><br>
             123 Rue du Gossip, 75000 Paris, France
           </p>
           <p>
-            <strong>Téléphone :</strong><br>
+            <strong><%= t('static_pages.contact.phone_label') %></strong><br>
             +33 1 23 45 67 89
           </p>
         </div>
@@ -21,10 +21,10 @@
     </div>
   </div>
 <div class="container my-5 text-center">
-  <h1>Contactez-nous</h1>
+  <h1><%= t('static_pages.contact.contact_us_title') %></h1>
   <hr class="my-4">
   <p class="lead">
-    Pour toute question ou demande d'information, n'hésitez pas à nous envoyer un e-mail à l'adresse suivante :
+    <%= t('static_pages.contact.contact_us_lead') %>
   </p>
   <a href="mailto:contact@eventbrite.com" class="btn btn-primary btn-lg">contact@bastair.fr</a>
 </div>

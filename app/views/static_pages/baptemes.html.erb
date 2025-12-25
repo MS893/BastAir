@@ -1,10 +1,10 @@
-<% content_for :title, "Baptêmes de l'Air" %>
+<% content_for :title, t('static_pages.baptemes.title') %>
 
 <div class="container my-5">
 
   <div class="text-center">
-    <h1 class="mb-4">Baptêmes de l'air</h1>
-    <p class="lead">Découvrez la Guadeloupe vue du ciel avec nos vols d'initiation.</p>
+    <h1 class="mb-4"><%= t('static_pages.baptemes.title') %></h1>
+    <p class="lead"><%= t('static_pages.baptemes.lead') %></p>
   </div>
 
   <hr class="my-5">
@@ -16,8 +16,8 @@
       <div class="card h-100">
         <%= image_tag 'Volcan1.webp', class: 'card-img-top', alt: 'Survol du volcan de la Soufrière' %>
         <div class="card-body">
-          <h5 class="card-title">Volcan</h5>
-          <p class="card-text">Survolez le majestueux volcan de la Soufrière et admirez son sommet fumant. Une vue à couper le souffle sur le parc national de la Guadeloupe (vol possible en fonction des conditions météorologiques).</p>
+          <h5 class="card-title"><%= t('static_pages.baptemes.volcano.title') %></h5>
+          <p class="card-text"><%= t('static_pages.baptemes.volcano.text') %></p>
         </div>
       </div>
     </div>
@@ -27,8 +27,8 @@
       <div class="card h-100">
         <%= image_tag 'LesSaintes1.webp', class: 'card-img-top', alt: 'Survol du volcan de la Soufrière' %>
         <div class="card-body">
-          <h5 class="card-title">Côte sous le vent</h5>
-          <p class="card-text">Survolez Les Saintes, ou longez la côte ouest de Basse-Terre, de la réserve Cousteau aux plages de Deshaies. Un panorama exceptionnel sur la mer des Caraïbes.</p>
+          <h5 class="card-title"><%= t('static_pages.baptemes.coast.title') %></h5>
+          <p class="card-text"><%= t('static_pages.baptemes.coast.text') %></p>
         </div>
       </div>
     </div>
@@ -37,15 +37,15 @@
   <div class="col-lg-4 col-md-6 mb-4">
     <div class="card h-100 text-center">
       <div class="card-header">
-        <h4 class="my-0 fw-normal">Baptêmes de l'air</h4>
+        <h4 class="my-0 fw-normal"><%= t('static_pages.baptemes.pricing_card.title') %></h4>
       </div>
       <div class="card-body d-flex flex-column">
-        <h1 class="card-title pricing-card-title">150€</h1>
+        <h1 class="card-title pricing-card-title"><%= t('static_pages.baptemes.pricing_card.price') %></h1>
         <ul class="list-unstyled mt-3 mb-4">
-          <li>Vol découverte de 30 minutes</li>
-          <li>Offrez-vous ou offrez à vos proches une expérience inoubliable.</li>
+          <li><%= t('static_pages.baptemes.pricing_card.item1') %></li>
+          <li><%= t('static_pages.baptemes.pricing_card.item2') %></li>
         </ul>
-        <%= link_to "Offrir un baptême", '#', class: "w-100 btn btn-lg btn-outline-primary mt-auto" %>
+        <%= link_to t('static_pages.baptemes.pricing_card.button'), '#', class: "w-100 btn btn-lg btn-outline-primary mt-auto" %>
       </div>
     </div>
   </div>
@@ -57,33 +57,33 @@
   <!-- Section Formulaire de Contact -->
   <div class="row">
     <div class="col-lg-8 mx-auto">
-      <h2 class="text-center mb-4">Demande d'informations</h2>
-      <p class="text-center mb-4">Une question ? Envie de réserver ? Laissez-nous un message !</p>
+      <h2 class="text-center mb-4"><%= t('static_pages.baptemes.contact.title') %></h2>
+      <p class="text-center mb-4"><%= t('static_pages.baptemes.contact.text') %></p>
       
       <%= form_with url: contact_path, method: :post, local: true do |form| %>
         <div class="row">
           <div class="col-md-6 mb-3">
-            <%= form.label :prenom, class: 'form-label' %>
+            <%= form.label :prenom, t('static_pages.baptemes.contact.form.first_name'), class: 'form-label' %>
             <%= form.text_field :prenom, class: 'form-control', required: true, value: @prenom %>
           </div>
           <div class="col-md-6 mb-3">
-            <%= form.label :nom, class: 'form-label' %>
+            <%= form.label :nom, t('static_pages.baptemes.contact.form.last_name'), class: 'form-label' %>
             <%= form.text_field :nom, class: 'form-control', required: true, value: @nom %>
           </div>
         </div>
         <div class="mb-3">
-          <%= form.label :email, 'Votre adresse email', class: 'form-label' %>
+          <%= form.label :email, t('static_pages.baptemes.contact.form.email'), class: 'form-label' %>
           <%= form.email_field :email, class: 'form-control', required: true, value: @email %>
         </div>
         <div class="mb-3">
-          <%= form.label :message, 'Donnez-nous les dates auxquelles vous êtes disponible', class: 'form-label' %>
+          <%= form.label :message, t('static_pages.baptemes.contact.form.message'), class: 'form-label' %>
           <%= form.text_area :message, class: 'form-control', rows: 5, required: true, value: @message %>
         </div>
         <div class="mb-3 d-flex justify-content-center">
           <%= recaptcha_tags %>
         </div>
         <div class="text-center">
-          <%= form.submit "Envoyer le message", class: "btn btn-primary btn-lg" %>
+          <%= form.submit t('static_pages.baptemes.contact.form.submit'), class: "btn btn-primary btn-lg" %>
         </div>
       <% end %>
     </div>

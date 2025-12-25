@@ -1,72 +1,228 @@
 fr:
-  hello: "Bonjour tout le monde"
-  time:
-    formats:
-      long_with_at: "Le %d %B %Y à %Hh%M"
-      long: "%A %d %B %Y à %Hh%M"
-      short: "%d %b %H:%M"
-      short_year: "%e/%m/%Y" # Ajout de l'année
-      short_year_time: "%e/%m/%Y à %H:%M" # Ajout de l'année
-      short_time: "%Hh%M" # Affiche l'heure sous la forme "14h30"
-      default: "%d/%m/%Y %H:%M:%S"
-    am: 'am'
-    pm: 'pm'
-  event:
-    participants:
-      one: "1 inscrit"
-      other: "%{count} inscrits"
-    month_names:
-      - ~
-      - janvier
-      - février
-      - mars
-      - avril
-      - mai
-      - juin
-      - juillet
-      - août
-      - septembre
-      - octobre
-      - novembre
-      - décembre
-  date:
-    formats:
-      long: "%d %B %Y"
-      short: "%d %b"
-      short_year: "%e/%m/%Y" # Ajout de l'année
-    month_names:
-      - ~
-      - janvier
-      - février
-      - mars
-      - avril
-      - mai
-      - juin
-      - juillet
-      - août
-      - septembre
-      - octobre
-      - novembre
-      - décembre
-    abbr_month_names: [~, jan, fév, mar, avr, mai, jui, jui, aoû, sep, oct, nov, déc]
-    day_names: [dimanche, lundi, mardi, mercredi, jeudi, vendredi, samedi]
-    abbr_day_names: [dim, lun, mar, mer, jeu, ven, sam]
-    order: [day, month, year]
-  activerecord:
-    errors:
-      messages:
-        record_invalid: "La validation a échoué : %{errors}"
-        # Ajouts pour le modèle Vol
-        models:
-          vol:
-            attributes:
-              date:
-                cannot_be_in_the_future: "ne peut pas être dans le futur"
-              compteur_fin:
-                must_be_greater_than_start_counter: "doit être supérieur au compteur de départ"
-              base: # Erreurs globales pour le modèle Vol
-                pilot_not_qualified: "Le pilote n'a pas les qualifications requises (licence ou médicale) à la date du vol."
-              instructeur_id:
-                required_for_instruction: "est requis pour un vol en instruction"
-              compteur_depart:
-                must_match_previous_flight: "doit être égal au compteur de fin du vol précédent (%{compteur})"
+  layouts:
+    navbar:
+      home: "Accueil"
+      fleet: "La flotte"
+      discovery_flights: "Baptêmes"
+      member_area: "Espace adhérents"
+      media_library: "Médiathèque"
+      admin: "Admin"
+      profile: "Mon Profil"
+      edit_profile: "Modifier mon profil"
+      edit_password: "Modifier mon mot de passe"
+      logout: "Se déconnecter"
+    footer:
+      about_title: "BastAir"
+      about_text: "Votre partenaire pour l'aviation de loisir. Découvrez nos outils et notre communauté."
+      links_title: "Liens Utiles"
+      faq: "FAQ"
+      contact: "Contact"
+      team: "Notre Équipe"
+      privacy: "Politique de Confidentialité"
+      follow_us: "Suivez-nous"
+      copyright: "Tous droits réservés."
+  static_pages:
+    home:
+      title: "Le Club"
+      main_title: "Bast'Air"
+      subtitle: "L'Aéroclub de Basse Terre - Baillif"
+      carousel:
+        sky_title: "Un ciel incroyable"
+        sky_text: "Un ciel différent chaque jour, avec des nuages magnifiques ou un grand ciel bleu."
+        runway_title: "Une piste magnifique"
+        runway_text: "Une piste en dur de 615m entretenue quotidiennement. Un décollage inoubliable face à la mer."
+        playground_title: "Un immense 'terrain de jeu'"
+        playground_text: "Des conditions météo parfois difficiles nous empêchant de voler, mais généralement clémentes."
+        facilities_title: "Infrastructures"
+        facilities_text: "Des bâtiments confortables et propres pour vous accueillir."
+        runway_14_32_title: "Piste 14-32"
+        runway_14_32_text: "Idéalement située pour des approches variées."
+        sunset_title: "Des couchers de soleil magnifiques"
+        sunset_text: "Atterrir à la tombée de la nuit après avoir regardé le soleil disparaître sous l'horizon."
+        takeoff_title: "Décollage piste 32"
+        takeoff_text: "Face à la mer, en profitant du paysage immédiatement."
+      welcome_lead: "Bienvenue sur la page de notre aéroclub. Découvrez notre histoire, nos valeurs et notre passion pour l'aviation."
+      history_title: "Notre Histoire"
+      history_text: "Fondé en 2025, l'aéroclub BastAir est né de la passion d'un groupe de pilotes souhaitant partager leur passion."
+      history_list:
+        guadeloupe: "La guadeloupe avec ses 5 aérodromes (Basse-Terre, Les Saintes, Marie Galante, Saint François, La Désirade) et son aéroport international Maryse Condé."
+        caribbean: "Les Caraïbes et toutes ses iles (Martinique, Dominique, Saint Barth, Saint Martin...)."
+      facilities_title: "Nos Installations"
+      facilities_text: "Basé sur l'aérodrome de Basse Terre Baillif (TFFB), notre club dispose d'installations modernes pour accueillir nos membres dans les meilleures conditions :"
+      facilities_list:
+        clubhouse: "Un club-house convivial pour les briefings et la détente."
+        classroom: "Une salle de cours équipée pour la formation théorique."
+        hangar: "Un hangar pour nos avions, entretenus avec le plus grand soin."
+      pilot_training_title: "Envie de devenir pilote ?"
+      pilot_training_text: "L'aéroclub vous permet de passer votre brevet de pilote privé LAPL(A) ou PPL(A) :"
+      pilot_training_list:
+        simulator: "Une formation en partie sur un simulateur de vol moins coûteux que l'avion pour travailler les procédures normales et d'urgence, l'exécution des check-lists, apprendre à parler à la radio, apprendre à utiliser tous les instruments de bord."
+        avionics: "Un avion à l'avionique moderne (EFIS), comme vous pouvez le voir ci-dessous."
+        leisure_pro: "Pour le loisir ou pour continuer vers une carrière professionnelle."
+        financial_aid: "Possibilité pour les jeunes d'avoir des aides financières."
+        bia: "Formation au BIA pour les collégiens ou lycéens (se renseigner auprès de votre établissement)."
+        rsfi: "Stages RSFI de maintien des compétences pour les FI."
+        trial: "Vous n'êtes pas sûr que cela va vous plaire ? Essayez avec un vol d'initiation avant de vous inscrire."
+      join_us: "Rejoignez-nous !"
+      bapteme_section_title: "Juste envie d'un baptême de l'air ?"
+      bapteme_text: "L'aéroclub propose des vols inoubliables au-dessus de la Guadeloupe (selon météo). Découvrez les paysages époustouflants de l'île, de la Soufrière aux plages de sable fin."
+      bapteme_subtext: "Admirez la diversité des paysages, entre mer turquoise et végétation luxuriante. Une expérience unique à vivre ou à offrir."
+      bapteme_button: "Réserver un baptême !"
+    fleet:
+      title: "Notre Flotte"
+      lead: "Découvrez les avions de dernière génération de Bast'Air, parfaitement entretenus pour votre sécurité et votre plaisir de vol."
+      elixir:
+        title: "Elixir Aircraft"
+        description: "L'avion école par excellence. Fiable, sûr et facile à piloter, l'Elixir est l'appareil idéal pour débuter votre formation de pilote. Rapide et équipé d'une avionique moderne, et à un tarif compétitif."
+        footer: "2 places - Monomoteur à pistons ROTAX 912iS"
+        website: "Site Constructeur"
+      features:
+        versatility:
+          title: "Polyvalence"
+          text: "L'Elixir passe facilement de la formation initiale aux vols de navigation."
+        safety:
+          title: "Sécurité"
+          text: "La certification CS-23 reflète notre engagement total envers la sécurité. Train d'atterrissage oléo-pneumatique robuste, réservoir anti-crash, parachute intégré de série."
+        economy:
+          title: "Économie"
+          text: "La structure OneShot de l'Elixir révolutionne la maintenance. Moins de pièces signifie plus de fiabilité, moins d'entretien et des coûts réduits."
+        ecology:
+          title: "Plus Écologique"
+          text: "Rejoignez la révolution verte avec l'Elixir. Grâce à l'essence sans plomb et à une faible consommation, il réduit les émissions de CO2 jusqu'à 70% par rapport à une flotte traditionnelle."
+      video_title: "L'Elixir en action"
+      gallery_title: "Galerie Photos"
+    baptemes:
+      title: "Baptêmes de l'air"
+      lead: "Découvrez la Guadeloupe vue du ciel avec nos vols d'initiation."
+      volcano:
+        title: "Volcan"
+        text: "Survolez le majestueux volcan de la Soufrière et admirez son sommet fumant. Une vue imprenable sur le Parc National de la Guadeloupe (vol soumis aux conditions météo)."
+      coast:
+        title: "Côte Sous-le-Vent"
+        text: "Volez au-dessus des Saintes, ou le long de la côte ouest de la Basse-Terre, de la réserve Cousteau aux plages de Deshaies. Un panorama exceptionnel sur la mer des Caraïbes."
+      pricing_card:
+        title: "Baptêmes de l'air"
+        price: "150€"
+        item1: "Vol découverte de 30 minutes"
+        item2: "Offrez-vous ou offrez à vos proches une expérience inoubliable."
+        button: "Offrir un vol"
+      contact:
+        title: "Demande d'informations"
+        text: "Une question ? Envie de réserver ? Laissez-nous un message !"
+        form:
+          first_name: "Prénom"
+          last_name: "Nom"
+          email: "Votre adresse email"
+          message: "Dites-nous les dates où vous êtes disponible"
+          submit: "Envoyer le message"
+    mediatheque:
+      title: "Médiathèque"
+      lead: "Plongez dans l'univers de BastAir à travers nos plus belles photos et vidéos."
+      video_title: "Vidéo de Présentation"
+      gallery_title: "Galerie Photos"
+      clubhouse_text: "L'ambiance conviviale de notre club-house."
+      hangar_text: "Le hangar abritant les avions de l'aéroclub."
+    contact:
+      title: "Contact"
+      coordinates_title: "Coordonnées"
+      address_label: "Adresse :"
+      phone_label: "Téléphone :"
+      contact_us_title: "Contactez-nous"
+      contact_us_lead: "Pour toute question ou demande d'information, n'hésitez pas à nous envoyer un e-mail à l'adresse suivante :"
+    team:
+      title: "Notre équipe"
+      lead: "Découvrez les personnes passionnées qui rendent BastAir possible."
+      member1:
+        name: "Jeannette Codeur"
+        role: "Lead Developer"
+        desc: "Le cerveau technique qui transforme les idées en fonctionnalités robustes."
+      member2:
+        name: "Bill BDD"
+        role: "DBA & Backend Specialist"
+        desc: "Gardien des données, il s'assure que tout fonctionne parfaitement en coulisses."
+      member3:
+        name: "Karine Style"
+        role: "Frontend & UX Designer"
+        desc: "L'artiste qui rend le site aussi beau qu'agréable à utiliser."
+    privacy_policy:
+      title: "Politique de Confidentialité"
+      last_update: "Dernière mise à jour :"
+      intro: "Votre vie privée est importante pour nous. Cette politique de confidentialité explique quelles données personnelles nous collectons auprès de vous et comment nous les utilisons."
+      data_collection:
+        title: "Données que nous collectons"
+        text: "Nous collectons des données pour fonctionner efficacement et vous fournir les meilleures expériences avec nos services. Vous fournissez certaines de ces données directement, par exemple lorsque vous créez un compte, vous vous inscrivez à un événement ou nous contactez pour obtenir de l'aide."
+        list_html: "<li><strong>Informations de compte :</strong> Votre nom, votre adresse e-mail, votre mot de passe (chiffré).</li><li><strong>Données de participation :</strong> Les événements auxquels vous vous inscrivez.</li><li><strong>Données de paiement :</strong> Lorsque vous achetez un billet pour un événement payant, vos informations de paiement sont traitées par notre partenaire de paiement Stripe et ne sont pas stockées sur nos serveurs.</li>"
+      data_usage:
+        title: "Comment nous utilisons vos données"
+        text: "Nous utilisons les données que nous collectons pour :"
+        list_html: "<li>Fournir et améliorer nos services.</li><li>Vous informer des événements auxquels vous êtes inscrit.</li><li>Communiquer avec vous, y compris pour les notifications de mise à jour ou d'annulation d'événements.</li>"
+      rights:
+        title: "Vos droits"
+        text: "Conformément au RGPD, vous disposez d'un droit d'accès, de rectification, de suppression et de portabilité de vos données personnelles. Vous pouvez exercer ces droits en accédant à votre page de profil ou en nous contactant."
+      cgu:
+        title: "Conditions Générales d'Utilisation (CGU)"
+        section1_title: "1. Mentions Légales et Objet"
+        section1_html: "<h5>Identification de l'Éditeur du Site :</h5><ul><li>Aéroclub Bast'Air (Association loi 1901).</li><li>Aérodrome de Basse-Terre / Baillif.</li></ul><h5>Hébergeur du Site :</h5><p>Nom et coordonnées de la société qui héberge votre site.</p><h5>Objet des CGU :</h5><p>Définir les conditions d'accès et d'utilisation du site de gestion de l'aéroclub.</p>"
+        section2_title: "2. Accès et Utilisation du Service"
+        section2_html: "<p><strong>Public Cible :</strong> Le service est réservé aux membres actifs et à jour de leur cotisation à l'Aéroclub.</p><p><strong>Acceptation des CGU :</strong> Le fait d'utiliser le site et de se connecter vaut acceptation pleine et entière des présentes CGU.</p>"
+        section3_title: "3. Gestion des Réservations et Comptes"
+        section3_html: "<h5>Règles de Réservation :</h5><ul><li>Les conditions spécifiques aux réservations sont définies dans le règlement intérieur de l'aéroclub.</li></ul><h5>Gestion des Comptes :</h5><ul><li>Le compte utilisateur permet le suivi des heures de vol, du solde financier, de la facturation et de l'historique des vols.</li></ul>"
+        section4_title: "4. Propriété Intellectuelle"
+        section4_text: "L'ensemble du contenu du site est la propriété exclusive de l'Aéroclub ou de ses ayants droit."
+        section5_title: "5. Protection des Données Personnelles (RGPD) 🇪🇺"
+        section5_html: "<p>Cette section complète les informations de notre Politique de Confidentialité.</p><h5>Nature des Données Collectées :</h5><p>Nous collectons les données suivantes : Nom, Prénom, Adresse, Email, Numéro de téléphone, informations de Licence/Brevet, heures de vol, historique des transactions, et identifiants de connexion.</p><h5>Finalités du Traitement :</h5><p>Ces données sont utilisées pour la gestion des adhésions, la gestion des réservations, la facturation, la communication interne du club et la sécurité du site.</p>"
+        section6_title: "6. Responsabilités et Garanties"
+        section6_text: "L'Aéroclub s'efforce d'assurer un accès continu et un bon fonctionnement du site mais ne peut garantir une absence totale d'interruption ou d'erreur technique."
+        section7_title: "7. Droit Applicable et Juridiction Compétente"
+        section7_text: "Les présentes CGU sont régies par le droit français. En cas de litige, une solution amiable sera recherchée en priorité."
+    faq:
+      title: "Foire Aux Questions (FAQ)"
+      subtitle: "Les Brevets de Pilote Avion (LAPL & PPL) ✈️"
+      q1:
+        question: "1. Quelle est la différence principale entre le PPL et le LAPL ?"
+        answer_html: "<p>La principale différence réside dans les <strong>privilèges</strong> et les <strong>contraintes</strong> associées à chaque licence :</p><table class='table table-bordered table-striped'><thead><tr><th scope='col'>Caractéristique</th><th scope='col'>LAPL</th><th scope='col'>PPL</th></tr></thead><tbody><tr><td><strong>Zone de vol</strong></td><td>Limitée aux pays <strong>EASA (Europe)</strong>.</td><td><strong>Monde entier</strong> (standard OACI).</td></tr><tr><td><strong>Passagers</strong></td><td><strong>Maximum 3</strong> passagers.</td><td>Aucune limitation.</td></tr><tr><td><strong>Masse de l'avion</strong></td><td>Jusqu'à <strong>2 000 kg</strong>.</td><td>Aucune limitation.</td></tr><tr><td><strong>Heures de vol min.</strong></td><td><strong>30 heures</strong>.</td><td><strong>45 heures</strong>.</td></tr></tbody></table>"
+      q2:
+        question: "2. Quelle licence devrais-je choisir : LAPL ou PPL ?"
+        answer_html: "<p>Le choix dépend de vos <strong>objectifs de vol</strong> :</p><ul><li><strong>Optez pour le LAPL</strong> si vous souhaitez voler principalement en Europe, pour le loisir, seul ou avec un petit nombre de passagers.</li><li><strong>Optez pour le PPL</strong> si vous envisagez de voler à travers le monde, sur des avions plus lourds, ou si vous prévoyez d'ajouter des qualifications avancées (IFR, etc.).</li></ul>"
+      q3:
+        question: "3. Quel est l'âge minimum pour commencer la formation et obtenir la licence ?"
+        answer_html: "<ul><li>Début de formation : <strong>sans limite d'âge</strong>.</li><li>Premier vol solo : <strong>16 ans révolus</strong>.</li><li>Obtention de la licence : <strong>17 ans révolus</strong>.</li></ul>"
+      q4:
+        question: "4. Faut-il être bon en maths ou en sciences pour réussir la théorie ?"
+        answer_html: "<p><strong>Non</strong>, ce n'est pas nécessaire. La formation théorique est accessible à tous et ne requiert <strong>pas de diplôme scientifique</strong> particulier.</p>"
+      q5:
+        question: "5. Comment se déroule la formation théorique ?"
+        answer_html: "<p>La formation couvre neuf modules (Réglementation, Météorologie, Navigation, etc.). L'examen est un <strong>QCM</strong> où vous devez obtenir au moins <strong>75%</strong> de bonnes réponses.</p>"
+      q6:
+        question: "6. Combien de temps faut-il pour obtenir la licence ?"
+        answer_html: "<p>La durée varie selon votre disponibilité :</p><ul><li>La théorie est valable <strong>24 mois</strong>.</li><li>En moyenne, une formation à temps partiel s'étale sur <strong>12 à 18 mois</strong>.</li></ul>"
+      q7:
+        question: "7. Quelle est l'exigence médicale ?"
+        answer_html: "<p>Il faut un certificat d'aptitude médicale :</p><ul><li><strong>LAPL :</strong> Certificat médical LAPL.</li><li><strong>PPL :</strong> Certificat médical de <strong>Classe 2</strong>.</li></ul><p class='mb-0'>Le port de lunettes n'est <strong>pas un obstacle</strong>.</p>"
+      q8:
+        question: "8. Quelle est la validité de la licence et du certificat médical ?"
+        answer_html: "<table class='table table-bordered'><tbody><tr><td><strong>Licence</strong></td><td><strong>À vie</strong>.</td></tr><tr><td><strong>Qualification de classe (SEP)</strong></td><td><strong>24 mois</strong> (à proroger).</td></tr><tr><td><strong>Certificat Médical Classe 2</strong></td><td>5 ans (<40 ans), 2 ans (40-50), 1 an (>50).</td></tr></tbody></table>"
+      q9:
+        question: "9. Comment maintenir ses privilèges de vol ?"
+        answer_html: "<p>Vous devez respecter des conditions d'<strong>expérience récente</strong> (heures de vol, décollages/atterrissages) ou effectuer un vol de contrôle avec un examinateur.</p>"
+      q10:
+        question: "10. Quel est le coût total d'une licence ?"
+        answer_html: "<p>Le coût varie selon la structure :</p><ul><li><strong>LAPL :</strong> Entre <strong>6 000 € et 9 000 €</strong>.</li><li><strong>PPL :</strong> Entre <strong>9 000 € et 15 000 €</strong>.</li></ul>"
+      q11:
+        question: "11. Peut-on financer la licence ?"
+        answer_html: "<p>Oui, notamment via la <strong>Bourse de la Fédération Française Aéronautique (FFA)</strong> pour les jeunes, souvent liée au BIA.</p>"
+      q12:
+        question: "12. Pourquoi payer pour l'instruction dans une association ?"
+        answer_html: "<p class='mb-0'>Le coût couvre les frais incompressibles (amortissement matériel, simulateur, maintien des compétences des instructeurs bénévoles).</p>"
+      q13:
+        question: "13. Quelles sont les aides de la FFA pour les moins de 21 ans ?"
+        answer_html: "<p>Voici quelques aides :</p><ul class='list-group'><li class='list-group-item d-flex justify-content-between align-items-center'>1er Lâché solo<span>350 €</span></li><li class='list-group-item d-flex justify-content-between align-items-center'>PPL ou LAPL Complet<span>700 €</span></li></ul><p class='mt-3 small text-muted'>Consultez le site de la FFA pour les détails.</p>"
+      q14:
+        question: "14. Qu'est-ce que le BIA ?"
+        answer_html: "<p>Le <strong>Brevet d'Initiation Aéronautique</strong> est un diplôme validant une culture générale aéronautique, destiné principalement aux jeunes.</p>"
+      q15:
+        question: "15. Qu'apporte le BIA ?"
+        answer_html: "<p>Il apporte des connaissances solides, une initiation au vol, des aides financières pour le pilotage et est un atout pour l'orientation professionnelle.</p>"
+      q16:
+        question: "16. Quelles sont les conditions pour passer le BIA ?"
+        answer_html: "<p>Ouvert aux candidats de <strong>13 ans révolus</strong>. L'examen est un QCM sur 5 domaines obligatoires.</p>"

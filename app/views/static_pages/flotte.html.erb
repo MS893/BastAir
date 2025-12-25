@@ -1,10 +1,10 @@
-<% content_for :title, "La Flotte" %>
+<% content_for :title, t('static_pages.fleet.title') %>
 
 <div class="container my-5">
   <div class="text-center">
-    <h1 class="mb-4">Notre Flotte</h1>
+    <h1 class="mb-4"><%= t('static_pages.fleet.title') %></h1>
     <p class="lead">
-      Découvrez l'avion dernière génération de Bast'Air, parfaitement entretenu pour votre sécurité et votre plaisir de voler.
+      <%= t('static_pages.fleet.lead') %>
     </p>
   </div>
   <hr class="my-5">
@@ -15,14 +15,14 @@
       <div class="card h-100">
         <%= image_tag 'Elixir.jpg', class: 'card-img-top', alt: 'Elixir' %>
         <div class="card-body">
-          <h5 class="card-title">Elixir Aircraft</h5>
+          <h5 class="card-title"><%= t('static_pages.fleet.elixir.title') %></h5>
           <p class="card-text">
-            L'avion-école par excellence. Fiable, sûr et facile à piloter, l'Elixir est l'appareil idéal pour débuter votre formation de pilote. Rapide et équipé d'une avionique moderne, et en plus un tarif compétitif.
+            <%= t('static_pages.fleet.elixir.description') %>
           </p>
         </div>
         <div class="card-footer d-flex justify-content-between align-items-center">
-          <small class="text-muted">2 places - Monomoteur à pistons ROTAX 912iS</small>
-          <%= link_to "Site constructeur", "https://elixir-aircraft.com/", class: "btn btn-sm btn-outline-primary", target: "_blank", rel: "noopener" %>
+          <small class="text-muted"><%= t('static_pages.fleet.elixir.footer') %></small>
+          <%= link_to t('static_pages.fleet.elixir.website'), "https://elixir-aircraft.com/", class: "btn btn-sm btn-outline-primary", target: "_blank", rel: "noopener" %>
         </div>
       </div>
     </div>
@@ -32,10 +32,9 @@
     <!-- Colonne 1: Polyvalence -->
     <div class="col-md-6 col-lg-3 mb-4">
       <div class="border rounded p-3 h-100">
-        <h4>Polyvalence</h4>
+        <h4><%= t('static_pages.fleet.features.versatility.title') %></h4>
         <p>
-          L’Elixir passe facilement de la formation initiale – à 100 kt pour seulement 10 L/h (2,63 US gal/h) – aux vols de navigation à 125 kt pour une consommation de 15 L/h (3,95 US gal/h).
-          Son autonomie de 7 heures répond aussi bien aux besoins de formation qu’aux envies de loisir. C’est l’avion idéal pour satisfaire les aspirations variées des membres de votre aéroclub.
+          <%= t('static_pages.fleet.features.versatility.text') %>
         </p>
       </div>
     </div>
@@ -43,10 +42,9 @@
     <!-- Colonne 2: Sécurité -->
     <div class="col-md-6 col-lg-3 mb-4">
       <div class="border rounded p-3 h-100">
-        <h4>Sécurité</h4>
+        <h4><%= t('static_pages.fleet.features.safety.title') %></h4>
         <p>
-          La certification CS-23 reflète notre engagement total pour la sécurité. Train d’atterrissage oléopneumatique robuste, réservoir résistant aux chocs, parachute intégré de série : chaque élément est conçu pour faire de la sécurité une priorité absolue.
-          L’indicateur d’incidence renforce encore la conscience situationnelle du pilote, pour une expérience de vol sécurisée et sereine pour tous vos membres.
+          <%= t('static_pages.fleet.features.safety.text') %>
         </p>
       </div>
     </div>
@@ -54,11 +52,9 @@
     <!-- Colonne 3: Économies -->
     <div class="col-md-6 col-lg-3 mb-4">
       <div class="border rounded p-3 h-100">
-        <h4>Économies</h4>
+        <h4><%= t('static_pages.fleet.features.economy.title') %></h4>
         <p>
-          La structure OneShot de l’Elixir révolutionne la maintenance.
-          Moins de pièces, c’est plus de fiabilité, moins d’entretien et des coûts réduits.
-          Chiffres à l’appui : une demi-journée pour effectuer une visite des 100 heures. Minimisez les coûts, maximisez la rentabilité et le plaisir de voler !
+          <%= t('static_pages.fleet.features.economy.text') %>
         </p>
       </div>
     </div>
@@ -66,11 +62,9 @@
     <!-- Colonne 4: Plus écologique -->
     <div class="col-md-6 col-lg-3 mb-4">
       <div class="border rounded p-3 h-100">
-        <h4>Plus écologique</h4>
+        <h4><%= t('static_pages.fleet.features.ecology.title') %></h4>
         <p>
-          Rejoignez la révolution verte avec l’Elixir, une nouvelle référence en aviation durable.
-          Grâce à l’essence sans plomb et à une faible consommation, il réduit jusqu’à 70 % les émissions de CO₂ par rapport à une flotte traditionnelle.
-          Sa structure certifiée sans limite de durée de vie garantit également une longévité remarquable.
+          <%= t('static_pages.fleet.features.ecology.text') %>
         </p>
       </div>
     </div>
@@ -81,7 +75,7 @@
   <!-- Section Vidéo -->
   <div class="row mb-5">
     <div class="col-lg-10 mx-auto">
-      <h2 class="text-center mb-4">L'Elixir en action</h2>
+      <h2 class="text-center mb-4"><%= t('static_pages.fleet.video_title') %></h2>
       <div class="ratio ratio-16x9 rounded overflow-hidden shadow">
         <iframe src="https://www.youtube.com/embed/cfKqM9kkRXM" title="Vidéo de présentation de l'Elixir" allowfullscreen="" loading="lazy"></iframe>
       </div>
@@ -91,7 +85,7 @@
   <hr class="my-5">
 
   <!-- Section Photos -->
-  <h2 class="text-center mb-4">Galerie Photos</h2>
+  <h2 class="text-center mb-4"><%= t('static_pages.fleet.gallery_title') %></h2>
   <div class="row justify-content-center">
 
     <!-- Photo 1 -->

@@ -1,10 +1,10 @@
-<% content_for :title, "Médiathèque" %>
+<% content_for :title, t('static_pages.mediatheque.title') %>
 
 <div class="container my-5">
   <div class="text-center">
-    <h1 class="mb-4">Médiathèque</h1>
+    <h1 class="mb-4"><%= t('static_pages.mediatheque.title') %></h1>
     <p class="lead">
-      Plongez dans l'univers de BastAir à travers nos plus belles photos et vidéos.
+      <%= t('static_pages.mediatheque.lead') %>
     </p>
   </div>
   <hr class="my-5">
@@ -12,7 +12,7 @@
   <!-- Section Vidéo -->
   <div class="row mb-5">
     <div class="col-lg-10 mx-auto">
-      <h2 class="text-center mb-4">Vidéo de Présentation</h2>
+      <h2 class="text-center mb-4"><%= t('static_pages.mediatheque.video_title') %></h2>
       <div class="ratio ratio-16x9">
         <iframe src="https://www.youtube.com/embed/ODmd8NKqIyo" title="Vidéo de présentation" allowfullscreen="" loading="lazy"></iframe>
       </div>
@@ -20,7 +20,7 @@
   </div>
 
   <!-- Section Photos -->
-  <h2 class="text-center mb-4">Galerie Photos</h2>
+  <h2 class="text-center mb-4"><%= t('static_pages.mediatheque.gallery_title') %></h2>
   <div class="row justify-content-center">
 
     <!-- Photo 1 -->
@@ -29,7 +29,7 @@
         <%# Photo du Club House %>
         <%= image_tag 'TFFB (10).jpg', class: 'card-img-top', alt: 'Club House' %>
         <div class="card-body">
-          <p class="card-text">L'ambiance conviviale de notre club-house.</p>
+          <p class="card-text"><%= t('static_pages.mediatheque.clubhouse_text') %></p>
         </div>
       </div>
     </div>
@@ -39,7 +39,7 @@
       <div class="card">
         <%= image_tag 'TFFB (9).jpg', class: 'card-img-top', alt: 'Hangar' %>
         <div class="card-body">
-          <p class="card-text">Le hangar abritant les avions de l'aéroclub.</p>
+          <p class="card-text"><%= t('static_pages.mediatheque.hangar_text') %></p>
         </div>
       </div>
     </div>

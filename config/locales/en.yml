@@ -1,31 +1,228 @@
-# Files in the config/locales directory are used for internationalization and
-# are automatically loaded by Rails. If you want to use locales other than
-# English, add the necessary files in this directory.
-#
-# To use the locales, use `I18n.t`:
-#
-#     I18n.t "hello"
-#
-# In views, this is aliased to just `t`:
-#
-#     <%= t("hello") %>
-#
-# To use a different locale, set it with `I18n.locale`:
-#
-#     I18n.locale = :es
-#
-# This would use the information in config/locales/es.yml.
-#
-# To learn more about the API, please read the Rails Internationalization guide
-# at https://guides.rubyonrails.org/i18n.html.
-#
-# Be aware that YAML interprets the following case-insensitive strings as
-# booleans: `true`, `false`, `on`, `off`, `yes`, `no`. Therefore, these strings
-# must be quoted to be interpreted as strings. For example:
-#
-#     en:
-#       "yes": yup
-#       enabled: "ON"
-
 en:
-  hello: "Hello world"
+  layouts:
+    navbar:
+      home: "Home"
+      fleet: "The Fleet"
+      discovery_flights: "Discovery Flights"
+      member_area: "Member Area"
+      media_library: "Media Library"
+      admin: "Admin"
+      profile: "My Profile"
+      edit_profile: "Edit Profile"
+      edit_password: "Change Password"
+      logout: "Sign out"
+    footer:
+      about_title: "BastAir"
+      about_text: "Your partner for leisure aviation. Discover our tools and our community."
+      links_title: "Useful Links"
+      faq: "FAQ"
+      contact: "Contact"
+      team: "Our Team"
+      privacy: "Privacy Policy"
+      follow_us: "Follow Us"
+      copyright: "All rights reserved."
+  static_pages:
+    home:
+      title: "The Club"
+      main_title: "Bast'Air"
+      subtitle: "The Basse Terre - Baillif Flying Club"
+      carousel:
+        sky_title: "An incredible sky"
+        sky_text: "A different sky every day, with magnificent clouds or a big blue sky."
+        runway_title: "A beautiful runway"
+        runway_text: "A 615m hard runway maintained daily. An unforgettable takeoff facing the sea."
+        playground_title: "A huge 'playground'"
+        playground_text: "Weather conditions sometimes difficult preventing us from flying, but generally mild."
+        facilities_title: "Infrastructures"
+        facilities_text: "Comfortable and clean buildings to welcome you."
+        runway_14_32_title: "Runway 14-32"
+        runway_14_32_text: "Ideally located for varied approaches."
+        sunset_title: "Magnificent sunsets"
+        sunset_text: "Landing at dusk after watching the sun disappear below the horizon."
+        takeoff_title: "Takeoff runway 32"
+        takeoff_text: "Facing the sea, enjoying the landscape immediately."
+      welcome_lead: "Welcome to our flying club page. Discover our history, our values, and our passion for aviation."
+      history_title: "Our History"
+      history_text: "Founded in 2025, the BastAir flying club is born from the passion of a group of pilots wishing to share their passion."
+      history_list:
+        guadeloupe: "Guadeloupe with its 5 airfields (Basse-Terre, Les Saintes, Marie Galante, Saint François, La Désirade) and its international airport Maryse Condé."
+        caribbean: "The Caribbean and all its islands (Martinique, Dominica, Saint Barth, Saint Martin...)."
+      facilities_title: "Our Facilities"
+      facilities_text: "Based at Basse Terre Baillif airfield (TFFB), our club has modern facilities to welcome our members in the best conditions:"
+      facilities_list:
+        clubhouse: "A friendly club-house for briefings and relaxation."
+        classroom: "A classroom equipped for theoretical training."
+        hangar: "A hangar for our aircraft, maintained with the greatest care."
+      pilot_training_title: "Want to become a pilot?"
+      pilot_training_text: "The flying club allows you to obtain a LAPL(A) or PPL(A) private pilot license:"
+      pilot_training_list:
+        simulator: "Training partly on a flight simulator, less expensive than the aircraft, to work on normal and emergency procedures, checklist execution, radio communication, and using all onboard instruments."
+        avionics: "An aircraft with modern avionics (EFIS), as you can see below."
+        leisure_pro: "For leisure or to continue towards a professional career."
+        financial_aid: "Possibility for young people to receive financial aid."
+        bia: "BIA training for middle or high school students (inquire at your school)."
+        rsfi: "RSFI skills maintenance courses for Flight Instructors."
+        trial: "Not sure if you'll like it? Try a discovery flight before signing up."
+      join_us: "Join us!"
+      bapteme_section_title: "Just want a discovery flight?"
+      bapteme_text: "The flying club offers unforgettable flights over Guadeloupe (weather permitting). Discover the breathtaking landscapes of the island, from the Soufrière to the sandy beaches."
+      bapteme_subtext: "Admire the diversity of landscapes, between turquoise sea and lush vegetation. A unique experience to live or to offer."
+      bapteme_button: "Book a discovery flight!"
+    fleet:
+      title: "Our Fleet"
+      lead: "Discover Bast'Air's latest generation aircraft, perfectly maintained for your safety and flying pleasure."
+      elixir:
+        title: "Elixir Aircraft"
+        description: "The flight school aircraft par excellence. Reliable, safe, and easy to fly, the Elixir is the ideal aircraft to start your pilot training. Fast and equipped with modern avionics, and at a competitive rate."
+        footer: "2 seats - ROTAX 912iS piston single engine"
+        website: "Manufacturer Site"
+      features:
+        versatility:
+          title: "Versatility"
+          text: "The Elixir easily switches from initial training to navigation flights."
+        safety:
+          title: "Safety"
+          text: "CS-23 certification reflects our total commitment to safety. Robust oleo-pneumatic landing gear, crash-resistant tank, integrated parachute as standard."
+        economy:
+          title: "Economy"
+          text: "The OneShot structure of the Elixir revolutionizes maintenance. Fewer parts mean more reliability, less maintenance, and reduced costs."
+        ecology:
+          title: "More Ecological"
+          text: "Join the green revolution with the Elixir. Thanks to unleaded gasoline and low consumption, it reduces CO2 emissions by up to 70% compared to a traditional fleet."
+      video_title: "The Elixir in action"
+      gallery_title: "Photo Gallery"
+    baptemes:
+      title: "Discovery Flights"
+      lead: "Discover Guadeloupe from the sky with our initiation flights."
+      volcano:
+        title: "Volcano"
+        text: "Fly over the majestic Soufrière volcano and admire its smoking summit. A breathtaking view of the Guadeloupe National Park (flight subject to weather conditions)."
+      coast:
+        title: "Leeward Coast"
+        text: "Fly over Les Saintes, or along the west coast of Basse-Terre, from the Cousteau reserve to the beaches of Deshaies. An exceptional panorama of the Caribbean Sea."
+      pricing_card:
+        title: "Discovery Flights"
+        price: "150€"
+        item1: "30-minute discovery flight"
+        item2: "Treat yourself or your loved ones to an unforgettable experience."
+        button: "Offer a flight"
+      contact:
+        title: "Information Request"
+        text: "A question? Want to book? Leave us a message!"
+        form:
+          first_name: "First Name"
+          last_name: "Last Name"
+          email: "Your email address"
+          message: "Tell us the dates you are available"
+          submit: "Send message"
+    mediatheque:
+      title: "Media Library"
+      lead: "Dive into the BastAir universe through our most beautiful photos and videos."
+      video_title: "Presentation Video"
+      gallery_title: "Photo Gallery"
+      clubhouse_text: "The friendly atmosphere of our club-house."
+      hangar_text: "The hangar housing the flying club's aircraft."
+    contact:
+      title: "Contact"
+      coordinates_title: "Contact Details"
+      address_label: "Address:"
+      phone_label: "Phone:"
+      contact_us_title: "Contact Us"
+      contact_us_lead: "For any questions or information requests, please do not hesitate to email us at the following address:"
+    team:
+      title: "Our Team"
+      lead: "Discover the passionate people who make BastAir possible."
+      member1:
+        name: "Jeannette Codeur"
+        role: "Lead Developer"
+        desc: "The technical brain transforming ideas into robust features."
+      member2:
+        name: "Bill BDD"
+        role: "DBA & Backend Specialist"
+        desc: "Guardian of the data, ensuring everything runs perfectly behind the scenes."
+      member3:
+        name: "Karine Style"
+        role: "Frontend & UX Designer"
+        desc: "The artist making the site as beautiful as it is pleasant to use."
+    privacy_policy:
+      title: "Privacy Policy"
+      last_update: "Last updated:"
+      intro: "Your privacy is important to us. This privacy policy explains what personal data we collect from you and how we use it."
+      data_collection:
+        title: "Data We Collect"
+        text: "We collect data to operate effectively and provide you the best experiences with our services. You provide some of this data directly, such as when you create an account, register for an event, or contact us for support."
+        list_html: "<li><strong>Account Information:</strong> Your name, email address, password (encrypted).</li><li><strong>Participation Data:</strong> Events you register for.</li><li><strong>Payment Data:</strong> When you buy a ticket, payment info is processed by Stripe and not stored on our servers.</li>"
+      data_usage:
+        title: "How We Use Your Data"
+        text: "We use the data we collect to:"
+        list_html: "<li>Provide and improve our services.</li><li>Inform you about events you are registered for.</li><li>Communicate with you, including updates or cancellation notifications.</li>"
+      rights:
+        title: "Your Rights"
+        text: "In accordance with GDPR, you have the right to access, rectify, delete, and port your personal data. You can exercise these rights by accessing your profile page or contacting us."
+      cgu:
+        title: "Terms of Service (ToS)"
+        section1_title: "1. Legal Notice and Object"
+        section1_html: "<h5>Publisher Identification:</h5><ul><li>Bast'Air Flying Club (Non-profit association).</li><li>Basse-Terre / Baillif Airfield.</li></ul><h5>Hosting Provider:</h5><p>Name and contact details of the hosting company.</p><h5>Object:</h5><p>Define the conditions of access and use of the flying club management site.</p>"
+        section2_title: "2. Access and Use of Service"
+        section2_html: "<p><strong>Target Audience:</strong> The service is reserved for active members up to date with their club fees.</p><p><strong>Acceptance:</strong> Using the site implies full acceptance of these ToS.</p>"
+        section3_title: "3. Booking and Account Management"
+        section3_html: "<h5>Booking Rules:</h5><ul><li>Specific booking conditions are defined in the club's internal regulations.</li></ul><h5>Account Management:</h5><ul><li>The user account allows tracking flight hours, financial balance, billing, and flight history.</li></ul>"
+        section4_title: "4. Intellectual Property"
+        section4_text: "All site content is the exclusive property of the Flying Club or its rights holders."
+        section5_title: "5. Personal Data Protection (GDPR) 🇪🇺"
+        section5_html: "<p>This section complements our Privacy Policy.</p><h5>Nature of Data Collected:</h5><p>We collect: Name, First Name, Address, Email, Phone, License info, flight hours, transaction history, and login credentials.</p><h5>Purposes:</h5><p>Data is used for membership management, booking management, billing, internal communication, and site security.</p>"
+        section6_title: "6. Responsibilities and Warranties"
+        section6_text: "The Flying Club strives to ensure continuous access but cannot guarantee total absence of interruptions or technical errors."
+        section7_title: "7. Applicable Law"
+        section7_text: "These ToS are governed by French law. In case of dispute, an amicable solution will be sought first."
+    faq:
+      title: "Frequently Asked Questions (FAQ)"
+      subtitle: "Airplane Pilot Licenses (LAPL & PPL) ✈️"
+      q1:
+        question: "1. What is the main difference between PPL and LAPL?"
+        answer_html: "<p>The main difference lies in the <strong>privileges</strong> and <strong>constraints</strong> associated with each license:</p><table class='table table-bordered table-striped'><thead><tr><th scope='col'>Feature</th><th scope='col'>LAPL</th><th scope='col'>PPL</th></tr></thead><tbody><tr><td><strong>Flight Zone</strong></td><td>Limited to <strong>EASA (Europe)</strong>.</td><td><strong>Worldwide</strong> (ICAO standard).</td></tr><tr><td><strong>Passengers</strong></td><td><strong>Max 3</strong> passengers.</td><td>No limitation.</td></tr><tr><td><strong>Aircraft Mass</strong></td><td>Up to <strong>2,000 kg</strong>.</td><td>No limitation.</td></tr><tr><td><strong>Min Flight Hours</strong></td><td><strong>30 hours</strong>.</td><td><strong>45 hours</strong>.</td></tr></tbody></table>"
+      q2:
+        question: "2. Which license should I choose: LAPL or PPL?"
+        answer_html: "<p>The choice depends on your <strong>flight goals</strong>:</p><ul><li><strong>Choose LAPL</strong> if you want to fly mainly in Europe, for leisure, alone or with a few passengers.</li><li><strong>Choose PPL</strong> if you plan to fly worldwide, on heavier aircraft, or plan to add advanced ratings (IFR, etc.).</li></ul>"
+      q3:
+        question: "3. What is the minimum age to start training?"
+        answer_html: "<ul><li>Start training: <strong>No minimum age</strong>.</li><li>First solo flight: <strong>16 years old</strong>.</li><li>License issuance: <strong>17 years old</strong>.</li></ul>"
+      q4:
+        question: "4. Do I need to be good at math or science?"
+        answer_html: "<p><strong>No</strong>. Theoretical training is accessible to everyone and does <strong>not require a scientific degree</strong>.</p>"
+      q5:
+        question: "5. How does theoretical training work?"
+        answer_html: "<p>Training covers nine modules (Regulation, Meteorology, Navigation, etc.). The exam is a <strong>multiple-choice test</strong> where you need at least <strong>75%</strong> correct answers.</p>"
+      q6:
+        question: "6. How long does it take to get the license?"
+        answer_html: "<p>Duration varies based on availability:</p><ul><li>Theory is valid for <strong>24 months</strong>.</li><li>On average, part-time training takes <strong>12 to 18 months</strong>.</li></ul>"
+      q7:
+        question: "7. What is the medical requirement?"
+        answer_html: "<p>You need a medical certificate:</p><ul><li><strong>LAPL:</strong> LAPL Medical Certificate.</li><li><strong>PPL:</strong> <strong>Class 2</strong> Medical Certificate.</li></ul><p class='mb-0'>Wearing glasses is <strong>not an obstacle</strong>.</p>"
+      q8:
+        question: "8. What is the validity of the license and medical certificate?"
+        answer_html: "<table class='table table-bordered'><tbody><tr><td><strong>License</strong></td><td><strong>Lifetime</strong>.</td></tr><tr><td><strong>Class Rating (SEP)</strong></td><td><strong>24 months</strong> (must be revalidated).</td></tr><tr><td><strong>Class 2 Medical</strong></td><td>5 years (<40yo), 2 years (40-50), 1 year (>50).</td></tr></tbody></table>"
+      q9:
+        question: "9. How to maintain flight privileges?"
+        answer_html: "<p>You must meet <strong>recent experience</strong> requirements (flight hours, take-offs/landings) or pass a proficiency check with an examiner.</p>"
+      q10:
+        question: "10. What is the total cost of a license?"
+        answer_html: "<p>Cost varies:</p><ul><li><strong>LAPL:</strong> Between <strong>€6,000 and €9,000</strong>.</li><li><strong>PPL:</strong> Between <strong>€9,000 and €15,000</strong>.</li></ul>"
+      q11:
+        question: "11. Can the license be financed?"
+        answer_html: "<p>Yes, especially via the <strong>French Aeronautical Federation (FFA) Scholarship</strong> for young people, often linked to the BIA.</p>"
+      q12:
+        question: "12. Why pay for instruction in a non-profit club?"
+        answer_html: "<p class='mb-0'>The cost covers incompressible expenses (equipment depreciation, simulator, maintaining volunteer instructors' skills).</p>"
+      q13:
+        question: "13. What are the FFA aids for under 21s?"
+        answer_html: "<p>Some aids include:</p><ul class='list-group'><li class='list-group-item d-flex justify-content-between align-items-center'>1st Solo Flight<span>€350</span></li><li class='list-group-item d-flex justify-content-between align-items-center'>Full PPL or LAPL<span>€700</span></li></ul><p class='mt-3 small text-muted'>Check the FFA website for details.</p>"
+      q14:
+        question: "14. What is the BIA?"
+        answer_html: "<p>The <strong>Brevet d'Initiation Aéronautique</strong> is a diploma validating general aeronautical culture, aimed mainly at young people.</p>"
+      q15:
+        question: "15. What does the BIA bring?"
+        answer_html: "<p>It provides solid knowledge, flight initiation, financial aids for pilot training, and is an asset for professional orientation.</p>"
+      q16:
+        question: "16. What are the conditions to take the BIA?"
+        answer_html: "<p>Open to candidates <strong>13 years old</strong> and up. The exam is a multiple-choice test on 5 mandatory domains.</p>"

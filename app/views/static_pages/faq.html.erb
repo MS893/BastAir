@@ -1,11 +1,11 @@
-<% content_for :title, "FAQ - Brevets de Pilote" %>
+<% content_for :title, t('static_pages.faq.title') %>
 
 <div class="container my-5">
   <div class="d-flex justify-content-center align-items-center text-center">
     <%= image_tag 'faq.png', alt: 'Icône FAQ', style: 'height: 60px; margin-right: 40px;' %>
     <div>
-      <h1 class="mb-0">Foire Aux Questions (FAQ)</h1>
-      <p class="lead">Les Brevets de Pilote Avion (LAPL & PPL) ✈️</p>
+      <h1 class="mb-0"><%= t('static_pages.faq.title') %></h1>
+      <p class="lead"><%= t('static_pages.faq.subtitle') %></p>
     </div>
   </div>
   <!-- Séparateur -->
@@ -18,48 +18,12 @@
     <div class="accordion-item">
       <h2 class="accordion-header" id="heading1">
         <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1" aria-expanded="true" aria-controls="collapse1">
-          1. Quelle est la différence principale entre le PPL et le LAPL ?
+          <%= t('static_pages.faq.q1.question') %>
         </button>
       </h2>
       <div id="collapse1" class="accordion-collapse collapse show" aria-labelledby="heading1" data-bs-parent="#faqAccordion">
         <div class="accordion-body">
-        <p>La principale différence réside dans les <strong>privilèges</strong> et les <strong>contraintes</strong> associées à chaque licence :</p>
-        <table class="table table-bordered table-striped">
-          <thead>
-            <tr>
-              <th scope="col">Caractéristique</th>
-              <th scope="col">LAPL (Light Aircraft Pilot Licence)</th>
-              <th scope="col">PPL (Private Pilot Licence)</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><strong>Zone de vol</strong></td>
-              <td>Limitée aux pays <strong>EASA (Europe)</strong>.</td>
-              <td><strong>Monde entier</strong> (standard OACI).</td>
-            </tr>
-            <tr>
-              <td><strong>Passagers</strong></td>
-              <td><strong>Maximum 3</strong> passagers.</td>
-              <td>Aucune limitation (dans la limite de la configuration de l'avion).</td>
-            </tr>
-            <tr>
-              <td><strong>Masse de l'avion</strong></td>
-              <td>Avions monomoteurs à pistons jusqu'à <strong>2 000 kg</strong>.</td>
-              <td>Aucune limitation de masse (avec les qualifications appropriées).</td>
-            </tr>
-            <tr>
-              <td><strong>Heures de vol minimum</strong></td>
-              <td><strong>30 heures</strong> de vol.</td>
-              <td><strong>45 heures</strong> de vol.</td>
-            </tr>
-            <tr>
-              <td><strong>Qualifications</strong></td>
-              <td>Qualifications limitées (ex : VFR de nuit, voltige).</td>
-              <td>Accès à <strong>toutes les qualifications</strong> (Multimoteur, IFR, etc.).</td>
-            </tr>
-          </tbody>
-        </table>
+          <%= t('static_pages.faq.q1.answer_html') %>
         </div>
       </div>
     </div>
@@ -68,16 +32,12 @@
     <div class="accordion-item">
       <h2 class="accordion-header" id="heading2">
         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2" aria-expanded="false" aria-controls="collapse2">
-          2. Quelle licence devrais-je choisir : LAPL ou PPL ?
+          <%= t('static_pages.faq.q2.question') %>
         </button>
       </h2>
       <div id="collapse2" class="accordion-collapse collapse" aria-labelledby="heading2" data-bs-parent="#faqAccordion">
         <div class="accordion-body">
-        <p>Le choix dépend de vos <strong>objectifs de vol</strong> :</p>
-        <ul>
-          <li><strong>Optez pour le LAPL</strong> si vous souhaitez voler principalement en Europe, pour le loisir, seul ou avec un petit nombre de passagers, et sur des avions légers. Le coût et la durée de la formation initiale sont généralement plus faibles.</li>
-          <li><strong>Optez pour le PPL</strong> si vous envisagez de voler à travers le monde, sur des avions plus lourds, de transporter plus de passagers, ou si vous prévoyez d'ajouter des qualifications avancées (comme le vol aux instruments – IFR) ou de progresser vers une carrière professionnelle.</li>
-        </ul>
+          <%= t('static_pages.faq.q2.answer_html') %>
       </div>
     </div>
     </div>
@@ -86,16 +46,12 @@
     <div class="accordion-item">
       <h2 class="accordion-header" id="heading3">
         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse3" aria-expanded="false" aria-controls="collapse3">
-          3. Quel est l'âge minimum pour commencer la formation et obtenir la licence ?
+          <%= t('static_pages.faq.q3.question') %>
         </button>
       </h2>
       <div id="collapse3" class="accordion-collapse collapse" aria-labelledby="heading3" data-bs-parent="#faqAccordion">
         <div class="accordion-body">
-        <ul>
-          <li>Vous pouvez commencer la formation <strong>sans limite d'âge minimum</strong> (souvent dès 15-16 ans en aéroclub).</li>
-          <li>L'âge minimum pour le <strong>premier vol solo</strong> est de <strong>16 ans révolus</strong>.</li>
-          <li>L'âge minimum pour la <strong>présentation à l'examen pratique</strong> et l'obtention de la licence (LAPL ou PPL) est de <strong>17 ans révolus</strong>.</li>
-        </ul>
+          <%= t('static_pages.faq.q3.answer_html') %>
       </div>
     </div>
     </div>
@@ -104,12 +60,12 @@
     <div class="accordion-item">
       <h2 class="accordion-header" id="heading4">
         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse4" aria-expanded="false" aria-controls="collapse4">
-          4. Faut-il être bon en maths ou en sciences pour réussir la théorie ?
+          <%= t('static_pages.faq.q4.question') %>
         </button>
       </h2>
       <div id="collapse4" class="accordion-collapse collapse" aria-labelledby="heading4" data-bs-parent="#faqAccordion">
         <div class="accordion-body">
-        <p><strong>Non</strong>, ce n'est pas nécessaire. Bien que la théorie aborde des sujets techniques (comme les principes du vol et la navigation), les connaissances sont enseignées de zéro. La formation théorique est accessible à tous et ne requiert <strong>pas de diplôme scientifique</strong> particulier.</p>
+          <%= t('static_pages.faq.q4.answer_html') %>
       </div>
     </div>
     </div>
@@ -118,13 +74,12 @@
     <div class="accordion-item">
       <h2 class="accordion-header" id="heading5">
         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse5" aria-expanded="false" aria-controls="collapse5">
-          5. Comment se déroule la formation théorique ?
+          <%= t('static_pages.faq.q5.question') %>
         </button>
       </h2>
       <div id="collapse5" class="accordion-collapse collapse" aria-labelledby="heading5" data-bs-parent="#faqAccordion">
         <div class="accordion-body">
-        <p>La formation théorique couvre neuf modules (Réglementation, Météorologie, Navigation, etc.). Elle se fait en cours au sol dispensés par votre organisme de formation et est souvent complétée par de l'auto-apprentissage.</p>
-        <p>L'examen est un <strong>QCM</strong> (Questionnaire à Choix Multiples) passé auprès de l'Autorité de l'Aviation Civile (DGAC en France). Vous devez obtenir au moins <strong>75%</strong> de bonnes réponses dans chaque module.</p>
+          <%= t('static_pages.faq.q5.answer_html') %>
       </div>
     </div>
     </div>
@@ -133,17 +88,12 @@
     <div class="accordion-item">
       <h2 class="accordion-header" id="heading6">
         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse6" aria-expanded="false" aria-controls="collapse6">
-          6. Combien de temps faut-il pour obtenir la licence ?
+          <%= t('static_pages.faq.q6.question') %>
         </button>
       </h2>
       <div id="collapse6" class="accordion-collapse collapse" aria-labelledby="heading6" data-bs-parent="#faqAccordion">
         <div class="accordion-body">
-        <p>La durée varie beaucoup en fonction de votre <strong>disponibilité</strong> et de la <strong>météo</strong> :</p>
-        <ul>
-          <li>La théorie est valable <strong>24 mois</strong> après sa réussite.</li>
-          <li>En moyenne, une formation à temps partiel s'étale sur <strong>12 à 18 mois</strong>.</li>
-          <li>Une formation plus intensive peut être complétée en quelques mois.</li>
-        </ul>
+          <%= t('static_pages.faq.q6.answer_html') %>
       </div>
     </div>
     </div>
@@ -152,17 +102,12 @@
     <div class="accordion-item">
       <h2 class="accordion-header" id="heading7">
         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse7" aria-expanded="false" aria-controls="collapse7">
-          7. Quelle est l'exigence médicale ?
+          <%= t('static_pages.faq.q7.question') %>
         </button>
       </h2>
       <div id="collapse7" class="accordion-collapse collapse" aria-labelledby="heading7" data-bs-parent="#faqAccordion">
         <div class="accordion-body">
-        <p>L'obtention de toute licence nécessite un certificat d'aptitude médicale délivré par un médecin aéronautique agréé :</p>
-        <ul>
-          <li><strong>LAPL :</strong> Nécessite un certificat médical de classe <strong>LAPL</strong>. Il est généralement moins restrictif.</li>
-          <li><strong>PPL :</strong> Nécessite un certificat médical de <strong>Classe 2</strong>.</li>
-        </ul>
-        <p class="mb-0">Le port de lunettes ou de lentilles n'est <strong>pas un obstacle</strong> à l'obtention de l'aptitude, à condition que la correction soit satisfaisante.</p>
+          <%= t('static_pages.faq.q7.answer_html') %>
       </div>
     </div>
     </div>
@@ -171,31 +116,12 @@
     <div class="accordion-item">
       <h2 class="accordion-header" id="heading8">
         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse8" aria-expanded="false" aria-controls="collapse8">
-          8. Quelle est la validité de la licence et du certificat médical ?
+          <%= t('static_pages.faq.q8.question') %>
         </button>
       </h2>
       <div id="collapse8" class="accordion-collapse collapse" aria-labelledby="heading8" data-bs-parent="#faqAccordion">
         <div class="accordion-body">
-        <table class="table table-bordered">
-          <tbody>
-            <tr>
-              <td><strong>Licence (LAPL ou PPL)</strong></td>
-              <td><strong>À vie</strong> (elle ne périme jamais).</td>
-            </tr>
-            <tr>
-              <td><strong>Qualification de classe (ex: SEP)</strong></td>
-              <td><strong>24 mois</strong> (doit être prorogée).</td>
-            </tr>
-            <tr>
-              <td><strong>Certificat Médical LAPL</strong></td>
-              <td>5 ans (avant 40 ans), 2 ans (après 40 ans).</td>
-            </tr>
-            <tr>
-              <td><strong>Certificat Médical Classe 2 (PPL)</strong></td>
-              <td>5 ans (avant 40 ans), 2 ans (de 40 à 50 ans), 1 an (après 50 ans).</td>
-            </tr>
-          </tbody>
-        </table>
+          <%= t('static_pages.faq.q8.answer_html') %>
       </div>
     </div>
     </div>
@@ -204,25 +130,12 @@
     <div class="accordion-item">
       <h2 class="accordion-header" id="heading9">
         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse9" aria-expanded="false" aria-controls="collapse9">
-          9. Comment maintenir ses privilèges de vol ?
+          <%= t('static_pages.faq.q9.question') %>
         </button>
       </h2>
       <div id="collapse9" class="accordion-collapse collapse" aria-labelledby="heading9" data-bs-parent="#faqAccordion">
         <div class="accordion-body">
-        <p>Pour pouvoir exercer les privilèges de votre licence, vous devez avoir rempli certaines conditions d'<strong>expérience récente</strong> :</p>
-        <h6>LAPL (tous les 24 mois glissants) :</h6>
-        <ul>
-          <li>12 heures de vol en tant que Commandant de Bord (CDB).</li>
-          <li>12 décollages et 12 atterrissages.</li>
-          <li>Un vol de <strong>remise à niveau d'au moins 1 heure</strong> avec un instructeur.</li>
-        </ul>
-        <h6>PPL (Qualification SEP, tous les 24 mois) :</h6>
-        <p>Vous devez effectuer un <strong>vol de contrôle de compétence</strong> avec un examinateur OU satisfaire aux conditions d'expérience récente dans les <strong>12 mois</strong> précédant l'expiration :</p>
-        <ul>
-          <li>12 heures de vol, dont 6 heures en CDB minimum.</li>
-          <li>12 décollages et 12 atterrissages.</li>
-          <li>Un vol d'entraînement d'au moins <strong>1 heure avec un instructeur</strong>.</li>
-        </ul>
+          <%= t('static_pages.faq.q9.answer_html') %>
       </div>
     </div>
     </div>
@@ -231,17 +144,12 @@
     <div class="accordion-item">
       <h2 class="accordion-header" id="heading10">
         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse10" aria-expanded="false" aria-controls="collapse10">
-          10. Quel est le coût total d'une licence ?
+          <%= t('static_pages.faq.q10.question') %>
         </button>
       </h2>
       <div id="collapse10" class="accordion-collapse collapse" aria-labelledby="heading10" data-bs-parent="#faqAccordion">
         <div class="accordion-body">
-        <p>Le coût varie considérablement selon la licence choisie et la structure de formation (aéroclub associatif ou ATO professionnel).</p>
-        <ul>
-          <li>En France, le coût d'un <strong>LAPL</strong> est généralement compris entre <strong>6 000 € et 9 000 €</strong>.</li>
-          <li>Le coût d'un <strong>PPL</strong> est généralement compris entre <strong>9 000 € et 15 000 €</strong>.</li>
-        </ul>
-        <p class="mb-0">Ce coût inclut les heures de vol, les cours théoriques, les manuels, les examens et la visite médicale initiale.</p>
+          <%= t('static_pages.faq.q10.answer_html') %>
       </div>
     </div>
     </div>
@@ -250,16 +158,12 @@
     <div class="accordion-item">
       <h2 class="accordion-header" id="heading11">
         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse11" aria-expanded="false" aria-controls="collapse11">
-          11. Peut-on financer la licence ?
+          <%= t('static_pages.faq.q11.question') %>
         </button>
       </h2>
       <div id="collapse11" class="accordion-collapse collapse" aria-labelledby="heading11" data-bs-parent="#faqAccordion">
         <div class="accordion-body">
-        <p>Des solutions existent, notamment pour les jeunes :</p>
-        <ul>
-          <li>La <strong>Bourse de la Fédération Française Aéronautique (FFA)</strong> permet d'obtenir des aides financières, souvent conditionnées à l'obtention du Brevet d'Initiation Aéronautique (BIA).</li>
-          <li>Renseignez-vous auprès des aéroclubs locaux pour les aides ou programmes spécifiques.</li>
-        </ul>
+          <%= t('static_pages.faq.q11.answer_html') %>
       </div>
     </div>
     </div>
@@ -268,14 +172,12 @@
     <div class="accordion-item">
       <h2 class="accordion-header" id="heading12">
         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse12" aria-expanded="false" aria-controls="collapse12">
-          12. C'est une association basée sur le bénévolat, alors pourquoi payer pour l'instruction ?
+          <%= t('static_pages.faq.q12.question') %>
         </button>
       </h2>
       <div id="collapse12" class="accordion-collapse collapse" aria-labelledby="heading12" data-bs-parent="#faqAccordion">
         <div class="accordion-body">
-        <p class="mb-0">
-          Le coût de l'instruction, bien que modeste, est nécessaire pour couvrir les frais incompressibles liés à une formation de qualité. Il inclut l'amortissement du matériel pédagogique et du simulateur de vol, et les frais de maintien des compétences de nos instructeurs bénévoles.
-        </p>
+          <%= t('static_pages.faq.q12.answer_html') %>
       </div>
     </div>
 
@@ -283,28 +185,12 @@
     <div class="accordion-item">
       <h2 class="accordion-header" id="headingFfaHelp">
         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFfaHelp" aria-expanded="false" aria-controls="collapseFfaHelp">
-          13. Quelles sont les aides de la FFA pour les moins de 21 ans ?
+          <%= t('static_pages.faq.q13.question') %>
         </button>
       </h2>
       <div id="collapseFfaHelp" class="accordion-collapse collapse" aria-labelledby="headingFfaHelp" data-bs-parent="#faqAccordion">
         <div class="accordion-body">
-          <p>Voici la liste des aides financières proposées par la Fédération Française Aéronautique (FFA) pour les pilotes de moins de 21 ans :</p>
-          <ul class="list-group">
-            <li class="list-group-item d-flex justify-content-between align-items-center">1er Lâché solo<span>350 €</span></li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">ABL<span>350 €</span></li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">ABL + BIA<span>520 €</span></li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">Théorique PPL ou LAPL + BIA<span>75 €</span></li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">Théorique PPL ou LAPL + lic. Jeunes Ailes + BIA<span>100 €</span></li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">PPL ou LAPL Complet (Non cumulables)<span>700 €</span></li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">Qualification FCL 800 (Voltige)<span>350 €</span></li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">Qualification Montagne<span>350 €</span></li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">Qualification Hydravion<span>350 €</span></li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">Qualification de site Outre-Mer<span>350 €</span></li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">Qualification IFR Privé (BIR)<span>350 €</span></li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">Qualification Vol de Nuit<span>350 €</span></li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">Autorisation d’accès Altiport<span>350 €</span></li>
-          </ul>
-          <p class="mt-3 small text-muted">Pour plus de détails et pour connaître les conditions d'éligibilité, nous vous invitons à consulter le site officiel de la FFA.</p>
+          <%= t('static_pages.faq.q13.answer_html') %>
         </div>
       </div>
     </div>
@@ -313,15 +199,12 @@
     <div class="accordion-item">
       <h2 class="accordion-header" id="heading14">
         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse14" aria-expanded="false" aria-controls="collapse14">
-          14. Qu'est-ce que le BIA ?
+          <%= t('static_pages.faq.q14.question') %>
         </button>
       </h2>
       <div id="collapse14" class="accordion-collapse collapse" aria-labelledby="heading14" data-bs-parent="#faqAccordion">
         <div class="accordion-body">
-          <p>Le BIA est l'acronyme du <strong>Brevet d'Initiation Aéronautique</strong>.</p>
-          <p>C'est un diplôme de l'Éducation nationale française qui valide un niveau de culture générale dans le domaine de l'aéronautique et de l'espace.</p>
-          <p>Il s'adresse principalement aux jeunes (collégiens et lycéens) et constitue une première étape pour ceux qui sont passionnés par l'aviation, l'espace, ou qui envisagent une carrière dans ces secteurs.</p>
-          <p class="mb-0">Il est généralement préparé en milieu scolaire (ateliers, clubs) ou dans des structures associatives comme les aéro-clubs, et est sanctionné par un examen écrit (QCM).</p>
+          <%= t('static_pages.faq.q14.answer_html') %>
         </div>
       </div>
     </div>
@@ -330,18 +213,12 @@
     <div class="accordion-item">
       <h2 class="accordion-header" id="heading15">
         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse15" aria-expanded="false" aria-controls="collapse15">
-          15. Qu'apporte le BIA ?
+          <%= t('static_pages.faq.q15.question') %>
         </button>
       </h2>
       <div id="collapse15" class="accordion-collapse collapse" aria-labelledby="heading15" data-bs-parent="#faqAccordion">
         <div class="accordion-body">
-          <p>Le BIA apporte de nombreux avantages et bénéfices :</p>
-          <ul>
-            <li><strong>📚 Connaissances Solides :</strong> Il permet d'acquérir une culture aéronautique et spatiale fondamentale à travers l'étude de cinq matières principales (aérodynamique et mécanique du vol, connaissance des aéronefs, météorologie, navigation/sécurité/réglementation, histoire de l'air et de l'espace).</li>
-            <li><strong>✈️ Initiation au Vol :</strong> Le diplôme donne souvent droit à des facilités ou des bourses pour effectuer des vols d'initiation ou des premiers brevets de pilote, en partenariat avec les fédérations et aéro-clubs.</li>
-            <li><strong>🚀 Orientation Professionnelle :</strong> Il est un atout majeur sur un CV pour les parcours scolaires et professionnels dans les domaines de l'aéronautique, de la mécanique, ou de la construction aérospatiale.</li>
-            <li><strong>🌟 Motivation et Encadrement :</strong> Il structure la passion des jeunes, leur offre un cadre d'apprentissage rigoureux et leur permet de rencontrer des professionnels et des passionnés du secteur.</li>
-          </ul>
+          <%= t('static_pages.faq.q15.answer_html') %>
         </div>
       </div>
     </div>
@@ -350,23 +227,12 @@
     <div class="accordion-item">
       <h2 class="accordion-header" id="heading16">
         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse16" aria-expanded="false" aria-controls="collapse16">
-          16. Quelles sont les conditions pour passer le BIA ?
+          <%= t('static_pages.faq.q16.question') %>
         </button>
       </h2>
       <div id="collapse16" class="accordion-collapse collapse" aria-labelledby="heading16" data-bs-parent="#faqAccordion">
         <div class="accordion-body">
-          <p>Les conditions d'inscription et de réussite sont assez souples et accessibles :</p>
-          <ul>
-            <li><strong>Âge :</strong> L'examen est ouvert à tous les candidats âgés de 13 ans révolus au jour de l'épreuve. Il n'y a pas de limite d'âge supérieure.</li>
-            <li><strong>Niveau Scolaire Recommandé :</strong> Bien qu'aucune condition de scolarité ne soit requise, le programme exige des connaissances en mathématiques et physique généralement acquises à partir du niveau de la 3e.</li>
-            <li><strong>Inscription :</strong> Les candidats peuvent s'inscrire :
-              <ul>
-                <li>Via leur établissement scolaire s'ils suivent la préparation en classe.</li>
-                <li>En candidat libre (individuel) auprès de leur académie de résidence.</li>
-              </ul>
-            </li>
-            <li><strong>Obtention du Diplôme :</strong> L'examen se présente sous la forme d'un Questionnaire à Choix Multiples (QCM) portant sur les cinq domaines obligatoires. Pour obtenir le BIA, le candidat doit obtenir une note moyenne d'au moins 10/20 (soit 50 points sur un total de 100).</li>
-          </ul>
+          <%= t('static_pages.faq.q16.answer_html') %>
         </div>
       </div>
     </div>
