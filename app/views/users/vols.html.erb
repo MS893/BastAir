@@ -5,7 +5,9 @@
     <h1 class="mb-0">Mon carnet de vol</h1>
     <div class="btn-group">
       <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#partialTotalsModal">Totaux partiels</button>
-      <button type="button" class="btn btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#csvExportModal">Exporter au format CSV</button>
+      <button type="button" class="btn btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#csvExportModal">
+        <i class="bi bi-filetype-csv me-2"></i>Exporter au format CSV
+      </button>
       <%= link_to "Enregistrer un nouveau vol", new_vol_path, class: "btn btn-primary" %>
     </div>
   </div>
