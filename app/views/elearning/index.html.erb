@@ -23,7 +23,7 @@
                 <% if livret_entry&.status == 3 %>
                   <%= link_to signature_livret_path(livret_entry), class: "text-decoration-none" do %>
                     <span class="badge bg-success ms-2 fw-normal">
-                      <i class="fas fa-check-circle me-1"></i> Validé le <%= l(livret_entry.updated_at, format: :short_year) %>
+                      <i class="bi bi-check-circle me-1"></i> Validé le <%= l(livret_entry.updated_at, format: :short_year) %>
                     </span>
                   <% end %>
                 <% end %>

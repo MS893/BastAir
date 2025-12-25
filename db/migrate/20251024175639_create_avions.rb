@@ -21,13 +21,15 @@ class CreateAvions < ActiveRecord::Migration[8.0]
       t.date :_50h
       t.date :_100h
       t.date :annuelle
-      t.date :gv
+      t.date :_1000h
+      t.date :gv              # grande visite
       t.date :tbo_helice
       t.date :tbo_parachute
       t.decimal :potentiel_cellule, precision: 7, scale: 2
       t.decimal :potentiel_moteur, precision: 7, scale: 2
-      t.decimal :next_50h, precision: 5, scale: 2
+      t.decimal :next_50h, precision: 4, scale: 2
       t.decimal :next_100h, precision: 5, scale: 2
+      t.decimal :next_1000h, precision: 6, scale: 2
 
       t.timestamps
     end

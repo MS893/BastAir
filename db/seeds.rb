@@ -191,13 +191,14 @@ def crediter
 end
 
 def avion
-  # 2. Création d'un avion / achat
+  # 2. Création de 2 avions / achat d'un seul
   # ----------------------------------------------------
   puts "\nCreating aircraft..."
   @avion = Avion.create!(
     immatriculation: "F-HGBT",
     marque: "Elixir Aircraft",
     modele: "Exlixir",
+    moteur: "Rotax 912iS",
     conso_horaire: 18,
     certif_immat: Faker::Date.forward(days: 365),
     cert_navigabilite: Faker::Date.forward(days: 365),
@@ -208,14 +209,43 @@ def avion
     assurance: Faker::Date.forward(days: 365),
     _50h: Faker::Date.forward(days: 30),
     _100h: Faker::Date.forward(days: 60),
+    _1000h: Faker::Date.forward(days: 200),
     annuelle: Faker::Date.forward(days: 365),
     gv: Faker::Date.forward(days: 1095),
-    helice: Faker::Date.forward(days: 1095),
-    parachute: Faker::Date.forward(days: 1095),
+    tbo_helice: Faker::Date.forward(days: 1095),
+    tbo_parachute: Faker::Date.forward(days: 1095),
     potentiel_cellule: 50000.00,
-    potentiel_moteur: 1000.00,
+    potentiel_moteur: 2000.00,
     next_100h: 50.00,
-    next_100h: 100.00
+    next_100h: 100.00,
+    next_1000h: 1000.00
+  )
+  puts "✅ Aircraft created: #{@avion.immatriculation}"
+  @avion = Avion.create!(
+    immatriculation: "F-HGCU",
+    marque: "Elixir Aircraft",
+    modele: "Exlixir",
+    moteur: "Rotax 912iS",
+    conso_horaire: 18,
+    certif_immat: Faker::Date.forward(days: 365),
+    cert_navigabilite: Faker::Date.forward(days: 365),
+    cert_examen_navigabilite: Faker::Date.forward(days: 365),
+    licence_station_aeronef: Faker::Date.forward(days: 365),
+    cert_limitation_nuisances: Faker::Date.forward(days: 365),
+    fiche_pesee: Faker::Date.forward(days: 365),
+    assurance: Faker::Date.forward(days: 365),
+    _50h: Faker::Date.forward(days: 30),
+    _100h: Faker::Date.forward(days: 60),
+    _1000h: Faker::Date.forward(days: 200),
+    annuelle: Faker::Date.forward(days: 365),
+    gv: Faker::Date.forward(days: 1095),
+    tbo_helice: Faker::Date.forward(days: 1095),
+    tbo_parachute: Faker::Date.forward(days: 1095),
+    potentiel_cellule: 50000.00,
+    potentiel_moteur: 2000.00,
+    next_100h: 50.00,
+    next_100h: 100.00,
+    next_1000h: 1000.00
   )
   puts "✅ Aircraft created: #{@avion.immatriculation}"
   # Création de la transaction d'achat de l'avion et de l'immobilisation correspondante

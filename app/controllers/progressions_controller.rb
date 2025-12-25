@@ -49,14 +49,14 @@ class ProgressionsController < ApplicationController
 
     render  pdf: "Livret_progression_#{@selected_eleve.full_name.parameterize}_#{Date.today.strftime('%d-%m-%Y')}",
             template: "progressions/show",
-            layout: 'pdf_progression',
+            layout: 'pdf',
             page_size: 'A4',
             orientation: 'Portrait',
             zoom: 1,
             dpi: 75,
             margin: { top: 30, bottom: 20, left: 10, right: 10 },
             header: { html: { template: 'layouts/_pdf_progression_header', layout: false }, spacing: 10 },
-            footer: { html: { template: 'layouts/_pdf_progression_footer', layout: false } }
+            footer: { html: { template: 'layouts/_pdf_footer', layout: false, formats: [:html] } }
   end
 
   def update_exam
@@ -131,14 +131,14 @@ class ProgressionsController < ApplicationController
     pdf = render_to_string(
       pdf: "Livret_progression_#{@selected_eleve.full_name.parameterize}_#{Date.today.strftime('%d-%m-%Y')}",
       template: "progressions/show",
-      layout: 'pdf_progression',
+      layout: 'pdf',
       page_size: 'A4',
       orientation: 'Portrait',
       zoom: 1,
       dpi: 75,
       margin: { top: 30, bottom: 20, left: 10, right: 10 },
       header: { html: { template: 'layouts/_pdf_progression_header', layout: false }, spacing: 10 },
-      footer: { html: { template: 'layouts/_pdf_progression_footer', layout: false } }
+      footer: { html: { template: 'layouts/_pdf_footer', layout: false, formats: [:html] } }
     )
 
     UserMailer.progression_booklet_email(@selected_eleve, pdf).deliver_later

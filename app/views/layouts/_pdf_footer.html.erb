@@ -1,18 +1,36 @@
-<%# app/views/layouts/_pdf_footer.html.erb %>
-<div style="font-size: 9px; color: #666; text-align: center; border-top: 1px solid #ddd; padding-top: 5px; font-family: sans-serif;">
-  <span>Généré le <%= l(Date.current, format: :long) %></span>
-  <span style="float: right;">Page <span id="page"></span> sur <span id="topage"></span></span>
-</div>
+<!DOCTYPE html>
+<html>
 
-<script>
-  // Ce script est une solution de contournement pour forcer l'affichage de la pagination
-  // quand les classes standards 'page' et 'topage' ne fonctionnent pas.
-  function subst() {
-    var vars = {};
-    var x = document.location.search.substring(1).split('&');
-    for (var i in x) { var z = x[i].split('=', 2); vars[z[0]] = unescape(z[1]); }
-    document.getElementById('page').innerHTML = vars['page'];
-    document.getElementById('topage').innerHTML = vars['topage'];
-  }
-  window.onload = subst;
-</script>
+<head>
+  <meta charset="utf-8">
+
+  <script>
+    function subst() {
+      var vars = {};
+      var x = document.location.search.substring(1).split('&');
+      for (var i in x) {var z = x[i].split('=', 2); vars[z[0]] = unescape(z[1]);}
+      var x = ['frompage', 'topage', 'page', 'webpage', 'section', 'subsection', 'subsubsection'];
+      for (var i in x) {
+        var y = document.getElementsByClassName(x[i]);
+        for (var j=0; j<y.length; ++j) y[j].textContent = vars[x[i]];
+      }
+    }
+  </script>
+
+</head>
+
+<body style="margin: 0; padding: 0;" onload="subst()">
+  <div style="border-top: 1px solid #ccc; padding-top: 5px; margin-top: 0; font-family: sans-serif; font-size: 10px; color: #777; width: 100%; overflow: hidden;">
+    <div style="float: left; width: 33%; text-align: left;">
+      BastAir - Aéroclub de Basse-Terre
+    </div>
+    <div style="float: left; width: 34%; text-align: center;">
+      Edité le <%= Date.today.strftime('%d/%m/%Y') %>
+    </div>
+    <div style="float: left; width: 33%; text-align: right;">
+      Page <span class="page"></span> / <span class="topage"></span>
+    </div>
+  </div>
+</body>
+
+</html>

@@ -4,7 +4,7 @@
   <div class="d-flex justify-content-between align-items-center mb-4">
     <%# Utilisation du titre dynamique %>
     <h1 class="mb-0 h2"><%= @page_title %></h1>
-    <%= link_to '<i class="bi bi-file-earmark-spreadsheet me-2"></i>Exporter en CSV'.html_safe, vols_path(format: :csv, period: params[:period], pilot_id: params[:pilot_id], avion_id: params[:avion_id]), class: 'btn btn-success' %>
+    <%= link_to '<i class="bi bi-filetype-csv me-2"></i>Exporter en CSV'.html_safe, vols_path(format: :csv, period: params[:period], pilot_id: params[:pilot_id], avion_id: params[:avion_id]), class: 'btn btn-success' %>
   </div>
 
   <%# --- FORMULAIRE DE FILTRE --- %>

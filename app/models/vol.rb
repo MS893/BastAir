@@ -110,7 +110,10 @@ class Vol < ApplicationRecord
       previous_100h = avion.next_100h
       
       avion.decrement(:potentiel_moteur, duree_vol.to_d)
+      avion.decrement(:potentiel_cellule, duree_vol.to_d)
+      avion.decrement(:next_50h, duree_vol.to_d) if avion.next_50h
       avion.decrement(:next_100h, duree_vol.to_d) if avion.next_100h
+      avion.decrement(:next_1000h, duree_vol.to_d) if avion.next_1000h
       avion.save(validate: false)
 
       # Si l'avion devient indisponible suite à ce vol, on prévient les futurs pilotes
@@ -139,7 +142,10 @@ class Vol < ApplicationRecord
       previous_100h = avion.next_100h
 
       avion.decrement(:potentiel_moteur, difference)
+      avion.decrement(:potentiel_cellule, difference)
+      avion.decrement(:next_50h, difference) if avion.next_50h
       avion.decrement(:next_100h, difference) if avion.next_100h
+      avion.decrement(:next_1000h, difference) if avion.next_1000h
       avion.save(validate: false)
 
       # Si l'avion devient indisponible suite à l'ajustement
@@ -160,7 +166,10 @@ class Vol < ApplicationRecord
     # Si le vol est supprimé, on rend les heures à l'avion
     avion.with_lock do
       avion.increment(:potentiel_moteur, duree_vol.to_d)
+      avion.increment(:potentiel_cellule, duree_vol.to_d)
+      avion.increment(:next_50h, duree_vol.to_d) if avion.next_50h
       avion.increment(:next_100h, duree_vol.to_d) if avion.next_100h
+      avion.increment(:next_1000h, duree_vol.to_d) if avion.next_1000h
       avion.save(validate: false)
     end
   end
@@ -279,6 +288,10 @@ class Vol < ApplicationRecord
 
     if avion.next_100h.present? && avion.next_100h < duree_vol.to_d
       errors.add(:base, "Le potentiel pour la visite des 100h est insuffisant pour ce vol (#{avion.next_100h}h restantes).")
+    end
+
+    if avion.next_1000h.present? && avion.next_1000h < duree_vol.to_d
+      errors.add(:base, "Le potentiel pour la visite des 1000h est insuffisant pour ce vol (#{avion.next_1000h}h restantes).")
     end
   end
 

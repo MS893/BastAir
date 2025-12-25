@@ -129,8 +129,10 @@
                 <%= form.datetime_field attr_name, value: attr_value, class: 'form-control' %>
               <% when :text %>
                 <%= form.text_area attr_name, value: attr_value, class: 'form-control' %>
-              <% when :integer, :float, :decimal %>
+              <% when :integer %>
                 <%= form.number_field attr_name, value: attr_value, class: 'form-control' %>
+              <% when :float, :decimal %>
+                <%= form.number_field attr_name, value: attr_value, class: 'form-control', step: 0.01 %>
               <% else %>
                 <%= form.text_field attr_name, value: attr_value, class: 'form-control' %>
               <% end %>
@@ -203,8 +205,10 @@
                 <%= form.datetime_field attr_name, value: attr_value, class: 'form-control' %>
               <% when :text %>
                 <%= form.text_area attr_name, value: attr_value, class: 'form-control' %>
-              <% when :integer, :float, :decimal %>
+              <% when :integer %>
                 <%= form.number_field attr_name, value: attr_value, class: 'form-control' %>
+              <% when :float, :decimal %>
+                <%= form.number_field attr_name, value: attr_value, class: 'form-control', step: 0.01 %>
               <% else %>
                 <%= form.text_field attr_name, value: attr_value, class: 'form-control' %>
               <% end %>

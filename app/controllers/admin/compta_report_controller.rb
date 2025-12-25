@@ -92,12 +92,12 @@ module Admin
         format.html
         format.pdf do
           # On génère le contenu des partiels
-          header_content = render_to_string(partial: 'layouts/pdf_header', formats: [:html])
+          header_content = render_to_string(partial: 'layouts/pdf_bilan_header', formats: [:html])
           footer_content = render_to_string(partial: 'layouts/pdf_footer', formats: [:html])
 
           # On les encapsule dans un document HTML complet avec l'encodage UTF-8
           full_header_html = "<!DOCTYPE html><html><head><meta charset='utf-8'></head><body>#{header_content}</body></html>"
-          full_footer_html = "<!DOCTYPE html><html><head><meta charset='utf-8'></head><body>#{footer_content}</body></html>"
+          full_footer_html = footer_content
 
           # On écrit ce contenu complet dans des fichiers temporaires
           header_file = Tempfile.new(['header', '.html'])
@@ -122,6 +122,8 @@ module Admin
       end
     end
 
+
+    
     private
 
     def authorize_admin_or_treasurer!

@@ -1,0 +1,14 @@
+<%# app/views/layouts/_pdf_bilan_header.html.erb %>
+<table style="width: 100%; border-collapse: collapse; border: 1px solid white; border-bottom: 1px solid #ddd; font-family: sans-serif;">
+  <tbody>
+    <tr>
+      <td style="width: 20%; vertical-align: middle; border: 1px solid white; border-bottom: 1px solid #ddd; padding-bottom: 10px;">
+        <%= wicked_pdf_image_tag 'logo_s_pdf.png', style: 'height: 50px;' %>
+      </td>
+      <td style="width: 80%; text-align: right; vertical-align: middle; border: 1px solid white; border-bottom: 1px solid #ddd; padding-bottom: 10px;">
+        <strong style="font-size: 1.2em;">Dossier d'entretien</strong><br>
+        <span style="color: #555;">Avion : <%= @avion.immatriculation %></span>
+      </td>
+    </tr>
+  </tbody>
+</table>

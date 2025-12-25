@@ -1,0 +1,72 @@
+<div class="container">
+  
+  <div class="text-center mb-5">
+    <h2>Dossier de Maintenance</h2>
+    <h4>Avion : <%= @avion.immatriculation %></h4>
+    <p>Date du dossier : <%= Date.today.strftime("%d/%m/%Y") %></p>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+      <h4 class="card-title mb-0">État des Potentiels</h4>
+    </div>
+    <div class="card-body">
+      <table class="table table-bordered">
+        <tbody>
+          <tr>
+            <th scope="row">Potentiel Moteur</th>
+            <td>
+              <strong><%= @avion.potentiel_moteur %>h</strong> / 2000h
+              <div class="progress mt-1" style="height: 10px;">
+                <div class="progress-bar" role="progressbar" style="width: <%= (@avion.potentiel_moteur / 2000.0 * 100).clamp(0, 100) %>%;"></div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">Prochaine Visite 100h</th>
+            <td>
+              <strong><%= @avion.next_100h %> h</strong> / 100 h
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">Visite Annuelle</th>
+            <td><%= @avion.annuelle&.strftime("%d/%m/%Y") || "Non définie" %></td>
+          </tr>
+          <tr>
+            <th scope="row">Certificat d'Examen de Navigabilité (CEN)</th>
+            <td><%= @avion.cert_examen_navigabilite&.strftime("%d/%m/%Y") || "Non défini" %></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header bg-secondary text-white">
+      <h4 class="card-title mb-0">Historique des dernières opérations</h4>
+    </div>
+    <div class="card-body">
+      <table class="table table-striped table-sm">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Action</th>
+            <th>Détails</th>
+            <th>Utilisateur</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @logs.each do |log| %>
+            <tr>
+              <td><%= log.created_at.strftime("%d/%m/%Y %H:%M") %></td>
+              <td><%= log.action %></td>
+              <td><%= log.details %></td>
+              <td><%= log.user.respond_to?(:full_name) ? log.user.full_name : log.user.email %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>

@@ -8,9 +8,11 @@
           <%= label_tag :year, "Choisir une année", class: "form-label" %>
           <%= select_tag :year, options_for_select(@available_years, @year), class: 'form-select' %>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-6">
           <%= submit_tag "Afficher", class: "btn btn-primary" %>
-          <%= link_to "Exporter en PDF", yearly_accounting_report_admin_compta_report_index_path(format: :pdf, year: @year), class: "btn btn-danger ms-2", target: "_blank" %>
+          <%= link_to yearly_accounting_report_admin_compta_report_index_path(format: :pdf, year: @year), class: "btn btn-outline-primary ms-2", target: "_blank" do %>
+            <i class="bi bi-file-earmark-pdf me-2"></i>Exporter en PDF
+          <% end %>
         </div>
       <% end %>
     </div>

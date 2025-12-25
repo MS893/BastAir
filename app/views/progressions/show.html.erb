@@ -8,10 +8,10 @@
       <h1>Livret de Progression</h1>
       <% if @selected_eleve %>
         <%= link_to download_livret_progression_path(eleve_id: @selected_eleve.id), class: "btn btn-outline-primary", target: "_blank", data: { turbo: false } do %>
-          <i class="fas fa-file-pdf me-2"></i> Télécharger en PDF
+          <i class="bi bi-file-earmark-pdf me-2"></i> Télécharger en PDF
         <% end %>
         <%= link_to send_pdf_email_progression_path(eleve_id: @selected_eleve.id), data: { turbo_method: :post, turbo_confirm: "Envoyer le livret par email à #{@selected_eleve.full_name} ?" }, class: "btn btn-outline-info ms-2" do %>
-          <i class="fas fa-envelope me-2"></i> Envoyer par email
+          <i class="bi bi-envelope me-2"></i> Envoyer par email
         <% end %>
       <% end %>
     </div>
@@ -93,7 +93,7 @@
 
         <% if @selected_eleve.date_fin_formation.present? %>
           <div class="alert alert-success mb-4">
-            <i class="fas fa-graduation-cap me-2"></i>Formation terminée le <%= l(@selected_eleve.date_fin_formation) %>
+            <i class="bi bi-motarboard me-2"></i>Formation terminée le <%= l(@selected_eleve.date_fin_formation) %>
           </div>
         <% end %>
 
@@ -113,7 +113,7 @@
             %>
             <div class="card mb-4 border-info">
               <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
-                <h5 class="mb-0"><i class="fas fa-clipboard-check me-2"></i>Vols en attente de validation</h5>
+                <h5 class="mb-0"><i class="bi bi-clipboard-check me-2"></i>Vols en attente de validation</h5>
                 <span class="badge bg-dark"><%= pending_vols.count %></span>
               </div>
               <div class="card-body p-0">
@@ -223,10 +223,10 @@
                   <%# On vérifie si l'email a déjà été envoyé via les logs d'activité %>
                   <% email_sent = ActivityLog.where(record_type: 'User', record_id: @selected_eleve.id, action: 'send_exam_email').exists? %>
                   <% if email_sent %>
-                    <span class="ms-2 text-success" title="Email de félicitations déjà envoyé"><i class="fas fa-check-circle"></i></span>
+                    <span class="ms-2 text-success" title="Email de félicitations déjà envoyé"><i class="bi bi-check-circle"></i></span>
                   <% else %>
                     <%= button_to send_exam_email_progression_path(eleve_id: @selected_eleve.id), method: :post, form_class: "d-inline ms-2", class: "btn btn-link text-primary p-0 border-0 bg-transparent", title: "Envoyer un email à l'élève", data: { turbo_confirm: "Confirmez-vous l'envoi de l'email de félicitations à l'élève ?" } do %>
-                      <i class="fas fa-envelope"></i>
+                      <i class="bi bi-envelope"></i>
                     <% end %>
                   <% end %>
                 </div>
@@ -261,7 +261,7 @@
 
         <div class="card mb-4">
           <div class="card-body">
-            <h6 class="card-title fw-bold mb-3"><i class="fas fa-clock me-2"></i>Synthèse des Heures de Vol</h6>
+            <h6 class="card-title fw-bold mb-3"><i class="bi bi-clock me-2"></i>Synthèse des Heures de Vol</h6>
             <div class="row text-center">
               <div class="col-md-4 border-end">
                 <h6 class="text-muted small text-uppercase">Local</h6>
@@ -374,7 +374,7 @@
                               </div>
                             </div>
                             <% if livret.status == 3 && livret.date.present? %>
-                              <span class="badge bg-success ms-2 fw-normal"><i class="fas fa-check-circle me-1"></i> - Validé le <%= l(livret.date, format: :short_year) %></span>
+                              <span class="badge bg-success ms-2 fw-normal"><i class="bi bi-check-circle me-1"></i> - Validé le <%= l(livret.date, format: :short_year) %></span>
                             <% else %>
                               <span class="badge bg-light text-dark border"> - Non validé</span>
                             <% end %>
@@ -451,11 +451,11 @@
                           <%# Si l'utilisateur est autorisé (instructeur/admin ou l'élève lui-même) ET qu'une signature existe, on crée un lien %>
                           <% if (current_user.instructeur? || current_user.admin? || current_user == livret.user) && livret.signature_image.attached? && !@pdf %>
                             <%= link_to signature_livret_path(livret), class: "text-decoration-none" do %>
-                              <span class="badge bg-success ms-2 fw-normal"><i class="fas fa-check-circle me-1"></i> Validé le <%= l(livret.date, format: :short_year) %></span>
+                              <span class="badge bg-success ms-2 fw-normal"><i class="bi bi-check-circle me-1"></i> Validé le <%= l(livret.date, format: :short_year) %></span>
                             <% end %>
                           <% else %>
                             <%# Sinon, on affiche un simple badge non cliquable %>
-                            <span class="badge bg-success ms-2 fw-normal"><i class="fas fa-check-circle me-1"></i> Validé le <%= l(livret.date, format: :short_year) %></span>
+                            <span class="badge bg-success ms-2 fw-normal"><i class="bi bi-check-circle me-1"></i> Validé le <%= l(livret.date, format: :short_year) %></span>
                           <% end %>
                         <% else %>
                           <span class="badge bg-light text-dark border">Non validé</span>
@@ -533,9 +533,9 @@
                               
                               <% date_content = capture do %>
                                 <% if livret.date? %>
-                                  <i class="fas fa-calendar-check me-1"></i><%= l(livret.date, format: :short_year) %>
+                                  <i class="bi bi-calendar-check me-1"></i><%= l(livret.date, format: :short_year) %>
                                 <% elsif vol %>
-                                  <i class="fas fa-calendar-check me-1"></i><%= l(vol.debut_vol.to_date, format: :short_year) %>
+                                  <i class="bi bi-calendar-check me-1"></i><%= l(vol.debut_vol.to_date, format: :short_year) %>
                                 <% end %>
                               <% end %>
 
@@ -596,11 +596,11 @@
                                   <button class="btn btn-link text-decoration-none p-0 border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     <% case livret.status %>
                                     <% when 1 %>
-                                      <span class="badge bg-secondary">Vu <i class="fas fa-caret-down ms-1" style="font-size: 0.7em;"></i></span>
+                                      <span class="badge bg-secondary">Vu <i class="bi bi-chevron-down ms-1" style="font-size: 0.7em;"></i></span>
                                     <% when 2 %>
-                                      <span class="badge bg-primary">Avancé <i class="fas fa-caret-down ms-1" style="font-size: 0.7em;"></i></span>
+                                      <span class="badge bg-primary">Avancé <i class="bi bi-chevron-down ms-1" style="font-size: 0.7em;"></i></span>
                                     <% when 3 %>
-                                      <span class="badge bg-success">Acquis <i class="fas fa-caret-down ms-1" style="font-size: 0.7em;"></i></span>
+                                      <span class="badge bg-success">Acquis <i class="bi bi-chevron-down ms-1" style="font-size: 0.7em;"></i></span>
                                     <% end %>
                                   </button>
                                   <ul class="dropdown-menu">

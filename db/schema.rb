@@ -72,6 +72,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_23_082656) do
     t.string "immatriculation"
     t.string "marque"
     t.string "modele"
+    t.string "moteur"
     t.integer "conso_horaire"
     t.date "certif_immat"
     t.date "cert_navigabilite"
@@ -83,12 +84,15 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_23_082656) do
     t.date "_50h"
     t.date "_100h"
     t.date "annuelle"
+    t.date "_1000h"
     t.date "gv"
-    t.date "helice"
-    t.date "parachute"
+    t.date "tbo_helice"
+    t.date "tbo_parachute"
     t.decimal "potentiel_cellule", precision: 7, scale: 2
     t.decimal "potentiel_moteur", precision: 7, scale: 2
+    t.decimal "next_50h", precision: 4, scale: 2
     t.decimal "next_100h", precision: 5, scale: 2
+    t.decimal "next_1000h", precision: 6, scale: 2
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

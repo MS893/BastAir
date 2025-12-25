@@ -1,7 +1,7 @@
 <div class="container mt-5">
   <div class="card shadow-sm">
     <div class="card-header bg-primary text-white">
-      <h3 class="mb-0 h5"><i class="fas fa-file-signature me-2"></i>Signature de la leçon : <%= @livret.display_title %></h3>
+      <h3 class="mb-0 h5"><i class="bi bi-pencil-square me-2"></i>Signature de la leçon : <%= @livret.display_title %></h3>
     </div>
     <div class="card-body">
       
@@ -13,10 +13,10 @@
             <div class="mb-2">
               <%= image_tag @livret.signature_image, class: "img-fluid border rounded bg-light", style: "max-height: 120px;" %>
             </div>
-            <p class="text-success small fw-bold"><i class="fas fa-check-circle"></i> Signé par <%= @livret.user.full_name %></p>
+            <p class="text-success small fw-bold"><i class="bi bi-check-circle"></i> Signé par <%= @livret.user.full_name %></p>
           <% else %>
             <div class="alert alert-light border text-muted py-4">
-              <i class="fas fa-user-graduate mb-2" style="font-size: 2rem; opacity: 0.3;"></i><br>
+              <i class="bi bi-pencil-square mb-2" style="font-size: 2rem; opacity: 0.3;"></i><br>
               En attente de signature
             </div>
           <% end %>
@@ -30,10 +30,10 @@
               <div class="mb-2">
                 <%= image_tag @livret.instructor_signature, class: "img-fluid border rounded bg-light", style: "max-height: 120px;" %>
               </div>
-              <p class="text-primary small fw-bold"><i class="fas fa-check-circle"></i> Signé par l'instructeur</p>
+              <p class="text-primary small fw-bold"><i class="bi bi-check-circle"></i> Signé par l'instructeur</p>
             <% else %>
               <div class="alert alert-light border text-muted py-4">
-                <i class="fas fa-user-tie mb-2" style="font-size: 2rem; opacity: 0.3;"></i><br>
+                <i class="bi bi-pencil-square mb-2" style="font-size: 2rem; opacity: 0.3;"></i><br>
                 En attente de signature
               </div>
             <% end %>
@@ -63,7 +63,7 @@
       <%# Message pour l'élève si l'instructeur n'a pas encore signé %>
       <% if current_user == @livret.user && !@livret.signature_image.attached? && !@livret.instructor_signature.attached? && @livret.flight_lesson_id.present? %>
         <div class="alert alert-warning text-center mt-3">
-          <i class="fas fa-info-circle me-2"></i>Vous pourrez signer cette leçon une fois que votre instructeur l'aura validée et signée.
+          <i class="bi bi-info-circle me-2"></i>Vous pourrez signer cette leçon une fois que votre instructeur l'aura validée et signée.
         </div>
       <% end %>
 

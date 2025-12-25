@@ -1,0 +1,112 @@
+<%# Ce partial n'affiche rien si l'utilisateur n'est pas admin %>
+<% if current_user&.admin? %>
+  <div id="maintenance-alerts" class="mb-4">
+    <% Avion.order(:immatriculation).each do |avion| %>
+      <% 
+        # Récupération des paramètres spécifiques de l'avion (50h, Annuelle, Parachute, 1000h)
+        setting_key = "maintenance_avion_#{avion.id}"
+        setting_val = Setting.find_by(var: setting_key)&.val || "1100"
+        check_50h = setting_val[0] == '1'
+        check_annuelle = setting_val[1] == '1'
+        check_parachute = setting_val[2] == '1'
+        check_1000h = setting_val[3] == '1'
+
+        reasons = []
+        is_grounded = false
+
+        # --- 1. Vérification des critères d'INDISPONIBILITÉ (Rouge) ---
+        
+        if avion.potentiel_moteur <= 0
+          reasons << "Potentiel moteur épuisé"
+          is_grounded = true
+        end
+        
+        if avion.next_100h.present? && avion.next_100h <= 0
+          reasons << "Visite 100h dépassée"
+          is_grounded = true
+        end
+        
+        if check_50h && avion.next_50h.present? && avion.next_50h <= 0
+          reasons << "Visite 50h dépassée"
+          is_grounded = true
+        end
+
+        if check_1000h && avion.next_1000h.present? && avion.next_1000h <= 0
+          reasons << "Visite 1000h dépassée"
+          is_grounded = true
+        end
+        
+        if check_annuelle && avion.annuelle.present? && avion.annuelle < Date.today
+          reasons << "Visite annuelle expirée"
+          is_grounded = true
+        end
+        
+        if avion.cert_examen_navigabilite.present? && avion.cert_examen_navigabilite < Date.today
+          reasons << "CEN expiré"
+          is_grounded = true
+        end
+
+        if check_parachute && avion.tbo_parachute.present? && avion.tbo_parachute < Date.today
+          reasons << "Parachute expiré"
+          is_grounded = true
+        end
+
+        if avion.tbo_helice.present? && avion.tbo_helice < Date.today
+          reasons << "Hélice expirée"
+          is_grounded = true
+        end
+
+        # --- 2. Vérification des critères d'ALERTE (Orange) ---
+        # On ne vérifie les alertes que si l'avion n'est pas déjà cloué au sol
+        unless is_grounded
+          if avion.potentiel_moteur < 50
+            reasons << "Potentiel moteur faible (< 50h)"
+          end
+          
+          if avion.next_100h.present? && avion.next_100h < 10
+            reasons << "Visite 100h proche (< 10h)"
+          end
+          
+          if check_50h && avion.next_50h.present? && avion.next_50h < 10
+            reasons << "Visite 50h proche (< 10h)"
+          end
+
+          if check_1000h && avion.next_1000h.present? && avion.next_1000h < 50
+            reasons << "Visite 1000h proche (< 50h)"
+          end
+          
+          if check_annuelle && avion.annuelle.present? && avion.annuelle < 30.days.from_now.to_date
+            reasons << "Visite annuelle proche (< 30j)"
+          end
+          
+          if avion.cert_examen_navigabilite.present? && avion.cert_examen_navigabilite < 30.days.from_now.to_date
+            reasons << "CEN proche (< 30j)"
+          end
+
+          if check_parachute && avion.tbo_parachute.present? && avion.tbo_parachute < 30.days.from_now.to_date
+            reasons << "Parachute proche (< 30j)"
+          end
+
+          if avion.tbo_helice.present? && avion.tbo_helice < 30.days.from_now.to_date
+            reasons << "Hélice proche (< 30j)"
+          end
+        end
+      %>
+
+      <%# Affichage de l'alerte si des raisons ont été trouvées %>
+      <% if reasons.any? %>
+        <div class="alert <%= is_grounded ? 'alert-danger' : 'alert-warning' %> d-flex align-items-center justify-content-between shadow-sm" role="alert">
+          <div class="d-flex align-items-center">
+            <i class="bi <%= is_grounded ? 'bi-exclamation-octagon-fill' : 'bi-exclamation-triangle-fill' %> me-3 fs-4"></i>
+            <div>
+              <strong><%= avion.immatriculation %> :</strong> <%= reasons.join(', ') %>
+            </div>
+          </div>
+          <%= link_to admin_maintenances_path(avion_id: avion.id), class: "btn btn-sm #{is_grounded ? 'btn-danger' : 'btn-warning'}" do %>
+            <i class="bi bi-tools me-1"></i>Gérer
+          <% end %>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+<% end %>

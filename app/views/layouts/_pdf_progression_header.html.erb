@@ -1,22 +1,14 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-</head>
-<body style="margin: 0; padding: 0;">
-  <div style="border-bottom: 2px solid #0d6efd; padding-bottom: 10px; margin-bottom: 0; font-family: sans-serif;">
-    <table style="width: 100%;">
-      <tr>
-        <td style="width: 30%; vertical-align: middle;">
-          <%# NB : il faut avoir un fichier logo_s_pdf.png dans app/assets/images %>
-          <%= image_tag wicked_pdf_asset_base64('logo_s_pdf.png'), style: "max-height: 60px; width: auto;" rescue "BastAir" %>
-        </td>
-        <td style="width: 70%; text-align: right; vertical-align: middle;">
-          <h3 style="margin: 0; color: #333; font-size: 18px;">Livret de Progression</h3>
-          <p style="margin: 5px 0 0; color: #666; font-size: 14px;">Elève : <%= @selected_eleve.full_name %></p>
-        </td>
-      </tr>
-    </table>
-  </div>
+<%# app/views/layouts/_pdf_progression_header.html.erb %>
+<body style="margin: 0; padding: 0;" onload="subst()">
+  <table style="width: 100%; border-collapse: collapse; border: 1px solid white; border-bottom: 1px solid #ddd; font-family: sans-serif;">
+    <tr>
+      <td style="width: 20%; vertical-align: middle; text-align: left; border: 1px solid white; border-bottom: 1px solid #ddd; padding-bottom: 10px;">
+        <%= wicked_pdf_image_tag 'logo_s_pdf.png', style: 'height: 50px;' %>
+      </td>
+      <td style="width: 80%; text-align: right; vertical-align: middle; border: 1px solid white; border-bottom: 1px solid #ddd; padding-bottom: 10px;">
+        <strong style="font-size: 1.2em;">Livret de Progression</strong><br>
+        <span style="color: #555;">Elève : <%= @selected_eleve.full_name %></span>
+      </td>
+    </tr>
+  </table>
 </body>
-</html>
