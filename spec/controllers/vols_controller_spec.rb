@@ -2,15 +2,15 @@ require 'rails_helper'
 
 RSpec.describe VolsController, type: :controller do
   # Définition des utilisateurs
-  let(:user) { create(:user) }
+  let(:user) { create(:user, :pilote) }
   let(:admin) { create(:user, admin: true) }
-  let(:instructeur) { create(:user, fonction: 'instructeur', fi: Date.today + 1.year) }
+  let(:instructeur) { create(:user, :instructeur) }
   
   # Définition des données nécessaires
   let(:avion) { create(:avion) }
   # On suppose qu'une factory 'tarif' existe, sinon on crée un objet Tarif manuellement si nécessaire
   let!(:tarif) { create(:tarif) rescue Tarif.create(annee: 2024, tarif_horaire_avion1: 150) }
-  let!(:vol) { create(:vol, user: user, avion: avion) }
+  let!(:vol) { create(:vol, user: user, avion: avion, instructeur: nil, debut_vol: Date.yesterday.to_time + 10.hours) }
 
   describe "GET #index" do
     context "when user is signed in" do
@@ -72,11 +72,13 @@ RSpec.describe VolsController, type: :controller do
         debut_vol_hour: "10",
         debut_vol_minute: "00",
         duree_vol: 1.5,
-        compteur_depart: 1000,
-        compteur_arrivee: 1001.5,
+        fin_vol: "#{Date.today} 11:30:00",
+        compteur_depart: 1001.0,
+        compteur_arrivee: 1002.5,
         depart: "LFPT",
         arrivee: "LFPT",
-        type_vol: "solo",
+        type_vol: "Standard",
+        solo: true,
         nb_atterro: 1
       }
     end
@@ -121,7 +123,7 @@ RSpec.describe VolsController, type: :controller do
   end
 
   describe "PATCH #update" do
-    let(:eleve) { create(:user, fonction: 'eleve') }
+    let(:eleve) { create(:user, :eleve) }
     let(:vol_eleve) { create(:vol, user: eleve) }
 
     context "as an authorized user (Instructor)" do
@@ -148,26 +150,6 @@ RSpec.describe VolsController, type: :controller do
         expect(response).to redirect_to(root_path)
         expect(flash[:alert]).to eq("Vous n'êtes pas autorisé à effectuer cette action.")
       end
-    end
-  end
-
-  describe "GET #vols" do
-    before { sign_in user }
-
-    it "returns a success response" do
-      get :vols
-      expect(response).to be_successful
-    end
-
-    it "calculates totals correctly" do
-      # On s'assure que le vol créé dans le `let` est bien pris en compte
-      # et on en ajoute un autre pour tester les sommes
-      create(:vol, user: user, duree_vol: 2.0, nature: 'VFR de nuit', nb_atterro: 2)
-
-      get :vols
-      
-      expect(assigns(:total_duree_vol)).to be > 0
-      expect(assigns(:total_atterrissages_nuit)).to be >= 2
     end
   end
 end

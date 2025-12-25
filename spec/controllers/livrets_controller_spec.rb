@@ -1,9 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe LivretsController, type: :controller do
-  let(:student) { create(:user, fonction: 'eleve') }
-  let(:instructor) { create(:user, fonction: 'instructeur', fi: Date.today + 1.year) }
-  let(:other_student) { create(:user, fonction: 'eleve') }
+  let(:student) { create(:user, :eleve) }
+  let(:instructor) { create(:user, :instructeur) }
+  let(:other_student) { create(:user, :eleve) }
   
   # On suppose que les factories course et flight_lesson existent
   let(:course) { create(:course) }

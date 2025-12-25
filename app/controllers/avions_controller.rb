@@ -16,7 +16,7 @@ class AvionsController < ApplicationController
   def signalements_list
     @avion = Avion.find(params[:id])
     # On ne récupère que les signalements qui ne sont pas "résolus"
-    @signalements = @avion.signalements.where.not(status: 'résolu').order(created_at: :desc)
+    @signalements = @avion.signalements.where.not(status: 'Résolu').order(created_at: :desc)
 
     # On vérifie si la requête vient de la modale (grâce au paramètre `source=modal`).
     if params[:source] == 'modal'

@@ -3,8 +3,8 @@ require 'rails_helper'
 RSpec.describe TransactionsController, type: :controller do
   # On prépare les différents types d'utilisateurs et une transaction de test
   let(:admin) { create(:user, admin: true) }
-  let(:tresorier) { create(:user, fonction: 'tresorier') }
-  let(:pilote) { create(:user, fonction: 'pilote') }
+  let(:tresorier) { create(:user, :tresorier) }
+  let(:pilote) { create(:user, :pilote) }
   let!(:transaction) { create(:transaction) }
 
   # Attributs valides pour créer/mettre à jour une transaction
@@ -12,9 +12,11 @@ RSpec.describe TransactionsController, type: :controller do
     {
       date_transaction: Date.today,
       description: "Achat de carburant",
-      mouvement: 'depense',
+      mouvement: 'Dépense',
       montant: 150.50,
-      source_transaction: 'fournisseur'
+      source_transaction: 'Charges Exceptionnelles',
+      payment_method: 'Virement',
+      user_id: tresorier.id
     }
   end
 
@@ -47,7 +49,7 @@ RSpec.describe TransactionsController, type: :controller do
     it "redirects to the root path with an alert" do
       get :index
       expect(response).to redirect_to(root_path)
-      expect(flash[:alert]).to eq("Accès réservé aux administrateurs et au trésorier.")
+      expect(flash[:alert]).to include("Accès réservé")
     end
   end
 

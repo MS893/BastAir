@@ -46,16 +46,17 @@ RSpec.describe UsersController, type: :controller do
   end
 
   describe "GET #vols" do
-    before { sign_in user }
-    let!(:vol) { create(:vol, user: user) }
+    let(:pilot_user) { create(:user, :pilote) }
+    before { sign_in pilot_user }
+    let!(:vol) { create(:vol, user: pilot_user, instructeur: nil) }
 
     it "returns success" do
-      get :vols, params: { id: user.id }
+      get :vols, params: { id: pilot_user.id }
       expect(response).to be_successful
     end
 
     it "exports CSV" do
-      get :vols, params: { id: user.id, start_date: Date.today - 1.month, end_date: Date.today, format: :csv }
+      get :vols, params: { id: pilot_user.id, start_date: Date.today - 1.month, end_date: Date.today, format: :csv }
       expect(response.header['Content-Type']).to include 'text/csv'
     end
   end
@@ -64,9 +65,10 @@ RSpec.describe UsersController, type: :controller do
     before { sign_in admin }
 
     it "updates user roles" do
-      patch :update, params: { id: user.id, user: { fonction: 'instructeur' } }
+      instructeur_val = User::ALLOWED_FCT.values.find { |v| v != user.fonction } || User::ALLOWED_FCT.values.last
+      patch :update, params: { id: user.id, user: { fonction: instructeur_val } }
       user.reload
-      expect(user.fonction).to eq('instructeur')
+      expect(user.fonction).to eq(instructeur_val)
       expect(response).to redirect_to(users_path)
     end
   end

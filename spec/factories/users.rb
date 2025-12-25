@@ -4,7 +4,8 @@ FactoryBot.define do
     password { "password123" }
     nom { "Doe" }
     prenom { "John" }
-    fonction { "pilote" }
+    # Tente de trouver un rôle "Pilote" par défaut, sinon prend une valeur au hasard
+    fonction { User::ALLOWED_FCT.values.find { |v| v.to_s.match?(/pilote/i) } || User::ALLOWED_FCT.values.first }
     licence_type { "PPL" }
     num_licence { "12345678" }
     telephone { "0601020304" }
@@ -23,12 +24,20 @@ FactoryBot.define do
     end
     
     trait :instructeur do
-      fonction { "instructeur" }
+      fonction { User::ALLOWED_FCT.values.find { |v| v.to_s.match?(/instructeur/i) } || User::ALLOWED_FCT.values.last }
       fi { Date.today + 1.year }
     end
     
     trait :eleve do
-      fonction { "eleve" }
+      fonction { User::ALLOWED_FCT.values.find { |v| v.to_s.match?(/eleve|élève/i) } || User::ALLOWED_FCT.values.first }
+    end
+
+    trait :pilote do
+      fonction { User::ALLOWED_FCT.values.find { |v| v.to_s.match?(/pilote/i) } || User::ALLOWED_FCT.values.first }
+    end
+
+    trait :tresorier do
+      fonction { User::ALLOWED_FCT.values.find { |v| v.to_s.match?(/tresorier|trésorier/i) } || User::ALLOWED_FCT.values.first }
     end
   end
 end

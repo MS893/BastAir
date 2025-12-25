@@ -11,7 +11,8 @@ RSpec.describe Admin::TablesController, type: :controller do
     it "affiche la liste des enregistrements pour une table donnée" do
       get :index, params: { table_name: table_name }
       expect(response).to be_successful
-      expect(assigns(:records)).to include(avion)
+      records = controller.instance_variable_get(:@records)
+      expect(records.map(&:id)).to include(avion.id)
     end
   end
 
@@ -19,7 +20,8 @@ RSpec.describe Admin::TablesController, type: :controller do
     it "affiche le formulaire d'édition" do
       get :edit_record, params: { table_name: table_name, id: avion.id }
       expect(response).to be_successful
-      expect(assigns(:record)).to eq(avion)
+      record = controller.instance_variable_get(:@record)
+      expect(record.id).to eq(avion.id)
     end
   end
 
@@ -35,7 +37,8 @@ RSpec.describe Admin::TablesController, type: :controller do
     it "affiche le formulaire de création" do
       get :new_record, params: { table_name: table_name }
       expect(response).to be_successful
-      expect(assigns(:record)).to be_a_new(Avion)
+      record = controller.instance_variable_get(:@record)
+      expect(record).to be_new_record
     end
   end
 

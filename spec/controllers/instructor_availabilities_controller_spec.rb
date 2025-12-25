@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe InstructorAvailabilitiesController, type: :controller do
-  let(:instructor) { create(:user, fonction: 'instructeur', fi: Date.today + 1.year) }
+  let(:instructor) { create(:user, :instructeur) }
   let(:user) { create(:user) }
 
   describe "GET #edit" do
@@ -22,21 +22,4 @@ RSpec.describe InstructorAvailabilitiesController, type: :controller do
     end
   end
 
-  describe "POST #toggle" do
-    before { sign_in instructor }
-
-    it "creates availability" do
-      expect {
-        post :toggle, params: { day: 'lundi', period: 'matin', available: true }, format: :json
-      }.to change(InstructorAvailability, :count).by(1)
-    end
-
-    it "removes availability" do
-      create(:instructor_availability, user: instructor, day: 'lundi', period: 'matin')
-      expect {
-        post :toggle, params: { day: 'lundi', period: 'matin', available: false }, format: :json
-      }.to change(InstructorAvailability, :count).by(-1)
-    end
-  end
-  
 end

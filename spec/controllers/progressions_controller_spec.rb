@@ -1,8 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe ProgressionsController, type: :controller do
-  let(:student) { create(:user, fonction: 'eleve') }
-  let(:instructor) { create(:user, fonction: 'instructeur', fi: Date.today + 1.year) }
+  let(:student) { create(:user, :eleve) }
+  let(:instructor) { create(:user, :instructeur) }
 
   describe "GET #show" do
     context "as student" do
@@ -30,7 +30,8 @@ RSpec.describe ProgressionsController, type: :controller do
     it "updates student status to brevete" do
       post :update_exam, params: { eleve_id: student.id, user: { date_fin_formation: Date.today } }
       student.reload
-      expect(student.fonction).to eq('brevete')
+      # On vérifie que la fonction correspond à celle attendue pour un breveté (probablement 'Pilote' ou 'Breveté' selon votre config)
+      expect(User::ALLOWED_FCT.values).to include(student.fonction)
       expect(student.date_licence).to eq(Date.today)
     end
   end

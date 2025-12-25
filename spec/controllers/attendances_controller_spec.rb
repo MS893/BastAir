@@ -42,12 +42,12 @@ RSpec.describe AttendancesController, type: :controller do
       before do
         # Setup initial state manually to simulate existing attendance
         Transaction.create!(user: user, montant: 50, mouvement: 'Dépense', description: 'test', source_transaction: 'Charges Exceptionnelles', payment_method: 'Prélèvement sur compte', date_transaction: Date.today)
-        Attendance.create!(user: user, event: paid_event)
       end
+      let!(:attendance) { Attendance.create!(user: user, event: paid_event) }
 
       it "refunds user" do
         expect {
-          delete :destroy, params: { event_id: paid_event.id }
+          delete :destroy, params: { event_id: paid_event.id, id: attendance.id }
         }.to change(Attendance, :count).by(-1)
           .and change(Transaction, :count).by(1) # Refund transaction
         

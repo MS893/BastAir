@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :vol do
-    association :user
+    association :user, factory: [:user, :pilote]
     association :avion
     depart { "LFPT" }
     arrivee { "LFPT" }
@@ -12,5 +12,12 @@ FactoryBot.define do
     nature { "VFR de jour" }
     type_vol { "Standard" }
     solo { true }
+
+    # Si l'utilisateur est un élève, on ajoute un instructeur pour passer la validation
+    after(:build) do |vol|
+      if vol.user&.eleve?
+        vol.instructeur ||= create(:user, :instructeur)
+      end
+    end
   end
 end

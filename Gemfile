@@ -102,6 +102,8 @@ group :development, :test do
 
   # Rspec pour les tests
   gem "rspec-rails", '~> 8.0.2'
+  gem "factory_bot_rails"
+  gem "rails-controller-testing"
 
 end
 
@@ -115,4 +117,5 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
   gem 'database_cleaner-active_record'
+  gem 'shoulda-matchers'
 end

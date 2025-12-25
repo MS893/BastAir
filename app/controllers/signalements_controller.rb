@@ -94,4 +94,5 @@ class SignalementsController < ApplicationController
   def signalement_update_params
     params.require(:signalement).permit(:status)
   end
+  
 end

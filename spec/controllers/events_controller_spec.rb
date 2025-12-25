@@ -63,7 +63,7 @@ RSpec.describe EventsController, type: :controller do
 
     describe "POST #create" do
       context "with valid parameters" do
-        let(:valid_attributes) { { title: "Portes Ouvertes", description: "Venez nous voir", start_date: Time.now, price: 0 } }
+        let(:valid_attributes) { { title: "Pot", description: "Venez nous voir", start_date: Time.now + 1.day, duration: "3h", price: 0 } }
 
         it "creates a new event" do
           expect {
@@ -91,17 +91,17 @@ RSpec.describe EventsController, type: :controller do
 
     describe "PATCH #update" do
       context "with valid parameters" do
-        let(:new_attributes) { { title: "Titre Mis à Jour" } }
+        let(:new_attributes) { { title: "Pot" } } # Utiliser un titre valide
 
         it "updates the requested event" do
           patch :update, params: { id: event.id, event: new_attributes }
           event.reload
-          expect(event.title).to eq("Titre Mis à Jour")
+          expect(event.title).to eq("Pot")
         end
 
         it "redirects to the root path" do
           patch :update, params: { id: event.id, event: new_attributes }
-          expect(response).to redirect_to(root_path)
+          expect(response).to redirect_to(event_path(event))
         end
       end
 

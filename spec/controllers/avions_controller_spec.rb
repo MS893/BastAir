@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe AvionsController, type: :controller do
-  let(:user) { create(:user) }
+  let(:user) { create(:user, :pilote) }
   let(:avion) { create(:avion) }
 
   # Authentification avant chaque test car le contrôleur utilise authenticate_user!
@@ -11,8 +11,8 @@ RSpec.describe AvionsController, type: :controller do
     context "quand des vols existent pour l'avion" do
       # On crée des vols avec des compteurs différents
       # Note: On suppose que la factory :vol gère les associations nécessaires (user, avion)
-      let!(:vol_ancien) { create(:vol, avion: avion, user: user, compteur_arrivee: 1000) }
-      let!(:vol_recent) { create(:vol, avion: avion, user: user, compteur_arrivee: 1050) }
+      let!(:vol_ancien) { create(:vol, avion: avion, user: user, compteur_depart: 900, compteur_arrivee: 1000) }
+      let!(:vol_recent) { create(:vol, avion: avion, user: user, compteur_depart: 1000, compteur_arrivee: 1050) }
 
       it "renvoie la valeur du compteur d'arrivée du dernier vol (le plus élevé)" do
         get :last_compteur, params: { id: avion.id }
@@ -40,8 +40,8 @@ RSpec.describe AvionsController, type: :controller do
   describe "GET #signalements_list" do
     # Création de signalements avec différents statuts
     # Assurez-vous que votre factory :signalement existe
-    let!(:signalement_ouvert) { create(:signalement, avion: avion, user: user, status: 'en cours') }
-    let!(:signalement_resolu) { create(:signalement, avion: avion, user: user, status: 'résolu') }
+    let!(:signalement_ouvert) { create(:signalement, avion: avion, user: user, status: 'En cours') }
+    let!(:signalement_resolu) { create(:signalement, avion: avion, user: user, status: 'Résolu') }
 
     it "assigne @avion" do
       get :signalements_list, params: { id: avion.id }

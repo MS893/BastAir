@@ -31,10 +31,11 @@ RSpec.describe ReservationsController, type: :controller do
       end
 
       it "creates a reservation with valid params" do
+        start_t = Time.zone.now.tomorrow.change(hour: 10, min: 0, sec: 0)
         reservation_params = {
           avion_id: avion.id,
-          date_debut: Time.now + 1.day,
-          date_fin: Time.now + 1.day + 2.hours,
+          start_time: start_t,
+          end_time: start_t + 2.hours,
           type_vol: "solo"
         }
         expect {
@@ -45,10 +46,11 @@ RSpec.describe ReservationsController, type: :controller do
       end
 
       it "calls create_event_for_app on GoogleCalendarService" do
+        start_t = Time.zone.now.tomorrow.change(hour: 10, min: 0, sec: 0)
         reservation_params = {
           avion_id: avion.id,
-          date_debut: Time.now + 1.day,
-          date_fin: Time.now + 1.day + 2.hours,
+          start_time: start_t,
+          end_time: start_t + 2.hours,
           type_vol: "solo"
         }
 
@@ -58,10 +60,11 @@ RSpec.describe ReservationsController, type: :controller do
       end
 
       it "sends a confirmation email" do
+        start_t = Time.zone.now.tomorrow.change(hour: 10, min: 0, sec: 0)
         reservation_params = {
           avion_id: avion.id,
-          start_time: Time.now + 1.day,
-          end_time: Time.now + 1.day + 2.hours,
+          start_time: start_t,
+          end_time: start_t + 2.hours,
           type_vol: "solo"
         }
 
@@ -72,10 +75,11 @@ RSpec.describe ReservationsController, type: :controller do
 
       it "does not create a reservation with invalid params and re-renders new" do
         # Test avec une date de fin antérieure à la date de début
+        start_t = Time.zone.now.tomorrow.change(hour: 10, min: 0, sec: 0)
         invalid_params = {
           avion_id: avion.id,
-          date_debut: Time.now + 1.day,
-          date_fin: Time.now + 1.day - 2.hours,
+          start_time: start_t,
+          end_time: start_t - 2.hours,
           type_vol: "solo"
         }
         expect {
@@ -85,17 +89,30 @@ RSpec.describe ReservationsController, type: :controller do
       end
 
       describe "DELETE #destroy" do
-        let!(:reservation_to_delete) { create(:reservation, user: valid_user, avion: avion, start_time: Time.current + 10.hours, end_time: Time.current + 12.hours) }
+        # On fixe une date/heure valide (demain à 10h) pour éviter les erreurs de validation (7h-17h)
+        # Pour le test de pénalité < 12h, on doit être proche du vol.
+        # On simule qu'on est le jour même à 8h00, pour un vol à 10h00.
+        
+        let(:start_t) { Time.zone.now.change(hour: 10, min: 0, sec: 0) }
+        let(:end_t) { start_t + 2.hours }
+        
+        let!(:reservation_to_delete) { create(:reservation, user: valid_user, avion: avion, start_time: start_t, end_time: end_t) }
 
         before do
           # Mock des paramètres de pénalité pour simuler une annulation tardive
           # Seuil 1 : < 12h => 20€
           # Seuil 2 : < 24h => 10€
+          
+          # On voyage dans le temps à 8h00 le jour du vol (2h avant)
+          travel_to(start_t - 2.hours)
+
           allow(Rails.cache).to receive(:fetch).with('penalty_settings', anything).and_return([
             { delay: 12, amount: 20 },
             { delay: 24, amount: 10 }
           ])
         end
+
+        after { travel_back }
 
         it "destroys the reservation" do
           expect {
@@ -127,7 +144,7 @@ RSpec.describe ReservationsController, type: :controller do
         context "when deleting an instruction flight" do
           let(:instructor) { create(:user, :instructeur) }
           let!(:instruction_reservation) do
-            r = build(:reservation, user: valid_user, avion: avion, instruction: true, fi: instructor.name, start_time: Time.current + 24.hours, end_time: Time.current + 26.hours)
+            r = build(:reservation, user: valid_user, avion: avion, instruction: true, fi: instructor.name, start_time: start_t + 1.day, end_time: end_t + 1.day)
             # On mocke la méthode de validation pour éviter de devoir créer les disponibilités
             allow(r).to receive(:instructor_is_available)
             r.save!
@@ -142,7 +159,7 @@ RSpec.describe ReservationsController, type: :controller do
         end
 
         it "does not create a penalty when cancellation is early enough" do
-          early_reservation = create(:reservation, user: valid_user, avion: avion, start_time: Time.current + 48.hours, end_time: Time.current + 50.hours)
+          early_reservation = create(:reservation, user: valid_user, avion: avion, start_time: start_t + 48.hours, end_time: end_t + 48.hours)
           
           expect {
             delete :destroy, params: { id: early_reservation.id, cancellation_reason: "Vacances" }

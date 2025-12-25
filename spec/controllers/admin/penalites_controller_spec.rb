@@ -42,7 +42,7 @@ RSpec.describe Admin::PenalitesController, type: :controller do
         }.to change(Transaction, :count).by(-1)
         
         expect(penalite.reload.status).to eq('Annulée')
-        expect(flash[:notice]).to include("retirée")
+        expect(flash[:notice]).to include("annulée")
       end
     end
 
