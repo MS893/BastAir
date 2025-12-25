@@ -93,6 +93,7 @@ module Admin
           render  pdf: "dossier_maintenance_#{@avion.immatriculation}",
                   template: "admin/maintenances/show",
                   layout: "pdf",
+                  margin: { top: 30, bottom: 23, left: 15, right: 15 },
                   header: { html: { template: 'layouts/_pdf_maintenance_header', layout: false, formats: [:html] }, spacing: 10 },
                   footer: { html: { template: 'layouts/_pdf_footer', layout: false, formats: [:html] } },
                   disposition: "inline",

@@ -91,31 +91,14 @@ module Admin
       respond_to do |format|
         format.html
         format.pdf do
-          # On génère le contenu des partiels
-          header_content = render_to_string(partial: 'layouts/pdf_bilan_header', formats: [:html])
-          footer_content = render_to_string(partial: 'layouts/pdf_footer', formats: [:html])
-
-          # On les encapsule dans un document HTML complet avec l'encodage UTF-8
-          full_header_html = "<!DOCTYPE html><html><head><meta charset='utf-8'></head><body>#{header_content}</body></html>"
-          full_footer_html = footer_content
-
-          # On écrit ce contenu complet dans des fichiers temporaires
-          header_file = Tempfile.new(['header', '.html'])
-          header_file.write(full_header_html)
-          header_file.close
-
-          footer_file = Tempfile.new(['footer', '.html'])
-          footer_file.write(full_footer_html)
-          footer_file.close
-
           render  pdf: "Bilan-Comptable-BastAir-#{@year}",
                   layout: 'pdf',
                   encoding: 'UTF-8',
                   page_size: 'A4',
                   orientation: 'Portrait',
-                  margin: { top: 30, bottom: 25, left: 15, right: 15 },
-                  header: { html: { url: header_file.path }, spacing: 10 },
-                  footer: { html: { url: footer_file.path }, spacing: 5 },
+                  margin: { top: 30, bottom: 20, left: 15, right: 15 },
+                  header: { html: { template: 'layouts/_pdf_bilan_header', layout: false, formats: [:html] }, spacing: 10 },
+                  footer: { html: { template: 'layouts/_pdf_footer', layout: false, formats: [:html] } },
                   # On force l'exécution du JS pour le logo et la pagination
                   extra_options: { 'enable-local-file-access': true, 'enable-javascript': true, 'javascript-delay': 100 }
         end
