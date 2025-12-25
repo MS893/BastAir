@@ -130,7 +130,7 @@ class StaticPagesController < ApplicationController
     # Validation du format de l'email côté serveur
     if !verify_recaptcha || @email.blank? || !@email.match?(/\A[^@\s]+@[^@\s]+\z/)
       flash.now[:alert] = "La vérification reCAPTCHA a échoué ou l'email est invalide. Veuillez réessayer."
-      render :baptemes, status: :unprocessable_entity
+      render :baptemes, status: ::unprocessable_content
     else
       # Envoyer l'email
       ContactMailer.contact_email(@nom, @prenom, @email, @message).deliver_now

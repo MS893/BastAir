@@ -31,7 +31,7 @@ class EventsController < ApplicationController
 
       redirect_to root_path, notice: "L'événement a été créé avec succès."
     else
-      render :new, status: :unprocessable_entity
+      render :new, status: ::unprocessable_content
     end
   end
 
@@ -50,7 +50,7 @@ class EventsController < ApplicationController
       end
       redirect_to @event, notice: "L'événement a été mis à jour avec succès."
     else
-      render :edit, status: :unprocessable_entity
+      render :edit, status: ::unprocessable_content
     end
   end
 

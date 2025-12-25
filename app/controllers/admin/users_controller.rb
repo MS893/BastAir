@@ -12,7 +12,7 @@ module Admin
         # On peut rediriger vers le profil du nouvel utilisateur ou la liste des utilisateurs
         redirect_to user_path(@user), notice: "L'adhérent a été créé avec succès."
       else
-        render :new, status: :unprocessable_entity
+        render :new, status: ::unprocessable_content
       end
     end
 

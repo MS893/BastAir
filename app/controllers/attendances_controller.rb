@@ -43,7 +43,7 @@ class AttendancesController < ApplicationController
         UserMailer.new_participant_notification(@attendance).deliver_later
         redirect_to @event, notice: "Félicitations ! Vous êtes inscrit à l'événement."
       else
-        render 'events/show', status: :unprocessable_entity
+        render 'events/show', status: ::unprocessable_content
       end
     end
   rescue ActiveRecord::RecordInvalid => e

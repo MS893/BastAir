@@ -31,8 +31,8 @@ class CommentsController < ApplicationController
     if @comment.update(comment_params)
       redirect_to event_path(@event), notice: 'Commentaire mis à jour.'
     else
-      # status: :unprocessable_entity indique au navigateur que la soumission du formulaire a échoué (code HTTP 422)
-      render :edit, status: :unprocessable_entity
+      # status: ::unprocessable_content indique au navigateur que la soumission du formulaire a échoué (code HTTP 422)
+      render :edit, status: ::unprocessable_content
     end
   end
 

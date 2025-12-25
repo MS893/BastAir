@@ -116,7 +116,7 @@ RSpec.describe VolsController, type: :controller do
         expect {
           post :create, params: { vol: invalid_attributes }
         }.not_to change(Vol, :count)
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(::unprocessable_content)
         expect(response).to render_template(:new)
       end
     end

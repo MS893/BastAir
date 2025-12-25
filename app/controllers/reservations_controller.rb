@@ -60,7 +60,7 @@ class ReservationsController < ApplicationController
       else
         @instructeurs = available_instructors(Date.today, 7, 0)
       end
-      render :new, status: :unprocessable_entity
+      render :new, status: ::unprocessable_content
     end
   end
 
@@ -141,7 +141,7 @@ class ReservationsController < ApplicationController
       else
         @instructeurs = available_instructors(Date.today, 7, 0)
       end
-      render :edit, status: :unprocessable_entity
+      render :edit, status: ::unprocessable_content
     end
 
   end

@@ -17,7 +17,7 @@ class Admin::SettingsController < ApplicationController
     if @time_zone.update(val: params[:setting][:val])
       redirect_to edit_admin_setting_path, notice: 'Le fuseau horaire a été mis à jour avec succès.'
     else
-      render :edit, status: :unprocessable_entity
+      render :edit, status: ::unprocessable_content
     end
   end
 

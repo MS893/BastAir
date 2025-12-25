@@ -116,7 +116,7 @@ class UsersController < ApplicationController
     if @user.update(user_params)
       redirect_to users_path, notice: "Les rôles de l'utilisateur #{@user.full_name} ont été mis à jour avec succès."
     else
-      render :show, status: :unprocessable_entity
+      render :show, status: ::unprocessable_content
     end
   end
 
@@ -126,7 +126,7 @@ class UsersController < ApplicationController
       redirect_to user_path(@user), notice: "Votre profil a été mis à jour avec succès."
     else
       # En cas d'erreur, on affiche à nouveau la page d'édition
-      render 'edit_profil', status: :unprocessable_entity
+      render 'edit_profil', status: ::unprocessable_content
     end
   end
 
