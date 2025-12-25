@@ -1,0 +1,18 @@
+<%# app/views/layouts/_pdf_footer.html.erb %>
+<div style="font-size: 9px; color: #666; text-align: center; border-top: 1px solid #ddd; padding-top: 5px; font-family: sans-serif;">
+  <span>Généré le <%= l(Date.current, format: :long) %></span>
+  <span style="float: right;">Page <span id="page"></span> sur <span id="topage"></span></span>
+</div>
+
+<script>
+  // Ce script est une solution de contournement pour forcer l'affichage de la pagination
+  // quand les classes standards 'page' et 'topage' ne fonctionnent pas.
+  function subst() {
+    var vars = {};
+    var x = document.location.search.substring(1).split('&');
+    for (var i in x) { var z = x[i].split('=', 2); vars[z[0]] = unescape(z[1]); }
+    document.getElementById('page').innerHTML = vars['page'];
+    document.getElementById('topage').innerHTML = vars['topage'];
+  }
+  window.onload = subst;
+</script>

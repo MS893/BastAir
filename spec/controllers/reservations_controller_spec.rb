@@ -7,6 +7,19 @@ RSpec.describe ReservationsController, type: :controller do
   let(:valid_user) { create(:user, solde: 100, date_licence: Date.today + 1.year, medical: Date.today + 1.year, controle: Date.today + 1.year) }
   let(:avion) { create(:avion) }
 
+  # Mock du service Google Calendar pour éviter les appels API réels
+  let(:calendar_service) { instance_double("GoogleCalendarService") }
+
+  before do
+    allow(GoogleCalendarService).to receive(:new).and_return(calendar_service)
+    allow(calendar_service).to receive(:create_event_for_app)
+    allow(calendar_service).to receive(:update_event_for_app)
+    allow(calendar_service).to receive(:delete_event_for_app)
+    allow(calendar_service).to receive(:create_instructor_event_only)
+    allow(calendar_service).to receive(:delete_instructor_event)
+    allow(calendar_service).to receive(:delete_instructor_event_by_id)
+  end
+
   describe "Authenticated user access" do
     context "with a valid user" do
       before { sign_in valid_user }
@@ -29,6 +42,119 @@ RSpec.describe ReservationsController, type: :controller do
         }.to change(Reservation, :count).by(1)
         expect(response).to redirect_to(root_path)
         expect(flash[:notice]).to eq('Votre réservation a été créée avec succès.')
+      end
+
+      it "calls create_event_for_app on GoogleCalendarService" do
+        reservation_params = {
+          avion_id: avion.id,
+          date_debut: Time.now + 1.day,
+          date_fin: Time.now + 1.day + 2.hours,
+          type_vol: "solo"
+        }
+
+        expect(calendar_service).to receive(:create_event_for_app)
+
+        post :create, params: { reservation: reservation_params }
+      end
+
+      it "sends a confirmation email" do
+        reservation_params = {
+          avion_id: avion.id,
+          start_time: Time.now + 1.day,
+          end_time: Time.now + 1.day + 2.hours,
+          type_vol: "solo"
+        }
+
+        expect {
+          post :create, params: { reservation: reservation_params }
+        }.to have_enqueued_mail(UserMailer)
+      end
+
+      it "does not create a reservation with invalid params and re-renders new" do
+        # Test avec une date de fin antérieure à la date de début
+        invalid_params = {
+          avion_id: avion.id,
+          date_debut: Time.now + 1.day,
+          date_fin: Time.now + 1.day - 2.hours,
+          type_vol: "solo"
+        }
+        expect {
+          post :create, params: { reservation: invalid_params }
+        }.not_to change(Reservation, :count)
+        expect(response).to render_template(:new)
+      end
+
+      describe "DELETE #destroy" do
+        let!(:reservation_to_delete) { create(:reservation, user: valid_user, avion: avion, start_time: Time.current + 10.hours, end_time: Time.current + 12.hours) }
+
+        before do
+          # Mock des paramètres de pénalité pour simuler une annulation tardive
+          # Seuil 1 : < 12h => 20€
+          # Seuil 2 : < 24h => 10€
+          allow(Rails.cache).to receive(:fetch).with('penalty_settings', anything).and_return([
+            { delay: 12, amount: 20 },
+            { delay: 24, amount: 10 }
+          ])
+        end
+
+        it "destroys the reservation" do
+          expect {
+            delete :destroy, params: { id: reservation_to_delete.id, cancellation_reason: "Imprévu" }
+          }.to change(Reservation, :count).by(-1)
+        end
+
+        it "creates a penalty when cancellation is late (within 12h)" do
+          expect {
+            delete :destroy, params: { id: reservation_to_delete.id, cancellation_reason: "Malade" }
+          }.to change(Penalite, :count).by(1)
+
+          penalty = Penalite.last
+          expect(penalty.penalty_amount).to eq(20)
+          expect(penalty.cancellation_reason).to eq("Malade")
+          expect(penalty.user).to eq(valid_user)
+        end
+
+        it "calls delete_event_for_app on GoogleCalendarService" do
+          expect(calendar_service).to receive(:delete_event_for_app)
+          delete :destroy, params: { id: reservation_to_delete.id, cancellation_reason: "Test" }
+        end
+
+        it "does not call delete_instructor_event for standard flights" do
+          expect(calendar_service).not_to receive(:delete_instructor_event)
+          delete :destroy, params: { id: reservation_to_delete.id, cancellation_reason: "Test" }
+        end
+
+        context "when deleting an instruction flight" do
+          let(:instructor) { create(:user, :instructeur) }
+          let!(:instruction_reservation) do
+            r = build(:reservation, user: valid_user, avion: avion, instruction: true, fi: instructor.name, start_time: Time.current + 24.hours, end_time: Time.current + 26.hours)
+            # On mocke la méthode de validation pour éviter de devoir créer les disponibilités
+            allow(r).to receive(:instructor_is_available)
+            r.save!
+            r
+          end
+
+          it "calls delete_instructor_event and delete_event_for_app on GoogleCalendarService" do
+            expect(calendar_service).to receive(:delete_instructor_event).with(instruction_reservation)
+            expect(calendar_service).to receive(:delete_event_for_app).with(instruction_reservation)
+            delete :destroy, params: { id: instruction_reservation.id, cancellation_reason: "Annulation cours" }
+          end
+        end
+
+        it "does not create a penalty when cancellation is early enough" do
+          early_reservation = create(:reservation, user: valid_user, avion: avion, start_time: Time.current + 48.hours, end_time: Time.current + 50.hours)
+          
+          expect {
+            delete :destroy, params: { id: early_reservation.id, cancellation_reason: "Vacances" }
+          }.not_to change(Penalite, :count)
+        end
+
+        it "does not debit the user immediately (penalty status is 'En attente')" do
+          # Le solde ne doit pas bouger car la pénalité est créée en statut "En attente"
+          expect {
+            delete :destroy, params: { id: reservation_to_delete.id, cancellation_reason: "Malade" }
+          }.not_to change { valid_user.reload.solde }
+        end
       end
     end
 

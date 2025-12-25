@@ -115,6 +115,10 @@ GEM
     connection_pool (3.0.2)
     crass (1.0.6)
     csv (3.3.5)
+    database_cleaner-active_record (2.2.2)
+      activerecord (>= 5.a)
+      database_cleaner-core (~> 2.0)
+    database_cleaner-core (2.0.1)
     date (3.5.1)
     debug (1.11.0)
       irb (~> 1.10)
@@ -253,8 +257,7 @@ GEM
     mini_magick (5.3.1)
       logger
     mini_mime (1.1.5)
-    minitest (6.0.0)
-      prism (~> 1.5)
+    minitest (5.27.0)
     msgpack (1.8.0)
     multi_json (1.18.0)
     net-http (0.9.1)
@@ -296,7 +299,7 @@ GEM
     pp (0.6.3)
       prettyprint
     prettyprint (0.2.0)
-    prism (1.6.0)
+    prism (1.7.0)
     propshaft (1.3.1)
       actionpack (>= 7.0.0)
       activesupport (>= 7.0.0)
@@ -533,6 +536,7 @@ DEPENDENCIES
   chartkick
   commonmarker
   csv
+  database_cleaner-active_record
   debug
   devise
   dotenv-rails
@@ -547,6 +551,7 @@ DEPENDENCIES
   kaminari
   letter_opener
   letter_opener_web
+  minitest (< 6.0)
   propshaft
   puma (>= 5.0)
   rails (~> 8.0.3)

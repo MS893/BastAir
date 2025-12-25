@@ -99,6 +99,12 @@ class UserMailer < ApplicationMailer
     )
   end
 
+  def reservation_confirmation(reservation)
+    @reservation = reservation
+    @user = reservation.user
+    mail(to: @user.email, subject: 'Confirmation de votre réservation BastAir')
+  end
+
   # Envoie une notification de taxe d'atterrissage aux administrateurs et au trésorier
   def landing_tax_notification(recipient_emails, pilot, vol, tax_status, tax_aerodrome)
     @pilot = pilot

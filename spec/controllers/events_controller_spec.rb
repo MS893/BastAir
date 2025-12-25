@@ -47,6 +47,20 @@ RSpec.describe EventsController, type: :controller do
   describe "Admin access" do
     before { sign_in admin }
 
+    describe "GET #new" do
+      it "returns a success response" do
+        get :new
+        expect(response).to be_successful
+      end
+    end
+
+    describe "GET #edit" do
+      it "returns a success response" do
+        get :edit, params: { id: event.id }
+        expect(response).to be_successful
+      end
+    end
+
     describe "POST #create" do
       context "with valid parameters" do
         let(:valid_attributes) { { title: "Portes Ouvertes", description: "Venez nous voir", start_date: Time.now, price: 0 } }
@@ -71,6 +85,31 @@ RSpec.describe EventsController, type: :controller do
           }.not_to change(Event, :count)
           expect(response).to have_http_status(:unprocessable_entity)
           expect(response).to render_template(:new)
+        end
+      end
+    end
+
+    describe "PATCH #update" do
+      context "with valid parameters" do
+        let(:new_attributes) { { title: "Titre Mis à Jour" } }
+
+        it "updates the requested event" do
+          patch :update, params: { id: event.id, event: new_attributes }
+          event.reload
+          expect(event.title).to eq("Titre Mis à Jour")
+        end
+
+        it "redirects to the root path" do
+          patch :update, params: { id: event.id, event: new_attributes }
+          expect(response).to redirect_to(root_path)
+        end
+      end
+
+      context "with invalid parameters" do
+        it "renders the edit template" do
+          patch :update, params: { id: event.id, event: { title: "" } }
+          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response).to render_template(:edit)
         end
       end
     end

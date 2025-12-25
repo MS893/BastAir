@@ -48,6 +48,9 @@ class ReservationsController < ApplicationController
       # On instancie le service (qui s'authentifie via le compte de service) et on crée l'événement.
       GoogleCalendarService.new.create_event_for_app(@reservation)
 
+      # Envoi de l'email de confirmation en arrière-plan
+      UserMailer.reservation_confirmation(@reservation).deliver_later
+  
       redirect_to root_path, notice: 'Votre réservation a été créée avec succès.'
     else
       # On recharge les données pour que le formulaire puisse se réafficher avec les erreurs

@@ -1,5 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Mel, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+  it "is valid with valid attributes" do
+    expect(Mel.new).to be_valid
+  end
 end
