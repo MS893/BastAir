@@ -17,7 +17,7 @@ jobs:
           ruby-version: .ruby-version # Utilise .ruby-version pour la cohérence
           bundler-cache: true
       - name: Run Brakeman Security Scan
-        # Fusionne les deux jobs Brakeman. --exit-on-warn est plus utile pour la CI.
+        # Fusionne les deux jobs Brakeman. --exit-on-warn est plus utile pour la CI
         run: |
           gem install brakeman # S'assurer que Brakeman est disponible si non dans Gemfile
           brakeman --exit-on-warn
