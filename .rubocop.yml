@@ -44,6 +44,10 @@ Layout/HashAlignment:
   Enabled: false # Désactive la règle d'alignement des hachages
 Layout/ArgumentAlignment:
   Enabled: false # Désactive la règle d'alignement des arguments
+Layout/ArrayAlignment:
+  Enabled: false # Désactive la règle d'alignement des tableaux
+Layout/TrailingWhitespace:
+  Enabled: false # Permet les espaces en fin de ligne (utile pour le markdown dans les chaînes de caractères)
 Naming/VariableNumber:
   Enabled: false # Permet plus de variables locales dans une méthode
 Naming/PredicatePrefix:
@@ -51,6 +55,7 @@ Naming/PredicatePrefix:
 Rails/Output:
   Exclude:
     - 'db/seeds.rb'
+    - 'app/services/google_calendar_service.rb'
 Rails/FilePath:
   Exclude:
     - 'spec/**/*'

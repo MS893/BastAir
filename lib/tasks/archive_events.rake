@@ -10,7 +10,8 @@ namespace :calendar do
     calendar_ids = [
       ENV.fetch('GOOGLE_CALENDAR_ID', nil),
       ENV.fetch('GOOGLE_CALENDAR_ID_EVENTS', nil),
-      ENV.fetch('GOOGLE_CALENDAR_ID_AVION_F_HGBT', nil)
+      ENV.fetch('GOOGLE_CALENDAR_ID_AVION_F_HGBT', nil),
+      ENV.fetch('GOOGLE_CALENDAR_ID_AVION_F_HGCU', nil)
     ]
     # Ajoute dynamiquement les calendriers de tous les instructeurs
     calendar_ids += User.where.not(google_calendar_id: nil).pluck(:google_calendar_id)

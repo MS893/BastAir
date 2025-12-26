@@ -131,10 +131,13 @@ class GoogleCalendarService
 
     calendar_id = nil
     if record.is_a?(Reservation)
-      # On récupère uniquement l'agenda de l'avion.
+      # On récupère uniquement l'agenda de l'avion F-HGBT
       avion = record.avion
-      calendar_id = if avion.immatriculation == 'F-HGBT'
+      calendar_id = case avion.immatriculation
+                    when 'F-HGBT'
                       ENV.fetch('GOOGLE_CALENDAR_ID_AVION_F_HGBT', nil)
+                    when 'F-HGCU'
+                      ENV.fetch('GOOGLE_CALENDAR_ID_AVION_F_HGCU', nil)
                     else
                       ENV.fetch('GOOGLE_CALENDAR_ID', nil)
                     end
@@ -190,7 +193,8 @@ class GoogleCalendarService
     calendar_ids = [
       ENV.fetch('GOOGLE_CALENDAR_ID', nil),
       ENV.fetch('GOOGLE_CALENDAR_ID_EVENTS', nil),
-      ENV.fetch('GOOGLE_CALENDAR_ID_AVION_F_HGBT', nil)
+      ENV.fetch('GOOGLE_CALENDAR_ID_AVION_F_HGBT', nil),
+      ENV.fetch('GOOGLE_CALENDAR_ID_AVION_F_HGCU', nil)
     ]
     # On y ajoute dynamiquement les IDs des calendriers de tous les instructeurs depuis la base de données
     calendar_ids += User.where.not(google_calendar_id: nil).pluck(:google_calendar_id)
@@ -215,6 +219,8 @@ class GoogleCalendarService
         response.items.each do |event|
           @service.delete_event(calendar_id, event.id)
           Rails.logger.info "  - Événement supprimé : #{event.summary} (ID: #{event.id})"
+          puts "  > Événement supprimé : #{event.summary}"
+          sleep 0.5 # Pause pour éviter le Rate Limit lors de la suppression en masse
         end
         page_token = response.next_page_token
         break unless page_token
@@ -392,6 +398,8 @@ class GoogleCalendarService
     case avion.immatriculation
     when 'F-HGBT'
       avion_calendar_id = ENV.fetch('GOOGLE_CALENDAR_ID_AVION_F_HGBT', nil)
+    when 'F-HGCU'
+      avion_calendar_id = ENV.fetch('GOOGLE_CALENDAR_ID_AVION_F_HGCU', nil)
       # Ajoutez d'autres cas pour d'autres avions ici.
     end
 

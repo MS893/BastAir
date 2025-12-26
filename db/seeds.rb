@@ -333,58 +333,60 @@ def vols
   # On récupère l'instructeur créé plus haut
   instructeur = User.find_by(email: 'instructeur@bastair.com')
 
-  compteur_actuel = 123.45 # compteur moteur
-
   # Pour les opérations complexes où les validations sur chaque enregistrement sont importantes,
   # enrober la boucle dans une transaction unique est un excellent moyen d'accélérer le processus
   # en ne faisant qu'un seul "commit" à la base de données à la fin.
   ActiveRecord::Base.transaction do
-    20.times do
-      depart_time = Faker::Time.between(from: 30.days.ago, to: DateTime.now)
-      pilote = all_users.sample
-      duree_vol_aleatoire = Faker::Number.between(from: 0.55, to: 3.05).round(2)
+    Avion.find_each do |avion_loop|
+      compteur_actuel = 123.45 # compteur moteur initial pour cet avion
+      10.times do
+        depart_time = Faker::Time.between(from: 30.days.ago, to: DateTime.now)
+        pilote = all_users.sample
+        duree_vol_aleatoire = Faker::Number.between(from: 0.55, to: 3.05).round(2)
 
-      vol = Vol.new(
-        user: pilote,
-        avion: @avion,
-        type_vol: types_vol.sample,
-        depart: aerodromes.sample,
-        arrivee: aerodromes.sample,
-        debut_vol: depart_time,
-        fin_vol: depart_time + (duree_vol_aleatoire * 60).minutes,
-        compteur_depart: compteur_actuel.round(2),
-        compteur_arrivee: (compteur_actuel + duree_vol_aleatoire).round(2),
-        duree_vol: duree_vol_aleatoire,
-        instructeur_id: pilote.eleve? ? instructeur.id : nil,
-        nb_atterro: [1, 2, 3].sample,
-        solo: [true, false].sample,
-        supervise: [true, false].sample,
-        nav: [true, false].sample,
-        nature: 'VFR de jour',
-        fuel_avant_vol: Faker::Number.between(from: 10.0, to: 100.0).round(1),
-        fuel_apres_vol: Faker::Number.between(from: 20.0, to: 110.0).round(1),
-        huile: Faker::Number.between(from: 2.0, to: 3.0).round(1)
-      )
-
-      if vol.save
-        tarif = Tarif.order(annee: :desc).first
-        cost = vol.duree_vol * tarif.tarif_horaire_avion1
-        cost += vol.duree_vol * tarif.tarif_instructeur if vol.instructeur_id.present? && !vol.solo?
-
-        Transaction.create!(
-          user: vol.user,
-          date_transaction: vol.debut_vol.to_date,
-          description: "Vol du #{vol.debut_vol.to_date.strftime('%d/%m/%Y')} sur #{vol.avion.immatriculation}",
-          mouvement: 'Dépense',
-          montant: cost.round(2),
-          source_transaction: 'Heures de Vol / Location Avions',
-          payment_method: 'Prélèvement sur compte',
-          is_checked: false
+        vol = Vol.new(
+          user: pilote,
+          avion: avion_loop,
+          type_vol: types_vol.sample,
+          depart: aerodromes.sample,
+          arrivee: aerodromes.sample,
+          debut_vol: depart_time,
+          fin_vol: depart_time + (duree_vol_aleatoire * 60).minutes,
+          compteur_depart: compteur_actuel.round(2),
+          compteur_arrivee: (compteur_actuel + duree_vol_aleatoire).round(2),
+          duree_vol: duree_vol_aleatoire,
+          instructeur_id: pilote.eleve? ? instructeur.id : nil,
+          nb_atterro: [1, 2, 3].sample,
+          solo: [true, false].sample,
+          supervise: [true, false].sample,
+          nav: [true, false].sample,
+          nature: 'VFR de jour',
+          fuel_avant_vol: Faker::Number.between(from: 10.0, to: 100.0).round(1),
+          fuel_apres_vol: Faker::Number.between(from: 20.0, to: 110.0).round(1),
+          huile: Faker::Number.between(from: 2.0, to: 3.0).round(1)
         )
 
-        compteur_actuel = (compteur_actuel + 1.90).round(2)
-      else
-        puts "Error creating flight: #{vol.errors.full_messages.join(', ')}"
+        if vol.save
+          tarif = Tarif.order(annee: :desc).first
+          cost = vol.duree_vol * tarif.tarif_horaire_avion1
+          cost += vol.duree_vol * tarif.tarif_instructeur if vol.instructeur_id.present? && !vol.solo?
+
+          Transaction.create!(
+            user: vol.user,
+            date_transaction: vol.debut_vol.to_date,
+            description: "Vol du #{vol.debut_vol.to_date.strftime('%d/%m/%Y')} sur #{vol.avion.immatriculation}",
+            mouvement: 'Dépense',
+            montant: cost.round(2),
+            source_transaction: 'Heures de Vol / Location Avions',
+            payment_method: 'Prélèvement sur compte',
+            is_checked: false
+          )
+
+          compteur_actuel = (compteur_actuel + 1.90).round(2)
+        else
+          puts "Error creating flight: #{vol.errors.full_messages.join(', ')}"
+        end
+        print '*'
       end
       print '*'
     end
@@ -400,33 +402,40 @@ def resas
   instructors = [@admin_user, @instructeur_user]
   types_vol = ['Standard', 'Vol découverte', "Vol d'initiation", "Vol d'essai", 'Convoyage', 'Vol BIA']
 
+  # Instanciation unique du service pour éviter de recharger les credentials à chaque itération
+  service = GoogleCalendarService.new
+
   # La création de réservations implique un appel à une API externe (Google Calendar).
   # Le goulot d'étranglement est le temps de réponse de l'API, pas la base de données.
   # L'utilisation d'une transaction garantit que si un appel API échoue, la base de données reste cohérente.
   ActiveRecord::Base.transaction do
-    20.times do
-      random_day = Faker::Date.between(from: 1.day.from_now, to: 60.days.from_now)
-      random_hour = rand(7..15)
-      random_minute = [0, 15, 30, 45].sample
-      date_debut = random_day.to_datetime.change(hour: random_hour, min: random_minute)
-      is_instruction = [true, false].sample
+    Avion.find_each do |avion_loop|
+      10.times do
+        random_day = Faker::Date.between(from: 1.day.from_now, to: 60.days.from_now)
+        random_hour = rand(7..15)
+        random_minute = [0, 15, 30, 45].sample
+        date_debut = random_day.to_datetime.change(hour: random_hour, min: random_minute)
+        is_instruction = [true, false].sample
 
-      reservation = Reservation.new(
-        user: all_users.sample,
-        avion: @avion,
-        start_time: date_debut,
-        end_time: date_debut + 1.hour,
-        instruction: is_instruction,
-        fi: is_instruction ? instructors.sample.name : nil,
-        type_vol: types_vol.sample
-      )
+        reservation = Reservation.new(
+          user: all_users.sample,
+          avion: avion_loop,
+          start_time: date_debut,
+          end_time: date_debut + 1.hour,
+          instruction: is_instruction,
+          fi: is_instruction ? instructors.sample.name : nil,
+          type_vol: types_vol.sample
+        )
 
-      if reservation.save
-        # L'appel à l'API externe est la partie lente.
-        # Si cet appel échoue, la transaction sera annulée (rollback).
-        GoogleCalendarService.new.create_event_for_app(reservation)
-      else
-        puts "Error creating reservation: #{reservation.errors.full_messages.join(', ')}"
+        if reservation.save
+          # L'appel à l'API externe est la partie lente.
+          # Si cet appel échoue, la transaction sera annulée (rollback).
+          service.create_event_for_app(reservation)
+          sleep 0.5 # Pause pour respecter le Rate Limit de l'API Google
+        else
+          puts "Error creating reservation: #{reservation.errors.full_messages.join(', ')}"
+        end
+        print '*'
       end
       print '*'
     end
@@ -438,6 +447,9 @@ def events
   # 5. Création de 10 events
   # ----------------------------------------------------
   puts "\nCreating 10 events..."
+  # Instanciation unique du service
+  service = GoogleCalendarService.new
+
   # Comme pour les réservations, cette méthode fait des appels API.
   # On utilise une transaction pour la cohérence des données.
   ActiveRecord::Base.transaction do
@@ -455,7 +467,8 @@ def events
         admin: @admin_user
       )
       if event.save
-        GoogleCalendarService.new.create_event_for_app(event)
+        service.create_event_for_app(event)
+        sleep 0.5 # Pause pour respecter le Rate Limit de l'API Google
         print '*'
       else
         puts "Error creating event: #{event.errors.full_messages.join(', ')}"
@@ -993,16 +1006,30 @@ else
     puts 'Effacement des événements des agendas Google en cours...'
     begin
       service = GoogleCalendarService.new
-      # On récupère dynamiquement tous les IDs de calendriers à nettoyer
-      calendar_ids = [ENV.fetch('GOOGLE_CALENDAR_ID_EVENTS', nil), ENV.fetch('GOOGLE_CALENDAR_ID_AVION_F_HGBT', nil)]
-      calendar_ids += User.where.not(google_calendar_id: nil).pluck(:google_calendar_id)
-      calendar_ids = calendar_ids.compact.uniq
+      # On construit une map ID => Nom pour l'affichage
+      id_hgbt = ENV.fetch('GOOGLE_CALENDAR_ID_AVION_F_HGBT', nil)
+      id_hgcu = ENV.fetch('GOOGLE_CALENDAR_ID_AVION_F_HGCU', nil)
+
+      calendar_map = {
+        ENV.fetch('GOOGLE_CALENDAR_ID_EVENTS', nil) => "Événements"
+      }
+
+      calendar_map[id_hgbt] = "Avions"
+      calendar_map[id_hgcu] = "Avion(s)"
+
+      # On ajoute les agendas des instructeurs
+      User.where.not(google_calendar_id: nil).each do |user|
+        calendar_map[user.google_calendar_id] = "Instructeur #{user.prenom} #{user.nom}"
+      end
+
+      calendar_ids = calendar_map.keys.compact
 
       if calendar_ids.empty?
         puts "⚠️  Aucun ID de calendrier Google trouvé dans les variables d'environnement."
       else
         calendar_ids.each do |cal_id|
-          puts "\nTraitement de l'agenda : #{cal_id}"
+          name = calendar_map[cal_id]
+          puts "Traitement de l'agenda : #{name}"
           service.clear_calendar(cal_id)
         end
         puts '✅ Tous les événements ont été effacés des agendas.'

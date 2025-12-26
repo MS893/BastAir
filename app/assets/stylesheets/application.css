@@ -158,3 +158,11 @@ h6 {
   /* Un bordeaux profond */
   color: white !important;
 }
+
+.calendar-dark-container iframe {
+  /* Invertit les couleurs : le blanc devient noir */
+  filter: invert(90%) hue-rotate(180deg) brightness(1.1);
+
+  /* Optionnel : adoucit les contrastes pour que ce soit plus lisible */
+  background-color: #121212;
+}

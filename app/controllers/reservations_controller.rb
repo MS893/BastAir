@@ -253,7 +253,7 @@ class ReservationsController < ApplicationController
     # Récupérer les instructeurs disponibles
     # On exclut l'utilisateur courant car on ne peut pas être son propre instructeur
     User.where(id: available_instructor_ids).where('fi IS NOT NULL AND fi >= ?',
-                                                   Time.zone.today).where.not(id: current_user.id).order(:nom)
+                                                    Time.zone.today).where.not(id: current_user.id).order(:nom)
   end
 
   def fetch_available_instructors
@@ -302,7 +302,8 @@ class ReservationsController < ApplicationController
       candidates = [
         ENV.fetch('GOOGLE_CALENDAR_ID', nil),
         ENV.fetch('GOOGLE_CALENDAR_ID_EVENTS', nil),
-        ENV.fetch('GOOGLE_CALENDAR_ID_AVION_F_HGBT', nil)
+        ENV.fetch('GOOGLE_CALENDAR_ID_AVION_F_HGBT', nil),
+        ENV.fetch('GOOGLE_CALENDAR_ID_AVION_F_HGCU', nil)
       ]
       candidates += User.where.not(google_calendar_id: nil).pluck(:google_calendar_id)
       candidates = candidates.compact.uniq
@@ -348,11 +349,11 @@ class ReservationsController < ApplicationController
   private
 
   def set_reservation
-    @reservation = if current_user.admin?
-                     Reservation.find(params[:id])
-                   else
-                     current_user.reservations.find(params[:id])
-                   end
+    @reservation =  if current_user.admin?
+                      Reservation.find(params[:id])
+                    else
+                      current_user.reservations.find(params[:id])
+                    end
   end
 
   # vérifie si l'adhérent a un solde positif ou pas
