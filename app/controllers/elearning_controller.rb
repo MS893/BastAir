@@ -5,6 +5,13 @@ class ElearningController < ApplicationController
   before_action :authorize_student_area!, only: %i[index show] # Seuls les élèves peuvent voir la liste et la page d'un cours
   before_action :set_course, only: %i[show document]
 
+  def index
+    @courses = Course.order(:id)
+    @audios = Audio.order(:title)
+    # On précharge le livret de l'élève pour optimiser les requêtes dans la vue
+    @user_livrets = Livret.where(user: current_user, course_id: @courses.pluck(:id)).index_by(&:course_id)
+  end
+
   def show
     # La variable @course est maintenant définie par le before_action :set_course
 
@@ -45,13 +52,6 @@ class ElearningController < ApplicationController
       # si aucun document n'est attaché, on redirige
       redirect_to elearning_index_path, alert: 'Le document pour ce cours est introuvable.'
     end
-  end
-
-  def index
-    @courses = Course.order(:id)
-    @audios = Audio.order(:title)
-    # On précharge le livret de l'élève pour optimiser les requêtes dans la vue
-    @user_livrets = Livret.where(user: current_user, course_id: @courses.pluck(:id)).index_by(&:course_id)
   end
 
   private

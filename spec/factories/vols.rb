@@ -6,7 +6,7 @@ FactoryBot.define do
     association :avion
     depart { 'LFPT' }
     arrivee { 'LFPT' }
-    debut_vol { Time.now }
+    debut_vol { Time.current }
     duree_vol { 1.0 }
     compteur_depart { 1000.0 }
     compteur_arrivee { 1001.0 }

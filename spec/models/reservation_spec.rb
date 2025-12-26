@@ -8,14 +8,14 @@ RSpec.describe Reservation, type: :model do
     it { should validate_presence_of(:end_time) }
 
     it 'validates end_time is after start_time' do
-      reservation = build(:reservation, start_time: Time.now, end_time: Time.now - 1.hour)
+      reservation = build(:reservation, start_time: Time.current, end_time: 1.hour.ago)
       expect(reservation).not_to be_valid
       expect(reservation.errors[:end_time]).to include("doit être après l'heure de début")
     end
 
     it 'validates within allowed hours' do
       # 6h du matin (trop tôt)
-      reservation = build(:reservation, start_time: Time.now.change(hour: 6))
+      reservation = build(:reservation, start_time: Time.current.change(hour: 6))
       expect(reservation).not_to be_valid
       expect(reservation.errors[:start_time]).to include('doit être entre 7h00 et 17h00')
     end

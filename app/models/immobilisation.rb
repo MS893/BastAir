@@ -25,7 +25,7 @@ class Immobilisation < ApplicationRecord
   private
 
   def date_acquisition_cannot_be_in_the_future
-    return unless date_acquisition.present? && date_acquisition > Date.today
+    return unless date_acquisition.present? && date_acquisition > Time.zone.today
 
     errors.add(:date_acquisition, 'ne peut pas être dans le futur')
   end

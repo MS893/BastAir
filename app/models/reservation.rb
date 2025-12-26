@@ -110,7 +110,7 @@ class Reservation < ApplicationRecord
     end
 
     # Vérifier si au moins une disponibilité correspondante existe pour l'une des périodes possibles.
-    is_available = instructor.instructor_availabilities.where(day: reservation_day_fr, period: possible_periods).exists?
+    is_available = instructor.instructor_availabilities.exists?(day: reservation_day_fr, period: possible_periods)
 
     errors.add(:base, "L'instructeur n'est pas disponible sur ce créneau.") unless is_available
   end

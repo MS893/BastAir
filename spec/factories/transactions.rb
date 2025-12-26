@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :transaction do
-    date_transaction { Date.today }
+    date_transaction { Time.zone.today }
     description { 'Transaction test' }
     mouvement { 'Recette' }
     montant { 100.0 }

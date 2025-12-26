@@ -8,8 +8,7 @@ namespace :cleanup do
     # On sélectionne les événements à supprimer :
     # - Dont la date de début est antérieure à aujourd'hui.
     # - Dont le titre n'est PAS "Objets trouvés".
-    events_to_delete = Event.where('start_date < ?', Time.zone.now.beginning_of_day)
-                            .where.not(title: 'Objets trouvés')
+    events_to_delete = Event.where(start_date: ...Time.zone.now.beginning_of_day).where.not(title: 'Objets trouvés')
 
     if events_to_delete.any?
       puts "Suppression de #{events_to_delete.count} événement(s) passé(s)."

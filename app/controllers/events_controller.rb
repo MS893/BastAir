@@ -19,6 +19,10 @@ class EventsController < ApplicationController
     @event = Event.new
   end
 
+  def edit
+    # @event est déjà défini par set_event
+  end
+
   def create
     @event = Event.new(event_params)
     # On associe l'administrateur actuel à l'événement
@@ -35,10 +39,6 @@ class EventsController < ApplicationController
     else
       render :new, status: :unprocessable_content
     end
-  end
-
-  def edit
-    # @event est déjà défini par set_event
   end
 
   def update
@@ -83,8 +83,7 @@ class EventsController < ApplicationController
     # On sélectionne les événements à supprimer :
     # - Dont la date de début est antérieure à aujourd'hui.
     # - Dont le titre n'est PAS "Objets trouvés".
-    events_to_delete = Event.where('start_date < ?', Time.zone.now.beginning_of_day)
-                            .where.not(title: 'Objets trouvés')
+    events_to_delete = Event.where(start_date: ...Time.zone.now.beginning_of_day).where.not(title: 'Objets trouvés')
 
     count = events_to_delete.destroy_all.size
     redirect_to events_path, notice: "#{count} événement(s) passé(s) ont été supprimé(s)."
@@ -97,9 +96,7 @@ class EventsController < ApplicationController
   end
 
   def combine_date_and_time
-    unless params[:event][:start_date].present? && params[:event][:start_date_hour].present? && params[:event][:start_date_minute].present?
-      return
-    end
+    return unless params[:event][:start_date].present? && params[:event][:start_date_hour].present? && params[:event][:start_date_minute].present?
 
     date = Date.parse(params[:event][:start_date])
     hour = params[:event][:start_date_hour].to_i
@@ -111,6 +108,6 @@ class EventsController < ApplicationController
   end
 
   def event_params
-    params.require(:event).permit(:title, :description, :start_date, :price, :photo)
+    params.expect(event: [:title, :description, :start_date, :price, :photo])
   end
 end

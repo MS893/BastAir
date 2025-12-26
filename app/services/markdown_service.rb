@@ -2,10 +2,11 @@
 
 # app/services/markdown_service.rb
 require 'commonmarker'
-# On inclut le helper de Rails pour pouvoir utiliser `sanitize`
-include ActionView::Helpers::SanitizeHelper
 
 class MarkdownService
+  # On inclut le helper de Rails pour pouvoir utiliser `sanitize`
+  include ActionView::Helpers::SanitizeHelper
+
   def initialize
     # Syntaxe obligatoire pour Commonmarker 2.x
     @options = {

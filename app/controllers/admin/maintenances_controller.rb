@@ -7,7 +7,7 @@ module Admin
     around_action :set_time_zone
 
     def index
-      @avions = Avion.all.order(:immatriculation)
+      @avions = Avion.order(:immatriculation)
       @selected_avion = params[:avion_id].present? ? Avion.find_by(id: params[:avion_id]) : @avions.first
 
       if @selected_avion
@@ -240,7 +240,7 @@ module Admin
     def notify_grounded
       count = 0
 
-      Avion.all.each do |avion|
+      Avion.find_each do |avion|
         next unless avion.grounded?
 
         unavailability_end_date = nil
@@ -258,7 +258,7 @@ module Admin
 
         # Règle : 1 journée (le jour de l'immobilisation) pour une visite 100 heures
         if avion.next_100h.present? && avion.next_100h <= 0
-          date_100h = Date.today
+          date_100h = Time.zone.today
           unavailability_end_date = unavailability_end_date ? [unavailability_end_date, date_100h].max : date_100h
         end
 
@@ -266,9 +266,7 @@ module Admin
 
         # On récupère les réservations futures qui tombent dans la période d'indisponibilité
         reservations_to_cancel = avion.reservations.where(
-          'start_time >= ? AND start_time <= ?',
-          Time.current,
-          unavailability_end_date.end_of_day
+          start_time: Time.current..unavailability_end_date.end_of_day
         ).where.not(status: 'cancelled')
 
         reservations_to_cancel.each do |reservation|
@@ -304,8 +302,8 @@ module Admin
     end
 
     def maintenance_params
-      params.require(:avion).permit(:marque, :modele, :moteur, :potentiel_moteur, :potentiel_cellule, :next_100h,
-                                    :next_50h, :next_1000h, :annuelle, :_1000h, :gv, :tbo_helice, :tbo_parachute, :cert_examen_navigabilite, :cen_document, :check_50h, :check_annuelle, :check_parachute)
+      params.expect(avion: %i[marque modele moteur potentiel_moteur potentiel_cellule next_100h
+                              next_50h next_1000h annuelle _1000h gv tbo_helice tbo_parachute cert_examen_navigabilite cen_document check_50h check_annuelle check_parachute])
     end
 
     def log_maintenance_action(action_name, details)

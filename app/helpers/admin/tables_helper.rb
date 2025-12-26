@@ -57,7 +57,7 @@ module Admin
 
       link_to(admin_tables_path(table_name: table_name, page: query_params[:page], query: query_params[:query], sort_column: column, sort_direction: next_direction),
               data: { turbo_frame: 'table_content_frame', turbo_action: 'advance' }) do
-        "#{header_text}#{icon}".html_safe
+        safe_join([header_text, icon])
       end
     end
 
@@ -66,13 +66,11 @@ module Admin
       value = record.public_send(column)
 
       # Cas spécial pour l'immatriculation des avions pour éviter la césure
-      if table_name == 'avions' && column == 'immatriculation'
-        return content_tag(:span, value, style: 'white-space: nowrap;')
-      end
+      return content_tag(:span, value, style: 'white-space: nowrap;') if table_name == 'avions' && column == 'immatriculation'
 
       # Cas spécial pour le champ 'fi' de la table 'reservations' qui contient un ID d'instructeur
       if table_name == 'reservations' && column == 'fi' && value.present?
-        instructeur = @users_by_id[value.to_i]
+        instructeur = users_by_id[value.to_i]
         return instructeur ? "#{instructeur.prenom} #{instructeur.nom}" : "ID: #{value}"
       end
 
@@ -80,7 +78,7 @@ module Admin
       return display_association_name(record, column, table_name, value) || "ID: #{value}" if column.end_with?('_id')
 
       # Gestion des types de données spécifiques
-      case @model.column_for_attribute(column).type
+      case current_model.column_for_attribute(column).type
       when :boolean
         if value
           content_tag(:span, 'Oui',
@@ -153,13 +151,13 @@ module Admin
 
       case column
       when 'user_id', 'instructeur_id', 'admin_id'
-        user = @users_by_id[value]
+        user = users_by_id[value]
         user ? "#{user.prenom} #{user.nom}" : nil
       when 'event_id'
-        event = @events_by_id[value]
+        event = events_by_id[value]
         event&.title
       when 'avion_id'
-        avion = @avions_by_id[value]
+        avion = avions_by_id[value]
         avion ? content_tag(:span, avion.immatriculation, style: 'white-space: nowrap;') : nil
       end
     end

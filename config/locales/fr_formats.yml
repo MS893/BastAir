@@ -1,0 +1,4 @@
+fr:
+  date:
+    formats:
+      short_year: "%d/%m/%y"

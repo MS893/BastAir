@@ -9,7 +9,7 @@ RSpec.describe AudiosController, type: :controller do
   before do
     sign_in user
     # Attacher un fichier dummy
-    file = Rails.root.join('spec', 'fixtures', 'files', 'test.mp3')
+    file = Rails.root.join('spec/fixtures/files/test.mp3')
     FileUtils.mkdir_p(File.dirname(file))
     File.write(file, 'dummy audio') unless File.exist?(file)
     audio.audio.attach(io: File.open(file), filename: 'test.mp3', content_type: 'audio/mpeg')

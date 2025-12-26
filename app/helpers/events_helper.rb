@@ -39,7 +39,7 @@ module EventsHelper
     when 'Aide vols BIA'
       'turquoise' # Turquoise défini dans le css
     else
-      'primary' # Bleu
+      'warning' # jaune
     end
   end
 end

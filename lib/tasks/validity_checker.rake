@@ -14,11 +14,11 @@ namespace :validity do
     # Vérifie les butées (licence, médical, contrôle)
     reminder_intervals.each do |days|
       puts "Vérification des validités expirant dans #{days} jours..."
-      target_date = Date.today + days.days
+      target_date = Time.zone.today + days.days
 
       validity_fields.each do |field, item_name|
         # Trouve les utilisateurs dont la validité expire exactement à la date cible
-        User.where(field => target_date).each do |user|
+        User.where(field => target_date).find_each do |user|
           # Envoie l'e-mail de rappel
           UserMailer.validity_reminder_email(user, item_name, user.public_send(field)).deliver_later
           puts "Rappel de #{days} jours envoyé à #{user.email} pour l'expiration de #{item_name}."

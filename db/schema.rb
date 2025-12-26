@@ -69,7 +69,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_23_082656) do
   end
 
   create_table "avions", force: :cascade do |t|
-    t.string "immatriculation"
+    t.string "immatriculation", null: false
     t.string "marque"
     t.string "modele"
     t.string "moteur"
@@ -95,6 +95,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_23_082656) do
     t.decimal "next_1000h", precision: 6, scale: 2
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["immatriculation"], name: "index_avions_on_immatriculation", unique: true
   end
 
   create_table "comments", force: :cascade do |t|
@@ -240,7 +241,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_23_082656) do
     t.text "source"
     t.text "extended_properties"
     t.text "sharedExtendedProperties"
-    t.boolean "instruction"
+    t.boolean "instruction", default: false, null: false
     t.string "fi"
     t.string "type_vol"
     t.datetime "created_at", null: false
@@ -298,7 +299,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_23_082656) do
     t.decimal "montant", precision: 8, scale: 2
     t.string "piece_justificative"
     t.string "payment_method"
-    t.boolean "is_checked"
+    t.boolean "is_checked", default: false, null: false
     t.string "source_transaction"
     t.string "attachment_url"
     t.datetime "deleted_at"
@@ -331,7 +332,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_12_23_082656) do
     t.decimal "solde", precision: 8, scale: 2, default: "0.0", null: false
     t.date "cotisation_club"
     t.date "cotisation_ffa"
-    t.boolean "autorise"
+    t.boolean "autorise", default: false, null: false
     t.boolean "admin", default: false, null: false
     t.string "fonction"
     t.date "date_fin_formation"

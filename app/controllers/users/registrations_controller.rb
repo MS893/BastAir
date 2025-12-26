@@ -5,6 +5,10 @@ module Users
     prepend_before_action :check_captcha, only: [:create] # Vérifie le captcha avant la création
     before_action :configure_sign_up_params, only: [:create]
 
+    def create
+      super
+    end
+
     # redirige l'utilisateur vers la page d'édition de son profil après l'inscription
     def after_sign_up_path_for(resource)
       edit_user_path(resource)

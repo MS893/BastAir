@@ -40,7 +40,7 @@ class User < ApplicationRecord
   has_many :instructor_availabilities, dependent: :destroy
   has_many :reservations, dependent: :destroy # <-- Ligne ajoutée pour corriger le bug
   # Événements qu'un administrateur a créés
-  has_many :created_events, foreign_key: 'admin_id', class_name: 'Event', dependent: :destroy
+  has_many :created_events, foreign_key: 'admin_id', class_name: 'Event', dependent: :destroy, inverse_of: :admin
   has_many :attended_events, through: :attendances, source: :event
   # ActiveStorage
   has_one_attached :avatar, dependent: :purge
@@ -76,10 +76,10 @@ class User < ApplicationRecord
   validate :incompatible_roles
   # == Actions ===============================================================
   before_validation :set_bia_defaults, if: :is_bia?       # lors de la création d'un compte BIA (collège ou lycée)
+  before_save :manage_training_end_date
   after_create :welcome_send, unless: :is_bia?            # envoie d'un email sauf si c'est un collège ou lycée BIA
   after_create :create_progression_livret, if: :eleve?    # quand on créé un élève, on crée son livret de progression
   after_update :check_for_negative_balance, if: -> { saved_change_to_solde? && !is_bia? }
-  before_save :manage_training_end_date
 
   # Turbo Streams pour la mise à jour du solde en temps réel
   # On s'assure que le solde est toujours un Decimal, avec 0.0 par défaut.
@@ -126,7 +126,7 @@ class User < ApplicationRecord
 
   # Un utilisateur est un instructeur si sa date FI est valide et non dépassée.
   def instructeur?
-    fi.present? && fi >= Date.today
+    fi.present? && fi >= Time.zone.today
   end
 
   # Un utilisateur est un collège ou lycée BIA si son prénom est "bia".
@@ -155,7 +155,7 @@ class User < ApplicationRecord
       # Crée l'enregistrement comptable. Le callback du modèle Transaction se chargera de la mise à jour du solde
       Transaction.create!(
         user: self,
-        date_transaction: Date.today,
+        date_transaction: Time.zone.today,
         description: 'Crédit du compte via paiement en ligne',
         mouvement: 'Recette',
         montant: amount.to_d,
@@ -169,17 +169,13 @@ class User < ApplicationRecord
   # Retourne un tableau de messages d'avertissement pour les validités expirant bientôt (- d'1 mois)
   def validity_warnings
     warnings = []
-    one_month_from_now = Date.today + 1.month
+    one_month_from_now = Time.zone.today + 1.month
 
     # Vérifie la date de licence
-    if date_licence.present? && date_licence.between?(Date.today, one_month_from_now)
-      warnings << "Attention, votre licence expire le #{I18n.l(date_licence, format: :long)}."
-    end
+    warnings << "Attention, votre licence expire le #{I18n.l(date_licence, format: :long)}." if date_licence.present? && date_licence.between?(Time.zone.today, one_month_from_now)
 
     # Vérifie la visite médicale
-    if medical.present? && medical.between?(Date.today, one_month_from_now)
-      warnings << "Attention, votre visite médicale expire le #{I18n.l(medical, format: :long)}."
-    end
+    warnings << "Attention, votre visite médicale expire le #{I18n.l(medical, format: :long)}." if medical.present? && medical.between?(Time.zone.today, one_month_from_now)
 
     warnings
   end
@@ -198,7 +194,7 @@ class User < ApplicationRecord
 
     if fonction == 'brevete' && fonction_was == 'eleve'
       # L'élève devient breveté : on fige la date de fin de formation à aujourd'hui si elle n'est pas fournie
-      self.date_fin_formation ||= Date.today
+      self.date_fin_formation ||= Time.zone.today
     elsif fonction == 'eleve'
       # Si on repasse en élève (erreur de manip ?), on efface la date pour réactiver le livret
       self.date_fin_formation = nil

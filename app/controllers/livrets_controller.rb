@@ -6,13 +6,13 @@ class LivretsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_livret, only: %i[show update signature]
 
-  def create
-    # Not implemented yet
-  end
-
   def show
     # Redirige vers la page de signature, qui agit comme la vue "show" pour un livret.
     redirect_to signature_livret_path(@livret)
+  end
+
+  def create
+    # Not implemented yet
   end
 
   def update
@@ -38,9 +38,7 @@ class LivretsController < ApplicationController
     end
 
     # Auto-validation des FTP (cours théoriques) lors de la signature de l'élève
-    if @livret.course_id.present? && (@livret.signature_data.present? || l_params[:signature_data].present?)
-      @livret.status = 3
-    end
+    @livret.status = 3 if @livret.course_id.present? && (@livret.signature_data.present? || l_params[:signature_data].present?)
 
     respond_to do |format|
       if @livret.save
@@ -78,6 +76,6 @@ class LivretsController < ApplicationController
   end
 
   def livret_params
-    params.require(:livret).permit(:signature_data, :instructor_signature_data, :status, :date)
+    params.expect(livret: [:signature_data, :instructor_signature_data, :status, :date])
   end
 end

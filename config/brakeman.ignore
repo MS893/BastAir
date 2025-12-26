@@ -1,0 +1,120 @@
+{
+  "ignored_warnings": [
+    {
+      "warning_type": "Mass Assignment",
+      "warning_code": 105,
+      "fingerprint": "16db8acee898a7635fec4189401d1d286bc319cd8d810d720d87eb5c744fcee3",
+      "check_name": "PermitAttributes",
+      "message": "Potentially dangerous key allowed for mass assignment",
+      "file": "app/controllers/users_controller.rb",
+      "line": 158,
+      "link": "https://brakemanscanner.org/docs/warning_types/mass_assignment/",
+      "code": "params.require(:user).permit(:admin, :fonction, :fi, :fe, :nuit, :google_calendar_id)",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "UsersController",
+        "method": "user_params"
+      },
+      "user_input": ":admin",
+      "confidence": "High",
+      "cwe_id": [
+        915
+      ],
+      "note": ""
+    },
+    {
+      "warning_type": "File Access",
+      "warning_code": 16,
+      "fingerprint": "5144165a99eeb2a44d8d82becc8ff4bbf8470a106ea8cfc66c4b53e70a4558a7",
+      "check_name": "FileAccess",
+      "message": "Model attribute used in file name",
+      "file": "app/controllers/flight_lessons_controller.rb",
+      "line": 37,
+      "link": "https://brakemanscanner.org/docs/warning_types/file_access/",
+      "code": "Dir.glob(Rails.root.join(\"lib\", \"assets\", \"lecons\", \"*#{(0 or (FlightLesson.where(\"id < ?\", FlightLesson.find(params[:id]).id).count + 1)).to_s.rjust(2, \"0\")}-*.pdf\"))",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "FlightLessonsController",
+        "method": "pdf"
+      },
+      "user_input": "FlightLesson.where(\"id < ?\", FlightLesson.find(params[:id]).id).count",
+      "confidence": "Weak",
+      "cwe_id": [
+        22
+      ],
+      "note": ""
+    },
+    {
+      "warning_type": "File Access",
+      "warning_code": 16,
+      "fingerprint": "54b86b5f2efe9abc69d7e8033ce8c0c865373fcf9ab59c3020dc31166f8a4907",
+      "check_name": "SendFile",
+      "message": "Parameter value used in file name",
+      "file": "app/controllers/static_pages_controller.rb",
+      "line": 121,
+      "link": "https://brakemanscanner.org/docs/warning_types/file_access/",
+      "code": "send_file(Rails.root.join(\"app\", \"assets\", \"files\", \"download\").join(File.basename(params[:filename])), :disposition => \"attachment\")",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "StaticPagesController",
+        "method": "download"
+      },
+      "user_input": "params[:filename]",
+      "confidence": "Weak",
+      "cwe_id": [
+        22
+      ],
+      "note": ""
+    },
+    {
+      "warning_type": "Mass Assignment",
+      "warning_code": 105,
+      "fingerprint": "cd537f333dc2734504b03c0f8f87351e7013f6a75688442359c25233bedd7f53",
+      "check_name": "PermitAttributes",
+      "message": "Potentially dangerous key allowed for mass assignment",
+      "file": "app/controllers/admin/users_controller.rb",
+      "line": 29,
+      "link": "https://brakemanscanner.org/docs/warning_types/mass_assignment/",
+      "code": "params.require(:user).permit(:fonction, :admin, :fi)",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Admin::UsersController",
+        "method": "user_params"
+      },
+      "user_input": ":admin",
+      "confidence": "High",
+      "cwe_id": [
+        915
+      ],
+      "note": ""
+    },
+    {
+      "warning_type": "File Access",
+      "warning_code": 16,
+      "fingerprint": "e7ed02bd57796a5e8e8567d3bfddbef1d7f2ff7a20f361b10294e1c75937aa31",
+      "check_name": "SendFile",
+      "message": "Model attribute used in file name",
+      "file": "app/controllers/flight_lessons_controller.rb",
+      "line": 40,
+      "link": "https://brakemanscanner.org/docs/warning_types/file_access/",
+      "code": "send_file(Dir.glob(Rails.root.join(\"lib\", \"assets\", \"lecons\", \"*#{(0 or (FlightLesson.where(\"id < ?\", FlightLesson.find(params[:id]).id).count + 1)).to_s.rjust(2, \"0\")}-*.pdf\")).first, :type => \"application/pdf\", :disposition => \"inline\")",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "FlightLessonsController",
+        "method": "pdf"
+      },
+      "user_input": "FlightLesson.where(\"id < ?\", FlightLesson.find(params[:id]).id).count",
+      "confidence": "Weak",
+      "cwe_id": [
+        22
+      ],
+      "note": ""
+    }
+  ],
+  "brakeman_version": "7.1.0"
+}

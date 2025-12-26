@@ -6,6 +6,10 @@ class CommentsController < ApplicationController
   before_action :set_comment, only: %i[edit update destroy]
   before_action :check_author, only: %i[edit update destroy]
 
+  def edit
+    # @comment est déjà chargé par le before_action
+  end
+
   def create
     # On vérifie si l'utilisateur a déjà commenté cet événement
     if @event.comments.exists?(user_id: current_user.id)
@@ -22,10 +26,6 @@ class CommentsController < ApplicationController
       # Si la sauvegarde échoue, on redirige avec une alerte.
       redirect_to event_path(@event), alert: 'Le commentaire ne peut pas être vide.'
     end
-  end
-
-  def edit
-    # @comment est déjà chargé par le before_action
   end
 
   def update
@@ -53,7 +53,7 @@ class CommentsController < ApplicationController
   end
 
   def comment_params
-    params.require(:comment).permit(:content)
+    params.expect(comment: [:content])
   end
 
   def check_author

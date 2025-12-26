@@ -16,24 +16,24 @@ class StaticPagesController < ApplicationController
       # On vérifie si le contact d'urgence est invalide pour afficher une alerte
       # On ne lance la validation que si le champ n'est pas vide.
       if current_user.contact_urgence.present? && !current_user.valid?(:update_profil)
-        flash.now[:warning] =
-          "Votre numéro de contact d'urgence semble invalide. #{view_context.link_to('Veuillez le corriger ici',
-                                                                                     edit_profil_user_path(current_user))}".html_safe
+        flash.now[:warning] = view_context.safe_join([
+                                                       'Votre numéro de contact d\'urgence semble invalide. ',
+                                                       view_context.link_to('Veuillez le corriger ici', edit_profil_user_path(current_user))
+                                                     ])
       end
 
       # On vérifie les validités qui expirent bientôt
       validity_warnings = current_user.validity_warnings
       if validity_warnings.any?
         # On combine les avertissements en un seul message flash.
-        flash.now[:info] = validity_warnings.join('<br>').html_safe
+        flash.now[:info] = view_context.safe_join(validity_warnings, view_context.tag.br)
       end
 
       @transactions = current_user.transactions.order(date_transaction: :desc).limit(5)
 
       # On charge les 3 prochaines réservations de l'utilisateur
-      @upcoming_reservations = current_user.reservations.where('start_time >= ?',
-                                                               Time.current).order(start_time: :asc).limit(3)
-      @upcoming_reservations_count = current_user.reservations.where('start_time >= ?', Time.current).count
+      @upcoming_reservations = current_user.reservations.where(start_time: Time.current..).order(start_time: :asc).limit(3)
+      @upcoming_reservations_count = current_user.reservations.where(start_time: Time.current..).count
     end
 
     # On charge les 5 dernières actualités, de la plus récente à la plus ancienne
@@ -90,12 +90,12 @@ class StaticPagesController < ApplicationController
     @instructor_status = {
       is_instructor: current_user.instructeur?,
       fi_present: current_user.fi.present?,
-      fi_expired: current_user.fi.present? && current_user.fi < Date.today
+      fi_expired: current_user.fi.present? && current_user.fi < Time.zone.today
     }
   end
 
   def documents_divers
-    downloads_path = Rails.root.join('app', 'assets', 'files', 'download')
+    downloads_path = Rails.root.join('app/assets/files/download')
     @files = []
 
     if Dir.exist?(downloads_path)
@@ -108,7 +108,7 @@ class StaticPagesController < ApplicationController
 
   def download
     filename = params[:filename]
-    downloads_path = Rails.root.join('app', 'assets', 'files', 'download')
+    downloads_path = Rails.root.join('app/assets/files/download')
 
     # Sécurisation : On s'assure que le nom de fichier ne contient pas de ".."
     # et qu'il correspond bien à un nom de fichier simple.

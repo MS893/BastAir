@@ -53,7 +53,7 @@ class ProgressionsController < ApplicationController
     @formations_theoriques = user_livrets.where.not(course_id: nil).order(:id)
     @lecons_en_vol = user_livrets.where.not(flight_lesson_id: nil).order(:id)
 
-    render  pdf: "Livret_progression_#{@selected_eleve.full_name.parameterize}_#{Date.today.strftime('%d-%m-%Y')}",
+    render  pdf: "Livret_progression_#{@selected_eleve.full_name.parameterize}_#{Time.zone.today.strftime('%d-%m-%Y')}",
             template: 'progressions/show',
             layout: 'pdf',
             page_size: 'A4',
@@ -140,7 +140,7 @@ class ProgressionsController < ApplicationController
 
     # Génération du PDF en mémoire
     pdf = render_to_string(
-      pdf: "Livret_progression_#{@selected_eleve.full_name.parameterize}_#{Date.today.strftime('%d-%m-%Y')}",
+      pdf: "Livret_progression_#{@selected_eleve.full_name.parameterize}_#{Time.zone.today.strftime('%d-%m-%Y')}",
       template: 'progressions/show',
       layout: 'pdf',
       page_size: 'A4',

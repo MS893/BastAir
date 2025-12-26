@@ -42,7 +42,7 @@ module Admin
       @resultat_exercice_n = @recettes_n - @depenses_n
 
       # --- Calculs pour les Immobilisations et Amortissements (N) ---
-      immobilisations_acquises_n = Immobilisation.where('date_acquisition <= ?', Date.new(@year).end_of_year)
+      immobilisations_acquises_n = Immobilisation.where(date_acquisition: ..Date.new(@year).end_of_year)
       @valeur_brute_immos_n = immobilisations_acquises_n.sum(:valeur_acquisition)
       @amortissements_cumules_n = immobilisations_acquises_n.sum { |immo| immo.amortissements_cumules(@year) }
       @dotation_amortissement_n = immobilisations_acquises_n.sum(&:amortissement_annuel)
@@ -62,8 +62,7 @@ module Admin
       @resultat_exercice_n_minus_1 = @recettes_n_minus_1 - @depenses_n_minus_1
 
       # --- Calculs pour les Immobilisations et Amortissements (N-1) ---
-      immobilisations_acquises_n_minus_1 = Immobilisation.where('date_acquisition <= ?',
-                                                                Date.new(@year_n_minus_1).end_of_year)
+      immobilisations_acquises_n_minus_1 = Immobilisation.where(date_acquisition: ..Date.new(@year_n_minus_1).end_of_year)
       @valeur_brute_immos_n_minus_1 = immobilisations_acquises_n_minus_1.sum(:valeur_acquisition)
       @amortissements_cumules_n_minus_1 = immobilisations_acquises_n_minus_1.sum do |immo|
         immo.amortissements_cumules(@year_n_minus_1)
@@ -79,8 +78,8 @@ module Admin
       # --- Calculs du Passif (Fonds propres) ---
       # Fonds propres au début de N-1 (solde de toutes les années avant N-1)
       # On utilise une comparaison de date directe pour la compatibilité avec SQLite.
-      @fonds_propres_debut_n_minus_1 = Transaction.where('date_transaction < ?',
-                                                         Date.new(@year_n_minus_1)).sum("CASE WHEN mouvement = 'Recette' THEN montant ELSE -montant END")
+      @fonds_propres_debut_n_minus_1 = Transaction.where(date_transaction: ...Date.new(@year_n_minus_1))
+                                                  .sum("CASE WHEN mouvement = 'Recette' THEN montant ELSE -montant END")
       # Fonds propres au début de N (solde de toutes les années avant N)
       @fonds_propres_debut_n = @fonds_propres_debut_n_minus_1 + @resultat_exercice_n_minus_1
 
@@ -107,7 +106,7 @@ module Admin
                   footer: { html: { template: 'layouts/_pdf_footer', layout: false, formats: [:html] } },
                   # On force l'exécution du JS pour le logo et la pagination
                   extra_options: { 'enable-local-file-access': true, 'enable-javascript': true,
-                                   'javascript-delay': 100 }
+                                  'javascript-delay': 100 }
         end
       end
     end
@@ -117,8 +116,7 @@ module Admin
     def authorize_admin_or_treasurer!
       return if current_user&.admin? || current_user&.fonction == 'tresorier'
 
-      redirect_to root_path,
-                  alert: "Vous n'avez pas les droits pour accéder à cette page."
+      redirect_to root_path, alert: "Vous n'avez pas les droits pour accéder à cette page."
     end
   end
 end

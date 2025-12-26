@@ -58,15 +58,15 @@ RSpec.describe Admin::MaintenancesController, type: :controller do
 
     it 'valide la visite annuelle' do
       patch :reset_annuelle, params: { id: avion.id }
-      expect(avion.reload.annuelle).to eq(Date.today + 1.year)
+      expect(avion.reload.annuelle).to eq(Time.zone.today + 1.year)
     end
   end
 
   describe 'POST #notify_grounded' do
     it 'annule les réservations futures pour les avions indisponibles' do
       # On crée une réservation future AVANT de rendre l'avion indisponible
-      start_t = (Time.now + 2.days).change(hour: 10, min: 0)
-      end_t = start_t + 1.hour
+      start_t = 2.days.from_now.change(hour: 10, min: 0)
+      end_t = start_t.advance(hours: 1)
       create(:reservation, avion: avion, start_time: start_t, end_time: end_t, status: 'confirmed')
 
       # On rend l'avion indisponible

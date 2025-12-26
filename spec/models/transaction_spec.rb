@@ -46,7 +46,7 @@ RSpec.describe Transaction, type: :model do
   describe 'Scopes' do
     it 'hides discarded transactions by default' do
       t1 = create(:transaction)
-      t2 = create(:transaction, deleted_at: Time.now)
+      t2 = create(:transaction, deleted_at: Time.current)
       expect(Transaction.all).to include(t1)
       expect(Transaction.all).not_to include(t2)
     end

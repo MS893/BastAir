@@ -5,6 +5,10 @@ module Users
   class SessionsController < Devise::SessionsController
     prepend_before_action :check_captcha, only: [:create]
 
+    def create
+      super
+    end
+
     private
 
     def check_captcha

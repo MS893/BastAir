@@ -347,8 +347,7 @@
                                   <div class="me-2">
                                     <% 
                                       if livret.signature_image.service.is_a?(ActiveStorage::Service::DiskService)
-                                        img_path = livret.signature_image.service.path_for(livret.signature_image.key)
-                                        img_data = Base64.encode64(File.read(img_path))
+                                        img_data = Base64.encode64(livret.signature_image.download)
                                         img_src = "data:#{livret.signature_image.content_type};base64,#{img_data}"
                                       else
                                         img_src = url_for(livret.signature_image)
@@ -361,8 +360,7 @@
                                   <div>
                                     <% 
                                       if livret.instructor_signature.service.is_a?(ActiveStorage::Service::DiskService)
-                                        img_path = livret.instructor_signature.service.path_for(livret.instructor_signature.key)
-                                        img_data = Base64.encode64(File.read(img_path))
+                                        img_data = Base64.encode64(livret.instructor_signature.download)
                                         img_src = "data:#{livret.instructor_signature.content_type};base64,#{img_data}"
                                       else
                                         img_src = url_for(livret.instructor_signature)
@@ -419,8 +417,7 @@
                                 <div class="me-2">
                                   <% 
                                     if livret.signature_image.service.is_a?(ActiveStorage::Service::DiskService)
-                                      img_path = livret.signature_image.service.path_for(livret.signature_image.key)
-                                      img_data = Base64.encode64(File.read(img_path))
+                                      img_data = Base64.encode64(livret.signature_image.download)
                                       img_src = "data:#{livret.signature_image.content_type};base64,#{img_data}"
                                     else
                                       img_src = url_for(livret.signature_image)
@@ -433,8 +430,7 @@
                                 <div>
                                   <% 
                                     if livret.instructor_signature.service.is_a?(ActiveStorage::Service::DiskService)
-                                      img_path = livret.instructor_signature.service.path_for(livret.instructor_signature.key)
-                                      img_data = Base64.encode64(File.read(img_path))
+                                      img_data = Base64.encode64(livret.instructor_signature.download)
                                       img_src = "data:#{livret.instructor_signature.content_type};base64,#{img_data}"
                                     else
                                       img_src = url_for(livret.instructor_signature)
@@ -553,8 +549,7 @@
                                     <div class="mb-1">
                                       <% 
                                         if livret.signature_image.service.is_a?(ActiveStorage::Service::DiskService)
-                                          img_path = livret.signature_image.service.path_for(livret.signature_image.key)
-                                          img_data = Base64.encode64(File.read(img_path))
+                                          img_data = Base64.encode64(livret.signature_image.download)
                                           img_src = "data:#{livret.signature_image.content_type};base64,#{img_data}"
                                         else
                                           img_src = url_for(livret.signature_image)
@@ -567,8 +562,7 @@
                                     <div class="d-flex align-items-center">
                                       <% 
                                         if livret.instructor_signature.service.is_a?(ActiveStorage::Service::DiskService)
-                                          img_path = livret.instructor_signature.service.path_for(livret.instructor_signature.key)
-                                          img_data = Base64.encode64(File.read(img_path))
+                                          img_data = Base64.encode64(livret.instructor_signature.download)
                                           img_src = "data:#{livret.instructor_signature.content_type};base64,#{img_data}"
                                         else
                                           img_src = url_for(livret.instructor_signature)
@@ -625,7 +619,7 @@
                                 </div>
                               <% end %>
                             </td>
-                            <td><%= sanitize(livret.comment.to_s).gsub("Commentaires :", "<br>Commentaires :").html_safe %></td>
+                            <td><%= sanitize(livret.comment.to_s.gsub("Commentaires :", "<br>Commentaires :")) %></td>
                           </tr>
                         <% end %>
                         <% end %>

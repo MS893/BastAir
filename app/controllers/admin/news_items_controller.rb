@@ -17,6 +17,9 @@ module Admin
       @news_item = NewsItem.new
     end
 
+    # GET /admin/news_items/:id/edit
+    def edit; end
+
     # POST /admin/news_items
     def create
       @news_item = NewsItem.new(news_item_params)
@@ -28,9 +31,6 @@ module Admin
         render :new, status: :unprocessable_content, alert: 'Erreur lors de la création de la consigne.'
       end
     end
-
-    # GET /admin/news_items/:id/edit
-    def edit; end
 
     # PATCH/PUT /admin/news_items/:id
     def update
@@ -54,7 +54,7 @@ module Admin
     end
 
     def news_item_params
-      params.require(:news_item).permit(:title, :content)
+      params.expect(news_item: %i[title content])
     end
   end
 end

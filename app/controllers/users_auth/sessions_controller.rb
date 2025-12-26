@@ -24,7 +24,7 @@ module UsersAuth
 
     def check_captcha
       # Ne vérifie le captcha qu'en environnement de production
-      return if Rails.env.development? || Rails.env.test?
+      return if Rails.env.local?
 
       return if verify_recaptcha
 

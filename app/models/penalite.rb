@@ -6,7 +6,6 @@ class Penalite < ApplicationRecord
   belongs_to :admin, class_name: 'User', optional: true
 
   # --- Validations ---
-  validates :user_id, presence: true
   validates :avion_immatriculation, presence: true
   validates :reservation_start_time, presence: true
   validates :reservation_end_time, presence: true

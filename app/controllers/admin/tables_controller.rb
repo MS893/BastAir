@@ -6,6 +6,7 @@ require 'kaminari'
 module Admin
   class TablesController < ApplicationController
     before_action :authorize_admin!
+    helper_method :current_model, :users_by_id, :avions_by_id, :events_by_id
 
     # Centralise la configuration des associations à précharger pour chaque table.
     # Clé: nom de la table.
@@ -72,11 +73,11 @@ module Admin
       @model = create_anonymous_model(params[:table_name])
 
       # 1. Construire la requête de base avec filtres et tri (sans l'exécuter)
-      filtered_records = if @selected_table == 'transactions'
-                           Transaction.unscoped # Inclut les transactions "discarded"
-                         else
-                           @model.all
-                         end
+      filtered_records =  if @selected_table == 'transactions'
+                            Transaction.unscoped # Inclut les transactions "discarded"
+                          else
+                            @model.all
+                          end
 
       if params[:query].present?
         query_term = "%#{params[:query].downcase}%"
@@ -87,14 +88,10 @@ module Admin
       end
 
       # Filtre par type d'action (spécifique pour activity_logs ou tables avec colonne 'action')
-      if params[:action_type].present? && @model.column_names.include?('action')
-        filtered_records = filtered_records.where(action: params[:action_type])
-      end
+      filtered_records = filtered_records.where(action: params[:action_type]) if params[:action_type].present? && @model.column_names.include?('action')
 
       # Filtre par type d'enregistrement (spécifique pour activity_logs)
-      if params[:record_type].present? && @model.column_names.include?('record_type')
-        filtered_records = filtered_records.where(record_type: params[:record_type])
-      end
+      filtered_records = filtered_records.where(record_type: params[:record_type]) if params[:record_type].present? && @model.column_names.include?('record_type')
 
       if params[:sort_column].present? && @model.column_names.include?(params[:sort_column])
         sort_direction = %w[asc desc].include?(params[:sort_direction]) ? params[:sort_direction] : 'asc'
@@ -125,11 +122,11 @@ module Admin
     def show_record
       @table_name = params[:table_name]
       @model = create_anonymous_model(@table_name)
-      if @table_name == 'transactions'
-        @record = Transaction.unscoped.find(params[:id]) # Permet de trouver les transactions même si elles sont supprimées logiquement
-      else
-        @record = @model.find(params[:id])
-      end
+      @record = if @table_name == 'transactions'
+                  Transaction.unscoped.find(params[:id]) # Permet de trouver les transactions même si elles sont supprimées logiquement
+                else
+                  @model.find(params[:id])
+                end
       @associated_records = {}
 
       # Détecte les clés étrangères et charge les enregistrements associés.
@@ -164,7 +161,7 @@ module Admin
       # Un instructeur est un utilisateur avec une date de qualification FI valide.
       case @table_name
       when 'reservations'
-        @instructors_for_select = User.where('fi IS NOT NULL AND fi >= ?', Date.today).order(:nom, :prenom).map do |u|
+        @instructors_for_select = User.where('fi IS NOT NULL AND fi >= ?', Time.zone.today).order(:nom, :prenom).map do |u|
           ["#{u.prenom} #{u.nom}", u.id]
         end
         @google_calendar_colors = {
@@ -194,7 +191,7 @@ module Admin
       when 'events'
         @event_titles = Event::ALLOWED_TITLES
       when 'vols'
-        @instructors_for_select = User.where('fi IS NOT NULL AND fi >= ?', Date.today).order(:nom, :prenom).map do |u|
+        @instructors_for_select = User.where('fi IS NOT NULL AND fi >= ?', Time.zone.today).order(:nom, :prenom).map do |u|
           ["#{u.prenom} #{u.nom}", u.id]
         end
         @nature_vols = ['VFR de jour', 'VFR de nuit', 'IFR']
@@ -349,6 +346,22 @@ module Admin
 
     private
 
+    def current_model
+      @model
+    end
+
+    def users_by_id
+      @users_by_id || {}
+    end
+
+    def avions_by_id
+      @avions_by_id || {}
+    end
+
+    def events_by_id
+      @events_by_id || {}
+    end
+
     def preload_associations(records)
       @users_by_id = {}
       @avions_by_id = {}
@@ -370,16 +383,10 @@ module Admin
       end
 
       # Charge les enregistrements associés en une seule requête par modèle
-      if ids_to_fetch[:user_ids].present?
-        @users_by_id = User.where(id: ids_to_fetch[:user_ids].compact.uniq).index_by(&:id)
-      end
-      if ids_to_fetch[:avion_ids].present?
-        @avions_by_id = Avion.where(id: ids_to_fetch[:avion_ids].compact.uniq).index_by(&:id)
-      end
-      if ids_to_fetch[:event_ids].present?
-        @events_by_id = Event.where(id: ids_to_fetch[:event_ids].compact.uniq).index_by(&:id)
-      end
-      return unless ids_to_fetch[:transaction_ids].present?
+      @users_by_id = User.where(id: ids_to_fetch[:user_ids].compact.uniq).index_by(&:id) if ids_to_fetch[:user_ids].present?
+      @avions_by_id = Avion.where(id: ids_to_fetch[:avion_ids].compact.uniq).index_by(&:id) if ids_to_fetch[:avion_ids].present?
+      @events_by_id = Event.where(id: ids_to_fetch[:event_ids].compact.uniq).index_by(&:id) if ids_to_fetch[:event_ids].present?
+      return if ids_to_fetch[:transaction_ids].blank?
 
       @transactions_by_id = Transaction.where(id: ids_to_fetch[:transaction_ids].compact.uniq).index_by(&:id)
     end
@@ -449,15 +456,11 @@ module Admin
           end
 
           # Validation de numericalité pour les types numériques
-          if %i[integer float decimal].include?(column.type)
-            # allow_blank: true est utilisé pour éviter des erreurs en double si validates_presence_of est déjà appliqué
-            validates_numericality_of column.name, allow_blank: true
-          end
+          # allow_blank: true est utilisé pour éviter des erreurs en double si validates_presence_of est déjà appliqué
+          validates_numericality_of column.name, allow_blank: true if %i[integer float decimal].include?(column.type)
 
           # Validation de longueur pour les colonnes string/text avec une limite définie
-          if %i[string text].include?(column.type) && column.limit.present? && column.limit.positive?
-            validates_length_of column.name, maximum: column.limit, allow_blank: true
-          end
+          validates_length_of column.name, maximum: column.limit, allow_blank: true if %i[string text].include?(column.type) && column.limit.present? && column.limit.positive?
         end
       end
     end
@@ -474,9 +477,6 @@ module Admin
                                 else
                                   column.name.chomp('_id').classify
                                 end
-        if column.name == 'purchase_transaction_id' # This is correct for set_foreign_key_options
-          associated_model_name = 'Transaction'
-        end
         begin
           associated_model_class = associated_model_name.constantize
           # S'assure que c'est bien un modèle ActiveRecord

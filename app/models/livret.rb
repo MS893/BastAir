@@ -65,7 +65,7 @@ class Livret < ApplicationRecord
   def set_date_if_validated
     return unless status.to_i == 3 && date.blank?
 
-    self.date = Date.today
+    self.date = Time.zone.today
   end
 
   def decode_and_attach_signature

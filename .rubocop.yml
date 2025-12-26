@@ -2,6 +2,9 @@
 # .rubocop.yml
 inherit_from: .rubocop_todo.yml # Permet d'ignorer les erreurs existantes
 
+plugins:
+  - rubocop-rails
+
 AllCops:
   NewCops: enable
   Exclude:
@@ -9,15 +12,93 @@ AllCops:
     - 'bin/*'
     - 'node_modules/**/*'
 
-# Désactivez les règles les plus frustrantes
+# Désactivation des règles chiantes et trop strictes
 Metrics/MethodLength:
-  Max: 20 # Augmente la taille autorisée des méthodes
+  Max: 70 # Augmente la taille autorisée des méthodes
 Metrics/AbcSize:
   Enabled: false # Désactive le calcul de complexité logicielle
+Metrics/ClassLength:
+  Max: 350 # Autorise des classes plus longues
+  Exclude:
+    - 'app/controllers/application_controller.rb'
+    - 'app/controllers/admin/tables_controller.rb'
+Metrics/BlockLength:
+  Max: 180 # Autorise des blocs plus longs
+Metrics/ModuleLength:
+  Max: 300 # Autorise des modules plus longs
+Metrics/PerceivedComplexity:
+  Max: 35 # Augmente la complexité perçue autorisée
+Metrics/CyclomaticComplexity:
+  Max: 35 # Augmente la complexité cyclomatique autorisée
 Style/Documentation:
   Enabled: false # Ne force pas les commentaires sur chaque classe
+Style/SymbolArray:
+  Enabled: false # je préfère "event: [:title, :photo]" plutôt que "event: %i[title photo]"
 Layout/LineLength:
-  Max: 120 # Autorise des lignes plus longues (80 est souvent trop court)
+  Max: 280 # Autorise des lignes plus longues (80 est souvent trop court)
+Layout/MultilineMethodCallIndentation:
+  Enabled: false # Désactive la règle d'indentation des appels de méthode multi-lignes
+Layout/FirstArrayElementIndentation:
+  Enabled: false # Désactive la règle d'indentation du premier élément d'un tableau
+Layout/HashAlignment:
+  Enabled: false # Désactive la règle d'alignement des hachages
+Layout/ArgumentAlignment:
+  Enabled: false # Désactive la règle d'alignement des arguments
+Naming/VariableNumber:
+  Enabled: false # Permet plus de variables locales dans une méthode
+Naming/PredicatePrefix:
+  Enabled: false # Permet des noms de méthodes booléennes sans "is_", "has_", etc.
+Rails/Output:
+  Exclude:
+    - 'db/seeds.rb'
+Rails/FilePath:
+  Exclude:
+    - 'spec/**/*'
+Rails/SkipsModelValidations:
+  Enabled: false # Permet l'utilisation de .update_column, .delete_all, etc
+Rails/ResponseParsedBody:
+  Enabled: false # Désactive la règle sur l'analyse des réponses HTTP (je préfère)
+Rails/I18nLocaleTexts:
+  Enabled: true
+  Exclude:  # j'enlève tous les fichiers avec du texte en dur mais qui ne sera jamais en anglais
+    - 'app/controllers/admin/**/*'
+    - 'app/controllers/application_controller.rb'
+    - 'app/controllers/attendances_controller.rb'
+    - 'app/controllers/audios_controller.rb'
+    - 'app/controllers/comments_controller.rb'
+    - 'app/controllers/elearning_controller.rb'
+    - 'app/controllers/events_controller.rb'
+    - 'app/controllers/flight_lessons_controller.rb'
+    - 'app/controllers/google_auth/authentication_controller.rb'
+    - 'app/controllers/instructor_availabilities_controller.rb'
+    - 'app/controllers/livrets_controller.rb'
+    - 'app/controllers/static_pages_controller.rb'
+    - 'app/controllers/checkout_controller.rb'
+    - 'app/controllers/progressions_controller.rb'
+    - 'app/controllers/reservations_controller.rb'
+    - 'app/controllers/signalements_controller.rb'
+    - 'app/controllers/transactions_controller.rb'
+    - 'app/controllers/users_auth/sessions_controller.rb'
+    - 'app/controllers/users_controller.rb'
+    - 'app/controllers/vols_controller.rb'
+    - 'app/controllers/stripe_webhooks_controller.rb'
+    - 'app/mailers/contact_mailer.rb'
+    - 'app/mailers/reservation_mailer.rb'
+    - 'app/mailers/user_mailer.rb'
+    - 'app/models/attendance.rb'
+    - 'app/models/avion.rb'
+    - 'app/models/event.rb'
+    - 'app/models/instructor_availability.rb'
+    - 'app/models/user.rb'
+    - 'app/views/admin/**/*'
+    - 'app/views/checkout/**/*'
+    - 'app/views/progressions/**/*'
+    - 'app/views/reservations/**/*'
+    - 'app/views/signalements/**/*'
+    - 'app/views/transactions/**/*'
+    - 'app/views/users/**/*'
+    - 'app/views/users_auth/**/*'
+    - 'app/views/vols/**/*'
 
 
 # Overwrite or add rules to create your own house style

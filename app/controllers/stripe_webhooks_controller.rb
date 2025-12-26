@@ -10,8 +10,8 @@ class StripeWebhooksController < ApplicationController
     endpoint_secret = Rails.application.credentials.dig(:stripe, :webhooks_secret)
 
     unless endpoint_secret
-      puts '💥 Webhook secret not found. Make sure you have set `config.credentials.stripe.webhook_secret`'
-      render json: { error: 'Webhook secret not configured' }, status: 500
+      Rails.logger.error '💥 Webhook secret not found. Make sure you have set `config.credentials.stripe.webhook_secret`'
+      render json: { error: 'Webhook secret not configured' }, status: :internal_server_error
       return
     end
     event = nil
@@ -22,11 +22,11 @@ class StripeWebhooksController < ApplicationController
       )
     rescue JSON::ParserError
       # Le payload JSON est invalide
-      render json: { error: 'Invalid payload' }, status: 400
+      render json: { error: 'Invalid payload' }, status: :bad_request
       return
     rescue Stripe::SignatureVerificationError
       # La signature est invalide
-      render json: { error: 'Invalid signature' }, status: 400
+      render json: { error: 'Invalid signature' }, status: :bad_request
       return
     end
 
@@ -37,15 +37,15 @@ class StripeWebhooksController < ApplicationController
       # Gère les paiements synchrones (la plupart des cartes)
       handle_checkout_session(session) if session.payment_status == 'paid' # On vérifie que le paiement est bien passé
     when 'checkout.session.async_payment_succeeded'
-      puts '1. paiement Stripe réussi'
+      Rails.logger.info '1. paiement Stripe réussi'
       session = event.data.object
       # Gère les paiements asynchrones (virements, etc.)
       handle_checkout_session(session)
     else
-      puts "Unhandled event type: #{event.type}"
+      Rails.logger.warn "Unhandled event type: #{event.type}"
     end
 
-    render json: { message: :success }, status: 200
+    render json: { message: :success }, status: :ok
   end
 
   private
@@ -62,18 +62,18 @@ class StripeWebhooksController < ApplicationController
     )
     user = User.find_by(id: session.metadata.user_id)
     unless user
-      puts "Webhook Error: User not found with id #{session.metadata.user_id}"
+      Rails.logger.error "Webhook Error: User not found with id #{session.metadata.user_id}"
       return
     end
 
-    puts '2. dans handle_checkout_session'
+    Rails.logger.info '2. dans handle_checkout_session'
     # CORRECTION: La description est dans le nom du produit du premier 'line_item'.
     # Lorsque product_data est utilisé, `product` est un ID de produit (chaîne de caractères),
     # pas un objet. La description est directement accessible sur le line_item.
     line_item = session_with_line_items.line_items.data.first
     description = line_item&.description
     unless description
-      puts "Webhook Error: Product description not found in session #{session.id}"
+      Rails.logger.error "Webhook Error: Product description not found in session #{session.id}"
       return
     end
 
@@ -109,15 +109,15 @@ class StripeWebhooksController < ApplicationController
     # On s'assure que le montant à créditer est bien un nombre
     return if amount_to_credit.nil? || amount_to_credit.nan?
 
-    puts "Attempting to credit user #{user.email} with #{amount_to_credit}€ for product: '#{description}'"
+    Rails.logger.info "Attempting to credit user #{user.email} with #{amount_to_credit}€ for product: '#{description}'"
 
     # On appelle la méthode centralisée sur le modèle User pour créditer le compte.
     # La transaction, le verrouillage et la diffusion Turbo Stream sont gérés par le modèle.
     user.credit_account(amount_to_credit)
-    puts "✅ User #{user.email} successfully credited. New balance: #{user.reload.solde}"
+    Rails.logger.info "✅ User #{user.email} successfully credited. New balance: #{user.reload.solde}"
   rescue StandardError => e
     # Si une erreur se produit, on l'affiche dans les logs pour le diagnostic
-    puts "💥 Webhook Error: Failed to handle checkout session #{session.id}. Error: #{e.message}"
-    puts e.backtrace.join("\n")
+    Rails.logger.error "💥 Webhook Error: Failed to handle checkout session #{session.id}. Error: #{e.message}"
+    Rails.logger.error e.backtrace.join("\n")
   end
 end

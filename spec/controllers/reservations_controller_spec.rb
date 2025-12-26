@@ -7,8 +7,8 @@ require 'rails_helper'
 RSpec.describe ReservationsController, type: :controller do
   # On crée un utilisateur avec un solde positif et des dates valides par défaut
   let(:valid_user) do
-    create(:user, solde: 100, date_licence: Date.today + 1.year, medical: Date.today + 1.year,
-                  controle: Date.today + 1.year)
+    create(:user, solde: 100, date_licence: Time.zone.today + 1.year, medical: Time.zone.today + 1.year,
+                  controle: Time.zone.today + 1.year)
   end
   let(:avion) { create(:avion) }
 
@@ -121,8 +121,6 @@ RSpec.describe ReservationsController, type: :controller do
                                                                                               ])
         end
 
-        after { travel_back }
-
         it 'destroys the reservation' do
           expect do
             delete :destroy, params: { id: reservation_to_delete.id, cancellation_reason: 'Imprévu' }
@@ -199,7 +197,7 @@ RSpec.describe ReservationsController, type: :controller do
 
     context 'with a user having an expired license' do
       let(:user_with_expired_license) do
-        create(:user, solde: 100, date_licence: Date.today - 1.day, medical: Date.today + 1.year)
+        create(:user, solde: 100, date_licence: Time.zone.today - 1.day, medical: Time.zone.today + 1.year)
       end
       before { sign_in user_with_expired_license }
 

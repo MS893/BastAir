@@ -8,8 +8,8 @@ namespace :instructors do
     puts "Vérification des qualifications d'instructeur expirant bientôt..."
 
     # Définir la période de recherche : entre aujourd'hui et dans 30 jours
-    start_date = Date.today
-    end_date = Date.today + 30.days
+    start_date = Time.zone.today
+    end_date = Time.zone.today + 30.days
 
     # Trouver tous les utilisateurs dont la date 'fi' est dans cet intervalle
     expiring_instructors = User.where.not(prenom: 'bia').where(fi: start_date..end_date)
