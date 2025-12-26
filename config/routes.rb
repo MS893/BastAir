@@ -10,12 +10,12 @@ Rails.application.routes.draw do
   # On désactive la création de compte publique (gérée par l'admin).
   # On regroupe les routes de Devise ici pour éviter les conflits.
   devise_for :users,
-             path: 'auth', # On préfixe les routes Devise avec 'auth' pour éviter les conflits (ex: /auth/sign_in)
-             skip: [:registrations], # On désactive les routes d'inscription publiques publiques
-             controllers: {
-               sessions: 'users_auth/sessions', # Contrôleur personnalisé pour la connexion (avec reCAPTCHA)
-               passwords: 'users_auth/passwords' # Contrôleur personnalisé pour les mots de passe
-             }
+              path: 'auth', # On préfixe les routes Devise avec 'auth' pour éviter les conflits (ex: /auth/sign_in)
+              skip: [:registrations], # On désactive les routes d'inscription publiques publiques
+              controllers: {
+                sessions: 'users_auth/sessions', # Contrôleur personnalisé pour la connexion (avec reCAPTCHA)
+                passwords: 'users_auth/passwords' # Contrôleur personnalisé pour les mots de passe
+              }
 
   # On recrée manuellement les routes pour que les utilisateurs puissent modifier leur profil,
   # tout en utilisant le contrôleur par défaut de Devise pour les registrations.

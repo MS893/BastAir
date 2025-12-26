@@ -14,9 +14,24 @@
 <%# On ajoute la classe "dashboard-background" au conteneur principal de la page %>
 <div class="dashboard-background">
   <div class="container-fluid pt-4 pb-4">
-    <h2 class="mb-5 ms-2">Bienvenue 
-      <%= current_user.prenom %> 
+    <h2 class="mb-5 ms-2 d-flex align-items-center flex-wrap">Bienvenue 
+      <%= current_user.prenom %>
       <%= link_to "Proroger / renouveler ma qualification SEP", 'https://sigebelext.aviation-civile.gouv.fr/sigebelext/identificationpn.htm', class: "btn btn-outline-secondary ms-5", target: '_blank' %>
+
+      <% if current_user.admin? %>
+        <% Avion.where.not(assurance: nil).where("assurance <= ?", 30.days.from_now).each do |avion| %>
+          <% days = (avion.assurance - Time.zone.today).to_i %>
+          <% is_expired = days.negative? %>
+          <% alert_class = is_expired ? "alert-danger" : "alert-warning" %>
+          <div class="alert <%= alert_class %> d-flex align-items-center py-1 px-2 ms-auto mb-0 fs-6" role="alert" data-bs-toggle="tooltip" title="L'assurance arrive bientôt à expiration, veuillez mettre la date à jour">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            <span class="me-2">Assurance <%= avion.immatriculation %> (<%= is_expired ? "Expirée" : "#{days} jours" %>)</span>
+            <%= link_to admin_edit_table_record_path(table_name: 'avions', id: avion.id), class: "btn btn-sm btn-light #{is_expired ? 'text-danger border-danger' : 'text-warning border-warning'} p-0 px-2", title: "Modifier" do %>
+              <i class="bi bi-pencil"></i>
+            <% end %>
+          </div>
+        <% end %>
+      <% end %>
     </h2>
 
     <%# Alerte pour les administrateurs (Maintenance avions) %>

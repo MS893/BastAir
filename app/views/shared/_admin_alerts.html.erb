@@ -1,30 +1,73 @@
 <% if user_signed_in? && current_user.admin? %>
-  <% avions_alert = Avion.where("next_100h < ?", 10) %>
-  <% avions_cen_alert = Avion.where("cert_examen_navigabilite < ?", 30.days.from_now) %>
-  
-  <% if avions_alert.any? %>
-    <div class="alert alert-danger alert-dismissible fade show my-3" role="alert">
-      <h4 class="alert-heading fs-5"><i class="bi bi-exclamation-triangle-fill me-2"></i>Alerte Maintenance</h4>
-      <p class="mb-1">Les avions suivants ont un potentiel inférieur à 10h :</p>
-      <ul class="mb-0">
-        <% avions_alert.each do |avion| %>
-          <li><strong><%= avion.immatriculation %></strong> : <%= avion.next_100h %>h restantes</li>
+
+  <% 
+    # On utilise un Hash pour regrouper les messages d'alerte par avion
+    alerts_by_plane = Hash.new { |h, k| h[k] = [] }
+
+    # 1. Potentiel
+    Avion.where("next_100h < ?", 10).each do |avion|
+      alerts_by_plane[avion] << { type: 'potential', icon: "bi-hourglass-split", msg: "Potentiel < 10h (#{avion.next_100h}h restantes)", urgent: true }
+    end
+
+    # 2. CEN
+    Avion.where("cert_examen_navigabilite < ?", 30.days.from_now).each do |avion|
+      days = (avion.cert_examen_navigabilite - Time.zone.today).to_i
+      txt = days.negative? ? "CEN dépassé de #{days.abs} jours" : "CEN expire dans #{days} jours"
+      alerts_by_plane[avion] << { type: 'cen', icon: "bi-calendar-x", msg: "#{txt} (#{avion.cert_examen_navigabilite&.strftime('%d/%m/%Y')})", urgent: days.negative? }
+    end
+
+    # 3. Visite Annuelle
+    Avion.where.not(annuelle: nil).where("annuelle <= ?", 30.days.from_now).each do |avion|
+      days = (avion.annuelle - Time.zone.today).to_i
+      txt = days.negative? ? "Visite Annuelle dépassée de #{days.abs} jours" : "Visite Annuelle expire dans #{days} jours"
+      alerts_by_plane[avion] << { type: 'annuelle', icon: "bi-calendar-check", msg: "#{txt} (#{avion.annuelle.strftime('%d/%m/%Y')})", urgent: days.negative? }
+    end
+
+    # 4. Grande Visite (GV)
+    Avion.where.not(gv: nil).where("gv <= ?", 30.days.from_now).each do |avion|
+      days = (avion.gv - Time.zone.today).to_i
+      txt = days.negative? ? "GV dépassée de #{days.abs} jours" : "GV expire dans #{days} jours"
+      alerts_by_plane[avion] << { type: 'gv', icon: "bi-tools", msg: "#{txt} (#{avion.gv.strftime('%d/%m/%Y')})", urgent: days.negative? }
+    end
+
+    # 5. TBO Hélice
+    Avion.where.not(tbo_helice: nil).where("tbo_helice <= ?", 30.days.from_now).each do |avion|
+      days = (avion.tbo_helice - Time.zone.today).to_i
+      txt = days.negative? ? "TBO Hélice dépassée de #{days.abs} jours" : "TBO Hélice expire dans #{days} jours"
+      alerts_by_plane[avion] << { type: 'tbo_helice', icon: "bi-fan", msg: "#{txt} (#{avion.tbo_helice.strftime('%d/%m/%Y')})", urgent: days.negative? }
+    end
+
+    # 6. TBO Parachute
+    Avion.where.not(tbo_parachute: nil).where("tbo_parachute <= ?", 30.days.from_now).each do |avion|
+      days = (avion.tbo_parachute - Time.zone.today).to_i
+      txt = days.negative? ? "TBO Parachute dépassée de #{days.abs} jours" : "TBO Parachute expire dans #{days} jours"
+      alerts_by_plane[avion] << { type: 'tbo_parachute', icon: "bi-parachute", msg: "#{txt} (#{avion.tbo_parachute.strftime('%d/%m/%Y')})", urgent: days.negative? }
+    end
+
+  %>
+
+  <% if alerts_by_plane.any? %>
+    <div class="alert alert-warning alert-dismissible fade show my-3" role="alert">
+      <h4 class="alert-heading fs-5"><i class="bi bi-exclamation-triangle-fill me-2"></i>Synthèse Maintenance</h4>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+
+      <ul class="mb-0 list-unstyled">
+        <% alerts_by_plane.sort_by { |avion, alerts| [alerts.any? { |a| a[:urgent] } ? 0 : 1, avion.immatriculation] }.each do |avion, alerts| %>
+          <li class="mb-2">
+            <strong><%= avion.immatriculation %></strong>
+            <%= link_to admin_maintenances_path(avion_id: avion.id), class: "ms-1 text-secondary", title: "Gérer la maintenance", data: { bs_toggle: "tooltip", bs_placement: "top" } do %><i class="bi bi-wrench-adjustable"></i><% end %>
+            <ul class="mb-0">
+              <% alerts.each do |alert| %>
+                <li class="<%= 'text-danger fw-bold' if alert[:urgent] %>">
+                  <i class="bi <%= alert[:icon] %> me-1"></i>
+                  <%= alert[:msg] %>
+                </li>
+              <% end %>
+            </ul>
+          </li>
         <% end %>
       </ul>
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
   <% end %>
 
-  <% if avions_cen_alert.any? %>
-    <div class="alert alert-warning alert-dismissible fade show my-3" role="alert">
-      <h4 class="alert-heading fs-5"><i class="bi bi-calendar-exclamation me-2"></i>Alerte CEN</h4>
-      <p class="mb-1">Les avions suivants ont un CEN expirant dans moins de 30 jours :</p>
-      <ul class="mb-0">
-        <% avions_cen_alert.each do |avion| %>
-          <li><strong><%= avion.immatriculation %></strong> : expire le <%= avion.cert_examen_navigabilite&.strftime('%d/%m/%Y') %></li>
-        <% end %>
-      </ul>
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-  <% end %>
 <% end %>

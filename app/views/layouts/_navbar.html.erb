@@ -145,7 +145,11 @@
           </a>
           <ul class="dropdown-menu dropdown-menu-end" style="min-width: auto;">
             <li><%= link_to "FR", url_for(request.params.merge(locale: 'fr')), data: { turbo: false }, class: "dropdown-item #{'active' if I18n.locale == :fr}" %></li>
-            <li><%= link_to "EN", url_for(request.params.merge(locale: 'en')), data: { turbo: false }, class: "dropdown-item #{'active' if I18n.locale == :en}" %></li>
+            <li>
+              <%# Si la page est restreinte, on redirige vers l'accueil en anglais, sinon on change juste la locale %>
+              <% target_path = restricted_page? ? root_path(locale: 'en') : url_for(request.params.merge(locale: 'en')) %>
+              <%= link_to "EN", target_path, data: { turbo: false }, class: "dropdown-item #{'active' if I18n.locale == :en}" %>
+            </li>
           </ul>
         </div>
         <% end %>

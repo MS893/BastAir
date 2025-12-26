@@ -34,7 +34,7 @@ module Admin
         date = start_date + i.months
         month_label = I18n.l(date, format: '%b %Y').capitalize
         total_hours = vols_period.select { |v| v.debut_vol.year == date.year && v.debut_vol.month == date.month }
-                                 .sum(&:duree_vol).round(2)
+                                  .sum(&:duree_vol).round(2)
         [month_label, total_hours]
       end
 
@@ -76,7 +76,7 @@ module Admin
       @per_page = 20
 
       scope = ActivityLog.where(action: %w[reset_100h reset_50h reset_1000h reset_moteur
-                                           update_maintenance reset_annuelle reset_cen notify_grounded])
+                                          update_maintenance reset_annuelle reset_cen notify_grounded])
 
       scope = scope.where(record_id: @selected_avion.id) if @selected_avion
 
@@ -89,7 +89,7 @@ module Admin
       @avion = Avion.find(params[:id])
       @logs = ActivityLog.where(record_id: @avion.id,
                                 action: %w[reset_100h reset_50h reset_1000h reset_moteur update_maintenance reset_annuelle reset_cen
-                                           notify_grounded]).order(created_at: :desc).limit(50)
+                                          notify_grounded]).order(created_at: :desc).limit(50)
       respond_to do |format|
         format.html { redirect_to admin_maintenances_path(avion_id: @avion.id) }
         format.pdf do
@@ -114,7 +114,7 @@ module Admin
 
       # 2. On capture les changements détectés par Rails
       changes = @avion.changes.slice('marque', 'modele', 'moteur', 'potentiel_moteur', 'potentiel_cellule',
-                                     'next_100h', 'next_50h', 'next_1000h', 'annuelle', '_1000h', 'gv', 'tbo_helice', 'tbo_parachute', 'cert_examen_navigabilite')
+                                    'next_100h', 'next_50h', 'next_1000h', 'annuelle', '_1000h', 'gv', 'tbo_helice', 'tbo_parachute', 'cert_examen_navigabilite', 'assurance')
 
       # 3. On tente de sauvegarder
       if @avion.save
@@ -142,6 +142,7 @@ module Admin
                         when 'tbo_helice' then 'TBO Hélice'
                         when 'tbo_parachute' then 'TBO Parachute'
                         when 'cert_examen_navigabilite' then 'CEN'
+                        when 'assurance' then 'Assurance'
                         else attr
                         end
 
@@ -203,7 +204,7 @@ module Admin
       @avion = Avion.find(params[:id])
       @avion.reset_potential_annuelle!
       log_maintenance_action('reset_annuelle',
-                             "Validation visite annuelle (nouvelle date : #{@avion.annuelle.strftime('%d/%m/%Y')})")
+                            "Validation visite annuelle (nouvelle date : #{@avion.annuelle.strftime('%d/%m/%Y')})")
       redirect_to admin_maintenances_path(avion_id: @avion.id),
                   notice: "Visite annuelle validée pour #{@avion.immatriculation}."
     end
@@ -213,7 +214,7 @@ module Admin
       @avion = Avion.find(params[:id])
       @avion.reset_potential_cen!
       log_maintenance_action('reset_cen',
-                             "Validation CEN (nouvelle date : #{@avion.cert_examen_navigabilite.strftime('%d/%m/%Y')})")
+                            "Validation CEN (nouvelle date : #{@avion.cert_examen_navigabilite.strftime('%d/%m/%Y')})")
       redirect_to admin_maintenances_path(avion_id: @avion.id), notice: "CEN validé pour #{@avion.immatriculation}."
     end
 
@@ -250,7 +251,7 @@ module Admin
           date_potential = 1.week.from_now.to_date
           unavailability_end_date = if unavailability_end_date
                                       [unavailability_end_date,
-                                       date_potential].max
+                                      date_potential].max
                                     else
                                       date_potential
                                     end
@@ -303,7 +304,7 @@ module Admin
 
     def maintenance_params
       params.expect(avion: %i[marque modele moteur potentiel_moteur potentiel_cellule next_100h
-                              next_50h next_1000h annuelle _1000h gv tbo_helice tbo_parachute cert_examen_navigabilite cen_document check_50h check_annuelle check_parachute])
+                              next_50h next_1000h annuelle _1000h gv tbo_helice tbo_parachute cert_examen_navigabilite cen_document check_50h check_annuelle check_parachute assurance])
     end
 
     def log_maintenance_action(action_name, details)

@@ -8,7 +8,7 @@ class Avion < ApplicationRecord
   # Document CEN scanné
   has_one_attached :cen_document
   validates :cen_document, content_type: { in: 'application/pdf', message: 'doit être un format PDF' },
-                          size: { less_than: 5.megabytes, message: 'doit peser moins de 5 Mo' }
+                                  size: { less_than: 5.megabytes, message: 'doit peser moins de 5 Mo' }
   validates :tbo_helice, presence: true
   validates :tbo_parachute, presence: true
   validates :immatriculation, presence: true, uniqueness: true
@@ -19,6 +19,7 @@ class Avion < ApplicationRecord
   validate :tbo_helice_must_be_in_the_future
   validate :tbo_parachute_must_be_in_the_future
   validate :_1000h_must_be_in_the_future
+  validate :assurance_date_cannot_be_in_the_past, on: :update
 
   # Réinitialise le compteur pour la visite des 50 heures
   def reset_potential_50h!
@@ -86,4 +87,11 @@ class Avion < ApplicationRecord
 
     errors.add(:_1000h, 'doit être dans le futur')
   end
+
+  def assurance_date_cannot_be_in_the_past
+    if assurance.present? && assurance < Time.zone.today
+      errors.add(:assurance, "ne peut pas être dans le passé")
+    end
+  end
+  
 end

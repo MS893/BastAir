@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class StaticPagesController < ApplicationController
+
   def home
     # Affiche un message si le paiement a été annulé
     flash.now[:alert] = 'Le paiement a été annulé.' if params[:canceled]
@@ -16,10 +17,8 @@ class StaticPagesController < ApplicationController
       # On vérifie si le contact d'urgence est invalide pour afficher une alerte
       # On ne lance la validation que si le champ n'est pas vide.
       if current_user.contact_urgence.present? && !current_user.valid?(:update_profil)
-        flash.now[:warning] = view_context.safe_join([
-                                                       'Votre numéro de contact d\'urgence semble invalide. ',
-                                                       view_context.link_to('Veuillez le corriger ici', edit_profil_user_path(current_user))
-                                                     ])
+        flash.now[:warning] = view_context.safe_join(['Votre numéro de contact d\'urgence semble invalide. ',
+                                                    view_context.link_to('Veuillez le corriger ici', edit_profil_user_path(current_user))])
       end
 
       # On vérifie les validités qui expirent bientôt
@@ -141,4 +140,5 @@ class StaticPagesController < ApplicationController
                   notice: 'Votre message a bien été envoyé. Nous vous répondrons dans les plus brefs délais.'
     end
   end
+  
 end

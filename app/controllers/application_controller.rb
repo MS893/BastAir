@@ -6,6 +6,8 @@ class ApplicationController < ActionController::Base
 
   # pour passer du site français à anglais selon la locale choisie
   before_action :set_locale
+  before_action :redirect_restricted_pages_in_english
+  helper_method :restricted_page?
 
   protected
 
@@ -15,6 +17,21 @@ class ApplicationController < ActionController::Base
   end
 
   private
+
+  def redirect_restricted_pages_in_english
+    # Si la langue est l'anglais et que l'on est sur une page restreinte
+    if I18n.locale == :en && restricted_page?
+      redirect_to root_path(locale: :en)
+    end
+  end
+
+  def restricted_page?
+    # Liste des conditions pour les pages non accessibles en anglais.
+    # devise_controller? couvre le login, l'inscription, le mot de passe oublié, etc.
+    # Vous pouvez ajouter d'autres contrôleurs si nécessaire (ex: 'users', 'members', etc.)
+    devise_controller? || controller_name == 'users' ||
+      (controller_name == 'static_pages' && %w[tarifs bia outils].include?(action_name))
+  end
 
   def set_locale
     I18n.locale = if user_signed_in?
