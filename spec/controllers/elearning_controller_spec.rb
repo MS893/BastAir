@@ -17,7 +17,7 @@ RSpec.describe ElearningController, type: :controller do
     create(:course).tap do |course|
       # On attache un fichier de test.
       # Le fichier 'test.pdf' doit exister dans spec/fixtures/files/
-      file_path = Rails.root.join('spec', 'fixtures', 'files', 'test.pdf')
+      file_path = Rails.root.join('spec/fixtures/files/test.pdf')
       # Créez le dossier et le fichier si nécessaire
       FileUtils.mkdir_p(File.dirname(file_path))
       File.write(file_path, 'dummy content') unless File.exist?(file_path)

@@ -10,8 +10,8 @@ module Admin
       @reservations = Reservation.includes(:user, :avion).order(start_time: :asc)
 
       # On récupère les utilisateurs et avions qui ont des réservations pour les filtres
-      @users = User.where(id: Reservation.distinct.pluck(:user_id)).order(:nom, :prenom)
-      @avions = Avion.where(id: Reservation.distinct.pluck(:avion_id)).order(:immatriculation)
+      @users = User.where(id: Reservation.select(:user_id).distinct).order(:nom, :prenom)
+      @avions = Avion.where(id: Reservation.select(:avion_id).distinct).order(:immatriculation)
 
       # On applique les filtres si les paramètres sont présents
       @reservations = @reservations.where(user_id: params[:user_id]) if params[:user_id].present?

@@ -12,7 +12,7 @@ module GoogleAuth
     def redirect
       client = Signet::OAuth2::Client.new(client_options)
       # Ligne de débogage : Affiche le client_id dans les logs du serveur Rails.
-      puts "DEBUG: Using Google Client ID: #{client.client_id}"
+      Rails.logger.debug { "DEBUG: Using Google Client ID: #{client.client_id}" }
 
       redirect_to client.authorization_uri.to_s, allow_other_host: true
     end
@@ -28,7 +28,7 @@ module GoogleAuth
       current_user.update(
         google_access_token: response['access_token'],
         google_refresh_token: response['refresh_token'],
-        google_token_expires_at: Time.now + response['expires_in'].to_i.seconds
+        google_token_expires_at: Time.current + response['expires_in'].to_i.seconds
       )
 
       redirect_to root_path, notice: 'Votre compte a bien été connecté à Google Calendar.'

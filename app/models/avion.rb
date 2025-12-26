@@ -8,7 +8,7 @@ class Avion < ApplicationRecord
   # Document CEN scanné
   has_one_attached :cen_document
   validates :cen_document, content_type: { in: 'application/pdf', message: 'doit être un format PDF' },
-                           size: { less_than: 5.megabytes, message: 'doit peser moins de 5 Mo' }
+                          size: { less_than: 5.megabytes, message: 'doit peser moins de 5 Mo' }
   validates :tbo_helice, presence: true
   validates :tbo_parachute, presence: true
   validates :immatriculation, presence: true, uniqueness: true
@@ -42,12 +42,12 @@ class Avion < ApplicationRecord
 
   # Valide la visite annuelle (repart pour 1 an à partir d'aujourd'hui)
   def reset_potential_annuelle!
-    update_attribute(:annuelle, Date.today + 1.year)
+    update_attribute(:annuelle, Time.zone.today + 1.year)
   end
 
   # Valide le CEN (repart pour 1 an à partir d'aujourd'hui)
   def reset_potential_cen!
-    update_attribute(:cert_examen_navigabilite, Date.today + 1.year)
+    update_attribute(:cert_examen_navigabilite, Time.zone.today + 1.year)
   end
 
   # Vérifie si l'avion est indisponible (maintenance requise ou documents expirés)
@@ -56,8 +56,8 @@ class Avion < ApplicationRecord
       (next_50h.present? && next_50h <= 0) ||
       (next_100h.present? && next_100h <= 0) ||
       (next_1000h.present? && next_1000h <= 0) ||
-      (annuelle.present? && annuelle < Date.today) ||
-      (cert_examen_navigabilite.present? && cert_examen_navigabilite < Date.today)
+      (annuelle.present? && annuelle < Time.zone.today) ||
+      (cert_examen_navigabilite.present? && cert_examen_navigabilite < Time.zone.today)
   end
 
   # Notifie les pilotes ayant une réservation future si l'avion est indisponible
@@ -70,19 +70,19 @@ class Avion < ApplicationRecord
   private
 
   def tbo_helice_must_be_in_the_future
-    return unless tbo_helice_changed? && tbo_helice.present? && tbo_helice <= Date.today
+    return unless tbo_helice_changed? && tbo_helice.present? && tbo_helice <= Time.zone.today
 
     errors.add(:tbo_helice, 'doit être dans le futur')
   end
 
   def tbo_parachute_must_be_in_the_future
-    return unless tbo_parachute_changed? && tbo_parachute.present? && tbo_parachute <= Date.today
+    return unless tbo_parachute_changed? && tbo_parachute.present? && tbo_parachute <= Time.zone.today
 
     errors.add(:tbo_parachute, 'doit être dans le futur')
   end
 
   def _1000h_must_be_in_the_future
-    return unless _1000h_changed? && _1000h.present? && _1000h <= Date.today
+    return unless _1000h_changed? && _1000h.present? && _1000h <= Time.zone.today
 
     errors.add(:_1000h, 'doit être dans le futur')
   end

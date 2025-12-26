@@ -15,7 +15,7 @@ RSpec.describe AttendancesController, type: :controller do
         expect do
           post :create, params: { event_id: free_event.id }
         end.to change(Attendance, :count).by(1)
-                                         .and change(Transaction, :count).by(0)
+                                        .and change(Transaction, :count).by(0)
       end
     end
 
@@ -24,7 +24,7 @@ RSpec.describe AttendancesController, type: :controller do
         expect do
           post :create, params: { event_id: paid_event.id }
         end.to change(Attendance, :count).by(1)
-                                         .and change(Transaction, :count).by(1)
+                                        .and change(Transaction, :count).by(1)
 
         user.reload
         expect(user.solde).to eq(50)
@@ -44,7 +44,7 @@ RSpec.describe AttendancesController, type: :controller do
       before do
         # Setup initial state manually to simulate existing attendance
         Transaction.create!(user: user, montant: 50, mouvement: 'Dépense', description: 'test',
-                            source_transaction: 'Charges Exceptionnelles', payment_method: 'Prélèvement sur compte', date_transaction: Date.today)
+                            source_transaction: 'Charges Exceptionnelles', payment_method: 'Prélèvement sur compte', date_transaction: Time.zone.today)
       end
       let!(:attendance) { Attendance.create!(user: user, event: paid_event) }
 
@@ -52,7 +52,7 @@ RSpec.describe AttendancesController, type: :controller do
         expect do
           delete :destroy, params: { event_id: paid_event.id, id: attendance.id }
         end.to change(Attendance, :count).by(-1)
-                                         .and change(Transaction, :count).by(1) # Refund transaction
+                                        .and change(Transaction, :count).by(1) # Refund transaction
 
         expect(flash[:notice]).to include('recrédité')
       end

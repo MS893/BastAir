@@ -36,7 +36,7 @@ RSpec.describe Admin::PenalitesController, type: :controller do
         penalite.update(status: 'Appliquée')
         # Créer la transaction associée pour pouvoir la supprimer
         Transaction.create!(user: user, montant: 20, mouvement: 'Dépense',
-                            description: "Pénalité pour annulation tardive du vol du #{I18n.l(penalite.reservation_start_time, format: :short_year_time)}", source_transaction: 'Charges Exceptionnelles', payment_method: 'Prélèvement sur compte', date_transaction: Date.today)
+                            description: "Pénalité pour annulation tardive du vol du #{I18n.l(penalite.reservation_start_time, format: :short_year_time)}", source_transaction: 'Charges Exceptionnelles', payment_method: 'Prélèvement sur compte', date_transaction: Time.zone.today)
       end
 
       it 'annule la pénalité et supprime la transaction' do

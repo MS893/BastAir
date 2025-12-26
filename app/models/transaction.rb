@@ -90,7 +90,7 @@ class Transaction < ApplicationRecord
 
   # Définit la date du jour par défaut pour les nouvelles transactions.
   def set_default_date
-    self.date_transaction ||= Date.today
+    self.date_transaction ||= Time.zone.today
   end
 
   def update_user_balance

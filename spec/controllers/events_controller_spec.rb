@@ -66,7 +66,7 @@ RSpec.describe EventsController, type: :controller do
     describe 'POST #create' do
       context 'with valid parameters' do
         let(:valid_attributes) do
-          { title: 'Pot', description: 'Venez nous voir', start_date: Time.now + 1.day, duration: '3h', price: 0 }
+          { title: 'Pot', description: 'Venez nous voir', start_date: 1.day.from_now, duration: '3h', price: 0 }
         end
 
         it 'creates a new event' do

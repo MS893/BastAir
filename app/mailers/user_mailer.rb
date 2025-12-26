@@ -36,7 +36,7 @@ class UserMailer < ApplicationMailer
   def reservation_cancelled_notification(user, reservation)
     @user = user
     @reservation = reservation
-    mail(to: @user.email, subject: 'Confirmation d\'annulation de votre réservation')
+    mail(to: @user.email, subject: "Confirmation d'annulation de votre réservation")
   end
 
   # Notification d'une tentative d'annulation tardive à un admin
@@ -129,7 +129,7 @@ class UserMailer < ApplicationMailer
   # envoi du livret par email en pièce jointe
   def progression_booklet_email(user, pdf_content)
     @user = user
-    attachments["Livret_progression_#{@user.full_name.parameterize}_#{Date.today.strftime('%d-%m-%Y')}.pdf"] =
+    attachments["Livret_progression_#{@user.full_name.parameterize}_#{Time.zone.today.strftime('%d-%m-%Y')}.pdf"] =
       pdf_content
     mail(to: @user.email, subject: "Votre Livret de Progression Bast'Air")
   end

@@ -9,7 +9,7 @@ namespace :maintenance do
     threshold_date = 30.days.from_now.to_date
 
     Avion.where.not(cert_examen_navigabilite: nil).where(
-      'cert_examen_navigabilite <= ? AND cert_examen_navigabilite >= ?', threshold_date, Date.today
+      'cert_examen_navigabilite <= ? AND cert_examen_navigabilite >= ?', threshold_date, Time.zone.today
     ).find_each do |avion|
       puts "  -> Envoi alerte CEN pour #{avion.immatriculation} (Expiration : #{avion.cert_examen_navigabilite})"
       MaintenanceMailer.cen_alert(avion).deliver_now
@@ -21,7 +21,7 @@ namespace :maintenance do
   desc 'Vérifie les avions indisponibles et prévient les pilotes ayant réservé'
   task notify_grounded_reservations: :environment do
     puts 'Vérification des réservations sur avions indisponibles...'
-    Avion.all.each do |avion|
+    Avion.find_each do |avion|
       avion.notify_future_reservations if avion.grounded?
     end
   end

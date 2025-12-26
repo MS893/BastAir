@@ -11,12 +11,10 @@ class ReservationsController < ApplicationController
 
   def index
     # On récupère les réservations à venir de l'utilisateur, paginées
-    @upcoming_reservations = current_user.reservations.where('start_time >= ?',
-                                                             Time.current).order(start_time: :asc).page(params[:upcoming_page]).per(10)
+    @upcoming_reservations = current_user.reservations.where(start_time: Time.current..).order(start_time: :asc).page(params[:upcoming_page]).per(10)
 
     # On récupère les réservations passées de l'utilisateur, paginées
-    @past_reservations = current_user.reservations.where('start_time < ?',
-                                                         Time.current).order(start_time: :desc).page(params[:past_page]).per(10)
+    @past_reservations = current_user.reservations.where(start_time: ...Time.current).order(start_time: :desc).page(params[:past_page]).per(10)
   end
 
   def new
@@ -24,7 +22,28 @@ class ReservationsController < ApplicationController
 
     # On charge les données nécessaires pour les listes déroulantes du formulaire
     @avions = Avion.order(:immatriculation)
-    @instructeurs = available_instructors(Date.today, 7, 0) # Valeurs par défaut
+    @instructeurs = available_instructors(Time.zone.today, 7, 0) # Valeurs par défaut
+  end
+
+  def edit
+    # @reservation est chargé par le before_action
+    # On charge les données pour les listes déroulantes
+    @avions = Avion.order(:immatriculation)
+    @instructeurs = available_instructors(@reservation.start_time.to_date, @reservation.start_time.hour,
+                                          @reservation.start_time.min)
+
+    # Décomposer start_time et end_time pour le formulaire
+    if @reservation.start_time.present?
+      @reservation.start_date = @reservation.start_time.to_date
+      @reservation.start_hour = @reservation.start_time.hour
+      @reservation.start_minute = @reservation.start_time.min
+    end
+
+    return if @reservation.end_time.blank?
+
+    @reservation.end_date = @reservation.end_time.to_date
+    @reservation.end_hour = @reservation.end_time.hour
+    @reservation.end_minute = @reservation.end_time.min
   end
 
   def create
@@ -63,31 +82,10 @@ class ReservationsController < ApplicationController
                         available_instructors(@reservation.start_time.to_date, @reservation.start_time.hour,
                                               @reservation.start_time.min)
                       else
-                        available_instructors(Date.today, 7, 0)
+                        available_instructors(Time.zone.today, 7, 0)
                       end
       render :new, status: :unprocessable_content
     end
-  end
-
-  def edit
-    # @reservation est chargé par le before_action
-    # On charge les données pour les listes déroulantes
-    @avions = Avion.order(:immatriculation)
-    @instructeurs = available_instructors(@reservation.start_time.to_date, @reservation.start_time.hour,
-                                          @reservation.start_time.min)
-
-    # Décomposer start_time et end_time pour le formulaire
-    if @reservation.start_time.present?
-      @reservation.start_date = @reservation.start_time.to_date
-      @reservation.start_hour = @reservation.start_time.hour
-      @reservation.start_minute = @reservation.start_time.min
-    end
-
-    return unless @reservation.end_time.present?
-
-    @reservation.end_date = @reservation.end_time.to_date
-    @reservation.end_hour = @reservation.end_time.hour
-    @reservation.end_minute = @reservation.end_time.min
   end
 
   def update
@@ -130,8 +128,6 @@ class ReservationsController < ApplicationController
         # Cas 3: L'instruction vient d'être ajoutée
         Rails.logger.info "🔍 DEBUG: Instruction ajoutée, création de l'événement instructeur"
         calendar_service.create_instructor_event_only(@reservation)
-      else
-        # Cas 4: Autre mise à jour (heure, etc.)
       end
       calendar_service.update_event_for_app(@reservation)
 
@@ -143,7 +139,7 @@ class ReservationsController < ApplicationController
                         available_instructors(@reservation.start_time.to_date, @reservation.start_time.hour,
                                               @reservation.start_time.min)
                       else
-                        available_instructors(Date.today, 7, 0)
+                        available_instructors(Time.zone.today, 7, 0)
                       end
       render :edit, status: :unprocessable_content
     end
@@ -161,11 +157,12 @@ class ReservationsController < ApplicationController
     # Le cache expirera après 1 heure, ou lorsque les paramètres seront modifiés.
     penalty_settings = Rails.cache.fetch('penalty_settings', expires_in: 1.hour) do
       settings_hash = Setting.where("var LIKE 'penalty_%'").pluck(:var, :val).to_h
-      (1..3).map do |i|
+      mapped_settings = (1..3).map do |i|
         delay = settings_hash["penalty_delay_#{i}"].to_i
         amount = settings_hash["penalty_amount_#{i}"].to_i
         delay.positive? && amount.positive? ? { delay: delay, amount: amount } : nil
-      end.compact.sort_by { |h| h[:delay] } # On trie par délai (12h, 24h, 48h)
+      end
+      mapped_settings.compact.sort_by { |h| h[:delay] } # On trie par délai (12h, 24h, 48h)
     end
 
     # On trouve le premier seuil qui correspond
@@ -188,9 +185,7 @@ class ReservationsController < ApplicationController
           penalty_amount: penalty_amount,
           status: 'En attente'
         )
-        unless penalite.save
-          Rails.logger.error "ERREUR lors de la création de la pénalité : #{penalite.errors.full_messages.to_sentence}"
-        end
+        Rails.logger.error "ERREUR lors de la création de la pénalité : #{penalite.errors.full_messages.to_sentence}" unless penalite.save
 
         # 3. Envoyer les emails de notification
         admins = User.where(admin: true)
@@ -204,8 +199,7 @@ class ReservationsController < ApplicationController
           first_name, last_name = @reservation.fi.split(' ', 2)
           instructor = User.find_by(prenom: first_name, nom: last_name)
           if instructor
-            UserMailer.late_cancellation_notification_to_instructor(instructor, current_user, @reservation,
-                                                                    cancellation_reason).deliver_later
+            UserMailer.late_cancellation_notification_to_instructor(instructor, current_user, @reservation, cancellation_reason).deliver_later
           end
         end
       end
@@ -259,11 +253,11 @@ class ReservationsController < ApplicationController
     # Récupérer les instructeurs disponibles
     # On exclut l'utilisateur courant car on ne peut pas être son propre instructeur
     User.where(id: available_instructor_ids).where('fi IS NOT NULL AND fi >= ?',
-                                                   Date.today).where.not(id: current_user.id).order(:nom)
+                                                   Time.zone.today).where.not(id: current_user.id).order(:nom)
   end
 
   def fetch_available_instructors
-    date = params[:date].present? ? Date.parse(params[:date]) : Date.today
+    date = params[:date].present? ? Date.parse(params[:date]) : Time.zone.today
     hour = params[:hour].present? ? params[:hour].to_i : 7
     minute = params[:minute].present? ? params[:minute].to_i : 0
 
@@ -278,7 +272,7 @@ class ReservationsController < ApplicationController
 
     # initialisation des credentials (service account)
     key_env = ENV.fetch('GOOGLE_APPLICATION_CREDENTIALS', nil)
-    keyfile = key_env.present? ? Rails.root.join(key_env) : Rails.root.join('config', 'gcal-service-account.json')
+    keyfile = key_env.present? ? Rails.root.join(key_env) : Rails.root.join('config/gcal-service-account.json')
     Rails.logger.info("Keyfile path: #{keyfile} / exists: #{File.exist?(keyfile)}")
 
     unless File.exist?(keyfile)
@@ -374,11 +368,11 @@ class ReservationsController < ApplicationController
     user = current_user
     expired_items = []
 
-    expired_items << 'votre licence' if user.date_licence.present? && user.date_licence < Date.today
+    expired_items << 'votre licence' if user.date_licence.present? && user.date_licence < Time.zone.today
 
-    expired_items << 'votre visite médicale' if user.medical.present? && user.medical < Date.today
+    expired_items << 'votre visite médicale' if user.medical.present? && user.medical < Time.zone.today
 
-    expired_items << 'votre contrôle en vol' if user.controle.present? && user.controle < Date.today
+    expired_items << 'votre contrôle en vol' if user.controle.present? && user.controle < Time.zone.today
 
     return unless expired_items.any?
 
@@ -388,7 +382,7 @@ class ReservationsController < ApplicationController
   end
 
   def reservation_params
-    params.require(:reservation).permit(:avion_id, :start_time, :end_time, :summary, :instruction, :fi, :type_vol,
-                                        :start_date, :start_hour, :start_minute, :end_date, :end_hour, :end_minute, :cancellation_reason)
+    params.expect(reservation: [:avion_id, :start_time, :end_time, :summary, :instruction, :fi, :type_vol,
+                                :start_date, :start_hour, :start_minute, :end_date, :end_hour, :end_minute, :cancellation_reason])
   end
 end

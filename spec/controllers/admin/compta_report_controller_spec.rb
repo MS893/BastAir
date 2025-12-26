@@ -59,7 +59,7 @@ RSpec.describe Admin::ComptaReportController, type: :controller do
     end
 
     it 'génère un PDF' do
-      get :yearly_accounting_report, params: { year: Date.today.year, format: :pdf }
+      get :yearly_accounting_report, params: { year: Time.zone.today.year, format: :pdf }
       expect(response).to be_successful
     end
   end

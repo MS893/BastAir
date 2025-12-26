@@ -22,7 +22,7 @@ RSpec.describe Livret, type: :model do
 
     it 'sets date to today when status becomes validated (3)' do
       livret.update(status: 3)
-      expect(livret.date).to eq(Date.today)
+      expect(livret.date).to eq(Time.zone.today)
     end
 
     it 'clears date if status changes from validated to something else' do

@@ -12,7 +12,7 @@ class VolsController < ApplicationController
     respond_to do |format|
       format.html
       # Pour l'export CSV, on s'assure que @vols contient tous les vols filtrés, sans pagination.
-      format.csv { send_data Vol.to_csv(@vols), filename: "export-vols-#{Date.today}.csv" }
+      format.csv { send_data Vol.to_csv(@vols), filename: "export-vols-#{Time.zone.today}.csv" }
     end
   end
 
@@ -21,7 +21,7 @@ class VolsController < ApplicationController
     # On charge les avions et instructeurs pour les menus déroulants du formulaire
     @avions = Avion.order(:immatriculation)
     # On charge tous les utilisateurs qui ont une qualification d'instructeur (FI) valide.
-    @instructeurs = User.where('fi IS NOT NULL AND fi >= ?', Date.today).order(:prenom, :nom)
+    @instructeurs = User.where('fi IS NOT NULL AND fi >= ?', Time.zone.today).order(:prenom, :nom)
     # On charge la liste des comptes BIA pour la modale de sélection
     @bia_users = User.where('LOWER(prenom) = ?', 'bia').order(:nom)
     # Assurez-vous d'avoir au moins un tarif dans votre base de données
@@ -49,7 +49,7 @@ class VolsController < ApplicationController
     else
       # si la sauvegarde échoue, on recharge les variables pour le formulaire
       @avions = Avion.order(:immatriculation)
-      @instructeurs = User.where('fi IS NOT NULL AND fi >= ?', Date.today).order(:prenom, :nom)
+      @instructeurs = User.where('fi IS NOT NULL AND fi >= ?', Time.zone.today).order(:prenom, :nom)
       @bia_users = User.where('LOWER(prenom) = ?', 'bia').order(:nom)
       @tarif = Tarif.order(annee: :desc).first
       render :new, status: :unprocessable_content
@@ -138,15 +138,13 @@ class VolsController < ApplicationController
   end
 
   def vol_params
-    params.require(:vol).permit(:avion_id, :type_vol, :depart, :arrivee, :nb_atterro, :debut_vol, :fin_vol,
-                                :compteur_depart, :compteur_arrivee, :duree_vol, :fuel_avant_vol, :fuel_apres_vol, :huile, :nature, :instructeur_id, :solo, :supervise, :nav, :bia_user_id)
+    params.expect(vol: [:avion_id, :type_vol, :depart, :arrivee, :nb_atterro, :debut_vol, :fin_vol,
+                        :compteur_depart, :compteur_arrivee, :duree_vol, :fuel_avant_vol, :fuel_apres_vol, :huile, :nature, :instructeur_id, :solo, :supervise, :nav, :bia_user_id])
   end
 
   # Combine les champs de date et d'heure du formulaire en un seul champ `debut_vol`
   def combine_date_and_time
-    unless params[:vol][:debut_vol_date].present? && params[:vol][:debut_vol_hour].present? && params[:vol][:debut_vol_minute].present?
-      return
-    end
+    return unless params[:vol][:debut_vol_date].present? && params[:vol][:debut_vol_hour].present? && params[:vol][:debut_vol_minute].present?
 
     date = Date.parse(params[:vol][:debut_vol_date])
     hour = params[:vol][:debut_vol_hour].to_i

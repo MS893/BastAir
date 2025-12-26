@@ -4,7 +4,7 @@ class CreateAvions < ActiveRecord::Migration[8.0]
   def change
     create_table :avions do |t|
       # spécifications
-      t.string :immatriculation
+      t.string :immatriculation, null: false, index: { unique: true }
       t.string :marque
       t.string :modele
       t.string :moteur

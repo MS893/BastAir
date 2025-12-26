@@ -70,22 +70,21 @@ class TransactionsController < ApplicationController
 
     respond_to do |format|
       format.html { @transactions = @transactions.page(params[:page]).per(15) } # On pagine uniquement pour la vue HTML
-      format.csv { send_data Transaction.to_csv(@transactions), filename: "export-transactions-#{Date.today}.csv" }
+      format.csv { send_data Transaction.to_csv(@transactions), filename: "export-transactions-#{Time.zone.today}.csv" }
     end
   end
 
   def analytics
-    @years = Transaction.pluck(Arel.sql("strftime('%Y', date_transaction)")).uniq.sort.reverse
-    @selected_year = params[:year].present? ? params[:year].to_i : Date.today.year
+    @years = Transaction.distinct.pluck(Arel.sql("strftime('%Y', date_transaction)")).sort.reverse
+    @selected_year = params[:year].present? ? params[:year].to_i : Time.zone.today.year
 
     transactions_for_year = Transaction.where("strftime('%Y', date_transaction) = ?", @selected_year.to_s)
-    transactions_for_previous_year = Transaction.where("strftime('%Y', date_transaction) = ?",
-                                                       (@selected_year - 1).to_s)
+    transactions_for_previous_year = Transaction.where("strftime('%Y', date_transaction) = ?", (@selected_year - 1).to_s)
 
     # Données pour le graphique en barres (Recettes vs Dépenses par mois)
     recettes_by_month = transactions_for_year.where(mouvement: 'Recette')
-                                             .group("strftime('%m', date_transaction)")
-                                             .sum(:montant)
+                                            .group("strftime('%m', date_transaction)")
+                                            .sum(:montant)
 
     # --- NOUVEAU GRAPHIQUE DE COMPARAISON ---
     # 1. Récupérer les recettes de l'année précédente
@@ -149,6 +148,10 @@ class TransactionsController < ApplicationController
     @users = User.order(:prenom, :nom)
   end
 
+  def edit
+    @users = User.order(:prenom, :nom)
+  end
+
   def create
     @transaction = Transaction.new(transaction_params)
     # Enregistre la transaction et crée une entrée dans les ActivityLogs
@@ -164,10 +167,6 @@ class TransactionsController < ApplicationController
     else
       render :new, status: :unprocessable_content
     end
-  end
-
-  def edit
-    @users = User.order(:prenom, :nom)
   end
 
   def update
@@ -232,8 +231,8 @@ class TransactionsController < ApplicationController
   end
 
   def transaction_params
-    params.require(:transaction).permit(:date_transaction, :description, :mouvement, :montant, :source_transaction,
-                                        :payment_method, :user_id, :is_checked)
+    params.expect(transaction: [:date_transaction, :description, :mouvement, :montant, :source_transaction,
+                                :payment_method, :user_id, :is_checked])
   end
 
   # Méthode de sécurité pour empêcher la modification des transactions vérifiées
@@ -274,9 +273,7 @@ class TransactionsController < ApplicationController
 
     # Si un user_id est spécifié, un utilisateur normal ne peut voir que ses propres transactions.
     if params[:user_id].present?
-      unless params[:user_id].to_i == current_user.id
-        redirect_to root_path, alert: "Vous n'êtes pas autorisé à voir les transactions d'autres utilisateurs."
-      end
+      redirect_to root_path, alert: "Vous n'êtes pas autorisé à voir les transactions d'autres utilisateurs." unless params[:user_id].to_i == current_user.id
     else
       # Si aucun user_id n'est spécifié, un utilisateur normal ne peut pas voir l'index général.
       redirect_to root_path,

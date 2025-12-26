@@ -12,7 +12,7 @@ RSpec.describe TransactionsController, type: :controller do
   # Attributs valides pour créer/mettre à jour une transaction
   let(:valid_attributes) do
     {
-      date_transaction: Date.today,
+      date_transaction: Time.zone.today,
       description: 'Achat de carburant',
       mouvement: 'Dépense',
       montant: 150.50,

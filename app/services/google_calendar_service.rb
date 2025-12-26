@@ -103,11 +103,11 @@ class GoogleCalendarService
 
     # --- 2. Mise à jour de l'événement de l'instructeur ---
     instructor_event_id = record.google_instructor_event_id
-    return unless instructor_event_id.present?
+    return if instructor_event_id.blank?
 
     instructor_name = record.fi
     instructor_calendar_id = get_instructor_calendar_id(instructor_name)
-    return unless instructor_calendar_id.present?
+    return if instructor_calendar_id.blank?
 
     # On personnalise le titre pour l'instructeur
     instructor_event_data = build_event_from_reservation(record).merge(
@@ -125,9 +125,9 @@ class GoogleCalendarService
 
   # Méthode pour supprimer un événement existant sur Google Calendar
   # Cette méthode est maintenant dédiée à la suppression de l'événement principal (avion).
-  def delete_event_for_app(record, event_id: nil)
+  def delete_event_for_app(record, _event_id: nil)
     google_event_id = record.google_event_id
-    return unless google_event_id.present?
+    return if google_event_id.blank?
 
     calendar_id = nil
     if record.is_a?(Reservation)
@@ -150,10 +150,10 @@ class GoogleCalendarService
     rescue Google::Apis::ClientError => e
       # Si l'événement n'est pas trouvé (déjà supprimé), on ne lève pas d'erreur.
       if [404, 410].include?(e.status_code)
-        puts "INFO: L'événement Google Calendar #{google_event_id} n'a pas été trouvé sur le calendrier #{calendar_id}. Il a probablement déjà été supprimé."
+        Rails.logger.info "INFO: L'événement Google Calendar #{google_event_id} n'a pas été trouvé sur le calendrier #{calendar_id}. Il a probablement déjà été supprimé."
       else
         # Pour les autres erreurs (ex: problème de permission), on affiche le message.
-        puts "ERREUR lors de la suppression de l'événement Google Calendar : #{e.message}"
+        Rails.logger.error "ERREUR lors de la suppression de l'événement Google Calendar : #{e.message}"
         Rails.logger.error "[GoogleCalendarService] Erreur API lors de la suppression de l'événement principal pour #{record.class} ##{record.id}: #{e.message}"
       end
     end
@@ -166,7 +166,7 @@ class GoogleCalendarService
     # 1. Find the instructor's calendar ID using the existing pattern.
     instructor_name = reservation.fi
     instructor_calendar_id = get_instructor_calendar_id(instructor_name)
-    return unless instructor_calendar_id.present?
+    return if instructor_calendar_id.blank?
 
     # 2. Build the event data using the existing reservation helper, then customize the summary.
     event_data = build_event_from_reservation(reservation).merge(
@@ -207,14 +207,14 @@ class GoogleCalendarService
   def clear_calendar(calendar_id)
     raise "L'ID du calendrier ne peut pas être vide." if calendar_id.blank?
 
-    puts "INFO: Début de la suppression de tous les événements du calendrier #{calendar_id}."
+    Rails.logger.info "INFO: Début de la suppression de tous les événements du calendrier #{calendar_id}."
     page_token = nil
     begin
       loop do
         response = @service.list_events(calendar_id, page_token: page_token)
         response.items.each do |event|
           @service.delete_event(calendar_id, event.id)
-          puts "  - Événement supprimé : #{event.summary} (ID: #{event.id})"
+          Rails.logger.info "  - Événement supprimé : #{event.summary} (ID: #{event.id})"
         end
         page_token = response.next_page_token
         break unless page_token
@@ -222,7 +222,7 @@ class GoogleCalendarService
     rescue Google::Apis::Error => e
       raise "Erreur lors de la communication avec l'API Google : #{e.message}"
     end
-    puts "INFO: Tous les événements du calendrier #{calendar_id} ont été supprimés."
+    Rails.logger.info "INFO: Tous les événements du calendrier #{calendar_id} ont été supprimés."
   end
 
   # Archive old events in a specific calendar by changing their title and color
@@ -255,7 +255,7 @@ class GoogleCalendarService
           event.color_id = '8' # '8' corresponds to gray in Google Calendar
           @service.update_event(calendar_id, event.id, event)
           archived_count += 1
-          puts "  - Archived event: #{event.summary}"
+          Rails.logger.info "  - Archived event: #{event.summary}"
         end
         page_token = response.next_page_token
         break unless page_token
@@ -270,15 +270,15 @@ class GoogleCalendarService
   def delete_instructor_event(reservation)
     # On vérifie qu'il y a bien un ID d'événement instructeur à supprimer.
     instructor_event_id = reservation.google_instructor_event_id
-    return unless instructor_event_id.present?
+    return if instructor_event_id.blank?
 
     # On récupère le nom de l'instructeur pour trouver son agenda.
     instructor_name = reservation.fi
-    return unless instructor_name.present?
+    return if instructor_name.blank?
 
     # On utilise la même table de correspondance que pour la création.
     instructor_calendar_id = get_instructor_calendar_id(instructor_name)
-    return unless instructor_calendar_id.present?
+    return if instructor_calendar_id.blank?
 
     begin
       @service.delete_event(instructor_calendar_id, instructor_event_id)
@@ -300,7 +300,7 @@ class GoogleCalendarService
 
     # On utilise la même table de correspondance que pour la création
     instructor_calendar_id = get_instructor_calendar_id(instructor_name)
-    return false unless instructor_calendar_id.present?
+    return false if instructor_calendar_id.blank?
 
     Rails.logger.info "🔍 [GoogleCalendarService] Tentative suppression event #{instructor_event_id} du calendrier #{instructor_calendar_id}"
 

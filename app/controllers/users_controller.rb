@@ -12,13 +12,10 @@ class UsersController < ApplicationController
       @users = @users.where('LOWER(nom) LIKE LOWER(?) OR LOWER(prenom) LIKE LOWER(?)', "%#{params[:query]}%",
                             "%#{params[:query]}%")
     end
-
     # Si la requête vient d'un Turbo Frame, on ne rend que la liste des résultats, sinon, on rend la page complète
-    if turbo_frame_request?
-      render(partial: 'users/user_list', locals: { users: @users })
-    else
-      # Comportement normal pour le chargement initial de la page
-    end
+    return unless turbo_frame_request?
+
+    render(partial: 'users/user_list', locals: { users: @users })
   end
 
   # Action pour la recherche d'utilisateurs en autocomplétion
@@ -40,16 +37,17 @@ class UsersController < ApplicationController
     # On vérifie si le contact d'urgence est invalide pour afficher une alerte.
     # L'alerte ne s'affiche que si l'utilisateur consulte son propre profil.
     if @user == current_user && @user.contact_urgence.present? && !@user.valid?(:update_profil)
-      flash.now[:warning] =
-        "Votre numéro de contact d'urgence semble invalide. #{view_context.link_to('Veuillez le corriger ici',
-                                                                                   edit_profil_user_path(@user))}".html_safe
+      flash.now[:warning] = view_context.safe_join([
+        "Votre numéro de contact d'urgence semble invalide.",
+        view_context.link_to('Veuillez le corriger ici', edit_profil_user_path(@user))
+      ])
     end
 
     # On vérifie les validités qui expirent bientôt
     validity_warnings = @user.validity_warnings
     if @user == current_user && validity_warnings.any?
       # On combine les avertissements en un seul message flash.
-      flash.now[:info] = validity_warnings.join('<br>').html_safe
+      flash.now[:info] = view_context.safe_join(validity_warnings, view_context.tag.br)
     end
 
     render partial: 'user_details', locals: { user: @user }
@@ -154,14 +152,14 @@ class UsersController < ApplicationController
     # Paramètres sensibles que seul un administrateur peut modifier
     # L'autorisation est vérifiée par `authorize_admin!` dans le `before_action`
     if current_user.admin?
-      params.require(:user).permit(:admin, :fonction, :fi, :fe, :nuit, :google_calendar_id)
+      params.expect(user: [:admin, :fonction, :fi, :fe, :nuit, :google_calendar_id])
     else
-      params.require(:user).permit # Ne rien autoriser par défaut
+      params.expect(user: []) # Ne rien autoriser par défaut
     end
   end
 
   # Nouveaux "strong parameters" pour la mise à jour du profil
   def profile_params
-    params.require(:user).permit(:email, :telephone, :adresse, :contact_urgence, :avatar)
+    params.expect(user: [:email, :telephone, :adresse, :contact_urgence, :avatar])
   end
 end

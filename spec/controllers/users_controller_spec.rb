@@ -58,7 +58,7 @@ RSpec.describe UsersController, type: :controller do
     end
 
     it 'exports CSV' do
-      get :vols, params: { id: pilot_user.id, start_date: Date.today - 1.month, end_date: Date.today, format: :csv }
+      get :vols, params: { id: pilot_user.id, start_date: Time.zone.today - 1.month, end_date: Time.zone.today, format: :csv }
       expect(response.header['Content-Type']).to include 'text/csv'
     end
   end

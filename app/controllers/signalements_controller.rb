@@ -35,20 +35,6 @@ class SignalementsController < ApplicationController
     # La vue edit.html.erb sera rendue implicitement
   end
 
-  def update
-    if @signalement.update(signalement_update_params)
-      redirect_to signalements_path, notice: 'Le statut du signalement a été mis à jour avec succès.'
-    else
-      render :edit, status: :unprocessable_content
-    end
-  end
-
-  def destroy
-    Rails.logger.info("Suppression - admin: #{current_user.admin?}, signalement: #{@signalement.id}")
-    @signalement.destroy
-    redirect_to signalements_path, notice: 'Le signalement a été supprimé avec succès.', status: :see_other
-  end
-
   def create
     @signalement = @avion.signalements.new(signalement_params)
     @signalement.user = current_user # Associe l'utilisateur qui signale
@@ -82,6 +68,20 @@ class SignalementsController < ApplicationController
     end
   end
 
+  def update
+    if @signalement.update(signalement_update_params)
+      redirect_to signalements_path, notice: 'Le statut du signalement a été mis à jour avec succès.'
+    else
+      render :edit, status: :unprocessable_content
+    end
+  end
+
+  def destroy
+    Rails.logger.info("Suppression - admin: #{current_user.admin?}, signalement: #{@signalement.id}")
+    @signalement.destroy
+    redirect_to signalements_path, notice: 'Le signalement a été supprimé avec succès.', status: :see_other
+  end
+
   private
 
   def set_signalement
@@ -93,12 +93,12 @@ class SignalementsController < ApplicationController
   end
 
   def signalement_params
-    params.require(:signalement).permit(:description)
+    params.expect(signalement: [:description])
   end
 
   # On utilise une méthode de "strong parameters" distincte pour la mise à jour
   # afin de n'autoriser que la modification du statut.
   def signalement_update_params
-    params.require(:signalement).permit(:status)
+    params.expect(signalement: [:status])
   end
 end

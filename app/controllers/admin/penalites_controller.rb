@@ -16,9 +16,9 @@ module Admin
         # On crée la transaction de débit sur le compte de l'utilisateur
         Transaction.create!(
           user: @penalite.user,
-          date_transaction: Date.today,
+          date_transaction: Time.zone.today,
           description: "Pénalité pour annulation tardive du vol du #{l(@penalite.reservation_start_time,
-                                                                       format: :short_year_time)}",
+                                                                      format: :short_year_time)}",
           mouvement: 'Dépense',
           montant: @penalite.penalty_amount,
           source_transaction: 'Charges Exceptionnelles',

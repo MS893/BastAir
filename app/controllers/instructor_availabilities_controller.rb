@@ -36,7 +36,7 @@ class InstructorAvailabilitiesController < ApplicationController
   # Action pour créer ou supprimer une disponibilité
   def toggle
     # Sécurité supplémentaire : si la qualification est expirée, on ne fait rien en base de données.
-    if current_user.fi.present? && current_user.fi < Date.today
+    if current_user.fi.present? && current_user.fi < Time.zone.today
       render json: { status: 'expired', message: 'Qualification expirée, aucune action effectuée.' }, status: :forbidden
       return
     end
@@ -61,6 +61,6 @@ class InstructorAvailabilitiesController < ApplicationController
   def check_if_instructor
     # On vérifie maintenant si l'utilisateur a une date FI, même si elle est expirée,
     # pour permettre à la logique de la vue (afficher une alerte) de fonctionner sans être bloquée.
-    render json: { error: 'Not authorized' }, status: :unauthorized unless current_user.fi.present?
+    render json: { error: 'Not authorized' }, status: :unauthorized if current_user.fi.blank?
   end
 end

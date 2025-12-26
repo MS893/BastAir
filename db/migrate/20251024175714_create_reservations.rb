@@ -27,7 +27,7 @@ class CreateReservations < ActiveRecord::Migration[8.0]
       t.text :sharedExtendedProperties          # Très utile pour stocker des IDs internes (ex: l'ID de la réservation dans votre BD Rails) sans modifier les champs principaux.
 
       # champs supplémentaires de la réservation, à inclure dans description et attendees
-      t.boolean :instruction
+      t.boolean :instruction, default: false, null: false
       t.string :fi
       t.string :type_vol # nav, mania, etc.
 

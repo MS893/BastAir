@@ -2,8 +2,13 @@
 
 module MarkdownHelper
   def md(text)
-    # On instancie le service et on appelle la méthode render
+    markdown_renderer.render(text)
+  end
+
+  private
+
+  # Mémoïse l'instance de MarkdownService pour éviter de créer un nouvel objet à chaque appel.
+  def markdown_renderer
     @markdown_renderer ||= MarkdownService.new
-    @markdown_renderer.render(text)
   end
 end

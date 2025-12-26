@@ -17,7 +17,7 @@ class CreateVols < ActiveRecord::Migration[8.0]
       t.float :compteur_depart, precision: 7, scale: 2, null: false
       t.float :compteur_arrivee, precision: 7, scale: 2, null: false
       t.float :duree_vol, precision: 4, scale: 2, null: false
-      t.integer :nb_atterro, precision: 2, null: false, default: 1, null: false
+      t.integer :nb_atterro, precision: 2, null: false, default: 1
       t.boolean :solo, null: false, default: false
       t.boolean :supervise, null: false, default: false
       t.boolean :nav, null: false, default: false

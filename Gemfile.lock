@@ -573,6 +573,7 @@ DEPENDENCIES
   rspec-rails (~> 8.0.2)
   rubocop
   rubocop-performance
+  rubocop-rails
   rubocop-rails-omakase
   rubocop-rspec
   selenium-webdriver

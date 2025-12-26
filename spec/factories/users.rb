@@ -16,10 +16,10 @@ FactoryBot.define do
     date_naissance { 30.years.ago }
     lieu_naissance { 'Paris' }
     profession { 'Pilote' }
-    date_licence { Date.today + 1.year }
-    medical { Date.today + 1.year }
-    controle { Date.today + 1.year }
-    cotisation_club { Date.today + 1.year }
+    date_licence { Time.zone.today + 1.year }
+    medical { Time.zone.today + 1.year }
+    controle { Time.zone.today + 1.year }
+    cotisation_club { Time.zone.today + 1.year }
 
     trait :admin do
       admin { true }
@@ -27,7 +27,7 @@ FactoryBot.define do
 
     trait :instructeur do
       fonction { User::ALLOWED_FCT.values.find { |v| v.to_s.match?(/instructeur/i) } || User::ALLOWED_FCT.values.last }
-      fi { Date.today + 1.year }
+      fi { Time.zone.today + 1.year }
     end
 
     trait :eleve do

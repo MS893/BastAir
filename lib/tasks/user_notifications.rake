@@ -7,11 +7,11 @@ namespace :users do
   task notify_expiring_validities: :environment do
     puts 'Vérification des validités (licences, médical) expirant bientôt...'
 
-    thirty_days_from_now = Date.today + 30.days
+    thirty_days_from_now = Time.zone.today + 30.days
 
     # --- Licences ---
     # On exclut les comptes BIA des notifications
-    expiring_licenses = User.where.not(prenom: 'bia').where(date_licence: Date.today..thirty_days_from_now)
+    expiring_licenses = User.where.not(prenom: 'bia').where(date_licence: Time.zone.today..thirty_days_from_now)
     if expiring_licenses.any?
       puts "Envoi de notifications pour #{expiring_licenses.count} licence(s) expirant bientôt..."
       expiring_licenses.each do |user|
@@ -22,7 +22,7 @@ namespace :users do
 
     # --- Visites Médicales ---
     # On exclut les comptes BIA des notifications
-    expiring_medicals = User.where.not(prenom: 'bia').where(medical: Date.today..thirty_days_from_now)
+    expiring_medicals = User.where.not(prenom: 'bia').where(medical: Time.zone.today..thirty_days_from_now)
     if expiring_medicals.any?
       puts "Envoi de notifications pour #{expiring_medicals.count} visite(s) médicale(s) expirant bientôt..."
       expiring_medicals.each do |user|

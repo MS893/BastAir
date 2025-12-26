@@ -74,11 +74,11 @@ RSpec.describe VolsController, type: :controller do
     let(:valid_attributes) do
       {
         avion_id: avion.id,
-        debut_vol_date: Date.today.to_s,
+        debut_vol_date: Time.zone.today.to_s,
         debut_vol_hour: '10',
         debut_vol_minute: '00',
         duree_vol: 1.5,
-        fin_vol: "#{Date.today} 11:30:00",
+        fin_vol: "#{Time.zone.today} 11:30:00",
         compteur_depart: 1001.0,
         compteur_arrivee: 1002.5,
         depart: 'LFPT',
