@@ -139,7 +139,7 @@
                                 <%= f.select :livret_id, options_for_select(livret_options), { prompt: "Choisir la leçon..." }, { class: "form-select form-select-sm", required: true, onchange: "updateLessonDetails(this)" } %>
                               </div>
                               <div class="col-md-2">
-                                <%= f.select :status, [['Vu', 1], ['Avancé', 2], ['Acquis', 3]], { selected: 1 }, { class: "form-select form-select-sm", required: true } %>
+                                <%= f.select :status, [['Vu', 1], ['En cours', 2], ['Acquis', 3]], { selected: 1 }, { class: "form-select form-select-sm", required: true } %>
                               </div>
                               <div class="col-md-5">
                                 <%= f.hidden_field :comment, class: "full-comment" %>
@@ -442,16 +442,20 @@
                             </div>
                           <% end %>
                         </div>
-                        <%# On vérifie si le cours est validé et si une date est présente %>
-                        <% if livret.status == 3 && livret.date.present? %>
-                          <%# Si l'utilisateur est autorisé (instructeur/admin ou l'élève lui-même) ET qu'une signature existe, on crée un lien %>
-                          <% if (current_user.instructeur? || current_user.admin? || current_user == livret.user) && livret.signature_image.attached? && !@pdf %>
+                        <%# Cas 1 : Le cours est entièrement validé et signé (Statut 3) %>
+                        <% if livret.status == 3 %>
+                          <% if (current_user.instructeur? || current_user.admin? || current_user == livret.user) && !@pdf %>
                             <%= link_to signature_livret_path(livret), class: "text-decoration-none" do %>
-                              <span class="badge bg-success ms-2 fw-normal"><i class="bi bi-check-circle me-1"></i> Validé le <%= l(livret.date, format: :short_year) %></span>
+                              <span class="badge bg-success ms-2 fw-normal"><i class="bi bi-check-circle me-1"></i> Validé le <%= l(livret.date, format: :short_year) if livret.date %></span>
                             <% end %>
                           <% else %>
-                            <%# Sinon, on affiche un simple badge non cliquable %>
-                            <span class="badge bg-success ms-2 fw-normal"><i class="bi bi-check-circle me-1"></i> Validé le <%= l(livret.date, format: :short_year) %></span>
+                            <span class="badge bg-success ms-2 fw-normal"><i class="bi bi-check-circle me-1"></i> Validé le <%= l(livret.date, format: :short_year) if livret.date %></span>
+                          <% end %>
+                        
+                        <%# Cas 2 : Le QCM est réussi mais en attente de signature (Statut 2) %>
+                        <% elsif livret.status == 2 && !@pdf %>
+                          <%= link_to signature_livret_path(livret), class: "text-decoration-none" do %>
+                            <span class="badge bg-warning text-dark ms-2 fw-normal"><i class="bi bi-pencil-square me-1"></i> À signer</span>
                           <% end %>
                         <% else %>
                           <span class="badge bg-light text-dark border">Non validé</span>
@@ -592,14 +596,14 @@
                                     <% when 1 %>
                                       <span class="badge bg-secondary">Vu <i class="bi bi-chevron-down ms-1" style="font-size: 0.7em;"></i></span>
                                     <% when 2 %>
-                                      <span class="badge bg-primary">Avancé <i class="bi bi-chevron-down ms-1" style="font-size: 0.7em;"></i></span>
+                                      <span class="badge bg-primary">En cours <i class="bi bi-chevron-down ms-1" style="font-size: 0.7em;"></i></span>
                                     <% when 3 %>
                                       <span class="badge bg-success">Acquis <i class="bi bi-chevron-down ms-1" style="font-size: 0.7em;"></i></span>
                                     <% end %>
                                   </button>
                                   <ul class="dropdown-menu">
                                     <li><%= button_to "Vu", livret_path(livret), method: :patch, params: { livret: { status: 1 } }, class: "dropdown-item" %></li>
-                                    <li><%= button_to "Avancé", livret_path(livret), method: :patch, params: { livret: { status: 2 } }, class: "dropdown-item" %></li>
+                                    <li><%= button_to "En cours", livret_path(livret), method: :patch, params: { livret: { status: 2 } }, class: "dropdown-item" %></li>
                                     <li><%= button_to "Acquis", livret_path(livret), method: :patch, params: { livret: { status: 3 } }, class: "dropdown-item" %></li>
                                   </ul>
                                 </div>
@@ -608,7 +612,7 @@
                                 <% when 1 %>
                                   <span class="badge bg-secondary">Vu</span>
                                 <% when 2 %>
-                                  <span class="badge bg-primary">Avancé</span>
+                                  <span class="badge bg-primary">En cours</span>
                                 <% when 3 %>
                                   <span class="badge bg-success">Acquis</span>
                                 <% end %>

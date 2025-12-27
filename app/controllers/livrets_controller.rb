@@ -12,7 +12,7 @@ class LivretsController < ApplicationController
   end
 
   def create
-    # Not implemented yet
+    # vide
   end
 
   def update
@@ -61,7 +61,14 @@ class LivretsController < ApplicationController
   def signature
     # @livret est défini par le before_action
     # Vérification des autorisations : seul le propriétaire, un admin ou un instructeur peut voir la signature.
-    return if @livret.user == current_user || current_user.admin? || current_user.instructeur?
+    if @livret.user == current_user || current_user.admin? || current_user.instructeur?
+      # Si c'est un cours théorique (FTP) et que l'élève accède à la page de signature,
+      # on passe le statut à 2 (En cours/A signer) si ce n'est pas déjà fait.
+      if current_user == @livret.user && @livret.flight_lesson_id.nil? && (@livret.status.nil? || @livret.status < 2)
+        @livret.update(status: 2)
+      end
+      return
+    end
 
     redirect_to elearning_index_path, alert: "Vous n'êtes pas autorisé à voir cette signature."
     nil

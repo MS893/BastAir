@@ -54,7 +54,7 @@
             signature_label = "Signer en tant qu'élève"
           end
         # L'instructeur signe s'il est connecté, n'a pas encore signé, ET n'est pas l'élève lui-même
-        elsif (current_user.instructeur? || current_user.admin?) && !@livret.instructor_signature.attached? && current_user != @livret.user
+        elsif (current_user.instructeur? || current_user.admin?) && !@livret.instructor_signature.attached? && current_user != @livret.user && @livret.flight_lesson_id.present?
           show_pad = true
           signature_label = "Signer en tant qu'instructeur"
         end
@@ -74,6 +74,8 @@
             
             <%= form_with(model: @livret, url: livret_path(@livret), method: :patch, local: true, data: { controller: "signature", signature_signer_name_value: (current_user.full_name || ""), turbo: false }) do |form| %>
               <%= form.hidden_field :signature_data, data: { signature_target: "input" } %>
+              <%# On force le statut à 3 (Validé) lors de la signature %>
+              <%= form.hidden_field :status, value: 3 %>
               
               <div class="d-flex justify-content-center mb-3">
                 <canvas data-signature-target="canvas" width="400" height="200" class="border bg-white shadow-sm rounded" style="touch-action: none; cursor: crosshair;"></canvas>
