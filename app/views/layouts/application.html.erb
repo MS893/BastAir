@@ -62,31 +62,31 @@
 
     <script>
       document.addEventListener('turbo:load', () => {
-        // Met à jour l'année du copyright dynamiquement
+
+        // Met à jour l'année du copyright dynamiquement du footer
         document.querySelectorAll('.current-year').forEach(span => {
           span.textContent = new Date().getFullYear();
         });
 
+        // switch de changement de thème (mode clair/mode sombre)
         const themeToggleSwitch = document.getElementById('theme-toggle');
         if (!themeToggleSwitch) return;
-
         const htmlElement = document.documentElement;
-
         const applyTheme = (theme) => {
           htmlElement.setAttribute('data-bs-theme', theme);
+          // Sauvegarde le choix de l'utilisateur dans le localStorage
           localStorage.setItem('theme', theme);
           // Met à jour l'état du switch : coché si le thème est sombre
           themeToggleSwitch.checked = theme === 'dark';
         };
-
         const savedTheme = localStorage.getItem('theme') || 'light';
         applyTheme(savedTheme);
-
         // On utilise l'événement 'change' pour le switch
         themeToggleSwitch.addEventListener('change', () => {
           const newTheme = themeToggleSwitch.checked ? 'dark' : 'light';
           applyTheme(newTheme);
         });
+
       });
     </script>
 

@@ -164,6 +164,11 @@ h6 {
   color: white !important;
 }
 
+/*
+ * =============================================================================
+ * AFFICHAGE DU GOOGLE CALENDAR EN MODE DARK
+ * =============================================================================
+ */
 .calendar-dark-container iframe {
   /* Invertit les couleurs : le blanc devient noir */
   filter: invert(90%) hue-rotate(180deg) brightness(1.1);
