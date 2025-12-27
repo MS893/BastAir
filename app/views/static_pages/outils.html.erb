@@ -27,6 +27,13 @@
 
             <div class="calculator bg-body-secondary p-1">
             <div class="calculator p-3">
+                <!-- Smart Input -->
+                <div class="mb-2">
+                    <input type="text" id="smart-input" class="form-control text-end fs-5" 
+                            placeholder="Saisie clavier (ex: 1h30 + 1.5)" 
+                            onkeydown="handleSmartInput(event)" 
+                            oninput="validateSmartInput(this)">
+                </div>
                 <!-- Display -->
                 <div class="display-area mb-2 rounded">
                     <div id="time-list"></div>
@@ -106,7 +113,7 @@
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item bg-transparent text-white-50"><strong>Saisie au clavier : utilisez la zone
                                 de saisie de valeurs et d'opérations (uniquement les chiffres et les caractères 
-                                <strong>h , . + -</strong>. En tapant sur ENTER, le calcul se fait.</li>
+                                <strong class="text-primary">h H , . + -</strong>). En tapant sur ENTER ou = le calcul se fait.</li>
                         <li class="list-group-item bg-transparent text-white-50"><strong>Avec le clavier de la calculatrice :</strong>
                                 entrez les heures, puis cliquez sur <strong class="text-warning">min</strong>, entrez les minutes, 
                                 puis cliquez sur <strong class="text-primary">+</strong> (ou <strong class="text-primary">-</strong> pour 
@@ -141,6 +148,62 @@
         let inputBuffer = '';
         let totalInMinutes = 0;
         let totalDisplayMode = 'minutes'; // 'minutes' or 'hundredths'
+
+        function handleSmartInput(event) {
+            if (event.key === 'Enter' || event.key === '=') {
+                event.preventDefault();
+                processSmartInput();
+            }
+        }
+
+        function validateSmartInput(input) {
+            input.value = input.value.replace(/[^0-9hH.,+\-\s=]/g, '');
+        }
+
+        function processSmartInput() {
+            const input = document.getElementById('smart-input');
+            let text = input.value;
+            if (!text.trim()) return;
+
+            // Split by '=' to find the last segment
+            const parts = text.split('=');
+            let lastSegment = parts[parts.length - 1];
+            
+            if (!lastSegment.trim()) return;
+
+            clearEntry(); // Clear keypad buffer
+
+            let segmentToProcess = lastSegment.replace(/,/g, '.').replace(/\s+/g, '');
+            const regex = /([+\-]?)((?:\d*h\d*)|(?:\d+\.?\d*)|(?:\.\d+))/gi;
+            let match;
+            let found = false;
+
+            while ((match = regex.exec(segmentToProcess)) !== null) {
+                if (match[0] === '') continue;
+                found = true;
+                const sign = match[1] === '-' ? -1 : 1;
+                const value = match[2];
+                let minutes = 0;
+
+                if (value.toLowerCase().includes('h')) {
+                    const parts = value.toLowerCase().split('h');
+                    const h = parseInt(parts[0]) || 0;
+                    const m = parseInt(parts[1]) || 0;
+                    minutes = h * 60 + m;
+                } else {
+                    const h = parseFloat(value) || 0;
+                    minutes = h * 60;
+                }
+
+                if (minutes !== 0) timeList.push(minutes * sign);
+            }
+
+            if (found) {
+                calculateTotal();
+                input.value = text.trim() + ' = ';
+                input.scrollLeft = input.scrollWidth;
+            }
+        }
 
         // Sauvegarde l'état dans le localStorage
         function saveState() {
@@ -272,6 +335,7 @@
             totalDisplayMode = 'minutes';
             document.getElementById('result').innerHTML = formatTime(0, totalDisplayMode);
             document.getElementById('convert-btn').textContent = 'Convertir en cent.';
+            document.getElementById('smart-input').value = '';
             updateDisplay();
             saveState(); // Sauvegarde après réinitialisation
         }

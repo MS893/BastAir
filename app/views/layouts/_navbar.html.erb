@@ -32,13 +32,19 @@
             <li class="nav-item">
               <%= link_to "Évènements", events_path, class: "nav-link #{'active' if current_page?(events_path)}" %>
             </li>
-            <!-- MENU DÉROULANT "DOCUMENTS" -->
+            <!-- MENU DÉROULANT "OUTILS" -->
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownDocs" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                Documents
+                OUTILS
               </a>
               <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownDocs">
                 <li><%= link_to "Documents divers", documents_divers_path, class: "dropdown-item" %></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><%= link_to "Préparation du vol", documents_divers_path, class: "dropdown-item" %></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><%= link_to "Mes vols, mon carnet de vol", documents_divers_path, class: "dropdown-item" %></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><%= link_to "Formalités DGAC", documents_divers_path, class: "dropdown-item" %></li>
               </ul>
             </li>
             <!-- MENU DÉROULANT "ÉLÈVES" -->
