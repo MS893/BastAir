@@ -3,13 +3,14 @@
 # config/routes.rb
 
 Rails.application.routes.draw do
-  # Defines the root path route ("/")
-  root 'static_pages#home'
+  # On enveloppe les routes dans un scope pour gérer la locale (ex: /fr/..., /en/...)
+  # Le paramètre est optionnel (parenthèses), ce qui permet aux routes sans locale de fonctionner aussi.
+  scope "(:locale)", locale: /fr|en|es|de|it/ do
+    # Defines the root path route ("/")
+    root 'static_pages#home'
 
-  # Configuration de Devise :
-  # On désactive la création de compte publique (gérée par l'admin).
-  # On regroupe les routes de Devise ici pour éviter les conflits.
-  devise_for :users,
+    # Configuration de Devise :
+    devise_for :users,
               path: 'auth', # On préfixe les routes Devise avec 'auth' pour éviter les conflits (ex: /auth/sign_in)
               skip: [:registrations], # On désactive les routes d'inscription publiques publiques
               controllers: {
@@ -17,170 +18,171 @@ Rails.application.routes.draw do
                 passwords: 'users_auth/passwords' # Contrôleur personnalisé pour les mots de passe
               }
 
-  # On recrée manuellement les routes pour que les utilisateurs puissent modifier leur profil,
-  # tout en utilisant le contrôleur par défaut de Devise pour les registrations.
-  as :user do
-    get 'users/edit' => 'devise/registrations#edit', as: 'edit_user_registration'
-    get 'users/edit_profil' => 'users#edit_profil', as: 'edit_profil_user'
-    patch 'users/update_profil/:id' => 'users#update_profil', as: 'update_profil_user'
-    put 'users' => 'devise/registrations#update', as: 'user_registration'
-  end
-  # --- Routes pour les utilisateurs et l'authentification ---
-  resources :users, only: %i[index show edit update], constraints: { id: /\d+/ } do
-    collection do
-      get :search # /users/search
+    # On recrée manuellement les routes pour que les utilisateurs puissent modifier leur profil,
+    # tout en utilisant le contrôleur par défaut de Devise pour les registrations.
+    as :user do
+      get 'users/edit' => 'devise/registrations#edit', as: 'edit_user_registration'
+      get 'users/edit_profil' => 'users#edit_profil', as: 'edit_profil_user'
+      patch 'users/update_profil/:id' => 'users#update_profil', as: 'update_profil_user'
+      put 'users' => 'devise/registrations#update', as: 'user_registration'
     end
-    get 'vols', on: :member # /users/:id/vols
-    resources :avatars, only: [:create]
-  end
-
-  # routes pour l'administration (gestion par un admninistrateur)
-  namespace :admin do
-    resources :users, only: %i[new create]
-    # On ajoute les routes pour gérer les actualités (sauf la page "show" qui n'est pas utile ici)
-    resources :news_items, except: [:show]
-    # Route pour la gestion des réservations par les admins
-    resources :reservations, only: %i[index destroy]
-    # Route pour la maintenance des avions
-    resources :maintenances, only: %i[index show update] do
-      member do
-        patch :reset_100h
-        patch :reset_50h
-        patch :reset_1000h
-        patch :reset_moteur
-        patch :reset_annuelle
-        patch :reset_cen
-        post :update_settings
-      end
+    # --- Routes pour les utilisateurs et l'authentification ---
+    resources :users, only: %i[index show edit update], constraints: { id: /\d+/ } do
       collection do
-        post :notify_grounded
+        get :search # /users/search
+      end
+      get 'vols', on: :member # /users/:id/vols
+      resources :avatars, only: [:create]
+    end
+
+    # routes pour l'administration (gestion par un admninistrateur)
+    namespace :admin do
+      resources :users, only: %i[new create]
+      # On ajoute les routes pour gérer les actualités (sauf la page "show" qui n'est pas utile ici)
+      resources :news_items, except: [:show]
+      # Route pour la gestion des réservations par les admins
+      resources :reservations, only: %i[index destroy]
+      # Route pour la maintenance des avions
+      resources :maintenances, only: %i[index show update] do
+        member do
+          patch :reset_100h
+          patch :reset_50h
+          patch :reset_1000h
+          patch :reset_moteur
+          patch :reset_annuelle
+          patch :reset_cen
+          post :update_settings
+        end
+        collection do
+          post :notify_grounded
+        end
+      end
+      resources :tables, only: [:index], param: :table_name
+      delete 'tables/:table_name/records/:id', to: 'tables#destroy_record', as: 'table_record'
+      get 'tables/:table_name/records/:id/edit', to: 'tables#edit_record', as: 'edit_table_record'
+      patch 'tables/:table_name/records/:id', to: 'tables#update_record', as: 'update_table_record'
+      patch 'tables/:table_name/records/:id/restore', to: 'tables#restore_record', as: 'restore_table_record'
+      get 'tables/:table_name/records/new', to: 'tables#new_record', as: 'new_table_record'
+      post 'tables/:table_name/records', to: 'tables#create_record', as: 'create_table_record'
+      get 'tables/:table_name/records/:id', to: 'tables#show_record', as: 'show_table_record'
+      resources :compta_report, only: [] do
+        get 'treasury_report', on: :collection
+        get 'yearly_accounting_report', on: :collection
+      end
+      # Routes spécifiques pour la gestion des pénalités
+      resources :penalites, only: [] do
+        patch 'apply', on: :member
+        patch 'cancel', on: :member
+      end
+      # Route pour la gestion des agendas Google
+      resources :google_calendars, only: [:index] do
+        delete 'clear', on: :collection
+      end
+      resource :setting, only: %i[edit update], path: 'parametres'
+    end
+
+    # Routes pour la création de réservations et gestion agenda
+    get 'agenda', to: 'reservations#agenda'
+    resources :reservations, only: %i[index new create edit update destroy] do
+      get 'fetch_available_instructors', on: :collection, as: :fetch_available_instructors
+    end
+
+    # Route pour la comptabilité, les paiments  et les catégories de transaction
+    get 'categories', to: 'categories#index'
+    # routes pour la gestion de la comptabilité
+    resources :transactions do
+      get 'analytics', on: :collection
+      member do
+        patch :toggle_check
       end
     end
-    resources :tables, only: [:index], param: :table_name
-    delete 'tables/:table_name/records/:id', to: 'tables#destroy_record', as: 'table_record'
-    get 'tables/:table_name/records/:id/edit', to: 'tables#edit_record', as: 'edit_table_record'
-    patch 'tables/:table_name/records/:id', to: 'tables#update_record', as: 'update_table_record'
-    patch 'tables/:table_name/records/:id/restore', to: 'tables#restore_record', as: 'restore_table_record'
-    get 'tables/:table_name/records/new', to: 'tables#new_record', as: 'new_table_record'
-    post 'tables/:table_name/records', to: 'tables#create_record', as: 'create_table_record'
-    get 'tables/:table_name/records/:id', to: 'tables#show_record', as: 'show_table_record'
-    resources :compta_report, only: [] do
-      get 'treasury_report', on: :collection
-      get 'yearly_accounting_report', on: :collection
+    # Stripe Checkout
+    get 'checkout', to: 'checkout#show'
+    post 'checkout', to: 'checkout#create'
+    post 'stripe-webhooks', to: 'stripe_webhooks#create'
+
+    # routes pour la gestion des vols
+    resources :vols, only: %i[new create index show update]
+    # Route pour récupérer des informations sur les avions (ex: dernier compteur)
+    resources :avions, only: [] do
+      # Route pour le formulaire de signalement pour un avion spécifique
+      resources :signalements, only: [:create]
+      member do
+        get :last_compteur
+        get :signalements_list # Pour afficher les signalements sur la page de réservation
+      end
     end
-    # Routes spécifiques pour la gestion des pénalités
-    resources :penalites, only: [] do
-      patch 'apply', on: :member
-      patch 'cancel', on: :member
+    # Route pour la liste des signalements sur un avion
+    resources :signalements, only: %i[index show edit update destroy]
+
+    # routes pour les cours en ligne
+    resources :elearning, only: %i[index show] do
+      member do
+        get 'document'
+      end
     end
-    # Route pour la gestion des agendas Google
-    resources :google_calendars, only: [:index] do
-      delete 'clear', on: :collection
+    # routes pour les leçons de vol
+    resources :flight_lessons, only: %i[index show] do
+      get :pdf, on: :member
     end
-    resource :setting, only: %i[edit update], path: 'parametres'
-  end
-
-  # Routes pour la création de réservations et gestion agenda
-  get 'agenda', to: 'reservations#agenda'
-  resources :reservations, only: %i[index new create edit update destroy] do
-    get 'fetch_available_instructors', on: :collection, as: :fetch_available_instructors
-  end
-
-  # Route pour la comptabilité, les paiments  et les catégories de transaction
-  get 'categories', to: 'categories#index'
-  # routes pour la gestion de la comptabilité
-  resources :transactions do
-    get 'analytics', on: :collection
-    member do
-      patch :toggle_check
+    # route pour les podcasts audio
+    resources :audios, only: [:show]
+    # routes pour le livret de progression
+    resources :livrets, only: %i[create update show] do
+      member do
+        get :signature
+      end
     end
-  end
-  # Stripe Checkout
-  get 'checkout', to: 'checkout#show'
-  post 'checkout', to: 'checkout#create'
-  post 'stripe-webhooks', to: 'stripe_webhooks#create'
+    get 'livret_progression', to: 'progressions#show'
+    get 'livret_progression/download', to: 'progressions#download', as: 'download_livret_progression'
+    patch 'livret_progression/update_exam', to: 'progressions#update_exam', as: 'update_exam_progression'
+    post 'livret_progression/send_exam_email', to: 'progressions#send_exam_email', as: 'send_exam_email_progression'
+    post 'livret_progression/send_pdf_email', to: 'progressions#send_pdf_email', as: 'send_pdf_email_progression'
 
-  # routes pour la gestion des vols
-  resources :vols, only: %i[new create index show update]
-  # Route pour récupérer des informations sur les avions (ex: dernier compteur)
-  resources :avions, only: [] do
-    # Route pour le formulaire de signalement pour un avion spécifique
-    resources :signalements, only: [:create]
-    member do
-      get :last_compteur
-      get :signalements_list # Pour afficher les signalements sur la page de réservation
+    # routes pour les événements, avec des routes imbriquées pour les participants + page de confirmation de suppression
+    resources :events do
+      resources :attendances, only: %i[new create]
+      member do
+        get 'confirm_destroy'
+      end
+      delete 'delete_past', on: :collection # Ajoute la route DELETE /events/delete_past
+      resources :attendances, only: %i[create destroy]
+      resources :comments, only: %i[create edit update destroy]
     end
-  end
-  # Route pour la liste des signalements sur un avion
-  resources :signalements, only: %i[index show edit update destroy]
 
-  # routes pour les cours en ligne
-  resources :elearning, only: %i[index show] do
-    member do
-      get 'document'
+    # routes pour les pages statiques de la navbar
+    get 'faq', to: 'static_pages#faq'
+    get 'check_list', to: 'static_pages#check_list'
+    get 'club', to: 'static_pages#club'
+    get 'flotte', to: 'static_pages#flotte'
+    get 'mediatheque', to: 'static_pages#mediatheque'
+    get 'tarifs', to: 'static_pages#tarifs'
+    get 'bia', to: 'static_pages#bia'
+    get 'baptemes', to: 'static_pages#baptemes'
+    get 'outils', to: 'static_pages#outils'
+    get 'documents_divers', to: 'static_pages#documents_divers'
+    get 'credit', to: 'static_pages#credit'
+    get 'agenda_avion', to: 'static_pages#agenda_avion'
+    get 'mel', to: 'static_pages#mel'
+    get 'agenda_instructeurs', to: 'static_pages#agenda_instructeurs'
+    # routes pour les pages statiques du footer
+    get 'contact', to: 'static_pages#contact' # Route pour afficher la page de contact
+    post 'contact', to: 'static_pages#create_contact' # Route pour la soumission du formulaire
+    get 'team', to: 'static_pages#team'
+    get 'privacy_policy', to: 'static_pages#privacy_policy'
+
+    # Routes pour la gestion des disponibilités des instructeurs
+    get 'mes_disponibilites', to: 'instructor_availabilities#edit', as: 'edit_instructor_availabilities'
+    patch 'mes_disponibilites', to: 'instructor_availabilities#update', as: 'update_instructor_availabilities'
+
+    # Route pour gérer le téléchargement des fichiers
+    get 'download/:filename', to: 'static_pages#download', as: 'download_file', constraints: { filename: %r{[^/]+} }
+
+    # --- Routes pour l'authentification Google Calendar ---
+    namespace :google_auth do
+      get 'redirect', to: 'authentication#redirect', as: 'redirect'
+      get 'callback', to: 'authentication#callback', as: 'callback'
     end
-  end
-  # routes pour les leçons de vol
-  resources :flight_lessons, only: %i[index show] do
-    get :pdf, on: :member
-  end
-  # route pour les podcasts audio
-  resources :audios, only: [:show]
-  # routes pour le livret de progression
-  resources :livrets, only: %i[create update show] do
-    member do
-      get :signature
-    end
-  end
-  get 'livret_progression', to: 'progressions#show'
-  get 'livret_progression/download', to: 'progressions#download', as: 'download_livret_progression'
-  patch 'livret_progression/update_exam', to: 'progressions#update_exam', as: 'update_exam_progression'
-  post 'livret_progression/send_exam_email', to: 'progressions#send_exam_email', as: 'send_exam_email_progression'
-  post 'livret_progression/send_pdf_email', to: 'progressions#send_pdf_email', as: 'send_pdf_email_progression'
-
-  # routes pour les événements, avec des routes imbriquées pour les participants + page de confirmation de suppression
-  resources :events do
-    resources :attendances, only: %i[new create]
-    member do
-      get 'confirm_destroy'
-    end
-    delete 'delete_past', on: :collection # Ajoute la route DELETE /events/delete_past
-    resources :attendances, only: %i[create destroy]
-    resources :comments, only: %i[create edit update destroy]
-  end
-
-  # routes pour les pages statiques de la navbar
-  get 'faq', to: 'static_pages#faq'
-  get 'check_list', to: 'static_pages#check_list'
-  get 'club', to: 'static_pages#club'
-  get 'flotte', to: 'static_pages#flotte'
-  get 'mediatheque', to: 'static_pages#mediatheque'
-  get 'tarifs', to: 'static_pages#tarifs'
-  get 'bia', to: 'static_pages#bia'
-  get 'baptemes', to: 'static_pages#baptemes'
-  get 'outils', to: 'static_pages#outils'
-  get 'documents_divers', to: 'static_pages#documents_divers'
-  get 'credit', to: 'static_pages#credit'
-  get 'agenda_avion', to: 'static_pages#agenda_avion'
-  get 'mel', to: 'static_pages#mel'
-  get 'agenda_instructeurs', to: 'static_pages#agenda_instructeurs'
-  # routes pour les pages statiques du footer
-  get 'contact', to: 'static_pages#contact' # Route pour afficher la page de contact
-  post 'contact', to: 'static_pages#create_contact' # Route pour la soumission du formulaire
-  get 'team', to: 'static_pages#team'
-  get 'privacy_policy', to: 'static_pages#privacy_policy'
-
-  # Routes pour la gestion des disponibilités des instructeurs
-  get 'mes_disponibilites', to: 'instructor_availabilities#edit', as: 'edit_instructor_availabilities'
-  patch 'mes_disponibilites', to: 'instructor_availabilities#update', as: 'update_instructor_availabilities'
-
-  # Route pour gérer le téléchargement des fichiers
-  get 'download/:filename', to: 'static_pages#download', as: 'download_file', constraints: { filename: %r{[^/]+} }
-
-  # --- Routes pour l'authentification Google Calendar ---
-  namespace :google_auth do
-    get 'redirect', to: 'authentication#redirect', as: 'redirect'
-    get 'callback', to: 'authentication#callback', as: 'callback'
   end
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
@@ -191,4 +193,5 @@ Rails.application.routes.draw do
   # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
   get 'manifest' => 'rails/pwa#manifest', as: :pwa_manifest
   get 'service-worker' => 'rails/pwa#service_worker', as: :pwa_service_worker
+  
 end

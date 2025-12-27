@@ -6,6 +6,7 @@ class ApplicationController < ActionController::Base
 
   # pour passer du site français à anglais selon la locale choisie
   before_action :set_locale
+  before_action :redirect_root_to_localized_path
   before_action :redirect_restricted_pages_in_english
   helper_method :restricted_page?
 
@@ -17,6 +18,14 @@ class ApplicationController < ActionController::Base
   end
 
   private
+
+  def redirect_root_to_localized_path
+    # Si on est à la racine pure '/' et que la locale n'est pas dans l'URL
+    if request.path == '/' && params[:locale].blank?
+      # On redirige vers la racine avec la locale courante (définie par set_locale)
+      redirect_to root_path(locale: I18n.locale)
+    end
+  end
 
   def redirect_restricted_pages_in_english
     # Si la langue est l'anglais et que l'on est sur une page restreinte
@@ -34,12 +43,33 @@ class ApplicationController < ActionController::Base
   end
 
   def set_locale
+    # On définit la locale I18n :
+    # 1. Soit celle trouvée (paramètre URL ou navigateur)
+    # 2. Soit la valeur par défaut (français) définie dans application.rb
     I18n.locale = if user_signed_in?
                     :fr
                   else
-                    # Définit la locale à partir des paramètres ou utilise la valeur par défaut
-                    params[:locale] || I18n.default_locale
+                    # Définit la locale ou utilise la valeur par défaut (FR)
+                    I18n.locale = extract_locale || I18n.default_locale
                   end
+  end
+
+  def extract_locale
+    # Étape 1 : On regarde si un paramètre 'locale' est présent dans l'URL (ex: ?locale=en)
+    # C'est prioritaire car cela permet à l'utilisateur de forcer la langue via le menu.
+    parsed_locale = params[:locale]
+
+    # Étape 2 : Si pas de paramètre, on regarde l'en-tête HTTP du navigateur
+    if parsed_locale.blank?
+      # request.env['HTTP_ACCEPT_LANGUAGE'] contient une chaîne type "fr-FR,fr;q=0.9,en;q=0.8"
+      # On scanne pour récupérer les 2 premiers caractères (ex: "fr" ou "en")
+      parsed_locale = request.env['HTTP_ACCEPT_LANGUAGE'].to_s.scan(/^[a-z]{2}/).first
+    end
+
+    # Étape 3 : Vérification de sécurité
+    # On ne retourne la locale que si elle fait partie de notre liste officielle ([:fr, :en, :es, :de, :it])
+    # Sinon on retourne nil (ce qui déclenchera le fallback vers le français)
+    I18n.available_locales.map(&:to_s).include?(parsed_locale) ? parsed_locale : nil
   end
 
   def default_url_options

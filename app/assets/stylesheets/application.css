@@ -1,5 +1,10 @@
 /* app/assets/stylesheets/application.css */
 
+/*
+ *= require_tree .
+ *= require_self
+ */
+
 /* Importation d'une police depuis Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
 
@@ -165,4 +170,19 @@ h6 {
 
   /* Optionnel : adoucit les contrastes pour que ce soit plus lisible */
   background-color: #121212;
+}
+
+/*
+ * =============================================================================
+ * ANIMATION DRAPEAUX NAVBAR
+ * =============================================================================
+ */
+.flag-icon {
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  display: inline-block;
+}
+
+.dropdown-toggle:hover .flag-icon,
+.dropdown-item:hover .flag-icon {
+  transform: scale(1.6);
 }

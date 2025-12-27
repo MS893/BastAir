@@ -9,6 +9,7 @@ require 'rails/all'
 Bundler.require(*Rails.groups)
 
 module BastAir
+
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 8.0
@@ -22,6 +23,12 @@ module BastAir
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
+
+    # Définir les langues disponibles (menu déroulant de sélection de langue)
+    config.i18n.available_locales = [:fr, :en, :es, :de, :it]
+
+    # Définir le français comme langue par défaut (si la détection échoue ou si la langue n'est pas dispo)
     config.i18n.default_locale = :fr
   end
+
 end

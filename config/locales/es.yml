@@ -1,0 +1,236 @@
+es:
+  time:
+    formats:
+      short_time: "%H:%M"
+      short_year: "%d/%m/%Y"
+      short_year_time: "%d/%m/%Y %H:%M"
+  date:
+    formats:
+      short_year: "%d/%m/%Y"
+  layouts:
+    navbar:
+      home: "Inicio"
+      fleet: "La flota"
+      discovery_flights: "Bautismos"
+      member_area: "Área de miembros"
+      media_library: "Mediateca"
+      admin: "Admin"
+      profile: "Mi Perfil"
+      edit_profile: "Editar mi perfil"
+      edit_password: "Cambiar contraseña"
+      logout: "Cerrar sesión"
+    footer:
+      about_title: "BastAir"
+      about_text: "Su socio para la aviación de ocio. Descubra nuestras herramientas y nuestra comunidad."
+      links_title: "Enlaces útiles"
+      faq: "Preguntas frecuentes"
+      contact: "Contacto"
+      team: "Nuestro equipo"
+      privacy: "Política de privacidad"
+      follow_us: "Síguenos"
+      copyright: "Todos los derechos reservados."
+  static_pages:
+    home:
+      title: "El Club"
+      main_title: "Bast'Air"
+      subtitle: "El Aeroclub de Basse Terre - Baillif"
+      carousel:
+        sky_title: "Un cielo increíble"
+        sky_text: "Un cielo diferente cada día, con nubes magníficas o un gran cielo azul."
+        runway_title: "Una pista magnífica"
+        runway_text: "Una pista dura de 615m mantenida diariamente. Un despegue inolvidable frente al mar."
+        playground_title: "Un inmenso 'terreno de juego'"
+        playground_text: "Condiciones meteorológicas a veces difíciles que nos impiden volar, pero generalmente clementes."
+        facilities_title: "Infraestructuras"
+        facilities_text: "Edificios cómodos y limpios para recibirle."
+        runway_14_32_title: "Pista 14-32"
+        runway_14_32_text: "Idealmente situada para aproximaciones variadas."
+        sunset_title: "Puestas de sol magníficas"
+        sunset_text: "Aterrizar al anochecer después de ver el sol desaparecer bajo el horizonte."
+        takeoff_title: "Despegue pista 32"
+        takeoff_text: "Frente al mar, disfrutando del paisaje inmediatamente."
+      welcome_lead: "Bienvenido a la página de nuestro aeroclub. Descubra nuestra historia, nuestros valores y nuestra pasión por la aviación."
+      history_title: "Nuestra Historia"
+      history_text: "Fundado en 2025, el aeroclub BastAir nació de la pasión de un grupo de pilotos que deseaban compartir su pasión."
+      history_list:
+        guadeloupe: "Guadalupe con sus 5 aeródromos (Basse-Terre, Les Saintes, Marie Galante, Saint François, La Désirade) y su aeropuerto internacional Maryse Condé."
+        caribbean: "El Caribe y todas sus islas (Martinica, Dominica, San Bartolomé, San Martín...)."
+      facilities_title: "Nuestras Instalaciones"
+      facilities_text: "Con base en el aeródromo de Basse Terre Baillif (TFFB), nuestro club dispone de instalaciones modernas para acoger a nuestros miembros en las mejores condiciones:"
+      facilities_list:
+        clubhouse: "Una casa club acogedora para los briefings y el descanso."
+        classroom: "Un aula equipada para la formación teórica."
+        hangar: "Un hangar para nuestros aviones, mantenidos con el mayor cuidado."
+      pilot_training_title: "¿Quiere convertirse en piloto?"
+      pilot_training_text: "El aeroclub le permite obtener su licencia de piloto privado LAPL(A) o PPL(A):"
+      pilot_training_list:
+        simulator: "Una formación en parte en un simulador de vuelo menos costoso que el avión para trabajar los procedimientos normales y de emergencia, la ejecución de las listas de verificación, aprender a hablar por radio, aprender a utilizar todos los instrumentos de a bordo."
+        avionics: "Un avión con aviónica moderna (EFIS), como puede ver a continuación."
+        leisure_pro: "Para el ocio o para continuar hacia una carrera profesional."
+        financial_aid: "Posibilidad para los jóvenes de tener ayudas financieras."
+        bia: "Formación para el BIA para estudiantes de secundaria (infórmese en su establecimiento)."
+        rsfi: "Cursos RSFI de mantenimiento de competencias para los FI."
+        trial: "¿No está seguro de que le guste? Pruebe con un vuelo de iniciación antes de inscribirse."
+      join_us: "¡Únase a nosotros!"
+      bapteme_section_title: "¿Solo quiere un bautismo del aire?"
+      bapteme_text: "El aeroclub propone vuelos inolvidables sobre Guadalupe (según el clima). Descubra los paisajes impresionantes de la isla, desde la Soufrière hasta las playas de arena fina."
+      bapteme_subtext: "Admire la diversidad de paisajes, entre mar turquesa y vegetación exuberante. Una experiencia única para vivir o regalar."
+      bapteme_button: "¡Reservar un bautismo!"
+    fleet:
+      title: "Nuestra Flota"
+      lead: "Descubra los aviones de última generación de Bast'Air, perfectamente mantenidos para su seguridad y su placer de vuelo."
+      elixir:
+        title: "Elixir Aircraft"
+        description: "El avión escuela por excelencia. Fiable, seguro y fácil de pilotar, el Elixir es el aparato ideal para comenzar su formación de piloto. Rápido y equipado con una aviónica moderna, y a una tarifa competitiva."
+        footer: "2 plazas - Monomotor de pistones ROTAX 912iS"
+        website: "Sitio del Constructor"
+      features:
+        versatility:
+          title: "Polivalencia"
+          text: "El Elixir pasa fácilmente de la formación inicial a los vuelos de navegación."
+        safety:
+          title: "Seguridad"
+          text: "La certificación CS-23 refleja nuestro compromiso total con la seguridad. Tren de aterrizaje oleoneumático robusto, tanque anti-choque, paracaídas integrado de serie."
+        economy:
+          title: "Economía"
+          text: "La estructura OneShot del Elixir revoluciona el mantenimiento. Menos piezas significa más fiabilidad, menos mantenimiento y costes reducidos."
+        ecology:
+          title: "Más Ecológico"
+          text: "Únase a la revolución verde con el Elixir. Gracias a la gasolina sin plomo y a un bajo consumo, reduce las emisiones de CO2 hasta un 70% en comparación con una flota tradicional."
+      video_title: "El Elixir en acción"
+      gallery_title: "Galería de Fotos"
+    baptemes:
+      title: "Bautismos del aire"
+      lead: "Descubra Guadalupe vista desde el cielo con nuestros vuelos de iniciación."
+      volcano:
+        title: "Volcán"
+        text: "Vuele sobre el majestuoso volcán de la Soufrière y admire su cima humeante. Una vista inmejorable sobre el Parque Nacional de Guadalupe (vuelo sujeto a condiciones meteorológicas)."
+      coast:
+        title: "Costa de Sotavento"
+        text: "Vuele por encima de Les Saintes, o a lo largo de la costa oeste de Basse-Terre, desde la reserva Cousteau hasta las playas de Deshaies. Un panorama excepcional sobre el mar Caribe."
+      pricing_card:
+        title: "Bautismos del aire"
+        price: "150€"
+        item1: "Vuelo de descubrimiento de 30 minutos"
+        item2: "Regálese o regale a sus seres queridos una experiencia inolvidable."
+        button: "Regalar un vuelo"
+      contact:
+        title: "Solicitud de información"
+        text: "¿Una pregunta? ¿Ganas de reservar? ¡Déjenos un mensaje!"
+        form:
+          first_name: "Nombre"
+          last_name: "Apellido"
+          email: "Su dirección de correo electrónico"
+          message: "Díganos las fechas en las que está disponible"
+          submit: "Enviar el mensaje"
+    mediatheque:
+      title: "Mediateca"
+      lead: "Sumérjase en el universo de BastAir a través de nuestras mejores fotos y vídeos."
+      video_title: "Vídeo de Presentación"
+      gallery_title: "Galería de Fotos"
+      clubhouse_text: "El ambiente acogedor de nuestra casa club."
+      hangar_text: "El hangar que alberga los aviones del aeroclub."
+    contact:
+      title: "Contacto"
+      coordinates_title: "Datos de contacto"
+      address_label: "Dirección:"
+      phone_label: "Teléfono:"
+      contact_us_title: "Contáctenos"
+      contact_us_lead: "Para cualquier pregunta o solicitud de información, no dude en enviarnos un correo electrónico a la siguiente dirección:"
+    team:
+      title: "Nuestro equipo"
+      lead: "Descubra a las personas apasionadas que hacen posible BastAir."
+      member1:
+        name: "Jeannette Codeur"
+        role: "Lead Developer"
+        desc: "El cerebro técnico que transforma las ideas en funcionalidades robustas."
+      member2:
+        name: "Bill BDD"
+        role: "DBA & Backend Specialist"
+        desc: "Guardián de los datos, se asegura de que todo funcione perfectamente entre bastidores."
+      member3:
+        name: "Karine Style"
+        role: "Frontend & UX Designer"
+        desc: "La artista que hace que el sitio sea tan hermoso como agradable de usar."
+    privacy_policy:
+      title: "Política de Privacidad"
+      last_update: "Última actualización:"
+      intro: "Su privacidad es importante para nosotros. Esta política de privacidad explica qué datos personales recopilamos de usted y cómo los utilizamos."
+      data_collection:
+        title: "Datos que recopilamos"
+        text: "Recopilamos datos para funcionar eficazmente y proporcionarle las mejores experiencias con nuestros servicios. Usted proporciona algunos de estos datos directamente, por ejemplo cuando crea una cuenta, se inscribe en un evento o nos contacta para obtener ayuda."
+        list_html: "<li><strong>Información de cuenta:</strong> Su nombre, su dirección de correo electrónico, su contraseña (cifrada).</li><li><strong>Datos de participación:</strong> Los eventos en los que se inscribe.</li><li><strong>Datos de pago:</strong> Cuando compra una entrada para un evento de pago, su información de pago es procesada por nuestro socio de pago Stripe y no se almacena en nuestros servidores.</li>"
+      data_usage:
+        title: "Cómo utilizamos sus datos"
+        text: "Utilizamos los datos que recopilamos para:"
+        list_html: "<li>Proporcionar y mejorar nuestros servicios.</li><li>Informarle de los eventos en los que está inscrito.</li><li>Comunicarnos con usted, incluidas las notificaciones de actualización o cancelación de eventos.</li>"
+      rights:
+        title: "Sus derechos"
+        text: "De conformidad con el RGPD, usted dispone de un derecho de acceso, rectificación, supresión y portabilidad de sus datos personales. Puede ejercer estos derechos accediendo a su página de perfil o contactándonos."
+      cgu:
+        title: "Condiciones Generales de Uso (CGU)"
+        section1_title: "1. Menciones Legales y Objeto"
+        section1_html: "<h5>Identificación del Editor del Sitio:</h5><ul><li>Aeroclub Bast'Air (Asociación ley 1901).</li><li>Aeródromo de Basse-Terre / Baillif.</li></ul><h5>Alojamiento del Sitio:</h5><p>Nombre y datos de contacto de la empresa que aloja su sitio.</p><h5>Objeto de las CGU:</h5><p>Definir las condiciones de acceso y uso del sitio de gestión del aeroclub.</p>"
+        section2_title: "2. Acceso y Uso del Servicio"
+        section2_html: "<p><strong>Público Objetivo:</strong> El servicio está reservado a los miembros activos y al día con su cuota en el Aeroclub.</p><p><strong>Aceptación de las CGU:</strong> El hecho de utilizar el sitio y conectarse implica la aceptación plena y total de las presentes CGU.</p>"
+        section3_title: "3. Gestión de Reservas y Cuentas"
+        section3_html: "<h5>Reglas de Reserva:</h5><ul><li>Las condiciones específicas para las reservas se definen en el reglamento interno del aeroclub.</li></ul><h5>Gestión de Cuentas:</h5><ul><li>La cuenta de usuario permite el seguimiento de las horas de vuelo, el saldo financiero, la facturación y el historial de vuelos.</li></ul>"
+        section4_title: "4. Propiedad Intelectual"
+        section4_text: "Todo el contenido del sitio es propiedad exclusiva del Aeroclub o de sus derechohabientes."
+        section5_title: "5. Protección de Datos Personales (RGPD) 🇪🇺"
+        section5_html: "<p>Esta sección completa la información de nuestra Política de Privacidad.</p><h5>Naturaleza de los Datos Recopilados:</h5><p>Recopilamos los siguientes datos: Apellido, Nombre, Dirección, Email, Número de teléfono, información de Licencia/Brevet, horas de vuelo, historial de transacciones e identificadores de conexión.</p><h5>Finalidades del Tratamiento:</h5><p>Estos datos se utilizan para la gestión de las membresías, la gestión de las reservas, la facturación, la comunicación interna del club y la seguridad del sitio.</p>"
+        section6_title: "6. Responsabilidades y Garantías"
+        section6_text: "El Aeroclub se esfuerza por asegurar un acceso continuo y un buen funcionamiento del sitio pero no puede garantizar una ausencia total de interrupción o error técnico."
+        section7_title: "7. Derecho Aplicable y Jurisdicción Competente"
+        section7_text: "Las presentes CGU se rigen por el derecho francés. En caso de litigio, se buscará una solución amistosa con prioridad."
+    faq:
+      title: "Preguntas Frecuentes (FAQ)"
+      subtitle: "Las Licencias de Piloto de Avión (LAPL & PPL) ✈️"
+      q1:
+        question: "1. ¿Cuál es la diferencia principal entre el PPL y el LAPL?"
+        answer_html: "<p>La principal diferencia reside en los <strong>privilegios</strong> y las <strong>restricciones</strong> asociadas a cada licencia:</p><table class='table table-bordered table-striped'><thead><tr><th scope='col'>Característica</th><th scope='col'>LAPL</th><th scope='col'>PPL</th></tr></thead><tbody><tr><td><strong>Zona de vuelo</strong></td><td>Limitada a los países <strong>EASA (Europa)</strong>.</td><td><strong>Mundo entero</strong> (estándar OACI).</td></tr><tr><td><strong>Pasajeros</strong></td><td><strong>Máximo 3</strong> pasajeros.</td><td>Sin limitación.</td></tr><tr><td><strong>Masa del avión</strong></td><td>Hasta <strong>2 000 kg</strong>.</td><td>Sin limitación.</td></tr><tr><td><strong>Horas de vuelo mín.</strong></td><td><strong>30 horas</strong>.</td><td><strong>45 horas</strong>.</td></tr></tbody></table>"
+      q2:
+        question: "2. ¿Qué licencia debería elegir: LAPL o PPL?"
+        answer_html: "<p>La elección depende de sus <strong>objetivos de vuelo</strong>:</p><ul><li><strong>Opte por el LAPL</strong> si desea volar principalmente en Europa, por ocio, solo o con un pequeño número de pasajeros.</li><li><strong>Opte por el PPL</strong> si planea volar por todo el mundo, en aviones más pesados, o si prevé añadir calificaciones avanzadas (IFR, etc.).</li></ul>"
+      q3:
+        question: "3. ¿Cuál es la edad mínima para comenzar la formación y obtener la licencia?"
+        answer_html: "<ul><li>Inicio de formación: <strong>sin límite de edad</strong>.</li><li>Primer vuelo solo: <strong>16 años cumplidos</strong>.</li><li>Obtención de la licencia: <strong>17 años cumplidos</strong>.</li></ul>"
+      q4:
+        question: "4. ¿Hay que ser bueno en matemáticas o ciencias para aprobar la teoría?"
+        answer_html: "<p><strong>No</strong>, no es necesario. La formación teórica es accesible a todos y no requiere <strong>ningún diploma científico</strong> particular.</p>"
+      q5:
+        question: "5. ¿Cómo se desarrolla la formación teórica?"
+        answer_html: "<p>La formación cubre nueve módulos (Reglamentación, Meteorología, Navegación, etc.). El examen es un <strong>tipo test</strong> donde debe obtener al menos <strong>75%</strong> de respuestas correctas.</p>"
+      q6:
+        question: "6. ¿Cuánto tiempo se necesita para obtener la licencia?"
+        answer_html: "<p>La duración varía según su disponibilidad:</p><ul><li>La teoría es válida <strong>24 meses</strong>.</li><li>En promedio, una formación a tiempo parcial se extiende de <strong>12 a 18 meses</strong>.</li></ul>"
+      q7:
+        question: "7. ¿Cuál es la exigencia médica?"
+        answer_html: "<p>Se necesita un certificado de aptitud médica:</p><ul><li><strong>LAPL:</strong> Certificado médico LAPL.</li><li><strong>PPL:</strong> Certificado médico de <strong>Clase 2</strong>.</li></ul><p class='mb-0'>El uso de gafas no es <strong>un obstáculo</strong>.</p>"
+      q8:
+        question: "8. ¿Cuál es la validez de la licencia y del certificado médico?"
+        answer_html: "<table class='table table-bordered'><tbody><tr><td><strong>Licencia</strong></td><td><strong>De por vida</strong>.</td></tr><tr><td><strong>Calificación de clase (SEP)</strong></td><td><strong>24 meses</strong> (a prorrogar).</td></tr><tr><td><strong>Certificado Médico Clase 2</strong></td><td>5 años (<40 años), 2 años (40-50), 1 año (>50).</td></tr></tbody></table>"
+      q9:
+        question: "9. ¿Cómo mantener sus privilegios de vuelo?"
+        answer_html: "<p>Debe respetar condiciones de <strong>experiencia reciente</strong> (horas de vuelo, despegues/aterrizajes) o realizar un vuelo de control con un examinador.</p>"
+      q10:
+        question: "10. ¿Cuál es el coste total de una licencia?"
+        answer_html: "<p>El coste varía según la estructura:</p><ul><li><strong>LAPL:</strong> Entre <strong>6 000 € y 9 000 €</strong>.</li><li><strong>PPL:</strong> Entre <strong>9 000 € y 15 000 €</strong>.</li></ul>"
+      q11:
+        question: "11. ¿Se puede financiar la licencia?"
+        answer_html: "<p>Sí, especialmente a través de la <strong>Beca de la Federación Francesa Aeronáutica (FFA)</strong> para los jóvenes, a menudo vinculada al BIA.</p>"
+      q12:
+        question: "12. ¿Por qué pagar por la instrucción en una asociación?"
+        answer_html: "<p class='mb-0'>El coste cubre los gastos incompresibles (amortización material, simulador, mantenimiento de competencias de los instructores voluntarios).</p>"
+      q13:
+        question: "13. ¿Cuáles son las ayudas de la FFA para los menores de 21 años?"
+        answer_html: "<p>Aquí hay algunas ayudas:</p><ul class='list-group'><li class='list-group-item d-flex justify-content-between align-items-center'>1er Vuelo solo<span>350 €</span></li><li class='list-group-item d-flex justify-content-between align-items-center'>PPL o LAPL Completo<span>700 €</span></li></ul><p class='mt-3 small text-muted'>Consulte el sitio de la FFA para los detalles.</p>"
+      q14:
+        question: "14. ¿Qué es el BIA?"
+        answer_html: "<p>El <strong>Brevet d'Initiation Aéronautique</strong> es un diploma que valida una cultura general aeronáutica, destinado principalmente a los jóvenes.</p>"
+      q15:
+        question: "15. ¿Qué aporta el BIA?"
+        answer_html: "<p>Aporta conocimientos sólidos, una iniciación al vuelo, ayudas financieras para el pilotaje y es una ventaja para la orientación profesional.</p>"
+      q16:
+        question: "16. ¿Cuáles son las condiciones para pasar el BIA?"
+        answer_html: "<p>Abierto a candidatos de <strong>13 años cumplidos</strong>. El examen es un tipo test sobre 5 dominios obligatorios.</p>"

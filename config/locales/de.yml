@@ -1,0 +1,236 @@
+de:
+  time:
+    formats:
+      short_time: "%H:%M"
+      short_year: "%d.%m.%Y"
+      short_year_time: "%d.%m.%Y %H:%M"
+  date:
+    formats:
+      short_year: "%d.%m.%Y"
+  layouts:
+    navbar:
+      home: "Startseite"
+      fleet: "Die Flotte"
+      discovery_flights: "Schnupperflüge"
+      member_area: "Mitgliederbereich"
+      media_library: "Mediathek"
+      admin: "Admin"
+      profile: "Mein Profil"
+      edit_profile: "Profil bearbeiten"
+      edit_password: "Passwort ändern"
+      logout: "Abmelden"
+    footer:
+      about_title: "BastAir"
+      about_text: "Ihr Partner für die Freizeitluftfahrt. Entdecken Sie unsere Tools und unsere Gemeinschaft."
+      links_title: "Nützliche Links"
+      faq: "FAQ"
+      contact: "Kontakt"
+      team: "Unser Team"
+      privacy: "Datenschutzrichtlinie"
+      follow_us: "Folgen Sie uns"
+      copyright: "Alle Rechte vorbehalten."
+  static_pages:
+    home:
+      title: "Der Club"
+      main_title: "Bast'Air"
+      subtitle: "Der Aeroclub von Basse Terre - Baillif"
+      carousel:
+        sky_title: "Ein unglaublicher Himmel"
+        sky_text: "Jeden Tag ein anderer Himmel, mit wunderschönen Wolken oder strahlend blauem Himmel."
+        runway_title: "Eine wunderschöne Piste"
+        runway_text: "Eine 615m lange Hartbelagpiste, die täglich gewartet wird. Ein unvergesslicher Start mit Blick auf das Meer."
+        playground_title: "Ein riesiger 'Spielplatz'"
+        playground_text: "Wetterbedingungen, die uns manchmal am Fliegen hindern, aber meistens mild sind."
+        facilities_title: "Infrastruktur"
+        facilities_text: "Komfortable und saubere Gebäude, um Sie zu empfangen."
+        runway_14_32_title: "Piste 14-32"
+        runway_14_32_text: "Ideal gelegen für abwechslungsreiche Anflüge."
+        sunset_title: "Wunderschöne Sonnenuntergänge"
+        sunset_text: "Landen bei Einbruch der Dunkelheit, nachdem man die Sonne unter dem Horizont verschwinden sah."
+        takeoff_title: "Start Piste 32"
+        takeoff_text: "Mit Blick auf das Meer, die Landschaft sofort genießend."
+      welcome_lead: "Willkommen auf der Seite unseres Aeroclubs. Entdecken Sie unsere Geschichte, unsere Werte und unsere Leidenschaft für die Luftfahrt."
+      history_title: "Unsere Geschichte"
+      history_text: "Gegründet im Jahr 2025, entstand der Aeroclub BastAir aus der Leidenschaft einer Gruppe von Piloten, die ihre Leidenschaft teilen wollten."
+      history_list:
+        guadeloupe: "Guadalupe mit seinen 5 Flugplätzen (Basse-Terre, Les Saintes, Marie Galante, Saint François, La Désirade) und seinem internationalen Flughafen Maryse Condé."
+        caribbean: "Die Karibik und all ihre Inseln (Martinique, Dominica, St. Barth, St. Martin...)."
+      facilities_title: "Unsere Einrichtungen"
+      facilities_text: "Basierend auf dem Flugplatz Basse Terre Baillif (TFFB), verfügt unser Club über moderne Einrichtungen, um unsere Mitglieder unter besten Bedingungen zu empfangen:"
+      facilities_list:
+        clubhouse: "Ein gemütliches Clubhaus für Briefings und Entspannung."
+        classroom: "Ein ausgestatteter Schulungsraum für die theoretische Ausbildung."
+        hangar: "Ein Hangar für unsere Flugzeuge, die mit größter Sorgfalt gewartet werden."
+      pilot_training_title: "Möchten Sie Pilot werden?"
+      pilot_training_text: "Der Aeroclub ermöglicht es Ihnen, Ihre Privatpilotenlizenz LAPL(A) oder PPL(A) zu erwerben:"
+      pilot_training_list:
+        simulator: "Eine Ausbildung teilweise auf einem Flugsimulator, der kostengünstiger ist als das Flugzeug, um normale und Notfallverfahren zu üben, Checklisten abzuarbeiten, Funken zu lernen und alle Bordinstrumente bedienen zu lernen."
+        avionics: "Ein Flugzeug mit moderner Avionik (EFIS), wie Sie unten sehen können."
+        leisure_pro: "Für die Freizeit oder um eine berufliche Karriere anzustreben."
+        financial_aid: "Möglichkeit für Jugendliche, finanzielle Unterstützung zu erhalten."
+        bia: "Ausbildung zum BIA für Schüler (erkundigen Sie sich bei Ihrer Schule)."
+        rsfi: "RSFI-Kurse zur Kompetenzerhaltung für Fluglehrer."
+        trial: "Sind Sie sich nicht sicher, ob es Ihnen gefällt? Probieren Sie es mit einem Schnupperflug, bevor Sie sich anmelden."
+      join_us: "Treten Sie uns bei!"
+      bapteme_section_title: "Einfach Lust auf einen Schnupperflug?"
+      bapteme_text: "Der Aeroclub bietet unvergessliche Flüge über Guadeloupe an (je nach Wetter). Entdecken Sie die atemberaubenden Landschaften der Insel, vom Soufrière bis zu den feinen Sandstränden."
+      bapteme_subtext: "Bewundern Sie die Vielfalt der Landschaften, zwischen türkisblauem Meer und üppiger Vegetation. Ein einzigartiges Erlebnis zum Erleben oder Verschenken."
+      bapteme_button: "Einen Schnupperflug buchen!"
+    fleet:
+      title: "Unsere Flotte"
+      lead: "Entdecken Sie die Flugzeuge der neuesten Generation von Bast'Air, perfekt gewartet für Ihre Sicherheit und Ihr Flugvergnügen."
+      elixir:
+        title: "Elixir Aircraft"
+        description: "Das Schulflugzeug schlechthin. Zuverlässig, sicher und einfach zu fliegen, ist die Elixir das ideale Gerät, um Ihre Pilotenausbildung zu beginnen. Schnell und mit moderner Avionik ausgestattet, und zu einem wettbewerbsfähigen Preis."
+        footer: "2 Plätze - Einmotoriger Kolbenmotor ROTAX 912iS"
+        website: "Hersteller-Website"
+      features:
+        versatility:
+          title: "Vielseitigkeit"
+          text: "Die Elixir wechselt problemlos von der Grundausbildung zu Navigationsflügen."
+        safety:
+          title: "Sicherheit"
+          text: "Die CS-23-Zertifizierung spiegelt unser absolutes Engagement für Sicherheit wider. Robustes oleopneumatisches Fahrwerk, Crash-sicherer Tank, serienmäßig integrierter Fallschirm."
+        economy:
+          title: "Wirtschaftlichkeit"
+          text: "Die OneShot-Struktur der Elixir revolutioniert die Wartung. Weniger Teile bedeuten mehr Zuverlässigkeit, weniger Wartung und geringere Kosten."
+        ecology:
+          title: "Ökologischer"
+          text: "Schließen Sie sich der grünen Revolution mit der Elixir an. Dank bleifreiem Benzin und geringem Verbrauch reduziert sie die CO2-Emissionen um bis zu 70% im Vergleich zu einer traditionellen Flotte."
+      video_title: "Die Elixir in Aktion"
+      gallery_title: "Fotogalerie"
+    baptemes:
+      title: "Schnupperflüge"
+      lead: "Entdecken Sie Guadeloupe aus der Luft mit unseren Einführungsflügen."
+      volcano:
+        title: "Vulkan"
+        text: "Überfliegen Sie den majestätischen Vulkan Soufrière und bewundern Sie seinen rauchenden Gipfel. Ein atemberaubender Blick auf den Nationalpark von Guadeloupe (Flug abhängig von den Wetterbedingungen)."
+      coast:
+        title: "Küste unter dem Wind"
+        text: "Fliegen Sie über Les Saintes oder entlang der Westküste von Basse-Terre, vom Cousteau-Reservat bis zu den Stränden von Deshaies. Ein außergewöhnliches Panorama über das Karibische Meer."
+      pricing_card:
+        title: "Schnupperflüge"
+        price: "150€"
+        item1: "30-minütiger Entdeckungsflug"
+        item2: "Gönnen Sie sich oder Ihren Lieben ein unvergessliches Erlebnis."
+        button: "Einen Flug verschenken"
+      contact:
+        title: "Informationsanfrage"
+        text: "Eine Frage? Lust zu buchen? Hinterlassen Sie uns eine Nachricht!"
+        form:
+          first_name: "Vorname"
+          last_name: "Nachname"
+          email: "Ihre E-Mail-Adresse"
+          message: "Sagen Sie uns, an welchen Daten Sie verfügbar sind"
+          submit: "Nachricht senden"
+    mediatheque:
+      title: "Mediathek"
+      lead: "Tauchen Sie ein in das Universum von BastAir durch unsere schönsten Fotos und Videos."
+      video_title: "Präsentationsvideo"
+      gallery_title: "Fotogalerie"
+      clubhouse_text: "Die gemütliche Atmosphäre unseres Clubhauses."
+      hangar_text: "Der Hangar, der die Flugzeuge des Aeroclubs beherbergt."
+    contact:
+      title: "Kontakt"
+      coordinates_title: "Kontaktdaten"
+      address_label: "Adresse:"
+      phone_label: "Telefon:"
+      contact_us_title: "Kontaktieren Sie uns"
+      contact_us_lead: "Für Fragen oder Informationsanfragen zögern Sie nicht, uns eine E-Mail an folgende Adresse zu senden:"
+    team:
+      title: "Unser Team"
+      lead: "Entdecken Sie die leidenschaftlichen Menschen, die BastAir möglich machen."
+      member1:
+        name: "Jeannette Codeur"
+        role: "Lead Developer"
+        desc: "Das technische Gehirn, das Ideen in robuste Funktionen verwandelt."
+      member2:
+        name: "Bill BDD"
+        role: "DBA & Backend Specialist"
+        desc: "Hüter der Daten, er sorgt dafür, dass hinter den Kulissen alles perfekt funktioniert."
+      member3:
+        name: "Karine Style"
+        role: "Frontend & UX Designer"
+        desc: "Die Künstlerin, die die Seite so schön wie benutzerfreundlich macht."
+    privacy_policy:
+      title: "Datenschutzrichtlinie"
+      last_update: "Letzte Aktualisierung:"
+      intro: "Ihre Privatsphäre ist uns wichtig. Diese Datenschutzrichtlinie erklärt, welche personenbezogenen Daten wir von Ihnen sammeln und wie wir sie verwenden."
+      data_collection:
+        title: "Daten, die wir sammeln"
+        text: "Wir sammeln Daten, um effizient zu arbeiten und Ihnen die besten Erfahrungen mit unseren Diensten zu bieten. Sie stellen einige dieser Daten direkt bereit, zum Beispiel wenn Sie ein Konto erstellen, sich für eine Veranstaltung anmelden oder uns um Hilfe bitten."
+        list_html: "<li><strong>Kontoinformationen:</strong> Ihr Name, Ihre E-Mail-Adresse, Ihr Passwort (verschlüsselt).</li><li><strong>Teilnahmedaten:</strong> Die Veranstaltungen, für die Sie sich anmelden.</li><li><strong>Zahlungsdaten:</strong> Wenn Sie ein Ticket für eine kostenpflichtige Veranstaltung kaufen, werden Ihre Zahlungsinformationen von unserem Zahlungspartner Stripe verarbeitet und nicht auf unseren Servern gespeichert.</li>"
+      data_usage:
+        title: "Wie wir Ihre Daten verwenden"
+        text: "Wir verwenden die Daten, die wir sammeln, um:"
+        list_html: "<li>Unsere Dienste bereitzustellen und zu verbessern.</li><li>Sie über Veranstaltungen zu informieren, für die Sie angemeldet sind.</li><li>Mit Ihnen zu kommunizieren, einschließlich Benachrichtigungen über Aktualisierungen oder Stornierungen von Veranstaltungen.</li>"
+      rights:
+        title: "Ihre Rechte"
+        text: "Gemäß der DSGVO haben Sie ein Recht auf Zugang, Berichtigung, Löschung und Übertragbarkeit Ihrer personenbezogenen Daten. Sie können diese Rechte ausüben, indem Sie auf Ihre Profilseite zugreifen oder uns kontaktieren."
+      cgu:
+        title: "Allgemeine Nutzungsbedingungen (AGB)"
+        section1_title: "1. Rechtliche Hinweise und Gegenstand"
+        section1_html: "<h5>Identifikation des Herausgebers der Website:</h5><ul><li>Aeroclub Bast'Air (Verein nach Gesetz 1901).</li><li>Flugplatz Basse-Terre / Baillif.</li></ul><h5>Webhosting:</h5><p>Name und Kontaktdaten des Unternehmens, das Ihre Website hostet.</p><h5>Gegenstand der AGB:</h5><p>Festlegung der Bedingungen für den Zugang und die Nutzung der Verwaltungswebsite des Aeroclubs.</p>"
+        section2_title: "2. Zugang und Nutzung des Dienstes"
+        section2_html: "<p><strong>Zielgruppe:</strong> Der Dienst ist aktiven Mitgliedern vorbehalten, die ihren Beitrag beim Aeroclub bezahlt haben.</p><p><strong>Akzeptanz der AGB:</strong> Die Nutzung der Website und das Einloggen gelten als volle und uneingeschränkte Akzeptanz dieser AGB.</p>"
+        section3_title: "3. Verwaltung von Reservierungen und Konten"
+        section3_html: "<h5>Reservierungsregeln:</h5><ul><li>Die spezifischen Bedingungen für Reservierungen sind in der Geschäftsordnung des Aeroclubs festgelegt.</li></ul><h5>Kontoverwaltung:</h5><ul><li>Das Benutzerkonto ermöglicht die Verfolgung von Flugstunden, Finanzsaldo, Rechnungsstellung und Flugverlauf.</li></ul>"
+        section4_title: "4. Geistiges Eigentum"
+        section4_text: "Der gesamte Inhalt der Website ist ausschließliches Eigentum des Aeroclubs oder seiner Rechtsnachfolger."
+        section5_title: "5. Schutz personenbezogener Daten (DSGVO) 🇪🇺"
+        section5_html: "<p>Dieser Abschnitt ergänzt die Informationen unserer Datenschutzrichtlinie.</p><h5>Art der gesammelten Daten:</h5><p>Wir sammeln folgende Daten: Name, Vorname, Adresse, E-Mail, Telefonnummer, Lizenz-/Brevet-Informationen, Flugstunden, Transaktionsverlauf und Anmeldedaten.</p><h5>Zwecke der Verarbeitung:</h5><p>Diese Daten werden für die Mitgliederverwaltung, Reservierungsverwaltung, Rechnungsstellung, interne Kommunikation des Clubs und die Sicherheit der Website verwendet.</p>"
+        section6_title: "6. Haftung und Garantien"
+        section6_text: "Der Aeroclub bemüht sich, einen kontinuierlichen Zugang und ein ordnungsgemäßes Funktionieren der Website zu gewährleisten, kann jedoch keine vollständige Abwesenheit von Unterbrechungen oder technischen Fehlern garantieren."
+        section7_title: "7. Anwendbares Recht und zuständiges Gericht"
+        section7_text: "Diese AGB unterliegen französischem Recht. Im Streitfall wird vorrangig eine gütliche Lösung gesucht."
+    faq:
+      title: "Häufig gestellte Fragen (FAQ)"
+      subtitle: "Die Pilotenlizenzen (LAPL & PPL) ✈️"
+      q1:
+        question: "1. Was ist der Hauptunterschied zwischen PPL und LAPL?"
+        answer_html: "<p>Der Hauptunterschied liegt in den <strong>Privilegien</strong> und <strong>Einschränkungen</strong>, die mit jeder Lizenz verbunden sind:</p><table class='table table-bordered table-striped'><thead><tr><th scope='col'>Merkmal</th><th scope='col'>LAPL</th><th scope='col'>PPL</th></tr></thead><tbody><tr><td><strong>Flugzone</strong></td><td>Begrenzt auf <strong>EASA-Länder (Europa)</strong>.</td><td><strong>Weltweit</strong> (ICAO-Standard).</td></tr><tr><td><strong>Passagiere</strong></td><td><strong>Maximal 3</strong> Passagiere.</td><td>Keine Begrenzung.</td></tr><tr><td><strong>Flugzeugmasse</strong></td><td>Bis zu <strong>2.000 kg</strong>.</td><td>Keine Begrenzung.</td></tr><tr><td><strong>Min. Flugstunden</strong></td><td><strong>30 Stunden</strong>.</td><td><strong>45 Stunden</strong>.</td></tr></tbody></table>"
+      q2:
+        question: "2. Welche Lizenz sollte ich wählen: LAPL oder PPL?"
+        answer_html: "<p>Die Wahl hängt von Ihren <strong>Flugzielen</strong> ab:</p><ul><li><strong>Wählen Sie den LAPL</strong>, wenn Sie hauptsächlich in Europa fliegen möchten, zum Vergnügen, allein oder mit einer kleinen Anzahl von Passagieren.</li><li><strong>Wählen Sie den PPL</strong>, wenn Sie weltweit fliegen möchten, auf schwereren Flugzeugen, oder wenn Sie fortgeschrittene Qualifikationen (IFR usw.) hinzufügen möchten.</li></ul>"
+      q3:
+        question: "3. Was ist das Mindestalter für den Beginn der Ausbildung und den Erhalt der Lizenz?"
+        answer_html: "<ul><li>Ausbildungsbeginn: <strong>ohne Altersbeschränkung</strong>.</li><li>Erster Alleinflug: <strong>16 Jahre vollendet</strong>.</li><li>Erhalt der Lizenz: <strong>17 Jahre vollendet</strong>.</li></ul>"
+      q4:
+        question: "4. Muss man gut in Mathe oder Naturwissenschaften sein, um die Theorie zu bestehen?"
+        answer_html: "<p><strong>Nein</strong>, das ist nicht notwendig. Die theoretische Ausbildung ist für alle zugänglich und erfordert <strong>kein besonderes wissenschaftliches Diplom</strong>.</p>"
+      q5:
+        question: "5. Wie läuft die theoretische Ausbildung ab?"
+        answer_html: "<p>Die Ausbildung umfasst neun Module (Luftrecht, Meteorologie, Navigation usw.). Die Prüfung ist ein <strong>Multiple-Choice-Test</strong>, bei dem Sie mindestens <strong>75%</strong> richtige Antworten erreichen müssen.</p>"
+      q6:
+        question: "6. Wie lange dauert es, die Lizenz zu erhalten?"
+        answer_html: "<p>Die Dauer variiert je nach Ihrer Verfügbarkeit:</p><ul><li>Die Theorie ist <strong>24 Monate</strong> gültig.</li><li>Im Durchschnitt dauert eine Teilzeitausbildung <strong>12 bis 18 Monate</strong>.</li></ul>"
+      q7:
+        question: "7. Was sind die medizinischen Anforderungen?"
+        answer_html: "<p>Es wird ein medizinisches Tauglichkeitszeugnis benötigt:</p><ul><li><strong>LAPL:</strong> LAPL-Tauglichkeitszeugnis.</li><li><strong>PPL:</strong> Tauglichkeitszeugnis der <strong>Klasse 2</strong>.</li></ul><p class='mb-0'>Das Tragen einer Brille ist <strong>kein Hindernis</strong>.</p>"
+      q8:
+        question: "8. Wie lange sind die Lizenz und das medizinische Tauglichkeitszeugnis gültig?"
+        answer_html: "<table class='table table-bordered'><tbody><tr><td><strong>Lizenz</strong></td><td><strong>Lebenslang</strong>.</td></tr><tr><td><strong>Klassenberechtigung (SEP)</strong></td><td><strong>24 Monate</strong> (zu verlängern).</td></tr><tr><td><strong>Medizinisches Tauglichkeitszeugnis Klasse 2</strong></td><td>5 Jahre (<40 Jahre), 2 Jahre (40-50), 1 Jahr (>50).</td></tr></tbody></table>"
+      q9:
+        question: "9. Wie erhält man seine Flugprivilegien aufrecht?"
+        answer_html: "<p>Sie müssen Bedingungen für <strong>aktuelle Erfahrung</strong> (Flugstunden, Starts/Landungen) erfüllen oder einen Überprüfungsflug mit einem Prüfer durchführen.</p>"
+      q10:
+        question: "10. Was sind die Gesamtkosten einer Lizenz?"
+        answer_html: "<p>Die Kosten variieren je nach Struktur:</p><ul><li><strong>LAPL:</strong> Zwischen <strong>6.000 € und 9.000 €</strong>.</li><li><strong>PPL:</strong> Zwischen <strong>9.000 € und 15.000 €</strong>.</li></ul>"
+      q11:
+        question: "11. Kann man die Lizenz finanzieren?"
+        answer_html: "<p>Ja, insbesondere über das <strong>Stipendium der Fédération Française Aéronautique (FFA)</strong> für Jugendliche, oft in Verbindung mit dem BIA.</p>"
+      q12:
+        question: "12. Warum für die Ausbildung in einem Verein bezahlen?"
+        answer_html: "<p class='mb-0'>Die Kosten decken die unvermeidbaren Ausgaben (Abschreibung des Materials, Simulator, Kompetenzerhaltung der ehrenamtlichen Fluglehrer).</p>"
+      q13:
+        question: "13. Welche Hilfen gibt es von der FFA für unter 21-Jährige?"
+        answer_html: "<p>Hier sind einige Hilfen:</p><ul class='list-group'><li class='list-group-item d-flex justify-content-between align-items-center'>1. Alleinflug<span>350 €</span></li><li class='list-group-item d-flex justify-content-between align-items-center'>PPL oder LAPL Komplett<span>700 €</span></li></ul><p class='mt-3 small text-muted'>Konsultieren Sie die Website der FFA für Details.</p>"
+      q14:
+        question: "14. Was ist das BIA?"
+        answer_html: "<p>Das <strong>Brevet d'Initiation Aéronautique</strong> ist ein Diplom, das eine allgemeine Luftfahrtkultur bescheinigt und sich hauptsächlich an Jugendliche richtet.</p>"
+      q15:
+        question: "15. Was bringt das BIA?"
+        answer_html: "<p>Es vermittelt solides Wissen, eine Einführung in das Fliegen, finanzielle Hilfen für die Pilotenausbildung und ist ein Vorteil für die berufliche Orientierung.</p>"
+      q16:
+        question: "16. Was sind die Bedingungen für das BIA?"
+        answer_html: "<p>Offen für Kandidaten ab <strong>13 Jahren</strong>. Die Prüfung ist ein Multiple-Choice-Test zu 5 Pflichtbereichen.</p>"

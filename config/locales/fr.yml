@@ -2,6 +2,7 @@ fr:
   time:
     formats:
       short_time: "%H:%M"
+      short_year: "%d/%m/%Y"
       short_year_time: "%d/%m/%Y %H:%M"
   date:
     formats:
