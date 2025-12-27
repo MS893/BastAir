@@ -169,7 +169,13 @@ h6 {
  * AFFICHAGE DU GOOGLE CALENDAR EN MODE DARK
  * =============================================================================
  */
-.calendar-dark-container iframe {
+.calendar-container iframe {
+  /* Transition fluide pour éviter le clignotement lors du changement de thème */
+  transition: filter 1.0s ease-in-out, background-color 1.0s ease-in-out;
+}
+
+/* Le filtre ne s'applique que si l'attribut data-bs-theme="dark" est présent sur la balise html */
+[data-bs-theme="dark"] .calendar-container iframe {
   /* Invertit les couleurs : le blanc devient noir */
   filter: invert(90%) hue-rotate(180deg) brightness(1.1);
 

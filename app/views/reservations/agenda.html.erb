@@ -6,7 +6,8 @@
   <h3 class="text-center mb-2">Agenda des réservations, évènements et instructeurs</h3>
 
   <% if @calendar_ids.present? && @calendar_ids.any? %>
-    <div class="calendar-dark-container">
+    <!--  calendar container permet de cibler le calendrier pour le style dark ou light -->
+    <div class="calendar-container">
       <%
         base_url = "https://calendar.google.com/calendar/embed?"
 
