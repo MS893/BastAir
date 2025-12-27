@@ -76,7 +76,7 @@
         <% end %>
         <% unless [:en, :es, :de, :it].include?(I18n.locale) %>
         <li class="nav-item">
-          <%= link_to "Outils", outils_path, class: "nav-link #{'active' if current_page?(outils_path)}" %>
+          <%= link_to "Calculatrice", outils_path, class: "nav-link #{'active' if current_page?(outils_path)}" %>
         </li>
         <% end %>
         </li>

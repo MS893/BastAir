@@ -10,92 +10,30 @@
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
-        }
-        .calculator {
-            max-width: 400px;
-            margin: auto;
-            border-radius: 20px;
-            box-shadow: 0 5px 15px #635b5b1a;
-        }
-
-        .display-area {
-            background-color: rgba(153, 197, 241, 1);
-            border-bottom: 1px solid #ffffffff;
-            text-align: right;
-            padding: .5rem 1rem .5rem .5rem;
-        }
-
-        #time-list {
-            min-height: 150px;
-            max-height: 150px;
-            overflow-y: auto;
-            font-size: 1.3rem;
-            padding-right: 1.5rem;
-            color: #0e1114ff; /* Couleur text-muted de Bootstrap */
-        }
-
-        #current-input, #result {
-            color: #0d6efd; /* Couleur text-primary de Bootstrap */
-        }
-
-        .keypad .btn {
-            height: 60px;
-            font-size: 1.5rem;
-        }
-
-        #current-input {
-            text-align: left;
-            padding-left: 0.5rem;
-        }
-
-        .keypad .btn-primary {
-            font-size: 2rem;
-            font-weight: bold;
-        }
-
-        .display-area small,
-        #result small {
-            font-size: 65%;
-        }
-        #backspace-btn {
-            font-size: 2rem;
-            line-height: 1.2;
-        }
-        .btn-dark-orange {
-            background-color: #b84d00; /* Orange plus foncé */
-            border-color: #b84d00;
-            color: #fff;
-        }
-        .btn-dark-orange:hover {
-            background-color: #8a4100;
-            border-color: #8a4100;
-            color: #fff;
-        }
+            }
     </style>
 </head>
 
 <body>
 
     <!-- CALCULATRICE -->
-    <section id="calculator-section" class="py-5">
+    <section id="calculator-section" class="py-3">
         <div class="container">
-            <div class="row mb-4">
-                <div class="col-md-12 text-center">
+            <div class="row mb-2">
+                <div class="col-md-12 text-center text-black">
                     <h2>Calculatrice de temps de vol</h2>
-                    <p class="lead">Additionnez des heures et minutes (ex: 1h 30mn) ou des heures en centièmes (ex: 1.5)
-                    </p>
                 </div>
             </div>
 
-            <div class="calculator bg-body-secondary p-3">
+            <div class="calculator bg-body-secondary p-1">
             <div class="calculator p-3">
                 <!-- Display -->
-                <div class="display-area mb-3 rounded">
+                <div class="display-area mb-2 rounded">
                     <div id="time-list"></div>
-                    <div id="current-input" class="h2 mb-0">0h 00mn</div>
+                    <div id="current-input" class="h2 mb-0">0 h 00 mn</div>
                 </div>
-                <div class="text-center mb-3">
-                    <h2>Total: <span id="result">0h 00mn</span></h2>
+                <div class="text-center mb-2">
+                    <h2>Total: <span id="result">0 h 00 mn</span></h2>
                     <button id="convert-btn" class="btn btn-success btn-sm mt-2" onclick="convertTotal()">Convertir en
                         cent.</button>
                 </div>
@@ -157,27 +95,31 @@
             </div>
     </section>
 
+    <p class="lead text-black text-center">Additionnez des heures et minutes (ex: 1h 30mn) ou des heures en centièmes (ex: 1.5)</p>
+
     <!-- MODE D'EMPLOI -->
-    <section id="user-guide-section" class="pt-5 pb-5">
+    <section id="user-guide-section" class="pt-3 pb-3">
         <div class="container">
             <div class="row">
                 <div class="col-12" style="max-width: 400px; margin: auto; background-color: #212529; padding: 1.5rem; border-radius: 20px;">
                     <h3 class="text-center mb-3">Mode d'emploi</h3>
                     <ul class="list-group list-group-flush">
-                        <li class="list-group-item bg-transparent text-white-50"><strong>Pour saisir en heures et
-                                minutes :</strong> entrez les heures, appuyez sur <strong
-                                class="text-warning">min</strong>, entrez les minutes, puis appuyez sur <strong
-                                class="text-primary">+</strong> (ou <strong class="text-primary">-</strong> pour
-                            soustraire).</li>
-                        <li class="list-group-item bg-transparent text-white-50"><strong>Pour saisir en heures et
-                                centièmes :</strong> entrez la valeur décimale (ex: 1.5), puis appuyez sur <strong
-                                class="text-primary">+</strong> (ou <strong class="text-primary">-</strong>).</li>
+                        <li class="list-group-item bg-transparent text-white-50"><strong>Saisie au clavier : utilisez la zone
+                                de saisie de valeurs et d'opérations (uniquement les chiffres et les caractères 
+                                <strong>h , . + -</strong>. En tapant sur ENTER, le calcul se fait.</li>
+                        <li class="list-group-item bg-transparent text-white-50"><strong>Avec le clavier de la calculatrice :</strong>
+                                entrez les heures, puis cliquez sur <strong class="text-warning">min</strong>, entrez les minutes, 
+                                puis cliquez sur <strong class="text-primary">+</strong> (ou <strong class="text-primary">-</strong> pour 
+                                soustraire). NB : pour saisir 0h25mn, vous pouvez cliquer directement sur <strong class="text-warning">
+                                min</strong> puis entrez 25.</li>
                         <li class="list-group-item bg-transparent text-white-50">Répétez l'opération pour chaque
-                            temps à additionner.</li>
-                        <li class="list-group-item bg-transparent text-white-50">Appuyez sur <strong
+                            temps à additionner ou soustraire.</li>
+                        <li class="list-group-item bg-transparent text-white-50">Cliquez sur <strong
                                 class="text-primary">=</strong> pour obtenir le total en heures et minutes.</li>
+                        <li class="list-group-item bg-transparent text-white-50"><strong>Pour saisir en heures et
+                                centièmes :</strong> entrez la valeur décimale en utilisant le point (ex: 1.5).</li>
                     </ul>
-                    <p class="mt-4 text-white-50">
+                    <p class="mt-2 text-white-50">
                         <strong>Autres boutons :</strong><br>
                         <strong class="text-warning">C</strong> : Efface la saisie en cours.<br>
                         <strong class="text-warning">AC</strong> : Réinitialise toute la calculatrice (saisie, liste
@@ -218,20 +160,20 @@
                 const hours = absMinutes / 60;
                 const h = Math.floor(hours);
                 const c = Math.round((hours - h) * 100);
-                return `${sign}${h},${c.toString().padStart(2, '0')}<small>h</small>`;
+                return `${sign}${h},${c.toString().padStart(2, '0')}<small> h</small>`;
             } else { // minutes
                 const h = Math.floor(absMinutes / 60);
                 const m = Math.round(absMinutes % 60);
-                return `${sign}${h}<small>h</small> ${m.toString().padStart(2, '0')}<small>mn</small>`;
+                return `${sign}${h}<small> h</small> ${m.toString().padStart(2, '0')}<small> mn</small>`;
             }
         }
 
         function updateDisplay() {
             const display = document.getElementById('current-input');
             if (currentInputMode === 'decimal') {
-                display.innerHTML = inputBuffer ? `${inputBuffer}<small>h</small>` : '0,00<small>h</small>';
+                display.innerHTML = inputBuffer ? `${inputBuffer}<small> h</small>` : '0,00<small> h</small>';
             } else {
-                display.innerHTML = `${currentH}<small>h</small> ${currentM.toString().padStart(2, '0')}<small>mn</small>`;
+                display.innerHTML = `${currentH}<small> h</small> ${currentM.toString().padStart(2, '0')}<small> mn</small>`;
             }
 
             const timeListDiv = document.getElementById('time-list');

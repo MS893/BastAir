@@ -197,3 +197,76 @@ h6 {
 .dropdown-item:hover .flag-icon {
   transform: scale(1.6);
 }
+
+/*
+ * =============================================================================
+ * STYLES POUR LA CALCULATRICE DE TEMPS DE VOL
+ * =============================================================================
+ */
+.calculator {
+  max-width: 400px;
+  margin: auto;
+  border-radius: 20px;
+  box-shadow: 0 5px 15px #635b5b1a;
+}
+
+.display-area {
+  background-color: rgba(153, 197, 241, 1);
+  border-bottom: 1px solid #ffffffff;
+  text-align: right;
+  padding: .5rem 1rem .5rem .5rem;
+}
+
+#time-list {
+  min-height: 150px;
+  max-height: 150px;
+  overflow-y: auto;
+  font-size: 1.3rem;
+  padding-right: 1.5rem;
+  color: #0e1114ff;
+  /* Couleur text-muted de Bootstrap */
+}
+
+#current-input,
+#result {
+  color: #0d6efd;
+  /* Couleur text-primary de Bootstrap */
+}
+
+.keypad .btn {
+  height: 60px;
+  font-size: 1.5rem;
+}
+
+#current-input {
+  text-align: left;
+  padding-left: 0.5rem;
+}
+
+.keypad .btn-primary {
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.display-area small,
+#result small {
+  font-size: 65%;
+}
+
+#backspace-btn {
+  font-size: 2rem;
+  line-height: 1.2;
+}
+
+.btn-dark-orange {
+  background-color: #b84d00;
+  /* Orange plus foncé */
+  border-color: #b84d00;
+  color: #fff;
+}
+
+.btn-dark-orange:hover {
+  background-color: #8a4100;
+  border-color: #8a4100;
+  color: #fff;
+}
